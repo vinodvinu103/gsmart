@@ -41,6 +41,7 @@ public class GetAuthorization {
 			httpSession.setAttribute("permissions", permissions);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
 		}
 
@@ -98,6 +99,7 @@ public class GetAuthorization {
 		String[] str = element.getClassName().split("\\.");
 		int length = str.length;
 		String moduleName = str[length-1].replace("Controller", "");
+		System.out.println(moduleName);
 		return moduleName;
 	}
 	
@@ -108,8 +110,7 @@ public class GetAuthorization {
 		
 		RolePermission permissions;
 		session = sessionFactory.openSession();
-		query = session.createQuery(
-				"from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName)");
+		query = session.createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName)");
 		query.setParameter("role", token.getRole());
 		query.setParameter("moduleName", module);
 		permissions = (RolePermission) query.uniqueResult();

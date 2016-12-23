@@ -32,6 +32,7 @@
 				<value>com.gsmart.model.Login</value>
 				<value>com.gsmart.model.Profile</value>
 				<value>com.gsmart.model.Token</value>
+				<value>com.gsmart.model.LeaveMaster</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
