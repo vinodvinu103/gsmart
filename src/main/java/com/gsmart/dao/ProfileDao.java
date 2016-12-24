@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gsmart.model.Profile;
+import com.gsmart.model.Search;
 //import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 
@@ -55,7 +56,7 @@ public interface ProfileDao {
 
 	public List<Profile> getAllRecord();
 
-	//public List<Profile> getsearchRep(Search search);
+	public List<Profile> getsearchRep(Search search);
 	
 	/**
 	 * @return list of Profile entities available in the {@link Profile} Table
