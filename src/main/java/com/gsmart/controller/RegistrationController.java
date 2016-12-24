@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
+import com.gsmart.model.Search;
 //import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
+import com.gsmart.services.SearchService;
+import com.gsmart.util.CommonMail;
 //import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -28,39 +31,39 @@ public class RegistrationController {
 
 	@Autowired
 	ProfileServices profileServices;
-	/*@Autowired
-	SearchService searchService;*/
 
+	@Autowired
+	SearchService searchService;
 
-	@RequestMapping(value = "/employee" , method = RequestMethod.GET)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> viewEmployeeProfiles() throws GSmartBaseException{
-		
+	@RequestMapping(value = "/employee", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, ArrayList<Profile>>> viewEmployeeProfiles() throws GSmartBaseException {
+
 		Loggers.loggerStart();
-		Map<String, ArrayList<Profile>>	jsonMap = new HashMap<>();
+		Map<String, ArrayList<Profile>> jsonMap = new HashMap<>();
 		jsonMap.put("result", profileServices.getProfiles("employee"));
 		Loggers.loggerEnd(jsonMap);
-		return new ResponseEntity<Map<String,ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-		
+		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value = "/student" ,method = RequestMethod.GET)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> viewStudentProfiles() throws GSmartBaseException{
-		
+
+	@RequestMapping(value = "/student", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, ArrayList<Profile>>> viewStudentProfiles() throws GSmartBaseException {
+
 		Loggers.loggerStart();
-		Map<String, ArrayList<Profile>>	jsonMap = new HashMap<>();
+		Map<String, ArrayList<Profile>> jsonMap = new HashMap<>();
 		jsonMap.put("result", profileServices.getProfiles("student"));
 		Loggers.loggerEnd(jsonMap);
-		return new ResponseEntity<Map<String,ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-		
+		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
+
 	}
-	
+
 	@RequestMapping(value = "/addProfile/{updSmartId}", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> addUser(@RequestBody Profile profile,
 			@PathVariable("updSmartId") String updSmartId) throws GSmartBaseException {
 
-		Loggers.loggerStart(profile);
+		Loggers.loggerStart(profile.getFirstName());
 		Loggers.loggerValue("Added by ", updSmartId);
-		
+
 		Map<String, String> jsonMap = new HashMap<>();
 
 		String id = profileServices.getmaxSamrtId();
@@ -71,18 +74,17 @@ public class RegistrationController {
 		profile.setSmartId(smartId);
 		profile.setUpdSmartId(updSmartId);
 
-		/*if (profileServices.insertUserProfileDetails(profile)) {
+		if (profileServices.insertUserProfileDetails(profile)) {
 			CommonMail commonMail = new CommonMail();
 			try {
 				commonMail.passwordMail(profile, smartId);
-			} 
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}*/
+		}
 
 		jsonMap.put("Id", smartId);
-		
+
 		Loggers.loggerEnd(jsonMap);
 		return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
 
@@ -102,15 +104,14 @@ public class RegistrationController {
 
 	}
 
-
-	/*@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
+	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search) {
-		
-			Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
-				Map<String, Profile> map = searchService.searchRep(search);
-				ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
-				jsonMap.put("result", profiless);
-				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-			
-	}	*/
+
+		Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
+		Map<String, Profile> map = searchService.searchRep(search);
+		ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
+		jsonMap.put("result", profiless);
+		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
+
+	}
 }

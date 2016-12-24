@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Profile;
+import com.gsmart.model.Search;
 //import com.gsmart.model.Search;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -198,20 +199,19 @@ public class ProfileDaoImp implements ProfileDao {
 		return profile;
 	}
 
-	/*@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public List<Profile> getsearchRep(Search search) {
 		try {
 			getConnection();
 			query = session.createQuery("from Profile where isActive like('Y') and band<:band  and school =:school");
 			query.setParameter("band", search.getBand());
 			query.setParameter("school", search.getSchool());
-			logger.info("query executed");
 			return (List<Profile>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		return null;
-	}*/
+	}
 
 	/**
 	 * to search and view the list of records available in {@link Profile} table
