@@ -150,7 +150,7 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 				case "Leave":
 					rolePermission.setIcon("white fa fa-th-list fa-3x");
 					break;
-				case "Fee":
+				case "FeeMaster":
 					rolePermission.setIcon("white fa fa-cc-visa fa-3x");
 					break;
 				case "RolePermission":
