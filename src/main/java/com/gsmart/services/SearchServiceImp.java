@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.ProfileDao;
+import com.gsmart.model.Fee;
+import com.gsmart.model.FeeMaster;
 //import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
@@ -21,9 +23,9 @@ public class SearchServiceImp implements SearchService {
 
 	@Autowired
 	ProfileDao profiledao;
-/*
+
 	@Autowired
-	FeeServices feeServices;*/
+	FeeServices feeServices;
 
 	@Autowired/*@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search) {
@@ -146,7 +148,7 @@ public class SearchServiceImp implements SearchService {
 		return noticeList;
 	}*/
 
-	/*@Override
+	@Override
 	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles)
 			throws GSmartServiceException {
 
@@ -215,9 +217,9 @@ public class SearchServiceImp implements SearchService {
 			return childList;
 		}
 
-	}*/
+	}
 
-	/*@Override
+	@Override
 	public ArrayList<Profile> studentFees(ArrayList<Profile> childList) throws GSmartServiceException {
 
 		ArrayList<Profile> fees = new ArrayList<Profile>();
@@ -259,7 +261,7 @@ public class SearchServiceImp implements SearchService {
 		}
 
 		return fees;
-	}*/
+	}
 
 	@Override
 	public ArrayList<Profile> gotoloop(ArrayList<Profile> childList, Map<String, Profile> profiles)
