@@ -15,8 +15,8 @@ public class Fee {
 	private String smartId;
 	
 	@Id
-	@Column(name="TIME_STAMP")
-	private String timeStamp;
+	@Column(name="ENTRY_TIME")
+	private String entryTime;
 	
 	@Column(name="ACADEMIC_YEAR")
 	private String academicYear;
@@ -37,25 +37,47 @@ public class Fee {
 	private String modeOfPayment;
 	
 	@Column(name="SPORTS_FEE")
-	private int sportsFee;
+	private Integer sportsFee;
 	
 	@Column(name="TUITION_FEE")
-	private int tuitionFee;
+	private Integer tuitionFee;
 	
 	@Column(name="ID_CARD_FEE")
-	private int idCardFee;
+	private Integer idCardFee;
 	
 	@Column(name="MISCELLANEOUS_FEE")
-	private int miscellaneousFee;
+	private Integer miscellaneousFee;
 	
+	@Column(name = "TRANSPORTATION_FEE")
+	private Integer transportationFee;
+	
+	public Integer getTransportationFee() {
+		return transportationFee;
+	}
+
+	public void setTransportationFee(Integer transportationFee) {
+		this.transportationFee = transportationFee;
+	}
+
+	@Override
+	public String toString() {
+		return "Fee [smartId=" + smartId + ", entryTime=" + entryTime + ", academicYear=" + academicYear + ", name="
+				+ name + ", parentName=" + parentName + ", date=" + date + ", standard=" + standard + ", modeOfPayment="
+				+ modeOfPayment + ", sportsFee=" + sportsFee + ", tuitionFee=" + tuitionFee + ", idCardFee=" + idCardFee
+				+ ", miscellaneousFee=" + miscellaneousFee + ", transportationFee=" + transportationFee
+				+ ", balanceFee=" + balanceFee + ", paidFee=" + paidFee + ", totalFee=" + totalFee + ", feeStatus="
+				+ feeStatus + ", reportingManagerId=" + reportingManagerId + ", childFlag=" + childFlag
+				+ ", parentFlag=" + parentFlag + "]";
+	}
+
 	@Column(name="BALANCE_FEE")
-	private int balanceFee;
+	private Integer balanceFee;
 	
 	@Column(name="PAID_FEE")
-	private int paidFee;
+	private Integer paidFee;
 	
 	@Column(name="TOATL_FEE")
-	private int totalFee;
+	private Integer totalFee;
 	
 	@Column(name="FEE_STATUS")
 	private String feeStatus;
@@ -118,51 +140,51 @@ public class Fee {
 		this.modeOfPayment = modeOfPayment;
 	}
 
-	public int getSportsFee() {
+	public Integer getSportsFee() {
 		return sportsFee;
 	}
 
-	public void setSportsFee(int sportsFee) {
+	public void setSportsFee(Integer sportsFee) {
 		this.sportsFee = sportsFee;
 	}
 
-	public int getTuitionFee() {
+	public Integer getTuitionFee() {
 		return tuitionFee;
 	}
 
-	public void setTuitionFee(int tuitionFee) {
+	public void setTuitionFee(Integer tuitionFee) {
 		this.tuitionFee = tuitionFee;
 	}
 
-	public int getIdCardFee() {
+	public Integer getIdCardFee() {
 		return idCardFee;
 	}
 
-	public void setIdCardFee(int idCardFee) {
+	public void setIdCardFee(Integer idCardFee) {
 		this.idCardFee = idCardFee;
 	}
 
-	public int getMiscellaneousFee() {
+	public Integer getMiscellaneousFee() {
 		return miscellaneousFee;
 	}
 
-	public void setMiscellaneousFee(int miscellaneousFee) {
+	public void setMiscellaneousFee(Integer miscellaneousFee) {
 		this.miscellaneousFee = miscellaneousFee;
 	}
 
-	public int getBalanceFee() {
+	public Integer getBalanceFee() {
 		return balanceFee;
 	}
 
-	public void setBalanceFee(int balanceFee) {
+	public void setBalanceFee(Integer balanceFee) {
 		this.balanceFee = balanceFee;
 	}
 
-	public int getTotalFee() {
+	public Integer getTotalFee() {
 		return totalFee;
 	}
 
-	public void setTotalFee(int totalFee) {
+	public void setTotalFee(Integer totalFee) {
 		this.totalFee = totalFee;
 	}
 
@@ -182,20 +204,22 @@ public class Fee {
 		this.academicYear = academicYear;
 	}
 
-	public int getPaidFee() {
+	public Integer getPaidFee() {
 		return paidFee;
 	}
 
-	public void setPaidFee(int paidFee) {
+	public void setPaidFee(Integer paidFee) {
 		this.paidFee = paidFee;
 	}
 
-	public String getTimeStamp() {
-		return timeStamp;
+	
+
+	public String getEntryTime() {
+		return entryTime;
 	}
 
-	public void setTimeStamp(String timeStamp) {
-		this.timeStamp = timeStamp;
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
 	}
 
 	public String getReportingManagerId() {

@@ -17,6 +17,7 @@ import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.util.GSmartServiceException;
+import com.gsmart.util.Loggers;
 
 @Service
 public class SearchServiceImp implements SearchService {
@@ -39,7 +40,7 @@ public class SearchServiceImp implements SearchService {
 }	*/
 	FeeMasterServices feeMasterServices;
 
-	private static final Logger logger = Logger.getLogger(SearchServiceImp.class);
+	;
 	private Map<String, Profile> allProfiles;
 
 
@@ -47,14 +48,17 @@ public class SearchServiceImp implements SearchService {
 	public Map<String, Profile> getAllProfiles() {
 		allProfiles = new HashMap<String, Profile>();
 		List<Profile> profiles = profiledao.getAllRecord();
+		Loggers.loggerStart("returned to searchService ");
 		for (Profile profile : profiles) {
 			allProfiles.put(profile.getSmartId(), profile);
 		}
+		Loggers.loggerEnd("for each loop is executed");
 		return allProfiles;
 	}
 
 	@Override
 	public ArrayList<Profile> getEmployeeInfo(String emp, Map<String, Profile> map) {
+		Loggers.loggerStart();
 		ArrayList<Profile> list = new ArrayList<Profile>();
 		try {
 			Set<String> key = map.keySet();
@@ -69,11 +73,13 @@ public class SearchServiceImp implements SearchService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Loggers.loggerEnd();
 		return list;
 	}
 
 	@Override
 	public ArrayList<Profile> searchEmployeeInfo(String smartId, Map<String, Profile> map) {
+		Loggers.loggerStart("searchEmployeeInfo ");
 		Set<String> key = map.keySet();
 		ArrayList<Profile> childList = new ArrayList<Profile>();
 
@@ -85,21 +91,23 @@ public class SearchServiceImp implements SearchService {
 				}
 			}
 		}
+		Loggers.loggerEnd("searchEmployeeInfo ended");
 		return childList;
 	}
 
 	public Map<String, Profile> searchRep(Search search) {
 
+		Loggers.loggerStart();
 		allProfiles = new HashMap<String, Profile>();
 
 		List<Profile> profiles = profiledao.getsearchRep(search);
 
-		logger.info(profiles.size());
+		Loggers.loggerValue("", profiles);
 		for (Profile profile : profiles) {
-			logger.info(profiles.size());
-			logger.info(profile.getSmartId());
+			Loggers.loggerValue("entered int for each loop in searchResp", "");
 			allProfiles.put(profile.getSmartId(), profile);
 		}
+		Loggers.loggerEnd();
 		return allProfiles;
 	}
 
@@ -113,18 +121,18 @@ public class SearchServiceImp implements SearchService {
 		Profile p;
 		boolean temp;
 		do {
-			logger.info(smartId);
+			Loggers.loggerValue("entered int do while in searchParentInfo", "");
 			p = map.get(smartId);
 			if (!(p.getReportingManagerId().equals(smartId))) {
 				parentList.add(p.getReportingManagerId());
 				smartId = p.getReportingManagerId();
 				temp = true;
-				logger.info(smartId);
+				Loggers.loggerValue("entered into if in do while in searchParentInfo", "");
 			} else {
 				temp = false;
 			}
 		} while (temp);
-		logger.info(parentList.size());
+		Loggers.loggerValue("ended do while in searchParentInfo", "");
 		return parentList;
 	}
 
@@ -152,6 +160,7 @@ public class SearchServiceImp implements SearchService {
 	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles)
 			throws GSmartServiceException {
 
+		Loggers.loggerStart();
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
 		int i = 0;
@@ -171,29 +180,39 @@ public class SearchServiceImp implements SearchService {
 		temp1 = childList;
 
 		if (!childList.isEmpty()) {
+			Loggers.loggerValue("if childList is not empty", "");
 
 			if (childList.get(0).getRole().toLowerCase().equals("student")) {
 
+				Loggers.loggerValue("childList getting ","");
 				fees = studentFees(childList);
 
+	
 				return fees;
 
 			} else {
+				Loggers.loggerValue("entered in else stmt", "");
 				do {
+					Loggers.loggerValue("entered in doWhile loop", "");
 
 					map.put(++i, gotoloop(temp1, profiles));
+					
+					Loggers.loggerValue("recievedd gotoloop obj", "");
 
 					boo = map.get(i).get(0).getRole().toLowerCase().equals("student");
-
+					Loggers.loggerValue("after comparing with student", "");
 					temp1 = map.get(i);
+					Loggers.loggerValue("endend doWhile loop in else stmt", "");
 
 					if (boo) {
+						Loggers.loggerValue("entered in if loop in 1ST DO WHILE Loop", "");
 						fees = studentFees(temp1);
 					}
 
 				} while (!boo);
 
 				do {
+					Loggers.loggerValue("entered in second do while loop", "");
 
 					for (int j = 0; j < map.get(i - 1).size(); j++) {
 
@@ -209,11 +228,13 @@ public class SearchServiceImp implements SearchService {
 
 				} while (i > 1);
 
+				Loggers.loggerValue("do while executed", "");
 				return temp2;
 			}
 		}
 
 		else {
+			Loggers.loggerValue("sumup ended", "");
 			return childList;
 		}
 
@@ -222,6 +243,7 @@ public class SearchServiceImp implements SearchService {
 	@Override
 	public ArrayList<Profile> studentFees(ArrayList<Profile> childList) throws GSmartServiceException {
 
+		Loggers.loggerStart(childList);
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
 		ArrayList<Fee> feeList = feeServices.getFeeLists("2016-2017");
@@ -232,31 +254,46 @@ public class SearchServiceImp implements SearchService {
 		
 		Map<String, Integer> feeMasterMap = new HashMap<String, Integer>();
 
+		System.out.println("feelist size is"+feeList.size());
 		
 		for (int i = 0; i < feeList.size(); i++) {
 
+			Loggers.loggerValue("entered into 1st For loop ", "");
 			feeMap.put(feeList.get(i).getSmartId(), feeList.get(i));
+			Loggers.loggerValue("smartid",feeList.get(i).getSmartId());
+			Loggers.loggerValue("feelist for above smart id", feeList.get(i));
 		}
 		
 		
 		for (int i = 0; i < fee.size(); i++) {
+			Loggers.loggerValue("entered into 2nd For loop ", "");
 			
 			feeMasterMap.put(fee.get(i).getStandard(), fee.get(i).getTotalFee());
+			
+			Loggers.loggerValue("total standard for ",fee.get(i).getStandard());
+			Loggers.loggerValue("total fee for ",fee.get(i).getTotalFee());
+			
 			
 		}
 
 		for (Profile profile : childList) {
 
+			Loggers.loggerValue("entered into for each loop ", "");
 			if (feeMap.get(profile.getSmartId()) != null) {
 
+				Loggers.loggerValue("entered into if loop inside for each loop ", "");
 				profile.setPaidAmount(feeMap.get(profile.getSmartId()).getPaidFee());
 				profile.setBalanceAmount(feeMap.get(profile.getSmartId()).getBalanceFee());
 				profile.setTotalAmount(feeMasterMap.get(profile.getStandard()));
+				
 				fees.add(profile);
+				Loggers.loggerValue("exiting from if loop inside for each loop ", "");
 			} else {
+				Loggers.loggerValue("entered into else  ", "");
 				profile.setTotalAmount(feeMasterMap.get(profile.getStandard()));
 				
 				fees.add(profile);
+				Loggers.loggerValue("exting from if loop inside for each loop ", "");
 			}
 		}
 
@@ -267,6 +304,7 @@ public class SearchServiceImp implements SearchService {
 	public ArrayList<Profile> gotoloop(ArrayList<Profile> childList, Map<String, Profile> profiles)
 			throws GSmartServiceException {
 
+		Loggers.loggerStart(childList);
 		ArrayList<Profile> childOfChild = new ArrayList<Profile>();
 		
 		for (Profile profile : childList) {
@@ -274,7 +312,7 @@ public class SearchServiceImp implements SearchService {
 			childOfChild = searchEmployeeInfo(profile.getSmartId(), profiles);
 
 		}
-		
+		Loggers.loggerEnd();
 		return childOfChild;
 	}
 

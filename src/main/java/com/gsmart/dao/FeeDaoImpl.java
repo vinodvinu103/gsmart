@@ -2,7 +2,6 @@ package com.gsmart.dao;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Fee;
+import com.gsmart.model.Profile;
+import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
+import com.gsmart.util.Loggers;
 
 @Repository
 public class FeeDaoImpl implements FeeDao{
@@ -26,12 +28,11 @@ public class FeeDaoImpl implements FeeDao{
 	Transaction transaction;
 	Query query;
 	
-	Logger logger=Logger.getLogger(FeeDaoImpl.class);
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Fee> getFeeList(Fee fee) throws GSmartDatabaseException {
-		logger.debug("Start :: FeeDaoImpl. getFeeList()");
+		Loggers.loggerStart();
 		ArrayList<Fee> feeList;
 		try{
 			getconnection();
@@ -44,16 +45,20 @@ public class FeeDaoImpl implements FeeDao{
 		}finally{
 			session.close();
 		}
-		logger.debug("End :: FeeDaoImpl. getFeeList()");
+		Loggers.loggerEnd();
 		return feeList;
 	}
 	
 	@Override
 	public void addFee(Fee fee) throws GSmartDatabaseException {
-		logger.debug("Start :: FeeDaoImpl. addFee()");
+		Loggers.loggerStart();
 		try{
 			getconnection();
-			fee.setBalanceFee(fee.getTotalFee()-fee.getPaidFee());
+			fee.setEntryTime(CalendarCalculator.getTimeStamp());
+			fee.setDate(CalendarCalculator.getTimeStamp());
+			Profile profile=getReportingManagerId(fee.getSmartId());
+			fee.setReportingManagerId(profile.getReportingManagerId());
+			fee.setParentName(profile.getFatherName());
 			session.save(fee);
 			transaction.commit();
 		}catch(ConstraintViolationException e){
@@ -64,9 +69,19 @@ public class FeeDaoImpl implements FeeDao{
 		}finally{
 			session.close();
 		}
-		logger.debug("End :: FeeDaoImpl. addFee()");
+		Loggers.loggerEnd();
 	}
 	
+	public Profile getReportingManagerId(String smartId)
+	{
+		Loggers.loggerStart();
+		query=session.createQuery("from Profile where smartId=:smartId");
+		query.setParameter("smartId", smartId);
+		Profile profileList=(Profile) query.uniqueResult();
+		
+		return profileList;
+		
+	}
 	public void getconnection(){
 		session=sessionFactory.openSession();
 		transaction=session.beginTransaction();
@@ -75,11 +90,22 @@ public class FeeDaoImpl implements FeeDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Fee> getFeeLists(String academicYear) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		ArrayList<Fee> feeList=null;
+		try
+		{
+		System.out.println(academicYear);
 		getconnection();
-		query=session.createQuery("from Fee where academicYear= :academicYear");
+		Loggers.loggerValue("getting connections", "");
+		query=session.createQuery("From Fee where academicYear=:academicYear");
 		query.setParameter("academicYear", academicYear);
+		feeList=(ArrayList<Fee>) query.list();
+		Loggers.loggerEnd();
 		
-		ArrayList<Fee> feeList=(ArrayList<Fee>) query.list();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		return feeList;
 	}
 

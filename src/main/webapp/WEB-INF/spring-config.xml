@@ -37,6 +37,8 @@
 				<value>com.gsmart.model.Band</value>
 				<value>com.gsmart.model.FeeMaster</value>
 				<value>com.gsmart.model.LeaveMaster</value>
+				<value>com.gsmart.model.Fee</value>
+				
 			</list>
 		</property>
 		<property name="hibernateProperties">
