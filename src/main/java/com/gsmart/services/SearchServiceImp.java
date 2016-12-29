@@ -279,6 +279,7 @@ public class SearchServiceImp implements SearchService {
 		for (Profile profile : childList) {
 
 			Loggers.loggerValue("entered into for each loop ", "");
+			Loggers.loggerValue("getting smartId", feeMap.get(profile.getSmartId()));
 			if (feeMap.get(profile.getSmartId()) != null) {
 
 				Loggers.loggerValue("entered into if loop inside for each loop ", "");
