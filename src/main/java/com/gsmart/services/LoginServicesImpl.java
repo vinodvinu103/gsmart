@@ -83,8 +83,10 @@ public class LoginServicesImpl implements LoginServices {
 				}
 			}
 		} catch (GSmartDatabaseException exception) {
+			exception.printStackTrace();
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
 		}
 

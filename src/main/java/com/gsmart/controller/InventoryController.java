@@ -1,6 +1,5 @@
 package com.gsmart.controller;
 
-import java.security.acl.Permission;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
-import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
@@ -101,7 +99,7 @@ public class InventoryController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<IAMResponse> addInventory(@RequestBody Inventory inventory,@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(inventory);
-		IAMResponse myResponse;
+
 		IAMResponse resp = new IAMResponse();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
@@ -110,9 +108,7 @@ public class InventoryController {
 		
 		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
 		CompoundInventory cb= inventoryServices.addInventory(inventory);
-		if (cb !=null) {
-			myResponse= new IAMResponse("success");
-		}
+		
 		
 		if (cb != null)
 			resp.setMessage("success");

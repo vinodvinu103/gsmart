@@ -68,7 +68,18 @@ public class FeeMaster {
 	@Column(name = "ISACTIVE")
 	private String isActive;
 	
+	@Column(name = "ID_CARD_FEE")
+	private Integer idCardFee;
 	
+	
+	public Integer getIdCardFee() {
+		return idCardFee;
+	}
+
+	public void setIdCardFee(Integer idCardFee) {
+		this.idCardFee = idCardFee;
+	}
+
 	public String getEntryTime() {
 		return entryTime;
 	}
@@ -156,7 +167,7 @@ public class FeeMaster {
 		return "FeeMaster [\n\tstandard=" + standard + ",\n\t sportsFee=" + sportsFee + ", \n\t tuitionFee=" + tuitionFee
 				+ ", \n\t transportationFee=" + transportationFee + ", \n\t miscellaneousFee=" + miscellaneousFee + ", \n\t totalFee="
 				+ totalFee + ", entryTime=" + entryTime + ", \n\t exitTime=" + exitTime + ", \n\t updatedTime=" + updatedTime
-				+ ", isActive=" + isActive + "]";
+				+ ", isActive=" + isActive +  ",\n\t idCardFee="+idCardFee+"]";
 	}
 	
 
