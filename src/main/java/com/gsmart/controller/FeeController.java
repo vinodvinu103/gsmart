@@ -136,7 +136,8 @@ public class FeeController {
 			
 			
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
-			Loggers.loggerValue("childlist", "");
+			Loggers.loggerValue("childlist", childList);
+			
 
 			fees = searchService.sumUpFee(childList, profiles);
 

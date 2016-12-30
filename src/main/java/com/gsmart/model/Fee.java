@@ -59,16 +59,7 @@ public class Fee {
 		this.transportationFee = transportationFee;
 	}
 
-	@Override
-	public String toString() {
-		return "Fee [smartId=" + smartId + ", entryTime=" + entryTime + ", academicYear=" + academicYear + ", name="
-				+ name + ", parentName=" + parentName + ", date=" + date + ", standard=" + standard + ", modeOfPayment="
-				+ modeOfPayment + ", sportsFee=" + sportsFee + ", tuitionFee=" + tuitionFee + ", idCardFee=" + idCardFee
-				+ ", miscellaneousFee=" + miscellaneousFee + ", transportationFee=" + transportationFee
-				+ ", balanceFee=" + balanceFee + ", paidFee=" + paidFee + ", totalFee=" + totalFee + ", feeStatus="
-				+ feeStatus + ", reportingManagerId=" + reportingManagerId + ", childFlag=" + childFlag
-				+ ", parentFlag=" + parentFlag + "]";
-	}
+	
 
 	@Column(name="BALANCE_FEE")
 	private Integer balanceFee;

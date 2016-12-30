@@ -152,15 +152,15 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	/* for login */
-	public Profile getProfileDetails(String string) {
+	public Profile getProfileDetails(String smartId) {
 
-		Loggers.loggerStart(string);
+		Loggers.loggerStart(smartId);
 		Profile profilelist = null;
 		
 		try {
 			getConnection();
 			query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
-			query.setParameter("smartId", string);
+			query.setParameter("smartId", smartId);
 			profilelist = (Profile) query.list().get(0);
 			profilelist.setChildFlag(true);
 			
