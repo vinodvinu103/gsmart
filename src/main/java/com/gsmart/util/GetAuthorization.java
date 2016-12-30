@@ -113,6 +113,7 @@ public class GetAuthorization {
 		query.setParameter("role", token.getRole());
 		query.setParameter("isActive", "Y");
 		query.setParameter("moduleName", module);
+		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
 		
 		Loggers.loggerEnd(permissions);
