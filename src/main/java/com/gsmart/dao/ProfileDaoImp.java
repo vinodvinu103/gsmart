@@ -152,15 +152,15 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	/* for login */
-	public Profile getProfileDetails(String string) {
+	public Profile getProfileDetails(String smartId) {
 
-		Loggers.loggerStart(string);
+		Loggers.loggerStart(smartId);
 		Profile profilelist = null;
 		
 		try {
 			getConnection();
 			query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
-			query.setParameter("smartId", string);
+			query.setParameter("smartId", smartId);
 			profilelist = (Profile) query.list().get(0);
 			profilelist.setChildFlag(true);
 			
@@ -195,17 +195,19 @@ public class ProfileDaoImp implements ProfileDao {
 			return null;
 		} 
 		
-		Loggers.loggerEnd(profile);
+		Loggers.loggerEnd("profile fetched from DB");
 		return profile;
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Profile> getsearchRep(Search search) {
+		Loggers.loggerStart();
 		try {
 			getConnection();
 			query = session.createQuery("from Profile where isActive like('Y') and band<:band  and school =:school");
 			query.setParameter("band", search.getBand());
 			query.setParameter("school", search.getSchool());
+			Loggers.loggerEnd();
 			return (List<Profile>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.gsmart.model;
 
+import java.util.Arrays;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -533,6 +534,8 @@ public class Profile {
 	public String getRole() {
 		return role;
 	}
+
+	
 
 	public void setRole(String role) {
 		this.role = role;

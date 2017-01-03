@@ -109,9 +109,11 @@ public class GetAuthorization {
 		
 		RolePermission permissions;
 		session = sessionFactory.openSession();
-		query = session.createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName)");
+		query = session.createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName) and isActive=:isActive");
 		query.setParameter("role", token.getRole());
+		query.setParameter("isActive", "Y");
 		query.setParameter("moduleName", module);
+		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
 		
 		Loggers.loggerEnd(permissions);

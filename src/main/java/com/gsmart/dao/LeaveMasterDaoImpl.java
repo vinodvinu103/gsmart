@@ -12,10 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.LeaveMaster;
-import com.gsmart.model.RolePermission;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
-import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 

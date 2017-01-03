@@ -46,7 +46,7 @@ public class RolePermission implements Serializable {
 	/**
 	 * Role of the person to access the add permission
 	 */
-	@Id
+
 	@Column(name = "SUB_MODULE_NAME")
 	private String subModuleName;
 
