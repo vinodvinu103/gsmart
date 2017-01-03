@@ -38,6 +38,7 @@
 				<value>com.gsmart.model.Band</value>
 				<value>com.gsmart.model.FeeMaster</value>
 				<value>com.gsmart.model.LeaveMaster</value>
+				<value>com.gsmart.model.InventoryAssignments</value>
 				<value>com.gsmart.model.Fee</value>
 				
 				<value>com.gsmart.model.Modules</value>
