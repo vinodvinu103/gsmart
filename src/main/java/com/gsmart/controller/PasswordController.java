@@ -1,7 +1,5 @@
 package com.gsmart.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Login;
 import com.gsmart.services.PasswordServices;
 import com.gsmart.util.CalendarCalculator;
-import com.gsmart.util.Decrypt;
 import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.IAMResponse;

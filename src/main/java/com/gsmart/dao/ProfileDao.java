@@ -56,7 +56,6 @@ public interface ProfileDao {
 
 	public List<Profile> getAllRecord();
 
-	public List<Profile> getsearchRep(Search search);
 	
 	/**
 	 * @return list of Profile entities available in the {@link Profile} Table
@@ -71,5 +70,7 @@ public interface ProfileDao {
 	 * @throws GSmartDatabaseException
 	 */
 	public void editRole(Profile profile)throws GSmartDatabaseException;
+
+	public List<Profile> getsearchRep(Search search);
 
 }

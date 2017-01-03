@@ -107,10 +107,12 @@ public class RegistrationController {
 	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search) {
 
+		Loggers.loggerStart();
 		Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 		Map<String, Profile> map = searchService.searchRep(search);
 		ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
 		jsonMap.put("result", profiless);
+		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
 
 	}
