@@ -32,7 +32,7 @@
 				<value>com.gsmart.model.Login</value>
 				<value>com.gsmart.model.Profile</value>
 				<value>com.gsmart.model.Token</value>
-                                <value>com.gsmart.model.Holiday</value>
+                <value>com.gsmart.model.Holiday</value>
 				<value>com.gsmart.model.Inventory</value>
 				<value>com.gsmart.model.Hierarchy</value>
 				<value>com.gsmart.model.Band</value>
