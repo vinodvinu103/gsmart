@@ -38,7 +38,7 @@ public class GetAuthorization {
 			Loggers.loggerValue("Module: ", module);
 			permissions = getPermission(token, module);
 			httpSession.setAttribute("permissions", permissions);
-
+			System.out.println("permission"+permissions);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
