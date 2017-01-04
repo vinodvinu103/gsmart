@@ -32,13 +32,15 @@
 				<value>com.gsmart.model.Login</value>
 				<value>com.gsmart.model.Profile</value>
 				<value>com.gsmart.model.Token</value>
-                                <value>com.gsmart.model.Holiday</value>
+                <value>com.gsmart.model.Holiday</value>
 				<value>com.gsmart.model.Inventory</value>
 				<value>com.gsmart.model.Hierarchy</value>
 				<value>com.gsmart.model.Band</value>
 				<value>com.gsmart.model.FeeMaster</value>
 				<value>com.gsmart.model.LeaveMaster</value>
 				<value>com.gsmart.model.Modules</value>
+				<value>com.gsmart.model.LeaveDetails</value>
+				<value>com.gsmart.model.Leave</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
