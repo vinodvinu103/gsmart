@@ -54,7 +54,7 @@ public class ReportCardController {
 		str.length();
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Map<String, Object> permission = null;
+		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePremission", modulePermission);
 		try {
 			if (modulePermission != null) {
