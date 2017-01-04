@@ -18,7 +18,7 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/magicbag" />
+		<property name="url" value="jdbc:mysql://localhost:3306/newmagicbag" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
 	</bean>
@@ -32,16 +32,17 @@
 				<value>com.gsmart.model.Login</value>
 				<value>com.gsmart.model.Profile</value>
 				<value>com.gsmart.model.Token</value>
-                                <value>com.gsmart.model.Holiday</value>
+                <value>com.gsmart.model.Holiday</value>
 				<value>com.gsmart.model.Inventory</value>
 				<value>com.gsmart.model.Hierarchy</value>
 				<value>com.gsmart.model.Band</value>
 				<value>com.gsmart.model.FeeMaster</value>
 				<value>com.gsmart.model.LeaveMaster</value>
+				<value>com.gsmart.model.ReportCard</value>
 				<value>com.gsmart.model.InventoryAssignments</value>
 				<value>com.gsmart.model.Fee</value>
-				
 				<value>com.gsmart.model.Modules</value>
+
 			</list>
 		</property>
 		<property name="hibernateProperties">
