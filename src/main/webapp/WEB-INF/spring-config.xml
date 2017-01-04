@@ -42,6 +42,8 @@
 				<value>com.gsmart.model.InventoryAssignments</value>
 				<value>com.gsmart.model.Fee</value>
 				<value>com.gsmart.model.Modules</value>
+				<value>com.gsmart.model.LeaveDetails</value>
+				<value>com.gsmart.model.Leave</value>
 
 			</list>
 		</property>
