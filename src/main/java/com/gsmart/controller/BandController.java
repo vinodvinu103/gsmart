@@ -40,7 +40,7 @@ import com.gsmart.util.Loggers;
  */
 
 @Controller
-@RequestMapping(Constants.BAND)
+@RequestMapping("/band")
 public class BandController {
 
 	@Autowired
