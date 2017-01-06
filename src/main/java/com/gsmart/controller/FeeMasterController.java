@@ -70,14 +70,14 @@ public class FeeMasterController {
 		
 		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Map<String, Object> permissions=new HashMap<>();
-		permissions.put("modulePermissions", modulePermission);
+		permissions.put("modulePermission", modulePermission);
 		
 		if(modulePermission!=null)
 		{
 			feeList = feeMasterServices.getFeeList();
 			Loggers.loggerValue("feeList", feeList);
 			permissions.put("feeList", feeList);
-			Loggers.loggerValue("permissions List", permissions);
+			Loggers.loggerValue("feeList", permissions);
 			return new ResponseEntity<Map<String,Object>>(permissions, HttpStatus.OK);
 			
 		}else

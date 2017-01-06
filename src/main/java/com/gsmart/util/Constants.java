@@ -19,8 +19,13 @@ public class Constants {
 	public static final String FEE = "/fee";
 	public static final String QUESTIONBANK = "/questionBank";
 	public static final String LEAVEMASTER = "/leavemaster";
+	public static final String REPORTCARD="/reportCard";
 	public static final String MODULES = "/modules";
 	public static final String PERFORMANCE="/performance";
+	public static final String LEAVE = "/leave";
+	public static final String MYTEAMLEAVE = "/myteamleave";
+	public static final String INVENTORYASSIGN = "/inventoryassignment";
+
 }
 
 /*
