@@ -72,11 +72,11 @@ public class PrivilegeController {
 
 		str.length();
 		List<Profile> profileList = null;
-        RolePermission modulePrivilege = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+        RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		
 		Map<String, Object> privilege = new HashMap<>();
-		privilege.put("modulePrivilege", modulePrivilege);
-		if (modulePrivilege!= null) {			
+		privilege.put("modulePermission", modulePermission);
+		if (modulePermission!= null) {			
 			profileList = profileServices.search(profile);
 			privilege.put("profileList", profileList);
 			Loggers.loggerEnd(profileList);

@@ -40,7 +40,7 @@ import com.gsmart.util.Loggers;
  */
 
 @Controller
-@RequestMapping(Constants.BAND)
+@RequestMapping("/band")
 public class BandController {
 
 	@Autowired
@@ -78,7 +78,7 @@ public class BandController {
 
 		Map<String, Object> permissions = new HashMap<>();
         
-		permissions.put("modulePermissions",modulePermission);
+		permissions.put("modulePermission",modulePermission);
 		if (modulePermission != null) {
 			System.out.println("success");
 			bandList = bandServices.getBandList();
