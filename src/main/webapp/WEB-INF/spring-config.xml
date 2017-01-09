@@ -18,7 +18,7 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:5432/magicbag" />
+		<property name="url" value="jdbc:postgresql://localhost:5432/magicbag" />
 		<property name="username" value="postgres" />
 		<property name="password" value="postgres" />
 	</bean>
@@ -32,15 +32,19 @@
 				<value>com.gsmart.model.Login</value>
 				<value>com.gsmart.model.Profile</value>
 				<value>com.gsmart.model.Token</value>
-                                <value>com.gsmart.model.Holiday</value>
+                <value>com.gsmart.model.Holiday</value>
 				<value>com.gsmart.model.Inventory</value>
 				<value>com.gsmart.model.Hierarchy</value>
 				<value>com.gsmart.model.Band</value>
 				<value>com.gsmart.model.FeeMaster</value>
 				<value>com.gsmart.model.LeaveMaster</value>
+				<value>com.gsmart.model.ReportCard</value>
+				<value>com.gsmart.model.InventoryAssignments</value>
 				<value>com.gsmart.model.Fee</value>
-				
 				<value>com.gsmart.model.Modules</value>
+				<value>com.gsmart.model.LeaveDetails</value>
+				<value>com.gsmart.model.Leave</value>
+
 			</list>
 		</property>
 		<property name="hibernateProperties">

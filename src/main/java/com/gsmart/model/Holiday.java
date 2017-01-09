@@ -1,5 +1,7 @@
 package com.gsmart.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,8 +28,16 @@ public class Holiday {
 	 */
 	@Id
 	@Column(name="HOLIDAY_DATE")
-	private String holidayDate;
+	private Date holidayDate;
 	
+	public Date getHolidayDate() {
+		return holidayDate;
+	}
+
+	public void setHolidayDate(Date holidayDate) {
+		this.holidayDate = holidayDate;
+	}
+
 	/**
 	 * description of holiday
 	 */
@@ -86,17 +96,7 @@ public class Holiday {
 	 * Gets the HolidayDate
 	 * @return HolidayDate, current HolidayDate
 	 */
-	public String getHolidayDate() {
-		return holidayDate;
-	}
-	
-	/**
-	 * Sets the Holiday Date
-	 * @return updatedTime new updated Time
-	 */
-	public void setHolidayDate(String holidayDate) {
-		this.holidayDate = holidayDate;
-	}
+
 
 	
 
@@ -118,8 +118,8 @@ public class Holiday {
 
 	@Override
 	public String toString() {
-		return "Holiday [\n\t holidayDate=" + holidayDate + ",\n\t  description=" + description + ",\n\t entryTime=" + entryTime
-				+ ",\n\t exitTime=" + exitTime + ", \n\t updatedTime=" + updatedTime + ", \n\t isActive=" + isActive + "]";
+		return "Holiday [holidayDate=" + holidayDate + ", description=" + description + ", entryTime=" + entryTime
+				+ ", exitTime=" + exitTime + ", updatedTime=" + updatedTime + ", isActive=" + isActive + "]";
 	}
 	
 

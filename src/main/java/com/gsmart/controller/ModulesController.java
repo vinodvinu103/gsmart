@@ -11,10 +11,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.model.CompoundModules;
 import com.gsmart.model.Modules;
 import com.gsmart.model.RolePermission;
 import com.gsmart.services.ModulesServices;
@@ -22,6 +24,7 @@ import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
+import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
 @Controller
 @RequestMapping(Constants.MODULES)
@@ -47,13 +50,13 @@ public class ModulesController {
 
 		List<Modules> modulesList = null;
 
-		RolePermission modulemodules = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> modules = new HashMap<>();
 
-		modules.put("modulemodules", modulemodules);
+		modules.put("modulePermission", modulePermission);
 
-		if (modulemodules != null) {
+		if (modulePermission != null) {
 			modulesList = modulesServices.getModulesList();
 
 			modules.put("modulesList", modulesList);
@@ -63,6 +66,34 @@ public class ModulesController {
 			return new ResponseEntity<Map<String, Object>>(modules, HttpStatus.OK);
 		}
 
+	}
+	@RequestMapping( method = RequestMethod.POST)
+	public ResponseEntity<IAMResponse> addModules(@RequestBody Modules modules,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+	    
+		Loggers.loggerStart(modules);
+		IAMResponse rsp=null;
+		
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+        if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
+		CompoundModules cb=modulesServices.addModules(modules);
+		
+	        if(cb!=null)
+	        	  rsp=new IAMResponse("DATA IS SUCCESSFULLY SAVED.");
+		    else
+			      rsp=new IAMResponse("DATA IS ALREADY EXIST.");
+		    
+	    	Loggers.loggerEnd();
+	    	return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
+        }else{
+			 rsp=new IAMResponse("Permission Denied"); 
+		    return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
+               }
+	     
 	}
 
 }
