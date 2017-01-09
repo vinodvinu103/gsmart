@@ -23,7 +23,7 @@ package com.gsmart.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-//import org.apache.log4j.Logger;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -171,13 +171,6 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	}
 
-	/**
-	 * removes the hierarchy entity from the database.
-	 * 
-	 * @param hierarchy
-	 *            instanceOf {@link Hierarchy}
-	 * @return Nothing
-	 */
 	@SuppressWarnings("unchecked")
 	public Hierarchy getHierarchy(String entryTime) {
 		try {

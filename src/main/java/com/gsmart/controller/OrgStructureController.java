@@ -5,22 +5,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
+import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.Loggers;
+import com.gsmart.util.GetAuthorization;
 
 @Controller
 @RequestMapping(value = "/org")
@@ -31,13 +37,27 @@ public class OrgStructureController {
 
 	@Autowired
 	ProfileServices profileServices;
+	
+	@Autowired
+	GetAuthorization getAuthorization;
 
 	//private static final Logger logger = Logger.getLogger(OrgStructureController.class);
 
 	@RequestMapping(value = "/{smartId}")
-	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId)
+	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId ,@RequestHeader HttpHeaders token,HttpSession httpSession)
 			throws GSmartBaseException {
 
+		String tokenNumber=token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		RolePermission modulePermisson=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		
+		Map<String, Object> resultmap = new HashMap<String, Object>();
+		
+		resultmap.put("modulePermisson", modulePermisson);
+		if(modulePermisson!=null)
+		{
 		Profile profile = profileServices.getProfileDetails(smartId);
 		Map<String, Profile> profiles = searchService.getAllProfiles();
 
@@ -61,26 +81,41 @@ public class OrgStructureController {
 				}
 			}
 		}
-
-		Map<String, Object> resultmap = new HashMap<String, Object>();
+		
+		
 		resultmap.put("selfProfile", profile);
 		resultmap.put("childList", childList);
 		return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
+		}
+		else
+		{
+			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
+		}
 
 	}
 
 	@RequestMapping(value = "/searchname", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> Search(@RequestBody Search search) {
+	public ResponseEntity<Map<String, ArrayList<Profile>>> Search(@RequestBody Search search,@RequestHeader HttpHeaders token,HttpSession httpSession) {
 		{
-			Loggers.loggerStart("inside search method in orgStructure controller");
+			String tokenNumber=token.get("Authorization").get(0);
+			String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+			str.length();
+			
+			getAuthorization.authorizationForPost(tokenNumber, httpSession);
 			Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 			try {
+				if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
 				Map<String, Profile> map = searchService.getAllProfiles();
 				ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
 				
 				jsonMap.put("result", profiless);
 				Loggers.loggerEnd();
 				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
+				}
+				else
+				{
+					return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
+				}
 			} catch (Exception e) {
 				jsonMap.put("result", null);
 				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);

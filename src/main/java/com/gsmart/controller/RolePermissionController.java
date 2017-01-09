@@ -80,7 +80,7 @@ public class RolePermissionController {
 		
 		Map<String, Object> permissions = new HashMap<>();
 		
-		permissions.put("modulePermissions", modulePermission);
+		permissions.put("modulePermission", modulePermission);
 
 		if (modulePermission!= null) {
 			rolePermissionList = rolePermissionServices.getPermissionList();
