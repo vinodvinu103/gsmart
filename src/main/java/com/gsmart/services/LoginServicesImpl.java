@@ -45,7 +45,9 @@ public class LoginServicesImpl implements LoginServices {
 
 			if (tokenNumber!=null) {
 				Token tokenDetails = getTokenDetails(tokenNumber);
+				System.out.println("role is"+tokenDetails.getRole());
 				Loggers.loggerValue("User is already logged in", "");
+				
 				List<RolePermission> rolePermissions = permissionServices.getPermission(tokenDetails.getRole());
 				Profile profile = profileServices.getProfileDetails(tokenDetails.getSmartId());
 				jsonMap.put("permissions", rolePermissions);

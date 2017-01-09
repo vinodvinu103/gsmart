@@ -20,6 +20,7 @@ import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.GSmartBaseException;
+import com.gsmart.util.Loggers;
 
 @Controller
 @RequestMapping(value = "/org")
@@ -71,11 +72,14 @@ public class OrgStructureController {
 	@RequestMapping(value = "/searchname", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, ArrayList<Profile>>> Search(@RequestBody Search search) {
 		{
+			Loggers.loggerStart("inside search method in orgStructure controller");
 			Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 			try {
 				Map<String, Profile> map = searchService.getAllProfiles();
 				ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
+				
 				jsonMap.put("result", profiless);
+				Loggers.loggerEnd();
 				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
 			} catch (Exception e) {
 				jsonMap.put("result", null);
@@ -108,19 +112,24 @@ public class OrgStructureController {
 
 	@RequestMapping(value = "/search/{smartId}", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search,
-			@PathVariable("smartId") String smartId) throws GSmartBaseException {
-
+			@PathVariable("smartId") String smartId) throws GSmartBaseException { 
 		Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 
 		ArrayList<Profile> temp = new ArrayList<Profile>();
 
+		try{
+			
+		
+		
 		Map<String, Profile> profiles = searchService.getAllProfiles();
 
 		ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 
+		Loggers.loggerValue("childList got from search Employee", "");
 		ArrayList<Profile> temp1 = childList;
 
 		ArrayList<Profile> temp2 = new ArrayList<>();
+		
 
 		while (!(temp1.isEmpty())) {
 
@@ -128,6 +137,7 @@ public class OrgStructureController {
 
 				smartId = temp1.get(i).getSmartId();
 				temp = searchService.searchEmployeeInfo(smartId, profiles);
+				
 				temp2.clear();
 				temp2.addAll(temp);
 				childList.addAll(temp);
@@ -137,12 +147,21 @@ public class OrgStructureController {
 		}
 		ArrayList<Profile> list = new ArrayList<Profile>();
 
+		
 		for (Profile p : childList) {
-			if ((p.getSmartId().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+			if ((p.getFirstName().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
 			}
+			else if ((p.getSmartId().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+				list.add(p);
+			}
+				
+	
+		else if ((p.getRole().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+			list.add(p);
 		}
 		
+	}
 		
 		Set<String> key = profiles.keySet();
 		for (int i = 0; i < list.size(); i++) {
@@ -159,8 +178,12 @@ public class OrgStructureController {
 			}
 		}
 				
-		
+		Loggers.loggerEnd(childList);
 		jsonMap.put("childList", list);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
 	}

@@ -73,7 +73,7 @@ public class SearchServiceImp implements SearchService {
 
 				Profile p = (Profile) map.get(i);
 
-				if ((p.getSmartId().trim().toLowerCase()).startsWith(emp.toLowerCase())) {
+				if ((p.getFirstName().trim().toLowerCase().startsWith(emp.toLowerCase()))) {
 					list.add(p);
 				}
 			}
@@ -87,9 +87,11 @@ public class SearchServiceImp implements SearchService {
 	@Override
 	public ArrayList<Profile> searchEmployeeInfo(String smartId, Map<String, Profile> map) {
 		Loggers.loggerStart("searchEmployeeInfo ");
-		/* Loggers.loggerValue("profiles in map", map); */
-		Set<String> key = map.keySet();
 		ArrayList<Profile> childList = new ArrayList<Profile>();
+		/* Loggers.loggerValue("profiles in map", map); */
+		try {
+		Set<String> key = map.keySet();
+		
 		/* Loggers.loggerValue("key", key); */
 
 		for (String temp : key) {
@@ -99,6 +101,10 @@ public class SearchServiceImp implements SearchService {
 					childList.add(p);
 				}
 			}
+			
+		}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		Loggers.loggerEnd("searchEmployeeInfo ended");
 		return childList;
