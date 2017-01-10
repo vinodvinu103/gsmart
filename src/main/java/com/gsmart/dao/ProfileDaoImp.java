@@ -107,14 +107,16 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getProfiles(String role) {
+	public ArrayList<Profile> getProfiles(String role,String smartId) {
 		try {
 			Loggers.loggerStart(role);
+	
+			Loggers.loggerStart("current smartId"+smartId);
 			getConnection();
 			if (role.toLowerCase().equals("student")) {
-				query = session.createQuery("from Profile where isActive='Y'and role='student'");
+				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"+smartId.substring(0,2)+"%'");
 			} else {
-				query = session.createQuery("from Profile where isActive='Y'and role!='student'");
+				query = session.createQuery("from Profile where isActive='Y'and role!='student' and smartId like '"+smartId.substring(0,2)+"%'");
 			}
 			Loggers.loggerEnd(query.list());
 			return (ArrayList<Profile>) query.list();
