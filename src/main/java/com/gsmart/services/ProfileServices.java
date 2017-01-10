@@ -19,7 +19,7 @@ public interface ProfileServices{
 
 	/*for profile*/
 
-	public ArrayList<Profile> getProfiles(String role)throws GSmartServiceException;
+	public ArrayList<Profile> getProfiles(String role,String smartId)throws GSmartServiceException;
 
 	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
 	

@@ -45,7 +45,7 @@ public interface ProfileDao {
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
-	public ArrayList<Profile> getProfiles(String role);
+	public ArrayList<Profile> getProfiles(String role,String smartId);
 
 	public Profile getParentInfo(String empSmartId);
 

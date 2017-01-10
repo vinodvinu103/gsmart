@@ -1,6 +1,7 @@
 package com.gsmart.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Embeddable;
 @Embeddable
@@ -10,7 +11,7 @@ public class CompoundHoliday implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String holidayDate;
+	private Date holidayDate;
 	private String entryTime;
 	
 	
@@ -20,11 +21,12 @@ public class CompoundHoliday implements Serializable {
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
 	}
-	public String getHolidayDate() {
+	public Date getHolidayDate() {
 		return holidayDate;
 	}
-	public void setHolidayDate(String holidayDate) {
+	public void setHolidayDate(Date holidayDate) {
 		this.holidayDate = holidayDate;
 	}
+	
 	
 }
