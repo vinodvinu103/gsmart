@@ -13,6 +13,7 @@ public class CompoundReportCard implements Serializable{
 	 
 	 private String entryTime;
 	 
+	 private String subject;
 	 
 
 	public String getSmartId() {
@@ -29,6 +30,14 @@ public class CompoundReportCard implements Serializable{
 
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 
