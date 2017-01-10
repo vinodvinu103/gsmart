@@ -109,13 +109,14 @@ public class ProfileDaoImp implements ProfileDao {
 	@Override
 	public ArrayList<Profile> getProfiles(String role) {
 		try {
+			Loggers.loggerStart(role);
 			getConnection();
 			if (role.toLowerCase().equals("student")) {
 				query = session.createQuery("from Profile where isActive='Y'and role='student'");
 			} else {
 				query = session.createQuery("from Profile where isActive='Y'and role!='student'");
 			}
-
+			Loggers.loggerEnd(query.list());
 			return (ArrayList<Profile>) query.list();
 		} catch (Exception e){
 			e.printStackTrace();
@@ -127,12 +128,19 @@ public class ProfileDaoImp implements ProfileDao {
 	public Profile getParentInfo(String smartId) {
 		try {
 			getConnection();
-			Profile currentProfile = (Profile) session.createQuery("from Profile where smartId=" + smartId).list()
-					.get(0);
+			Loggers.loggerStart(smartId);
+			/*Profile currentProfile1 = (Profile) session.createQuery("from Profile where smartId='" + smartId + "'").list()
+					.get(0);*/
+			
+			query=session.createQuery("from Profile where smartId=:smartId and isActive='Y' ");
+			query.setParameter("smartId", smartId);
+			Profile currentProfile=(Profile) query.uniqueResult();
+			Loggers.loggerEnd(currentProfile);
 			if (currentProfile.getReportingManagerId() != smartId)
 				return getProfileDetails(currentProfile.getReportingManagerId());
 			else
 				return null;
+			
 		} catch (Exception e){
 			e.printStackTrace();
 			return null;
@@ -143,8 +151,14 @@ public class ProfileDaoImp implements ProfileDao {
 	@Override
 	public ArrayList<Profile> getReportingProfiles(String smartId) {
 		try {
+			Loggers.loggerStart(smartId);
 			getConnection();
-			return (ArrayList<Profile>) session.createQuery("from Profile where reportingManagerId=" + smartId).list();
+			ArrayList<Profile> reportingList=null;
+			query=session.createQuery("from Profile where reportingManagerId=:smartId and isActive='Y' ");
+			query.setParameter("smartId", smartId);
+			reportingList=(ArrayList<Profile>) query.list();
+			Loggers.loggerEnd(reportingList);
+			return reportingList;
 		} catch (Exception e){
 			e.printStackTrace();
 			return null;

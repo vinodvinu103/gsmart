@@ -21,7 +21,7 @@ public class Constants {
 	public static final String LEAVEMASTER = "/leavemaster";
 	public static final String REPORTCARD="/reportCard";
 	public static final String MODULES = "/modules";
-
+	public static final String INVENTORYASSIGN="/inventoryAssign";
 
 }
 
