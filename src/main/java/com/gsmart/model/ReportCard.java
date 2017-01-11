@@ -14,6 +14,7 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;*/
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="REPORT_CARD")
@@ -32,20 +33,18 @@ public class ReportCard {
 	private String studentName;
 	
 	@Column(name="STANDARD")
-	private int standard;
+	private String standard;
 	
 	@Column(name="SECTION")
 	private String section;
 	
-	/*@ManyToMany(cascade=CascadeType.ALL)
-	@JoinTable(name="STUDENT_SUBJECT", joinColumns={@JoinColumn(name="SMARTID"),@JoinColumn(name="ENTRYTIME")},
-		inverseJoinColumns={@JoinColumn(name="SUBJECT_ID")})
-	private Set<Subject> subjects=new HashSet<Subject>(0);*/
-	
+	@Column(name="REPORTING_MANAGER_ID")
+	private String reportingManagerId;
 	
 	@Column(name="TEACHER_NAME")
 	private String teacherName;
 	
+	@Id
 	@Column(name="SUBJECT")
 	private String subject;
 	
@@ -67,8 +66,8 @@ public class ReportCard {
 	@Column(name="RESULT")
 	private String result;
 	
-	@Column(name="ACADAMIC_YEAR")
-	private String acadamicYear;
+	@Column(name="ACADEMIC_YEAR")
+	private String academicYear;
 	
 	@Column(name="IS_ACTIVE")
 	private String isActive;
@@ -78,6 +77,9 @@ public class ReportCard {
 	
 	@Column(name="EXIT_TIME")
 	private String exitTime;
+	
+	@Transient
+	private int childReportFlag;
 
 	public String getSmartId() {
 		return smartId;
@@ -103,11 +105,11 @@ public class ReportCard {
 		this.studentName = studentName;
 	}
 
-	public int getStandard() {
+	public String getStandard() {
 		return standard;
 	}
 
-	public void setStandard(int standard) {
+	public void setStandard(String standard) {
 		this.standard = standard;
 	}
 
@@ -210,23 +212,42 @@ public class ReportCard {
 	}
 	
 
-	public String getAcadamicYear() {
-		return acadamicYear;
+	public String getAcademicYear() {
+		return academicYear;
 	}
 
-	public void setAcadamicYear(String acadamicYear) {
-		this.acadamicYear = acadamicYear;
+	public void setAcademicYear(String academicYear) {
+		this.academicYear = academicYear;
+	}
+
+	public String getReportingManagerId() {
+		return reportingManagerId;
+	}
+
+	public void setReportingManagerId(String reportingManagerId) {
+		this.reportingManagerId = reportingManagerId;
+	}
+
+	public int getChildReportFlag() {
+		return childReportFlag;
+	}
+
+	public void setChildReportFlag(int childReportFlag) {
+		this.childReportFlag = childReportFlag;
 	}
 
 	@Override
 	public String toString() {
 		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", studentName=" + studentName
-				+ ", standard=" + standard + ", section=" + section + ", teacherName="
-				+ teacherName + ", subject=" + subject + ", maxMarks=" + maxMarks + ", minMarks="
+				+ ", standard=" + standard + ", section=" + section + ", reportingManagerId=" + reportingManagerId
+				+ ", teacherName=" + teacherName + ", subject=" + subject + ", maxMarks=" + maxMarks + ", minMarks="
 				+ minMarks + ", marksObtained=" + marksObtained + ", subjectGrade=" + subjectGrade + ", totalGrade="
-				+ totalGrade + ", result=" + result + ", acadamicYear=" + acadamicYear + ", isActive=" + isActive
+				+ totalGrade + ", result=" + result + ", academicYear=" + academicYear + ", isActive=" + isActive
 				+ ", updateTime=" + updateTime + ", exitTime=" + exitTime + "]";
 	}
+	
+
+	
 
 	
 	

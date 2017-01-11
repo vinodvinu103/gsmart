@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.ReportCard;
+import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
 
 public interface ReportCardDao {
@@ -20,9 +21,8 @@ public interface ReportCardDao {
 	
 	public void excelToDB(String smartId,MultipartFile fileUpload) throws Exception;
 	
-	public List<ReportCard> search(String smartId)throws GSmartDatabaseException;
+	public List<ReportCard> search(Token tokenDetail)throws GSmartDatabaseException;
 	
 	public List<ReportCard> search(String subject,int standard)throws GSmartDatabaseException;
 	
-	public List<ReportCard> searchBasedOnStandard(ReportCard card)throws GSmartDatabaseException;
 }

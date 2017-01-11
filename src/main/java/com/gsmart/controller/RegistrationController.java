@@ -4,24 +4,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
+import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
+import com.gsmart.model.Token;
 //import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
+import com.gsmart.services.TokenService;
 import com.gsmart.util.CommonMail;
 //import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
+import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
 @Controller
@@ -34,27 +42,60 @@ public class RegistrationController {
 
 	@Autowired
 	SearchService searchService;
+	
+	@Autowired
+	GetAuthorization getAuthorization;
+	
+	@Autowired
+	TokenService tokenService;
 
 	@RequestMapping(value = "/employee", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> viewEmployeeProfiles() throws GSmartBaseException {
-
+	public ResponseEntity<Map<String, Object>> viewEmployeeProfiles(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
-		Map<String, ArrayList<Profile>> jsonMap = new HashMap<>();
-		jsonMap.put("result", profileServices.getProfiles("employee"));
+		String tokenNumber=token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String, Object> jsonMap = new HashMap<>();
+		
+		RolePermission modulePermisson=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		jsonMap.put("modulePermisson", modulePermisson);
+
+		Token Token = tokenService.getToken(tokenNumber);
+		String smartId=Token.getSmartId();
+		
+		if(modulePermisson!=null){
+		jsonMap.put("result", profileServices.getProfiles("employee",smartId));
 		Loggers.loggerEnd(jsonMap);
-		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		}
+		else{
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		}
 
 	}
 
 	@RequestMapping(value = "/student", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> viewStudentProfiles() throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> viewStudentProfiles(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
 
-		Loggers.loggerStart();
-		Map<String, ArrayList<Profile>> jsonMap = new HashMap<>();
-		jsonMap.put("result", profileServices.getProfiles("student"));
+		String tokenNumber=token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String, Object> jsonMap = new HashMap<>();
+		
+		RolePermission modulePermisson=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		jsonMap.put("modulePermisson", modulePermisson);
+
+		Token Token = tokenService.getToken(tokenNumber);
+		String smartId=Token.getSmartId();
+		
+		if(modulePermisson!=null){
+		jsonMap.put("result", profileServices.getProfiles("student",smartId));
 		Loggers.loggerEnd(jsonMap);
-		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-
+		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		}
+		else{
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		}
 	}
 
 	@RequestMapping(value = "/addProfile/{updSmartId}", method = RequestMethod.POST)
