@@ -10,8 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.ReportCard;
+import com.gsmart.model.Token;
 import com.gsmart.util.Constants;
-import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -80,11 +80,11 @@ public class ReportCardServiceImpl implements ReportCardService {
 	}
 
 	@Override
-	public List<ReportCard> search(String smartId) throws GSmartServiceException {
+	public List<ReportCard> search(Token tokenDetail) throws GSmartServiceException {
 		Loggers.loggerStart();
 		List<ReportCard> card = null;
 		try {
-			card = reportCardDao.search(smartId);
+			card = reportCardDao.search(tokenDetail);
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 
@@ -106,17 +106,5 @@ public class ReportCardServiceImpl implements ReportCardService {
 		return card;
 	}
 
-	@Override
-	public List<ReportCard> searchBasedOnStandard(ReportCard card) throws GSmartServiceException {
-		Loggers.loggerStart();
-		List<ReportCard> card1 = null;
-		try {
-			card1 = reportCardDao.searchBasedOnStandard(card);
-			Loggers.loggerEnd();
-			return card1;
-		} catch (Exception e) {
-			throw new GSmartServiceException(e.getMessage());
-		}
-	}
 
 }

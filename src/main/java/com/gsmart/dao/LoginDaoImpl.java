@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Login;
+import com.gsmart.model.Profile;
 import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -68,6 +70,9 @@ public class LoginDaoImpl implements LoginDao {
 			return 5;
 
 		}
+		finally {
+			session.close();
+		}
 	}
 
 	public void resetAttempt(Login login) {
@@ -92,6 +97,20 @@ public class LoginDaoImpl implements LoginDao {
 	public void getConnection() {
 		session = sessionFactory.openSession();
 		tx = session.beginTransaction();
+	}
+	
+	@Override
+	public List<Profile> getAllRecord(){
+		getConnection();
+		List<Profile> list=null;
+		try {
+			query=session.createQuery("from Profile where isActive='Y'");
+			list=query.list();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 }
