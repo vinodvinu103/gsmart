@@ -70,6 +70,9 @@ public class LoginDaoImpl implements LoginDao {
 			return 5;
 
 		}
+		finally {
+			session.close();
+		}
 	}
 
 	public void resetAttempt(Login login) {
