@@ -67,8 +67,6 @@ public class GetAuthorization {
 
 	public boolean authorizationForPut(String tokenNumber, String task, HttpSession httpSession) {
 		
-		Loggers.loggerStart(tokenNumber);
-		Loggers.loggerStart(task);
 		RolePermission rolePermission = null;
 		
 		try{
@@ -76,17 +74,14 @@ public class GetAuthorization {
 			
 			if(task.equalsIgnoreCase("edit"))
 			{
-				Loggers.loggerEnd(rolePermission.getEdit());
 				return rolePermission.getEdit();
 			}
 			else
 			{
-				Loggers.loggerEnd(rolePermission.getDel());
 				return rolePermission.getDel();
 			}
 		} catch(Exception e){
 			e.printStackTrace();
-			Loggers.loggerEnd(false);
 			return false;
 		}
 	}
