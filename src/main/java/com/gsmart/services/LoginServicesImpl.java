@@ -61,8 +61,9 @@ public class LoginServicesImpl implements LoginServices {
 					String smartId = login.getSmartId();
 					Profile profile = profileServices.getProfileDetails(smartId);
 					String role = profile.getRole();
+					String reportingId = profile.getReportingManagerId();
 					List<RolePermission> rolePermissions = permissionServices.getPermission(role);
-					String token = issueToken(smartId, role);
+					String token = issueToken(smartId, role,reportingId);
 					jsonMap.put("permissions", rolePermissions);
 					jsonMap.put("profile", profile);
 					jsonMap.put("token", token);
@@ -94,7 +95,7 @@ public class LoginServicesImpl implements LoginServices {
 		return jsonMap;
 	}
 
-	private String issueToken(String smartId, String role) throws GSmartServiceException {
+	private String issueToken(String smartId, String role,String reportingId) throws GSmartServiceException {
 
 		Token token = null;
 		String tokenNumber = null;
@@ -107,11 +108,12 @@ public class LoginServicesImpl implements LoginServices {
 			token.setTokenNumber(tokenNumber);
 			token.setSmartId(smartId);
 			token.setRole(role);
+			token.setReportingManagerId(reportingId);
 
 			tokenService.saveToken(token);
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
-			issueToken(smartId, role);
+			issueToken(smartId, role ,reportingId);
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}

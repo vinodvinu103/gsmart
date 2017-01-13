@@ -19,6 +19,15 @@ public class Token {
 	@Column(name="ROLE")
 	String role;
 	
+	@Column(name="REPORTINGMANAGER_ID")
+	String reportingManagerId;
+	
+	public String getReportingManagerId() {
+		return reportingManagerId;
+	}
+	public void setReportingManagerId(String reportingManagerId) {
+		this.reportingManagerId = reportingManagerId;
+	}
 	public String getTokenNumber() {
 		return tokenNumber;
 	}
@@ -41,7 +50,7 @@ public class Token {
 	@Override
 	public String toString() {
 		
-		return "\nToken [\n\tTokenNumber="+tokenNumber+"\n\tSmartID="+smartId+"\n\tRole="+role+" ]";
+		return "\nToken [\n\tTokenNumber="+tokenNumber+"\n\tSmartID="+smartId+"\n\tRole="+role+"\n\tReportingManagerId="+reportingManagerId+"\n\t]";
 	}
 	
 }

@@ -18,7 +18,7 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/newmagicbag" />
+		<property name="url" value="jdbc:mysql://localhost:3306/magicbag" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
 	</bean>
@@ -45,6 +45,7 @@
 				<value>com.gsmart.model.Modules</value>
 				<value>com.gsmart.model.LeaveDetails</value>
 				<value>com.gsmart.model.Leave</value>
+				<value>com.gsmart.model.PerformanceRecord</value>
 
 			</list>
 		</property>
