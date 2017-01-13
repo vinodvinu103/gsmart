@@ -108,34 +108,36 @@ public class InventoryAssignmentsController {
 	 * @RequestMapping (value="/add/{updSmartId}", method=RequestMethod.POST
 	 * ,consumes=MediaType.APPLICATION_JSON_VALUE)
 	 */
-	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addInventory(@RequestBody InventoryAssignments inventoryAssignments ,@RequestHeader HttpHeaders token,
-			HttpSession httpSession ) throws GSmartBaseException {
-	        
-		     Loggers.loggerStart(inventoryAssignments);
-	         
-	         IAMResponse resp = new IAMResponse();
-	         
-	         String tokenNumber = token.get("Authorization").get(0);
-	 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<IAMResponse> addInventory(@RequestBody InventoryAssignments inventoryAssignments,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
-	 		str.length();
-	 		
-			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-				InventoryAssignmentsCompoundKey ch = inventoryAssignmentsServices.addInventoryDetails(inventoryAssignments);
-		
-				if (ch != null){
-					resp.setMessage("success");
-				}else{
-					resp.setMessage("Already exists");
-				}
-				return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+		Loggers.loggerStart(inventoryAssignments);
+
+		Loggers.loggerValue("InventoryAssignments quantity", inventoryAssignments.getQuantity());
+
+		IAMResponse resp = new IAMResponse();
+
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			InventoryAssignmentsCompoundKey ch = inventoryAssignmentsServices.addInventoryDetails(inventoryAssignments);
+
+			if (ch != null) {
+				resp.setMessage("success");
 			} else {
-				resp.setMessage("Permission Denied");
-				
+				resp.setMessage("Already exists");
 			}
-			Loggers.loggerEnd();
 			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+		} else {
+			resp.setMessage("Permission Denied");
+
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 	}
 	/*
 	 * @RequestMapping( method = RequestMethod.POST) public
@@ -167,107 +169,96 @@ public class InventoryAssignmentsController {
 	 * @RequestMapping (value="/edit/{updSmartId}" , method=RequestMethod.POST ,
 	 * consumes=MediaType.APPLICATION_JSON_VALUE)
 	 */
-	@RequestMapping(value="/{task}", method=RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editdeleteInventory(@RequestBody InventoryAssignments inventoryAssignments,
-			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException {
-	  Loggers.loggerStart(inventoryAssignments);
-	  IAMResponse myResponse=null;
-	
-	  String tokenNumber = token.get("Authorization").get(0);
-	  String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-	  
-	  str.length();
-	  InventoryAssignments ch=null;
+	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-			
-			if (task.equals("edit")) {
-				ch=inventoryAssignmentsServices.editInventoryDetails(inventoryAssignments);
-			if(ch!=null){
-				myResponse = new IAMResponse("success");
-				
-			}
-			else{
-			
-				myResponse=new IAMResponse("DATA IS ALREADY EXIST");
-			
-			}}
-			else if (task.equals("delete")) {
-				inventoryAssignmentsServices.deleteInventoryDetails(inventoryAssignments);
-			    myResponse = new IAMResponse("success");
-		        Loggers.loggerEnd();
-	            return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-			}
+	public ResponseEntity<IAMResponse> editdeleteInventory(@RequestBody InventoryAssignments inventoryAssignments,
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
+		IAMResponse myResponse = null;
+
+		try {
+			String tokenNumber = token.get("Authorization").get(0);
+
+			String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+			str.length();
+			InventoryAssignments ch = null;
+
+			if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+
+				if (task.equals("edit")) {
+					ch = inventoryAssignmentsServices.editInventoryDetails(inventoryAssignments);
+					if (ch != null) {
+						myResponse = new IAMResponse("success");
+
+					} else {
+
+						myResponse = new IAMResponse("DATA IS ALREADY EXIST");
+
+					}
+				} else if (task.equals("delete")) {
+					inventoryAssignmentsServices.deleteInventoryDetails(inventoryAssignments);
+					myResponse = new IAMResponse("success");
+					return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+				}
 			} else {
-					myResponse = new IAMResponse("Permission Denied");
-					
+				myResponse = new IAMResponse("Permission Denied");
+
 			}
-		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 	}
+
 }
-		        
-	
 
+/*
+ * @RequestMapping(value="/{task}", method = RequestMethod.PUT) public
+ * ResponseEntity<IAMResponse> editdeleteInventory(@RequestBody
+ * InventoryAssignments inventoryAssignments,
+ * 
+ * @PathVariable("task") String task, @RequestHeader HttpHeaders token,
+ * HttpSession httpSession)throws GSmartBaseException {
+ * Loggers.loggerStart(inventoryAssignments); IAMResponse myResponse=null;
+ * 
+ * String tokenNumber = token.get("Authorization").get(0); String str =
+ * getAuthorization.getAuthentication(tokenNumber, httpSession);
+ * 
+ * str.length(); InventoryAssignments ch=null; if
+ * (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+ * if(task.equals("edit")){
+ * 
+ * ch=inventoryAssignmentsServices.editInventoryDetails(inventoryAssignments); }
+ * if(ch!=null){ myResponse = new IAMResponse("success");
+ * 
+ * } else { myResponse=new IAMResponse("DATA IS ALREADY EXIST");
+ * 
+ * } } else if(task.equals("delete")){
+ * inventoryAssignmentsServices.deleteInventoryDetails(inventoryAssignments);
+ * myResponse = new IAMResponse("success"); Loggers.loggerEnd(); return new
+ * ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK); } else { myResponse =
+ * new IAMResponse("Permission Denied"); return new
+ * ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK); } }
+ * 
+ * }
+ */
 
-	/*@RequestMapping(value="/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editdeleteInventory(@RequestBody InventoryAssignments inventoryAssignments,
-			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException {
-		Loggers.loggerStart(inventoryAssignments);
-		IAMResponse myResponse=null;
-		
-		String tokenNumber = token.get("Authorization").get(0);
-		  String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		  
-		  str.length();
-		InventoryAssignments ch=null;
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-		if(task.equals("edit")){
-			
-			ch=inventoryAssignmentsServices.editInventoryDetails(inventoryAssignments);
-		}
-		if(ch!=null){
-			myResponse = new IAMResponse("success");
-			
-		}
-		else
-		{
-			myResponse=new IAMResponse("DATA IS ALREADY EXIST");
-		
-		}
-		}
-		else if(task.equals("delete")){
-			inventoryAssignmentsServices.deleteInventoryDetails(inventoryAssignments);
-			myResponse = new IAMResponse("success");
-	        Loggers.loggerEnd();
-            return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-	    } else {
-				myResponse = new IAMResponse("Permission Denied");
-				return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-			}
-		}
-	        
-	}
-*/
-	
-/*	@RequestMapping(value="/delete/{updSmartId}", method= RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity <Map<String,String>> deleteInventory(@RequestBody InventoryAssignments inventoryAssignments , @PathVariable ("updSmartId") int updSmartId) 
-	{
-		Map<String,String> jsonMap = new HashMap<>();
-		try
-		{
-			inventoryAssignments.setUpdSmartId(updSmartId);
-			inventoryAssignmentsServices.deleteInventoryDetails(inventoryAssignments);
-			jsonMap.put("result","deleted");
-			return new ResponseEntity<Map<String,String>>(jsonMap, HttpStatus.OK);
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-			jsonMap.put("result","error");
-			return new ResponseEntity<Map<String,String>>(jsonMap, HttpStatus.OK);
-		}
-	}
-	
-	}
-	
-*/
+/*
+ * @RequestMapping(value="/delete/{updSmartId}", method=
+ * RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE) public
+ * ResponseEntity <Map<String,String>> deleteInventory(@RequestBody
+ * InventoryAssignments inventoryAssignments , @PathVariable ("updSmartId") int
+ * updSmartId) { Map<String,String> jsonMap = new HashMap<>(); try {
+ * inventoryAssignments.setUpdSmartId(updSmartId);
+ * inventoryAssignmentsServices.deleteInventoryDetails(inventoryAssignments);
+ * jsonMap.put("result","deleted"); return new
+ * ResponseEntity<Map<String,String>>(jsonMap, HttpStatus.OK); }catch(Exception
+ * e) { e.printStackTrace(); jsonMap.put("result","error"); return new
+ * ResponseEntity<Map<String,String>>(jsonMap, HttpStatus.OK); } }
+ * 
+ * }
+ * 
+ */
