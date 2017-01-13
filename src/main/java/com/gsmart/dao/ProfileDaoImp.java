@@ -11,6 +11,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Assign;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 //import com.gsmart.model.Search;
@@ -61,6 +62,12 @@ public class ProfileDaoImp implements ProfileDao {
 		try {
 			profile.setIsActive("Y");
 			profile.setEntryTime(CalendarCalculator.getTimeStamp());
+			if(profile.getRole().toUpperCase()=="STUDENT")
+			{
+				Assign assign=getStandardTeacher(profile.getStandard());
+				profile.setReportingManagerId(assign.getTeacherSmartId());
+				
+			}
 			session.save(profile);
 			transaction.commit();
 			flag = true;
@@ -69,6 +76,25 @@ public class ProfileDaoImp implements ProfileDao {
 			flag = false;
 		} 
 		return flag;
+	}
+	
+	public Assign getStandardTeacher(String standard)
+	{
+		Loggers.loggerStart();
+		Assign assign=null;
+		try
+		{
+			query=session.createQuery("from Assign where standard=:standard");
+			query.setParameter("standard", standard);
+			assign=(Assign) query.uniqueResult();
+			
+		}catch (Exception e) {
+
+		e.printStackTrace();
+		}
+		return assign;
+		
+		
 	}
 
 	@Override

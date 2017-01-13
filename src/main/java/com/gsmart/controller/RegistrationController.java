@@ -28,6 +28,7 @@ import com.gsmart.services.TokenService;
 import com.gsmart.util.CommonMail;
 //import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
+import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
@@ -106,7 +107,7 @@ public class RegistrationController {
 		Loggers.loggerValue("Added by ", updSmartId);
 
 		Map<String, String> jsonMap = new HashMap<>();
-
+			
 		String id = profileServices.getmaxSamrtId();
 		String[] part = id.split("(?<=\\D)(?=\\d)");
 		int newId = Integer.parseInt(part[1]) + 1;
@@ -118,7 +119,7 @@ public class RegistrationController {
 		if (profileServices.insertUserProfileDetails(profile)) {
 			CommonMail commonMail = new CommonMail();
 			try {
-				commonMail.passwordMail(profile, smartId);
+				commonMail.passwordMail(profile, Encrypt.md5(smartId));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
