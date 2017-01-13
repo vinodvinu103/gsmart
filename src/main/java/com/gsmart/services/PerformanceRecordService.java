@@ -8,7 +8,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface PerformanceRecordService {
 	
-	public List<PerformanceRecord> getPerformanceRecord(PerformanceAppraisal appraisal,String smartId)throws GSmartServiceException;
+	public List<PerformanceRecord> getPerformanceRecord(String year,String smartId)throws GSmartServiceException;
 
 	public void addAppraisalRecord(PerformanceAppraisal appraisal)throws GSmartServiceException;
 

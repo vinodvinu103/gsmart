@@ -7,12 +7,12 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "PERFARMANCE")
+@Table(name = "PERFORMANCE")
 @IdClass(com.gsmart.model.CompoundPerformanceAppraisal.class)
 public class PerformanceAppraisal {
 	@Id
-	@Column(name = "SMART_ID")
-	private String smartId;
+	@Column(name = "REPORTINGMANAGER_ID")
+	private String reportingManagerID;
 
 	@Id
 	@Column(name = "ACADAMIC_YEAR")
@@ -64,12 +64,13 @@ public class PerformanceAppraisal {
 		this.isActive = isActive;
 	}
 
-	public String getSmartId() {
-		return smartId;
+	
+	public String getReportingManagerID() {
+		return reportingManagerID;
 	}
 
-	public void setSmartId(String smartId) {
-		this.smartId = smartId;
+	public void setReportingManagerID(String reportingManagerID) {
+		this.reportingManagerID = reportingManagerID;
 	}
 
 	public String getSchoolPerformance() {

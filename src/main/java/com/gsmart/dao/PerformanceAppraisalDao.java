@@ -7,9 +7,9 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface PerformanceAppraisalDao {
 
-	public List<PerformanceAppraisal> getAppraisalList(String smartId, String year) throws GSmartDatabaseException;
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year) throws GSmartDatabaseException;
 
-	public CompoundPerformanceAppraisal addAppraisal(PerformanceAppraisal appraisal) throws GSmartDatabaseException;
+	public void addAppraisal(PerformanceAppraisal appraisal) throws GSmartDatabaseException;
 
 	public void editAppraisal(PerformanceAppraisal appraisal) throws GSmartDatabaseException;
 

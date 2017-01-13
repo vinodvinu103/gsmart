@@ -8,7 +8,7 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface PerformanceRecordDao {
 
-	public List<PerformanceRecord> getPerformanceRecord(PerformanceAppraisal appraisal,String smartId) throws GSmartDatabaseException;
+	public List<PerformanceRecord> getPerformanceRecord(String smartId,String year) throws GSmartDatabaseException;
 
 	public void addAppraisalRecord(PerformanceAppraisal appraisal)throws GSmartDatabaseException;
 

@@ -17,10 +17,10 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 	@Autowired
 	PerformanceRecordDao performancerecordao;
 	@Override
-	public List<PerformanceRecord> getPerformanceRecord(PerformanceAppraisal appraisal,String smartId) throws GSmartServiceException {
+	public List<PerformanceRecord> getPerformanceRecord(String smartId,String year) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-	return	performancerecordao.getPerformanceRecord(appraisal,smartId);
+	return	performancerecordao.getPerformanceRecord(smartId,year);
 		
 	
 	} catch (GSmartDatabaseException exception) {

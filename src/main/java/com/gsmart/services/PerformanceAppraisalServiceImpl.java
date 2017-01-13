@@ -1,7 +1,10 @@
 package com.gsmart.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +21,12 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 	@Autowired
 	PerformanceAppraisalDao appraisalDao;
 
+	
 	@Override
-	public List<PerformanceAppraisal> getAppraisalList(String smartId, String year) throws GSmartServiceException {
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return appraisalDao.getAppraisalList(smartId, year);
+			return appraisalDao.getAppraisalList(reportingId,year);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -33,20 +37,20 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 	}
 
 	@Override
-	public CompoundPerformanceAppraisal addAppraisal(PerformanceAppraisal appraisal) throws GSmartServiceException {
+	public void addAppraisal(PerformanceAppraisal appraisal) throws GSmartServiceException {
 		Loggers.loggerStart();
 
 		CompoundPerformanceAppraisal ca = null;
 
 		try {
-			ca = appraisalDao.addAppraisal(appraisal);
+			 appraisalDao.addAppraisal(appraisal);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
 		Loggers.loggerEnd();
-		return ca;
+		
 	}
 
 	@Override
@@ -82,5 +86,7 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 
 		Loggers.loggerEnd();
 	}
+
+	
 
 }

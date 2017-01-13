@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.xmlbeans.impl.xb.ltgfmt.FileDesc.Role;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.CompoundPerformanceAppraisal;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.PerformanceAppraisal;
+import com.gsmart.model.PerformanceRecord;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.PerformanceAppraisalService;
+import com.gsmart.services.PerformanceRecordService;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -41,27 +44,35 @@ public class PerformanceController {
 	GetAuthorization getauthorization;
 	@Autowired
 	TokenService tokenService;
+	@Autowired
+	PerformanceRecordService performancerecord;
 
 	@RequestMapping(value = "/{year}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAppraisalList(@PathVariable("year") String year,
+	public ResponseEntity<Map<String, Object>> performance(@PathVariable("year") String year,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+
+		Map<String, Object> jsonMap = new HashMap<>();
 		List<PerformanceAppraisal> appraisalList = null;
+		List<PerformanceRecord> performancerecordList = null;
 		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
 		Map<String, Object> permissions = new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
 		IAMResponse rsp = new IAMResponse();
 		Token token1 = tokenService.getToken(tokenNumber);
 		String smartId = token1.getSmartId();
+		String reportingId =token1.getReportingManagerId();
 		if (modulePermission != null) {
 
-			appraisalList = appraisalservice.getAppraisalList(smartId, year);
-			permissions.put("appraisalList", appraisalList);
-			Loggers.loggerEnd(appraisalList);
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+			appraisalList = appraisalservice.getAppraisalList(reportingId,year);
+			performancerecordList = performancerecord.getPerformanceRecord(smartId,year);
+			jsonMap.put("appraisalList", appraisalList);
+			jsonMap.put("performancerecord", performancerecordList);
+			Loggers.loggerEnd(jsonMap);
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		}
@@ -73,20 +84,14 @@ public class PerformanceController {
 
 		Loggers.loggerStart(appraisal);
 		IAMResponse myResponse;
+
 		IAMResponse resp = new IAMResponse();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
-			CompoundPerformanceAppraisal cb = appraisalservice.addAppraisal(appraisal);
-
-			if (cb != null)
-				resp.setMessage("success");
-			else {
-				resp.setMessage("Already exists");
-				System.out.println("record exist....");
-			}
-			Loggers.loggerEnd();
+			appraisalservice.addAppraisal(appraisal);
+			resp.setMessage("success");
 			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 		} else {
 			resp.setMessage("Permission Denied");
@@ -123,4 +128,58 @@ public class PerformanceController {
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
 	}
+
+	@RequestMapping(value = "/record", method = RequestMethod.POST)
+	public ResponseEntity<IAMResponse> addAppraisalRecord(@RequestBody PerformanceAppraisal appraisal,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(appraisal);
+		IAMResponse myResponse;
+		IAMResponse resp = new IAMResponse();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
+			performancerecord.addAppraisalRecord(appraisal);
+
+			resp.setMessage("success");
+			Loggers.loggerEnd();
+			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+		} else {
+			resp.setMessage("Permission Denied");
+			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+		}
+
+	}
+
+	@RequestMapping(value = "/record/{task}", method = RequestMethod.PUT)
+	public ResponseEntity<IAMResponse> editPerformancerecord(@RequestBody PerformanceAppraisal appraisal,
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+		Loggers.loggerStart();
+		IAMResponse myResponse;
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		if (getauthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+			if (task.equals("edit"))
+
+				performancerecord.editAppraisalrecord(appraisal);
+
+			else if (task.equals("delete"))
+
+				performancerecord.deleteAppraisalrecord(appraisal);
+
+			myResponse = new IAMResponse("success");
+			Loggers.loggerEnd();
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		} else {
+			myResponse = new IAMResponse("Permission Denied");
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
+	}
+
 }
