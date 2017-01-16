@@ -57,6 +57,7 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerValue("returnd to getall Profiles in serviceImpl ", "");
 		for (Profile profile : profiles) {
 			Loggers.loggerValue("smartIds :", profile.getSmartId());
+			
 			allProfiles.put(profile.getSmartId(), profile);
 		}
 		Loggers.loggerEnd("for each loop is executed");
@@ -234,7 +235,7 @@ public class SearchServiceImp implements SearchService {
 
 					}
 					Loggers.loggerValue("before gooing to total fees method",fees);
-					System.out.println("hiee");
+					System.out.println("hi...........");
 					Loggers.loggerValue("profile map before calling total fee in sumup method", profileMap);
 
 					temp2 = totalfees(profileMap, fees);
@@ -263,7 +264,7 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerStart(childList);
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
-		ArrayList<Fee> feeList = feeServices.getFeeLists("2016-2017");
+		ArrayList<Fee> feeList = feeServices.getFeeLists("2017-2018");
 
 		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList();
 
@@ -274,7 +275,8 @@ public class SearchServiceImp implements SearchService {
 		System.out.println("feelist size is" + feeList.size());
 
 		for (int i = 0; i < feeList.size(); i++) {
-
+          
+			 System.out.println("inside the for loop");
 			Loggers.loggerValue("entered into 1st For loop ", "");
 			feeMap.put(feeList.get(i).getSmartId(), feeList.get(i));
 			Loggers.loggerValue("smartid", feeList.get(i).getSmartId());
@@ -322,11 +324,17 @@ public class SearchServiceImp implements SearchService {
 			throws GSmartServiceException {
 
 		Loggers.loggerStart(childList);
+	
 		ArrayList<Profile> childOfChild = new ArrayList<Profile>();
 
 		for (Profile profile : childList) {
-
-			childOfChild = searchEmployeeInfo(profile.getSmartId(), profiles);
+			
+			System.out.println(" going to child method ");
+          	childOfChild = searchEmployeeInfo(profile.getSmartId(), profiles);
+			
+          	System.out.println(searchEmployeeInfo(profile.getSmartId(), profiles));
+			
+          	Loggers.loggerValue("child list by smartid","");
 
 		}
 		Loggers.loggerValue("child of child list", childOfChild);
@@ -339,15 +347,26 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerStart(fees);
 		Loggers.loggerValue("profile map", profileMap);
 		for (Profile profile : fees) {
-
+            
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having paidAmount of " + profile.getPaidAmount());
+			
 			profileMap.get(profile.getReportingManagerId()).setPaidAmount(
 					profileMap.get(profile.getReportingManagerId()).getPaidAmount() + profile.getPaidAmount());
+			Loggers.loggerValue("total fees of set fees","");
+
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having balanceAmount of " + profile.getBalanceAmount());
 
 			profileMap.get(profile.getReportingManagerId()).setBalanceAmount(
 					profileMap.get(profile.getReportingManagerId()).getBalanceAmount() + profile.getBalanceAmount());
+			Loggers.loggerValue("total fees of setbalance fees","");
+
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having TotalAmount of" + profile.getTotalAmount());
 
 			profileMap.get(profile.getReportingManagerId()).setTotalAmount(
 					profileMap.get(profile.getReportingManagerId()).getTotalAmount() + profile.getTotalAmount());
+		
+			
+			Loggers.loggerValue("total fees of settotal fees","");
 
 		}
 		ArrayList<Profile> list = new ArrayList<Profile>(profileMap.values());
