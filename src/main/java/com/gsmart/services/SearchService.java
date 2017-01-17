@@ -29,4 +29,7 @@ public interface SearchService {
 	ArrayList<Profile> sumUpFee(ArrayList<Profile> childList,Map<String, Profile> profiles) throws GSmartServiceException;
 
 	ArrayList<Profile> totalfees(Map<String, Profile> profileMap, ArrayList<Profile> fees);
+
+	Map<String, Object> getParentInfo(String smartId);
+
 }

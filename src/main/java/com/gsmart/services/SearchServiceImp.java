@@ -36,9 +36,9 @@ public class SearchServiceImp implements SearchService {
 				 * 
 				 * Map<String, ArrayList<Profile>> jsonMap = new HashMap<String,
 				 * ArrayList<Profile>>(); Map<String, Profile> map =
-				 * searchService.searchRep(search); ArrayList<Profile> profiless
+				 * searchService.searchRep(search); ArrayList<Profile> profiles
 				 * = searchService.getEmployeeInfo(search.getName(), map);
-				 * jsonMap.put("result", profiless); return new
+				 * jsonMap.put("result", profiles); return new
 				 * ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap,
 				 * HttpStatus.OK);
 				 * 
@@ -354,6 +354,12 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerEnd(list);
 		return list;
 
+	}
+
+	@Override
+	public Map<String, Object> getParentInfo(String smartId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

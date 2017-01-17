@@ -10,8 +10,8 @@ public class SMTPAuthenticator extends Authenticator {
 	//private static final Logger logger = Logger.getLogger(SMTPAuthenticator.class);
 
 	public PasswordAuthentication getPasswordAuthentication() {
-		username = "surendrak@gowdanar.com";
-		password = "surendrak@123";
+		username = "vinod@gowdanar.com";
+		password = "vinodvinu@103";
 		return new PasswordAuthentication(username, password);
 	}
 
