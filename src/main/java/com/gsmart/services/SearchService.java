@@ -30,6 +30,11 @@ public interface SearchService {
 
 	ArrayList<Profile> totalfees(Map<String, Profile> profileMap, ArrayList<Profile> fees);
 
-	Map<String, Object> getParentInfo(String smartId);
+
+
+
+
+	
+	public Map<String, Object> getParentInfo(String smartId);
 
 }

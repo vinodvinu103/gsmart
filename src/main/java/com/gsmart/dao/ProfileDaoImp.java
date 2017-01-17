@@ -11,6 +11,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Assign;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 //import com.gsmart.model.Search;
@@ -61,6 +62,12 @@ public class ProfileDaoImp implements ProfileDao {
 		try {
 			profile.setIsActive("Y");
 			profile.setEntryTime(CalendarCalculator.getTimeStamp());
+			if(profile.getRole().toUpperCase()=="STUDENT")
+			{
+				Assign assign=getStandardTeacher(profile.getStandard());
+				profile.setReportingManagerId(assign.getTeacherSmartId());
+				
+			}
 			session.save(profile);
 			transaction.commit();
 			flag = true;
@@ -69,6 +76,25 @@ public class ProfileDaoImp implements ProfileDao {
 			flag = false;
 		} 
 		return flag;
+	}
+	
+	public Assign getStandardTeacher(String standard)
+	{
+		Loggers.loggerStart();
+		Assign assign=null;
+		try
+		{
+			query=session.createQuery("from Assign where standard=:standard");
+			query.setParameter("standard", standard);
+			assign=(Assign) query.uniqueResult();
+			
+		}catch (Exception e) {
+
+		e.printStackTrace();
+		}
+		return assign;
+		
+		
 	}
 
 	@Override
@@ -109,6 +135,7 @@ public class ProfileDaoImp implements ProfileDao {
 	@Override
 	public ArrayList<Profile> getProfiles(String role,String smartId) {
 		try {
+			Loggers.loggerStart(role);
 	
 			Loggers.loggerStart("current smartId"+smartId);
 			getConnection();
@@ -117,7 +144,7 @@ public class ProfileDaoImp implements ProfileDao {
 			} else {
 				query = session.createQuery("from Profile where isActive='Y'and role!='student' and smartId like '"+smartId.substring(0,2)+"%'");
 			}
-
+			Loggers.loggerEnd(query.list());
 			return (ArrayList<Profile>) query.list();
 		} catch (Exception e){
 			e.printStackTrace();
@@ -129,12 +156,19 @@ public class ProfileDaoImp implements ProfileDao {
 	public Profile getParentInfo(String smartId) {
 		try {
 			getConnection();
-			Profile currentProfile = (Profile) session.createQuery("from Profile where smartId=" + smartId).list()
-					.get(0);
+			Loggers.loggerStart(smartId);
+			/*Profile currentProfile1 = (Profile) session.createQuery("from Profile where smartId='" + smartId + "'").list()
+					.get(0);*/
+			
+			query=session.createQuery("from Profile where smartId=:smartId and isActive='Y' ");
+			query.setParameter("smartId", smartId);
+			Profile currentProfile=(Profile) query.uniqueResult();
+			Loggers.loggerEnd(currentProfile);
 			if (currentProfile.getReportingManagerId() != smartId)
 				return getProfileDetails(currentProfile.getReportingManagerId());
 			else
 				return null;
+			
 		} catch (Exception e){
 			e.printStackTrace();
 			return null;
@@ -145,8 +179,14 @@ public class ProfileDaoImp implements ProfileDao {
 	@Override
 	public ArrayList<Profile> getReportingProfiles(String smartId) {
 		try {
+			Loggers.loggerStart(smartId);
 			getConnection();
-			return (ArrayList<Profile>) session.createQuery("from Profile where reportingManagerId=" + smartId).list();
+			ArrayList<Profile> reportingList=null;
+			query=session.createQuery("from Profile where reportingManagerId=:smartId and isActive='Y' ");
+			query.setParameter("smartId", smartId);
+			reportingList=(ArrayList<Profile>) query.list();
+			Loggers.loggerEnd(reportingList);
+			return reportingList;
 		} catch (Exception e){
 			e.printStackTrace();
 			return null;

@@ -355,6 +355,21 @@ public class SearchServiceImp implements SearchService {
 		return list;
 
 	}
+	
+	@Override
+	public Map<String, Object> getParentInfo(String smartId) {
+		Map<String, Object> parentInfo = new HashMap<>();
+		Loggers.loggerStart();
+		Profile parentProfile = profiledao.getParentInfo(smartId);
+		parentInfo.put("parentProfile", parentProfile);
+		if (parentProfile != null) {
+			String parentSmartId = parentProfile.getSmartId();
+			parentInfo.put("reportingProfiles", profiledao.getReportingProfiles(parentSmartId));
+		}
+		else
+			parentInfo.put("reportingProfiles", null);
+		return parentInfo;
+	}
 
 	@Override
 	public Map<String, Object> getParentInfo(String smartId) {
