@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Assign;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 //import com.gsmart.model.Search;
@@ -61,7 +62,8 @@ public class ProfileDaoImp implements ProfileDao {
 		boolean flag = false;
 		try {
 			profile.setIsActive("Y");
-			profile.setEntryTime(CalendarCalculator.getTimeStamp());
+			query = session.createQuery("from Hierarchy where school='" + profile.getHierarchy().getSchool() + "' and institution='" + profile.getHierarchy().getInstitution() + "'");
+			profile.setHierarchy((Hierarchy)query.list().get(0));
 			if(profile.getRole().toUpperCase()=="STUDENT")
 			{
 				Assign assign=getStandardTeacher(profile.getStandard());
@@ -250,7 +252,10 @@ public class ProfileDaoImp implements ProfileDao {
 			query.setParameter("band", search.getBand());
 			query.setParameter("school", search.getSchool());
 			Loggers.loggerEnd();
-			return (List<Profile>) query.list();
+			List<Profile> profileList = (List<Profile>) query.list();
+			query = session.createQuery("from Profile where isActive like('Y') and role='ADMIN'");
+			profileList.addAll((List<Profile>)query.list());
+			return profileList;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
