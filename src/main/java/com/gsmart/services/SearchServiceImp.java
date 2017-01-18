@@ -72,8 +72,11 @@ public class SearchServiceImp implements SearchService {
 			for (String i : key) {
 
 				Profile p = (Profile) map.get(i);
-
-				if ((p.getSmartId().trim().toLowerCase()).startsWith(emp.toLowerCase())) {
+				if(emp != null) {
+					if ((p.getTeacherId().trim().toLowerCase()).startsWith(emp.toLowerCase())) {
+						list.add(p);
+					}
+				} else {
 					list.add(p);
 				}
 			}

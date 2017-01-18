@@ -30,8 +30,9 @@ public class LoginDaoImpl implements LoginDao {
 	public int authenticate(Login loginDetails) throws GSmartDatabaseException {
 		
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			int attempt = 0;
 			Query query = session.createQuery("from Login where smartId = :smartId");
 			query.setParameter("smartId", loginDetails.getSmartId());
