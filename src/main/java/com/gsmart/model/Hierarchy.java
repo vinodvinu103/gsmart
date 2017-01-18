@@ -38,7 +38,7 @@ public class Hierarchy {
 	/**
 	 * School of a person
 	 */
-
+	
 	@Id
 	@Column(name="SCHOOL")
 	private String school;
@@ -47,16 +47,16 @@ public class Hierarchy {
 	 * Standard of a person
 	 */
 
-	@Id
-	@Column(name="STANDARD")
-	private String standard;
-
-	/**
-	 * Section of a person
-	 */
-	@Id
-	@Column(name="SECTION")
-	private String section;
+//	@Id
+//	@Column(name="STANDARD")
+//	private String standard;
+//
+//	/**
+//	 * Section of a person
+//	 */
+//	@Id
+//	@Column(name="SECTION")
+//	private String section;
 
 	/**
 	 * Institution of a person
@@ -87,11 +87,6 @@ public class Hierarchy {
 	@Column(name="IS_ACTIVE")
 	private String isActive;
 	
-	
-	
-	
-	
-
 
 	public String getEntryTime() {
 		return entryTime;
@@ -141,32 +136,32 @@ public class Hierarchy {
 	 * @return standard, current name of the standard
 	 */
 
-	public String getStandard() {
+	/*public String getStandard() {
 		return standard;
-	}
+	}*/
 	/**
 	 * Changes the name of the standard
 	 * @param standard, new name of the standard
 	 */
-	public void setStandard(String standard) {
+	/*public void setStandard(String standard) {
 		this.standard = standard;
-	}
+	}*/
 	/**
 	 * Gets the name of the section
 	 * @return section, current name of the section
 	 */
 
-	public String getSection() {
+	/*public String getSection() {
 		return section;
-	}
+	}*/
 
 	/**
 	 * Changes the name of the section
 	 * @param section, new name of the section
 	 */
-	public void setSection(String section) {
+	/*public void setSection(String section) {
 		this.section = section;
-	}
+	}*/
 
 	public String getExitTime() {
 		return exitTime;
@@ -194,7 +189,7 @@ public class Hierarchy {
 
 	@Override
 	public String toString( ) {
-		return "\n\n{Hierarchy {Compound  : \n\tschool=" + school + ",\n\t standard=" + standard + ",\n\t section=" + section + ",\n\t institution="
+		return "\n\n{Hierarchy {Compound  : \n\tschool=" + school + ",\n\t institution="
 				+ institution + " },\n entryTime=" + entryTime + ",\n exitTime=" + exitTime + ",\n updateTime=" + updateTime
 				+ ",\n isActive=" + isActive + " }";
 	}

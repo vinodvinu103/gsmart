@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -27,12 +28,17 @@ public class AssignDaoImpl implements AssignDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Assign> getAssignReportee() throws GSmartDatabaseException {
+	public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Assign> assignList = null;
 		try {
 			getConnection();
-			query = session.createQuery("from Assign where isActive=:isActive");
+			if(role.equalsIgnoreCase("admin"))
+				query = session.createQuery("from Assign where isActive=:isActive");
+			else {
+				query = session.createQuery("from Assign where isActive=:isActive and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy);
+			}
 			query.setParameter("isActive", "Y");
 			assignList = query.list();
 		} catch (Exception e) {

@@ -10,4 +10,5 @@ public interface TokenService {
 	public Token getToken(String tokenNumber) throws GSmartServiceException;
 	
 	public void deleteToken(String tokenNumber) throws GSmartServiceException;
+	
 }

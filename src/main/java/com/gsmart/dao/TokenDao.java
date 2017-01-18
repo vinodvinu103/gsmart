@@ -10,4 +10,5 @@ public interface TokenDao {
 	public Token getToken(String tokenNumber) throws GSmartDatabaseException;
 	
 	public void deleteToken(String tokenNumber) throws GSmartDatabaseException;
+	
 }
