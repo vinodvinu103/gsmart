@@ -22,6 +22,7 @@ package com.gsmart.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 /**
  * class-name: CompoundHierarchy.java
@@ -52,11 +53,11 @@ public class CompoundHierarchy  implements Serializable{
 	/**
 	 * standard of a person
 	 */
-	private String standard;
+	/*private String standard;*/
 	/**
 	 * section of a person
 	 */
-	private String  section;
+	/*private String  section;*/
 	
 	private String entryTime;
 	
@@ -94,30 +95,30 @@ public class CompoundHierarchy  implements Serializable{
 	 * Gets the name of the Standard
 	 * @return Standard, current name of the Standard
 	 */
-	public String getStandard() {
+	/*public String getStandard() {
 		return standard;
-	}
+	}*/
 	/**
 	 * Changes the name of the Standard
 	 * @param Standard, new name of the Standard
 	 */
-	public void setStandard(String standard) {
+	/*public void setStandard(String standard) {
 		this.standard = standard;
-	}
+	}*/
 	/**
 	 * Gets the name of the Section
 	 * @return Section, current name of the Section
 	 */
-	public String getSection() {
+	/*public String getSection() {
 		return section;
-	}
+	}*/
 	/**
 	 * Changes the name of the Section
 	 * @param Section, new name of the Section
 	 */
-	public void setSection(String section) {
+	/*public void setSection(String section) {
 		this.section = section;
-	}
+	}*/
 	public String getEntryTime() {
 		return entryTime;
 	}

@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.AssignService;
+import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -36,6 +38,9 @@ public class AssignController {
 
 	@Autowired
 	AssignService assignService;
+	
+	@Autowired
+	TokenService tokenServices;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAssigningReportee(@RequestHeader HttpHeaders token,
@@ -47,6 +52,7 @@ public class AssignController {
 		List<Assign> assignList = null;
 
 		String tokenNumber = token.get("Authorization").get(0);
+		Token tokenObj = tokenServices.getToken(tokenNumber);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
@@ -56,7 +62,7 @@ public class AssignController {
 
 		if (modulePermission != null) {
 
-			assignList = assignService.getAssignReportee();
+			assignList = assignService.getAssignReportee(tokenObj.getRole(), tokenObj.getHierarchy());
 
 			permissions.put("assignList", assignList);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);

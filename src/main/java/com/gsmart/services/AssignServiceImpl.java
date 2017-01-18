@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.gsmart.dao.AssignDao;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -22,8 +23,8 @@ public class AssignServiceImpl implements AssignService{
 	
 
 	@Override
-	public List<Assign> getAssignReportee() throws GSmartServiceException {
-		return assignDao.getAssignReportee();
+	public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws GSmartServiceException {
+		return assignDao.getAssignReportee(role, hierarchy);
 	}
 
 	@Override

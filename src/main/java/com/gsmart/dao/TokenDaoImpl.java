@@ -78,4 +78,5 @@ public class TokenDaoImpl implements TokenDao{
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 	}
+
 }

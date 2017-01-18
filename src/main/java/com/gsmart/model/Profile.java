@@ -3,8 +3,12 @@ package com.gsmart.model;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -294,9 +298,25 @@ public class Profile {
 
 	@Transient
 	private double balanceAmount;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumns({
+		@JoinColumn(name="SCHOOL", insertable = false, updatable = false),
+		@JoinColumn(name="INSTITUTION", insertable = false, updatable = false),
+		@JoinColumn(name="ENTRY_TIME", insertable = false, updatable = false)})
+	private Hierarchy hierarchy;
 
 	// -----------------------------------------------------------/
+	
 
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+	
 	public String getUpdSmartId() {
 		return updSmartId;
 	}

@@ -4,7 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -31,6 +35,21 @@ public class Login implements Serializable {
 
 	@Column(name = "UPDATED_TIME")
 	private String updatedTime;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumns({
+		@JoinColumn(name="SCHOOL", insertable = false, updatable = false),
+		@JoinColumn(name="INSTITUTION", insertable = false, updatable = false),
+		@JoinColumn(name="ENTRY_TIME", insertable = false, updatable = false)})
+	private Hierarchy hierarchy;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
 
 	public String getSmartId() {
 		return smartId;

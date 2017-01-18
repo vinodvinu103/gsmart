@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
 
 public interface AssignDao {
 	
-public List<Assign> getAssignReportee() throws GSmartDatabaseException;
+public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws GSmartDatabaseException;
 	
 	public CompoundAssign addAssigningReportee(Assign assign) throws GSmartDatabaseException;
 	

@@ -219,12 +219,10 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 		query = session.createQuery(
-				"FROM Hierarchy WHERE institution=:institution AND standard=:standard AND school=:school AND section=:section AND isActive=:isActive");
+				"FROM Hierarchy WHERE institution=:institution AND school=:school AND isActive=:isActive");
 		query.setParameter("school", hierarchy.getSchool());
-		query.setParameter("section", hierarchy.getSection());
 		query.setParameter("isActive", "Y");
 		query.setParameter("institution", hierarchy.getInstitution());
-		query.setParameter("standard", hierarchy.getStandard());
 		Hierarchy hierarchy1 = (Hierarchy) query.uniqueResult();
 		return hierarchy1;
 
