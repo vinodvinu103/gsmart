@@ -4,11 +4,13 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -17,7 +19,7 @@ import javax.persistence.Transient;
 public class Profile {
 
 	@Id
-	@Column(name = "SMART_ID")
+    @Column(name = "SMART_ID")
 	private String smartId;
 
 	@Column(name = "FIRST_NAME")
