@@ -47,14 +47,18 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	@Override
 	public List<RolePermission> getPermissionList() throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<RolePermission> rolePermissions = null;
 		try {
-			getConnection();
+			
 			query = session.createQuery("from RolePermission where isActive='Y'");
 			rolePermissions = (List<RolePermission>) query.list();
 
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
+		}
+		finally {
+			session.close();
 		}
 		Loggers.loggerEnd(rolePermissions);
 		return rolePermissions;
@@ -70,9 +74,10 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	@Override
 	public RolePermissionCompound addPermission(RolePermission permission) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		RolePermissionCompound cb = null;
 		try {
-			getConnection();
+			
 			query = session.createQuery(
 					"FROM RolePermission where role=:role AND moduleName=:moduleName AND subModuleName=:subModuleName AND isActive=:isActive ");
 			query.setParameter("role", permission.getRole());
@@ -94,6 +99,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
+		}
+		finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 		return cb;
@@ -118,8 +126,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	@Override
 	public void editPermission(RolePermission permission) throws GSmartBaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			RolePermission oldRolePermission = getRolePermission(permission.getEntryTime());
 			oldRolePermission.setIsActive("N");
 			oldRolePermission.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -135,6 +144,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
+		finally {
+			session.close();
+		}
 		Loggers.loggerEnd();
 	}
 
@@ -148,8 +160,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	public void deletePermission(RolePermission permission) throws GSmartBaseException {
 
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			permission.setExitTime(CalendarCalculator.getTimeStamp());
 			permission.setIsActive("D");
 			session.update(permission);
@@ -160,6 +173,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		finally {
+			session.close();
+		}
 		Loggers.loggerEnd();
 	}
 
@@ -169,10 +185,11 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	public List<RolePermission> getPermission(String role) throws GSmartDatabaseException {
 		
 		Loggers.loggerStart();
+		getConnection();
 		List<RolePermission> rolePermissions = new ArrayList<>();
 		
 		try {
-			getConnection();
+			
 			Loggers.loggerValue("given role is : ", role);
 			query = session.createQuery("SELECT DISTINCT moduleName from RolePermission where role=:role and isActive=:isActive");
 			query.setParameter("role", role);
@@ -190,6 +207,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
+		finally {
+			session.close();
+		}
 		Loggers.loggerEnd(rolePermissions);
 		return rolePermissions;
 	}
@@ -197,10 +217,11 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RolePermission> getSubModuleNames(String role) throws GSmartBaseException {
-		
+		Loggers.loggerStart();
+		getConnection();
 		List<RolePermission> rolePermissions = null;
 		try{
-			getConnection();
+			
 			query = session.createQuery("from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
@@ -209,6 +230,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
+		}
+		finally {
+			session.close();
 		}
 		return rolePermissions;
 	}

@@ -38,8 +38,9 @@ public class ProfileDaoImp implements ProfileDao {
 		 * This getMaxSmartId() method will get maximum smart id from Emp_Login
 		 * table and return to UserProfile Manager.
 		 */
+		getConnection();
 		try {
-			getConnection();
+			
 			query = session
 					.createQuery("select smartId from Profile where entryTime in (select max(entryTime) from Profile)");
 			ArrayList<String> maxId = (ArrayList<String>) query.list();
@@ -53,6 +54,9 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+		finally {
+			session.close();
 		}
 	}
 
@@ -75,6 +79,9 @@ public class ProfileDaoImp implements ProfileDao {
 			e.printStackTrace();
 			flag = false;
 		} 
+		finally {
+			session.close();
+		}
 		return flag;
 	}
 	
@@ -99,8 +106,9 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@Override
 	public String updateProfile(Profile profile) {
+		getConnection();
 		try {
-			getConnection();
+			
 
 			profile.setIsActive("Y");
 			session.update(profile);
@@ -111,34 +119,43 @@ public class ProfileDaoImp implements ProfileDao {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		finally {
+			session.close();
+		}
 
 		
 		return "update successfully21";
 	}
+	
 
 	/* for profile */
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> getAllProfiles() {
+		getConnection();
 		try {
-			getConnection();
+			
 			query = session.createQuery("from Profile where isActive='Y'");
 			return (ArrayList<Profile>) query.list();
 		} catch(Exception e){
 			e.printStackTrace();
 			return null;
 		}
+		finally {
+			session.close();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> getProfiles(String role,String smartId) {
+		getConnection();
 		try {
 			Loggers.loggerStart(role);
 	
 			Loggers.loggerStart("current smartId"+smartId);
-			getConnection();
+			
 			if (role.toLowerCase().equals("student")) {
 				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"+smartId.substring(0,2)+"%'");
 			} else {
@@ -150,12 +167,16 @@ public class ProfileDaoImp implements ProfileDao {
 			e.printStackTrace();
 			return null;
 		}
+		finally {
+			session.close();
+		}
 	}
 
 	@Override
 	public Profile getParentInfo(String smartId) {
+		getConnection();
 		try {
-			getConnection();
+			
 			Loggers.loggerStart(smartId);
 			/*Profile currentProfile1 = (Profile) session.createQuery("from Profile where smartId='" + smartId + "'").list()
 					.get(0);*/
@@ -173,14 +194,18 @@ public class ProfileDaoImp implements ProfileDao {
 			e.printStackTrace();
 			return null;
 		}
+		finally {
+			session.close();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> getReportingProfiles(String smartId) {
+		getConnection();
 		try {
 			Loggers.loggerStart(smartId);
-			getConnection();
+			
 			ArrayList<Profile> reportingList=null;
 			query=session.createQuery("from Profile where reportingManagerId=:smartId and isActive='Y' ");
 			query.setParameter("smartId", smartId);
@@ -191,6 +216,9 @@ public class ProfileDaoImp implements ProfileDao {
 			e.printStackTrace();
 			return null;
 		}
+		finally {
+			session.close();
+		}
 	}
 
 	/* for login */
@@ -198,9 +226,10 @@ public class ProfileDaoImp implements ProfileDao {
 
 		Loggers.loggerStart(smartId);
 		Profile profilelist = null;
+		getConnection();
 		
 		try {
-			getConnection();
+			
 			query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
 			query.setParameter("smartId", smartId);
 			profilelist = (Profile) query.list().get(0);
@@ -209,7 +238,9 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-		
+		finally {
+			session.close();
+		}
 		Loggers.loggerEnd(profilelist);
 		return profilelist;
 	}
@@ -224,11 +255,12 @@ public class ProfileDaoImp implements ProfileDao {
 	public List<Profile> getAllRecord() {
 		
 		Loggers.loggerStart();
+		getConnection();
 		
 		List<Profile> profile = null;
 		
 		try {
-			getConnection();
+			
 			query = session.createQuery("from Profile where isActive like('Y')");
 			
 			profile = (List<Profile>) query.list();
@@ -236,6 +268,9 @@ public class ProfileDaoImp implements ProfileDao {
 			e.printStackTrace();
 			return null;
 		} 
+		finally {
+			session.close();
+		}
 		
 		Loggers.loggerEnd("profile fetched from DB");
 		return profile;
@@ -244,8 +279,9 @@ public class ProfileDaoImp implements ProfileDao {
 	@SuppressWarnings("unchecked")
 	public List<Profile> getsearchRep(Search search) {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			query = session.createQuery("from Profile where isActive like('Y') and band<:band  and school =:school");
 			query.setParameter("band", search.getBand());
 			query.setParameter("school", search.getSchool());
@@ -253,7 +289,10 @@ public class ProfileDaoImp implements ProfileDao {
 			return (List<Profile>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
+		finally {
+			session.close();
+		}
 		return null;
 	}
 
@@ -267,15 +306,19 @@ public class ProfileDaoImp implements ProfileDao {
 	public List<Profile> search(Profile profile) throws GSmartDatabaseException {
 		
 		Loggers.loggerStart(profile);
+		getConnection();
 		List<Profile> profileList;
 		try {
-			getConnection();
+			
 			query = session.createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%'");
 			profileList = query.list();
 
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		} 
+		finally {
+			session.close();
+		}
 		
 		Loggers.loggerEnd(profileList);
 		return profileList;
@@ -292,9 +335,9 @@ public class ProfileDaoImp implements ProfileDao {
 	public void editRole(Profile profile) throws GSmartDatabaseException {
 
 		Loggers.loggerStart(profile);
-		
+		getConnection();
 		try {
-			getConnection();
+			
 			query = session.createQuery("UPDATE Profile set   role=:role WHERE entryTime = :entryTime");
 			query.setParameter("entryTime", profile.getEntryTime());
 			query.setParameter("role", profile.getRole());
@@ -305,6 +348,9 @@ public class ProfileDaoImp implements ProfileDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
+		}
+		finally {
+			session.close();
 		}
 		
 		Loggers.loggerEnd();

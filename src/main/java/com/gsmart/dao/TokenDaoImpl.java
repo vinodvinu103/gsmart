@@ -58,6 +58,9 @@ public class TokenDaoImpl implements TokenDao{
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
+		/*finally {
+			session.close();
+		}*/
 
 		return token;
 	}

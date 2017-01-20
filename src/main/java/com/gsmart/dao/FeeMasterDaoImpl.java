@@ -44,9 +44,10 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public List<FeeMaster> getFeeList() throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<FeeMaster> feeList=null;
 		try {
-			getConnection();
+			
 			query = session.createQuery("from FeeMaster where isActive='Y'");
 			feeList = (List<FeeMaster>)query.list();
 
@@ -71,10 +72,10 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public CompoundFeeMaster addFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		
+		getConnection();
 		CompoundFeeMaster cfm = null;
 		try {
-			getConnection();
+		
 			FeeMaster feeMaster2=null;
 			query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive");
 			query.setParameter("standard", feeMaster.getStandard());
@@ -115,8 +116,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	public void editFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			FeeMaster oldFee = getFeeMas(feeMaster.getEntryTime());
 			oldFee.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			oldFee.setIsActive("N");
@@ -154,8 +156,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public void deleteFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			/*query = session.createQuery("update FeeMaster set IsActive=:IsActive, exittime=:exittime where entrytime = :entrytime");
 			query.setParameter("entrytime", feeMaster.getEntrytime());
 		
