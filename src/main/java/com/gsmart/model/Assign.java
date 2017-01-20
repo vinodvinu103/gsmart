@@ -8,53 +8,45 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ASSIGN")
+@Table(name = "ASSIGN")
 @IdClass(com.gsmart.model.CompoundAssign.class)
 public class Assign {
-	
+
 	@Id
-	@Column(name="STANDARD")
+	@Column(name = "STANDARD")
 	private String standard;
-	
-	
-	@Column(name="SECTION")
+
+	@Column(name = "SECTION")
 	private String section;
-	
 
-	@Column(name="TEACHER_SMART_ID")
+	@Column(name = "TEACHER_SMART_ID")
 	private String teacherSmartId;
-	
-	@Column(name="HOD_SMART_ID")
+
+	@Column(name = "HOD_SMART_ID")
 	private String hodSmartId;
-	
-	@Column(name="PRINCIPAL_SMART_ID")
+
+	@Column(name = "PRINCIPAL_SMART_ID")
 	private String principalSmartId;
-	
+
 	@Id
-	@Column(name="ENTRY_TIME")
+	@Column(name = "ENTRY_TIME")
 	private String entryTime;
-	
-	
-	@Column(name="EXIT_TIME")
+
+	@Column(name = "EXIT_TIME")
 	private String exitTime;
-	
 
-	@Column(name="UPDATED_TIME")
+	@Column(name = "UPDATED_TIME")
 	private String updatedTime;
-	
-	
 
-	@Column(name="IS_ACTIVE")
+	@Column(name = "IS_ACTIVE")
 	private String isActive;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumns({
-		@JoinColumn(name="SCHOOL", insertable = false, updatable = false),
-		@JoinColumn(name="INSTITUTION", insertable = false, updatable = false),
-		@JoinColumn(name="ENTRY_TIME", insertable = false, updatable = false)})
+
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="hid", insertable = false, updatable = false)
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {
@@ -72,7 +64,7 @@ public class Assign {
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
 	}
-	
+
 	public String getSection() {
 		return section;
 	}
@@ -80,7 +72,6 @@ public class Assign {
 	public void setSection(String section) {
 		this.section = section;
 	}
-
 
 	public String getPrincipalSmartId() {
 		return principalSmartId;
@@ -137,7 +128,5 @@ public class Assign {
 	public void setHodSmartId(String hodSmartId) {
 		this.hodSmartId = hodSmartId;
 	}
-	
-	
 
 }

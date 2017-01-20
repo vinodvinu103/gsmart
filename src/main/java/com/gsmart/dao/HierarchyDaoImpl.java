@@ -32,7 +32,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gsmart.model.CompoundHierarchy;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -93,30 +92,32 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	 */
 
 	@Override
-	public CompoundHierarchy addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
+	public boolean addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		CompoundHierarchy ch = null;
+		boolean status;
 		try {
 			getConnection();
 			Hierarchy hierarchy1 = fetch(hierarchy);
 			if (hierarchy1 != null) {
-				return null;
+				return false;
 			}
 			hierarchy.setEntryTime(CalendarCalculator.getTimeStamp());
 			hierarchy.setIsActive("Y");
 			System.out.println(hierarchy);
-			ch = (CompoundHierarchy) session.save(hierarchy);
+			session.save(hierarchy);
 			transaction.commit();
-
+			status = true;
 		} catch (ConstraintViolationException e) {
+			status = false;
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
+			status = false;
 			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 			session.close();
 		}
 		Loggers.loggerEnd();
-		return ch;
+		return status;
 	}
 
 	/**
@@ -223,8 +224,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		query.setParameter("school", hierarchy.getSchool());
 		query.setParameter("isActive", "Y");
 		query.setParameter("institution", hierarchy.getInstitution());
-		Hierarchy hierarchy1 = (Hierarchy) query.uniqueResult();
-		return hierarchy1;
+		return (Hierarchy) query.uniqueResult();
 
 	}
 }

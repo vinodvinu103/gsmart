@@ -5,8 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -55,11 +54,8 @@ public class Fee {
 	@Column(name = "TRANSPORTATION_FEE")
 	private Integer transportationFee;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumns({
-		@JoinColumn(name="SCHOOL", insertable = false, updatable = false),
-		@JoinColumn(name="INSTITUTION", insertable = false, updatable = false),
-		@JoinColumn(name="ENTRY_TIME", insertable = false, updatable = false)})
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="hid", insertable = false, updatable = false)
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {

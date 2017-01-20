@@ -32,36 +32,21 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="HIERARCHY_MASTER")
-@IdClass( com.gsmart.model.CompoundHierarchy.class)
-
 public class Hierarchy {
 	/**
 	 * School of a person
 	 */
 	
 	@Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    private Integer hid;
+	
 	@Column(name="SCHOOL")
 	private String school;
 
 	/**
-	 * Standard of a person
-	 */
-
-//	@Id
-//	@Column(name="STANDARD")
-//	private String standard;
-//
-//	/**
-//	 * Section of a person
-//	 */
-//	@Id
-//	@Column(name="SECTION")
-//	private String section;
-
-	/**
 	 * Institution of a person
 	 */
-	@Id
 	@Column(name="INSTITUTION")
 	private String institution;
 
@@ -131,38 +116,6 @@ public class Hierarchy {
 		this.school = school;
 	}
 
-	/**
-	 * Gets the name of the standard
-	 * @return standard, current name of the standard
-	 */
-
-	/*public String getStandard() {
-		return standard;
-	}*/
-	/**
-	 * Changes the name of the standard
-	 * @param standard, new name of the standard
-	 */
-	/*public void setStandard(String standard) {
-		this.standard = standard;
-	}*/
-	/**
-	 * Gets the name of the section
-	 * @return section, current name of the section
-	 */
-
-	/*public String getSection() {
-		return section;
-	}*/
-
-	/**
-	 * Changes the name of the section
-	 * @param section, new name of the section
-	 */
-	/*public void setSection(String section) {
-		this.section = section;
-	}*/
-
 	public String getExitTime() {
 		return exitTime;
 	}
@@ -187,11 +140,19 @@ public class Hierarchy {
 		this.isActive = isActive;
 	}
 
-	@Override
+	/*@Override
 	public String toString( ) {
 		return "\n\n{Hierarchy {Compound  : \n\tschool=" + school + ",\n\t institution="
 				+ institution + " },\n entryTime=" + entryTime + ",\n exitTime=" + exitTime + ",\n updateTime=" + updateTime
 				+ ",\n isActive=" + isActive + " }";
+	}*/
+
+	public Integer getHid() {
+		return hid;
+	}
+
+	public void setHid(Integer hid) {
+		this.hid = hid;
 	}
 	
 

@@ -4,7 +4,7 @@ package com.gsmart.services;
 
 import java.util.List;
 
-import com.gsmart.model.CompoundHierarchy;
+import com.gsmart.controller.HierarchyController;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartServiceException;
 
@@ -27,7 +27,7 @@ public interface HierarchyServices {
 	 * @return nothing
 	 * @throws GSmartServiceException
 	 */
-	public CompoundHierarchy addHierarchy(Hierarchy hierarchy) throws GSmartServiceException;
+	public boolean addHierarchy(Hierarchy hierarchy) throws GSmartServiceException;
 	/**
 	 * @param hierarchy instanceOf {@link Hierarchy}
 	 * @return nothing
