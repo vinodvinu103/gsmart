@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="PERFORMANCE_RECORD")
-@IdClass(com.gsmart.model.CompoundPerformanceAppraisal.class)
+@IdClass(com.gsmart.model.CompoundPerformanceRecord.class)
 public class PerformanceRecord {
 
 
@@ -20,23 +20,22 @@ public class PerformanceRecord {
 	@Column(name = "YEAR")
 	private String year;
 	
+
+	@Id
+	@Column(name = "REPORTINGMANAGER_ID")
+	private String reportingManagerID;
+	
+	
 	@Column(name = "RATINGS")
 	private String ratings;
 	
-	public String getRatings() {
-		return ratings;
-	}
-
-	public void setRatings(String ratings) {
-		this.ratings = ratings;
-	}
+	
 
 	@Id
 	@Column(name = "ENTRY_TIME")
 	private Long entryTime;
 	
-	@Column(name = "REPORTINGMANAGER_ID")
-	private String reportingManagerID;
+
 	
 	@Column(name = "COMMENTS")
 	private String comments;
@@ -112,6 +111,19 @@ public class PerformanceRecord {
 
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
+	}
+	public String getRatings() {
+		return ratings;
+	}
+
+	public void setRatings(String ratings) {
+		this.ratings = ratings;
+	}
+	@Override
+	public String toString() {
+		return " \n PerformanceRecord [{compond ,\n \t smartId=" + smartId + ",\n \t year=" + year + ", \n \tcomments=" + comments + "}, reportingManagerID=" + reportingManagerID
+				+ ", ratings=" + ratings + ", entryTime=" + entryTime + ",  updateTime="
+				+ updateTime + ", isActive=" + isActive + ", role=" + role + "]";
 	}
 
 }

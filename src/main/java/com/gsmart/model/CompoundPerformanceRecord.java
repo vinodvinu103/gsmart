@@ -13,6 +13,15 @@ public class CompoundPerformanceRecord implements Serializable {
 
 	private String year;
 	private String smartId;
+	private String reportingManagerID;
+
+	public String getReportingManagerID() {
+		return reportingManagerID;
+	}
+
+	public void setReportingManagerID(String reportingManagerID) {
+		this.reportingManagerID = reportingManagerID;
+	}
 
 	public Long getEntryTime() {
 		return entryTime;

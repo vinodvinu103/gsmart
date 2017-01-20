@@ -8,8 +8,6 @@ import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 
 public class CalendarCalculator {
 	
-	public static Long currentEpoch = new Date().getTime()/1000;
-
 	public static String getTimeStamp() {
 		try {
 			Date a = new Date();
@@ -22,6 +20,10 @@ public class CalendarCalculator {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static Long getCurrentEpochTime() {
+		return new Date().getTime()/1000;
 	}
 
 }

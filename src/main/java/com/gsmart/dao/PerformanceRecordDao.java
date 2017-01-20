@@ -10,7 +10,7 @@ public interface PerformanceRecordDao {
 
 	public List<PerformanceRecord> getPerformanceRecord(String smartId,String year) throws GSmartDatabaseException;
 
-	public void addAppraisalRecord(PerformanceAppraisal appraisal)throws GSmartDatabaseException;
+	public void addAppraisalRecord(PerformanceRecord appraisal)throws GSmartDatabaseException;
 
 	public void editAppraisalRecord(PerformanceAppraisal appraisal)throws GSmartDatabaseException;
 

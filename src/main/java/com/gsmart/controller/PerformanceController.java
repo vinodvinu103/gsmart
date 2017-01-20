@@ -47,10 +47,11 @@ public class PerformanceController {
 	@Autowired
 	PerformanceRecordService performancerecord;
 
-	@RequestMapping(value = "/{year}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> performance(@PathVariable("year") String year,
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> performance( String year,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
+		Loggers.loggerStart(year);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -78,7 +79,7 @@ public class PerformanceController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value="/app" ,method = RequestMethod.POST)
 	public ResponseEntity<IAMResponse> addAppraisal(@RequestBody PerformanceAppraisal appraisal,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
@@ -129,17 +130,27 @@ public class PerformanceController {
 		}
 	}
 
-	@RequestMapping(value = "/record", method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addAppraisalRecord(@RequestBody PerformanceAppraisal appraisal,
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<IAMResponse> addAppraisalRecord(@RequestBody PerformanceRecord appraisal,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-
 		Loggers.loggerStart(appraisal);
+		
+		
 		IAMResponse myResponse;
 		IAMResponse resp = new IAMResponse();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		Token token1 = tokenService.getToken(tokenNumber);
+		String smartId = token1.getSmartId();
+		String reportingId =token1.getReportingManagerId();
+		appraisal.setSmartId(smartId);
+		appraisal.setReportingManagerID(reportingId);
+	
+		
 		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
+			Loggers.loggerStart(appraisal);
+			Loggers.loggerStart(smartId);
 			performancerecord.addAppraisalRecord(appraisal);
 
 			resp.setMessage("success");

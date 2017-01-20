@@ -32,10 +32,12 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<PerformanceAppraisal> appraisalList = null;
+		getConnection();
 		try {
-			getConnection();
-			System.out.println();
-			Loggers.loggerStart();
+			
+		
+			Loggers.loggerStart(reportingId);
+			Loggers.loggerStart(year);
 			query = session.createQuery(
 					"from PerformanceAppraisal where isActive=:isActive AND reportingManagerID=:reportingManagerID AND year=:year");
 			query.setParameter("reportingManagerID",reportingId);
@@ -58,7 +60,7 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 
 		try {
 			getConnection();
-			appraisal.setEntryTime(CalendarCalculator.currentEpoch);
+			appraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
 
 			session.save(appraisal);
 			Loggers.loggerEnd(appraisal);
@@ -80,13 +82,14 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 	@Override
 	public void editAppraisal(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			PerformanceAppraisal oldAppraisal = getAppraisal(appraisal.getEntryTime());
 			oldAppraisal.setIsActive("N");
-			oldAppraisal.setUpdateTime(CalendarCalculator.currentEpoch);
+			oldAppraisal.setUpdateTime(CalendarCalculator.getCurrentEpochTime());
 			session.update(oldAppraisal);
-			appraisal.setEntryTime(CalendarCalculator.currentEpoch);
+			appraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
 			appraisal.setIsActive("Y");
 			session.save(appraisal);
 			transaction.commit();
@@ -121,10 +124,11 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 	public void deleteAppraisal(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+		
 
-			appraisal.setExitTime(CalendarCalculator.currentEpoch);
+			appraisal.setExitTime(CalendarCalculator.getCurrentEpochTime());
 			appraisal.setIsActive("D");
 			session.update(appraisal);
 			transaction.commit();

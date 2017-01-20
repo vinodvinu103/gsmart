@@ -33,7 +33,7 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 	
 }
 	@Override
-	public void addAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartServiceException {
+	public void addAppraisalRecord(PerformanceRecord appraisal) throws GSmartServiceException {
 		try {
 		performancerecordao.addAppraisalRecord(appraisal);
 		}

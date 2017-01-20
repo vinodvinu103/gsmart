@@ -10,7 +10,7 @@ public interface PerformanceRecordService {
 	
 	public List<PerformanceRecord> getPerformanceRecord(String year,String smartId)throws GSmartServiceException;
 
-	public void addAppraisalRecord(PerformanceAppraisal appraisal)throws GSmartServiceException;
+	public void addAppraisalRecord(PerformanceRecord appraisal)throws GSmartServiceException;
 
 	public void editAppraisalrecord(PerformanceAppraisal appraisal)throws GSmartServiceException;
 

@@ -30,8 +30,9 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	public List<PerformanceRecord> getPerformanceRecord(String smartId, String year) throws GSmartDatabaseException {
 		List<PerformanceRecord> performancerecordList = null;
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			System.out.println();
 			Loggers.loggerStart();
 			query = session
@@ -52,14 +53,21 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	}
 
 	@Override
-	public void addAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
+	public void addAppraisalRecord(PerformanceRecord appraisal) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		Loggers.loggerStart(appraisal);
+		
+		getConnection();
 		try {
-			getConnection();
-			appraisal.setEntryTime(CalendarCalculator.currentEpoch);
-			session.save(appraisal);
-
-			Loggers.loggerEnd(appraisal);
+			
+		
+			appraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
+			appraisal.setIsActive("Y");
+			
+			
+            session.save(appraisal);
+            
+			
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -75,13 +83,14 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	@Override
 	public void editAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			PerformanceRecord oldAppraisalrecord = getAppraisalRecord(appraisal.getEntryTime());
 			oldAppraisalrecord.setIsActive("N");
-			oldAppraisalrecord.setUpdateTime(CalendarCalculator.currentEpoch);
+			oldAppraisalrecord.setUpdateTime(CalendarCalculator.getCurrentEpochTime());
 			session.update(oldAppraisalrecord);
-			appraisal.setEntryTime(CalendarCalculator.currentEpoch);
+			appraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
 			appraisal.setIsActive("Y");
 			session.save(appraisal);
 			transaction.commit();
@@ -116,10 +125,11 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	public void deletAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+		
 
-			appraisal.setExitTime(CalendarCalculator.currentEpoch);
+			appraisal.setExitTime(CalendarCalculator.getCurrentEpochTime());
 			appraisal.setIsActive("D");
 			session.update(appraisal);
 			transaction.commit();
