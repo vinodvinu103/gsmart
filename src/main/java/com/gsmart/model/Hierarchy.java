@@ -39,7 +39,7 @@ public class Hierarchy {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
-    private Integer hid;
+    private Long hid;
 	
 	@Column(name="SCHOOL")
 	private String school;
@@ -147,11 +147,11 @@ public class Hierarchy {
 				+ ",\n isActive=" + isActive + " }";
 	}*/
 
-	public Integer getHid() {
+	public Long getHid() {
 		return hid;
 	}
 
-	public void setHid(Integer hid) {
+	public void setHid(Long hid) {
 		this.hid = hid;
 	}
 	
