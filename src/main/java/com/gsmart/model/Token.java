@@ -53,4 +53,5 @@ public class Token {
 		return "\nToken [\n\tTokenNumber="+tokenNumber+"\n\tSmartID="+smartId+"\n\tRole="+role+"\n\tReportingManagerId="+reportingManagerId+"\n\t]";
 	}
 	
+	
 }
