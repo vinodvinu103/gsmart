@@ -227,4 +227,13 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		return (Hierarchy) query.uniqueResult();
 
 	}
+
+	@Override
+	public Hierarchy getHierarchyByHid(Long hid) throws GSmartDatabaseException {
+		getConnection();
+		query = session.createQuery(
+				"FROM Hierarchy WHERE hid=:hid");
+		query.setParameter("hid", hid);
+		return (Hierarchy) query.uniqueResult();
+	}
 }

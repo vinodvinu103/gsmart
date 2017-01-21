@@ -318,7 +318,7 @@ public class ProfileDaoImp implements ProfileDao {
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart(hierarchy);
 		getConnection();
-		query = session.createQuery("from Profile where hierarchy=" + hierarchy + " and role!='STUDENT'");
+		query = session.createQuery("from Profile where hierarchy=" + hierarchy.getHid() + " and role!='STUDENT'");
 		return (List<Profile>) query.list();
 	}
 

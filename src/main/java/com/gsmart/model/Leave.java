@@ -50,8 +50,8 @@ public class Leave {
 	private String exitTime;
 	@Column(name="LEAVE_STATUS")
 	private String leaveStatus;
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="hid", insertable = false, updatable = false)
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {

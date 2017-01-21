@@ -76,8 +76,8 @@ public class FeeMaster {
 	@Column(name = "ID_CARD_FEE")
 	private Integer idCardFee;
 	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="hid", insertable = false, updatable = false)
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {

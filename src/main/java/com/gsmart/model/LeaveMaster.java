@@ -34,8 +34,8 @@ public class LeaveMaster {
 	@Column(name = "IS_ACTIVE")
 	private String isActive;
 	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="hid", insertable = false, updatable = false)
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {

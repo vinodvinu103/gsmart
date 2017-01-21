@@ -37,7 +37,7 @@ public class AssignDaoImpl implements AssignDao {
 				query = session.createQuery("from Assign where isActive=:isActive");
 			else {
 				query = session.createQuery("from Assign where isActive=:isActive and hierarchy:hierarchy");
-				query.setParameter("hierarchy", hierarchy);
+				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			query.setParameter("isActive", "Y");
 			assignList = query.list();
@@ -148,6 +148,22 @@ public class AssignDaoImpl implements AssignDao {
 	public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
+	}
+
+	@Override
+	public Assign getStaffByClassAndSection(String standard, String section, Hierarchy hierarchy) {
+		getConnection();
+		try {
+			query = session.createQuery(
+					"from Assign where hierarchy.hid=:hierarchy and standard=:standard and section=:section");
+			query.setParameter("standard", standard);
+			query.setParameter("section", section);
+			query.setParameter("hierarchy", hierarchy.getHid());
+			return (Assign) query.uniqueResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

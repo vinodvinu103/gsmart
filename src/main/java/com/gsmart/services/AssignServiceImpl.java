@@ -70,6 +70,11 @@ public class AssignServiceImpl implements AssignService{
 	}
 	}
 
+	@Override
+	public Assign getStaffByClassAndSection(String standard, String section, Hierarchy hierarchy) {
+		return assignDao.getStaffByClassAndSection(standard, section, hierarchy);
+	}
+
 	
 
 }

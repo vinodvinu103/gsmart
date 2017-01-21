@@ -89,4 +89,9 @@ public class HierarchyServicesImpl implements HierarchyServices {
 		Loggers.loggerEnd();
 	}
 
+	@Override
+	public Hierarchy getHierarchyByHid(Long hid) throws GSmartServiceException {
+		return getHierarchyByHid(hid);
+	}
+
 }

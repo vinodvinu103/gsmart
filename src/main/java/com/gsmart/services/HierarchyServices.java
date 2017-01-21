@@ -41,6 +41,8 @@ public interface HierarchyServices {
 	 */
 	public void deleteHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
 	
+	public Hierarchy getHierarchyByHid(Long hid)throws GSmartServiceException;
+	
 	
 	
 }

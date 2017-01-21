@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.model.Assign;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
 import com.gsmart.model.Token;
+import com.gsmart.services.AssignService;
+import com.gsmart.services.HierarchyServices;
 //import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
@@ -51,6 +54,12 @@ public class RegistrationController {
 
 	@Autowired
 	TokenService tokenService;
+	
+	@Autowired
+	AssignService assignService;
+	
+	@Autowired
+	HierarchyServices hierarchyServices;
 
 	@RequestMapping(value = "/employee", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewEmployeeProfiles(@RequestHeader HttpHeaders token,
@@ -115,6 +124,13 @@ public class RegistrationController {
 		Map<String, String> jsonMap = new HashMap<>();
 
 		String smartId = String.valueOf((Integer.parseInt(profileServices.getmaxSamrtId()) + 1));
+		if(profile.getRole().equalsIgnoreCase("student")) {
+			profile.setHierarchy(tokenObj.getHierarchy());
+			/*Hierarchy hierarchy = hierarchyServices.getHierarchyByHid(tokenObj.getHierarchy().getHid());
+			Assign assign = assignService.getStaffByClassAndSection(profile.getStandard(), profile.getSection(), hierarchy);
+			profile.setReportingManagerId(assign.getTeacherSmartId());
+			profile.setCounterSigningManagerId(assign.getHodSmartId());*/
+		}
 		profile.setSmartId(smartId);
 		profile.setUpdSmartId(updSmartId);
 		profile.setEntryTime(Calendar.getInstance().getTime().toString());
