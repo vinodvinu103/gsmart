@@ -149,6 +149,43 @@ public class ProfileServicesImp implements ProfileServices {
 		}
 	}
 
+	@Override
+	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException {
+	
+		return profileDao.getProfilesWithoutRfid();
+	}
 
+	@Override
+	public List<Profile> addRfid(Profile profile)throws GSmartServiceException {
+		
+		
+		try {
+			profileDao.addRfid(profile);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		return null;
+		
+	}
 
+	public List<Profile> editRfid(Profile rfid)throws GSmartServiceException{
+	
+	try {
+		profileDao.editRfid(rfid);
+	} catch (GSmartDatabaseException exception) {
+		throw (GSmartServiceException) exception;
+	} catch (Exception e) {
+		throw new GSmartServiceException(e.getMessage());
+	}
+	return null;
+
+}
+
+	@Override
+	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
+		
+		return profileDao.getProfilesWithRfid();
+	}
 }

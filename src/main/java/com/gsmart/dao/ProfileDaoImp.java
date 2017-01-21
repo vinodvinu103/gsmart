@@ -11,6 +11,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 //import com.gsmart.model.Search;
@@ -269,5 +270,91 @@ public class ProfileDaoImp implements ProfileDao {
 		
 		Loggers.loggerEnd();
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException{
+		//Loggers.loggerStart(profile);
+		List<Profile> profileListWithoutRfid;
+		try {
+			getConnection();
+			query = session.createQuery(" from Profile where rfId is null AND isActive='Y' AND role='STUDENT'");
+			profileListWithoutRfid = query.list();
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} 
+		
+		Loggers.loggerEnd(profileListWithoutRfid);
+		return profileListWithoutRfid;
+		//return null;
+	}
+	
+	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException{
+		
+		 //List<Profile> profileListWithoutRfid = null;
+		
+		try {
+			getConnection();
+
+			session.update(rfid);
+		
+			transaction.commit();
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return getProfilesWithoutRfid();
+		
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException{
+//		Loggers.loggerStart(profile);
+		List<Profile> profileListWithRfid;
+		try {
+			getConnection();
+			query = session.createQuery("from Profile where rfId is not null AND isActive='Y' AND role='STUDENT'");
+			profileListWithRfid = query.list();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} 
+		
+		Loggers.loggerEnd(profileListWithRfid);
+		return profileListWithRfid;
+		
+	}	
+
+	@Override
+	public List<Profile> editRfid(Profile rfid) throws GSmartDatabaseException {
+	//Loggers.loggerStart(profile);
+		
+		try {
+			getConnection();
+
+			session.update(rfid);
+		
+			transaction.commit();
+
+		} catch (ConstraintViolationException e) {
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+		
+		Loggers.loggerEnd();
+		return getProfilesWithRfid();
+		
+	}
+
 
 }

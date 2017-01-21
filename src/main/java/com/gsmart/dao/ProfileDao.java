@@ -72,5 +72,13 @@ public interface ProfileDao {
 	public void editRole(Profile profile)throws GSmartDatabaseException;
 
 	public List<Profile> getsearchRep(Search search);
-
+	
+	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
+	
+	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException;
+//	
+	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
+	
+	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
+	
 }
