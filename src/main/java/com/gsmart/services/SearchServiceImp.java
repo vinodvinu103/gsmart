@@ -321,17 +321,26 @@ public class SearchServiceImp implements SearchService {
 	public ArrayList<Profile> gotoloop(ArrayList<Profile> childList, Map<String, Profile> profiles)
 			throws GSmartServiceException {
 
+		ArrayList<Profile> childOfChildList=new ArrayList<>();
 		Loggers.loggerStart(childList);
 		ArrayList<Profile> childOfChild = new ArrayList<Profile>();
 
 		for (Profile profile : childList) {
 
 			childOfChild = searchEmployeeInfo(profile.getSmartId(), profiles);
+			if(!childOfChild.isEmpty())
+			{
+				for(Profile childProfile : childOfChild)
+				{
+					System.out.println("child of child");
+					childOfChildList.add(childProfile);
+				}
+			}
 
 		}
-		Loggers.loggerValue("child of child list", childOfChild);
+		Loggers.loggerValue("child of child list", childOfChildList);
 		Loggers.loggerEnd();
-		return childOfChild;
+		return childOfChildList;
 	}
 
 	public ArrayList<Profile> totalfees(Map<String, Profile> profileMap, ArrayList<Profile> fees) {
@@ -342,18 +351,40 @@ public class SearchServiceImp implements SearchService {
 
 			profileMap.get(profile.getReportingManagerId()).setPaidAmount(
 					profileMap.get(profile.getReportingManagerId()).getPaidAmount() + profile.getPaidAmount());
+			
+			System.out.println(profileMap.get(profile.getReportingManagerId())+"paid amount is"+profileMap.get(profile.getReportingManagerId()).getPaidAmount());
 
 			profileMap.get(profile.getReportingManagerId()).setBalanceAmount(
 					profileMap.get(profile.getReportingManagerId()).getBalanceAmount() + profile.getBalanceAmount());
 
+			System.out.println(profileMap.get(profile.getReportingManagerId())+"Balance amount is"+profileMap.get(profile.getReportingManagerId()).getBalanceAmount());
+
 			profileMap.get(profile.getReportingManagerId()).setTotalAmount(
 					profileMap.get(profile.getReportingManagerId()).getTotalAmount() + profile.getTotalAmount());
+
+			System.out.println(profileMap.get(profile.getReportingManagerId())+"Total amount is"+profileMap.get(profile.getReportingManagerId()).getTotalAmount());
 
 		}
 		ArrayList<Profile> list = new ArrayList<Profile>(profileMap.values());
 		Loggers.loggerEnd(list);
 		return list;
 
+	}
+	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees)
+	{
+		Loggers.loggerStart();
+		for(Profile profile : fees)
+		{
+			if(profileMap.getSmartId().equals(profile.getReportingManagerId()))
+			{
+				profileMap.setPaidAmount(profileMap.getPaidAmount()+profile.getPaidAmount());
+				profileMap.setBalanceAmount(profileMap.getBalanceAmount()+profile.getBalanceAmount());
+				profileMap.setTotalAmount(profileMap.getTotalAmount()+profile.getTotalAmount());
+			}
+		}
+		Loggers.loggerEnd(profileMap);
+		return profileMap;
+		
 	}
 	
 	@Override
