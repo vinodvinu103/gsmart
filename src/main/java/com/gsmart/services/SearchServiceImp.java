@@ -216,12 +216,12 @@ public class SearchServiceImp implements SearchService {
 						Loggers.loggerValue("entered in if loop in 1ST DO WHILE Loop", "");
 						fees = studentFees(temp1);
 					}
-					}else
+					/*}else
 					{
 						Loggers.loggerValue("sumup ended", "");
 						return childList;	
+					}*/
 					}
-
 				} while (!boo);
 
 				do {
@@ -247,7 +247,7 @@ public class SearchServiceImp implements SearchService {
 
 				
 				return temp2;
-			}
+				}
 		}
 
 		else {
@@ -371,10 +371,6 @@ public class SearchServiceImp implements SearchService {
 		return parentInfo;
 	}
 
-	@Override
-	public Map<String, Object> getParentInfo(String smartId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 }

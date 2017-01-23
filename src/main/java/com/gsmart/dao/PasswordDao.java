@@ -10,6 +10,6 @@ public interface PasswordDao {
 
 	public Profile forgotPassword(String email) throws GSmartDatabaseException;
 
-	
+
 
 }

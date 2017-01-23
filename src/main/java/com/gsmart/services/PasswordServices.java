@@ -11,4 +11,5 @@ public interface PasswordServices {
 	
 
 	public Profile forgotPassword(String email) throws GSmartServiceException;
+	
 }

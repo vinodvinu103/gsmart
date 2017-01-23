@@ -1,6 +1,8 @@
 package com.gsmart.controller;
 
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ import com.gsmart.model.Profile;
 import com.gsmart.services.PasswordServices;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.CommonMail;
+import com.gsmart.util.Decrypt;
 import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.IAMResponse;
@@ -37,13 +40,21 @@ public class PasswordController {
 	public ResponseEntity<IAMResponse> setPassword(@RequestBody Login login) throws GSmartBaseException {
 		
 		Loggers.loggerStart();
-		IAMResponse myResponse;
-		login.setPassword(Encrypt.md5(String.valueOf(login.getPassword())));
-		login.setAttempt(0);
-		login.setEntryTime(CalendarCalculator.getTimeStamp());
-		passwordServices.setPassword(login);
-		System.out.println(login);
-		myResponse = new IAMResponse("success");
+		IAMResponse myResponse=null;
+		try {
+			login.setSmartId(Decrypt.MD5(login.getSmartId()));
+			
+			login.setPassword(Encrypt.md5(String.valueOf(login.getPassword())));
+			login.setAttempt(0);
+			login.setEntryTime(CalendarCalculator.getTimeStamp());
+			passwordServices.setPassword(login);
+			System.out.println(login);
+			myResponse = new IAMResponse("success");
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
@@ -84,3 +95,6 @@ public class PasswordController {
     }
 	
 }
+
+
+  

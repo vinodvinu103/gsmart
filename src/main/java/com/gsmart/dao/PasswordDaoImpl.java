@@ -54,6 +54,7 @@ public class PasswordDaoImpl implements PasswordDao {
 		try {
 
 			getConnection();
+			
 			System.out.println(email);
 
 			query = session.createQuery("from Profile where emailId=:emailId");

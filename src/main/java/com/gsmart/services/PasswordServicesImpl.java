@@ -25,6 +25,9 @@ public class PasswordServicesImpl implements PasswordServices {
 
 			return passwordDao.forgotPassword(email);
 		}
+	
+		}
+
+	
 
 
-}
