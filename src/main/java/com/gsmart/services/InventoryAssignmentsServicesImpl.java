@@ -2,6 +2,7 @@ package com.gsmart.services;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
+import com.gsmart.util.Loggers;
 
 @Service
 public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsServices {
@@ -56,9 +58,12 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	@Override
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments) {
 		try {
+			Loggers.loggerStart();
+			Logger.getLogger(InventoryAssignmentsServicesImpl.class).info("navigating to dao impl to delete the record with entry time : " + inventoryAssignments.getEntryTime());
 			inventoryAssignmentsDao.deleteInventoryDetails(inventoryAssignments);
 		} catch (GSmartDatabaseException e) {
 			// TODO Auto-generated catch block
+			Logger.getLogger(InventoryAssignmentsServicesImpl.class).info("tried navigating the record with entry time : " + inventoryAssignments.getEntryTime() + " but ended with exception");
 			e.printStackTrace();
 		}
 	}

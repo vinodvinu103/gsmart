@@ -173,14 +173,16 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		
 		try {
 			getConnection();
+			Loggers.loggerValue("given role is : ", role);
 			query = session.createQuery("SELECT DISTINCT moduleName from RolePermission where role=:role and isActive=:isActive");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
 			List<String> modules = query.list();
-			
+			Loggers.loggerValue("given modules size is : ", modules.size());
 			for (String moduleName : modules) {
 				RolePermission permission = new RolePermission();
 				permission.setModuleName(moduleName);
+				Loggers.loggerValue("given moduleName is : ", moduleName);
 				rolePermissions.add(permission);
 			}
 			

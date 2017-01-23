@@ -30,6 +30,7 @@ public class LoginDaoImpl implements LoginDao {
 	public int authenticate(Login loginDetails) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
+		getConnection();
 		try {
 			
 			int attempt = 0;
