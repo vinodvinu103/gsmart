@@ -94,7 +94,7 @@ public class RfidController {
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			List<Profile> pl=profileServices.addRfid(rfid);
 			List<Profile> pl1=profileServices.editRfid(rfid);
-			if(pl!=null && pl1!=null)
+			if(pl!=null || pl1!=null)
 			resp.setMessage("success");
 		else
 			resp.setMessage("Already exists");

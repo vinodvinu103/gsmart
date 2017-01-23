@@ -1,4 +1,3 @@
-
 package com.gsmart.services;
 
 import java.util.List;
@@ -158,7 +157,10 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 					break;
 				case "RFID":
 					rolePermission.setIcon("white fa fa-home fa-3x");
-					break;
+					break;					
+				case "Assign":
+					rolePermission.setIcon("white fa fa-th-list fa-3x");
+					break;	
 				}
 				
 			}

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.ReportCard;
+import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -48,6 +49,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			getConnection();
 			query = session.createQuery("from ReportCard where isActive='Y'");
 			cards = query.list();
+			Loggers.loggerEnd(cards);
 			return cards;
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
@@ -141,7 +143,9 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		try {
 			query = session.createQuery(
 					"from ReportCard where smartId=:smartId and isActive=:isActive and subject=:subject and "
-							+ "maxMarks=:maxMarks and minMarks=:minMarks and marksObtained=:marksObtained and subjectGrade=:subjectGrade and totalGrade=:totalGrade");
+							+ "maxMarks=:maxMarks and minMarks=:minMarks and marksObtained=:marksObtained and "
+							+ "subjectGrade=:subjectGrade and totalGrade=:totalGrade "
+							+ "and academicYear=:academicYear and reportingManagerId=:reportingManagerId");
 			query.setParameter("smartId", card.getSmartId());
 			query.setParameter("isActive", "Y");
 			query.setParameter("subject", card.getSubject());
@@ -150,6 +154,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			query.setParameter("marksObtained", card.getMarksObtained());
 			query.setParameter("subjectGrade", card.getSubjectGrade());
 			query.setParameter("totalGrade", card.getTotalGrade());
+			query.setParameter("academicYear", card.getAcademicYear());
+			query.setParameter("reportingManagerId", card.getReportingManagerId());
 			ReportCard list = (ReportCard) query.uniqueResult();
 
 			return list;
@@ -160,7 +166,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public void deleteReportCard(ReportCard card) throws GSmartDatabaseException {
-		try { 
+		try {
 			Loggers.loggerStart();
 			getConnection();
 			card.setExitTime(CalendarCalculator.getTimeStamp());
@@ -189,61 +195,56 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		return reportCard;
 
 	}
-	
+
 	@Override
-	public List<ReportCard> search(String smartId)throws GSmartDatabaseException{
+	public List<ReportCard> search(Token tokenDetail) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		List<ReportCard> list=null;
+		List<ReportCard> list = null;
 		try {
 			getConnection();
-			
-			query=session.createQuery("from ReportCard where smartId=:smartId and isActive='Y'");
-			query.setParameter("smartId", smartId);
-			list=query.list();
-			System.out.println("Serch based on smartid..."+list);
+
+			/*query = session.createQuery(
+					"from ReportCard where reportingManagerId=:reportingManagerId or smartId=:smartId and isActive='Y'");
+			query.setParameter("reportingManagerId", smartId);
+			query.setParameter("smartId", smartId);*/
+			String role=tokenDetail.getRole();
+			String smartId=tokenDetail.getSmartId();
+			if(role.equalsIgnoreCase("Principal")|role.equalsIgnoreCase("admin")|role.equalsIgnoreCase("owner")){
+			query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y'");
+			list = query.list();
+			}
+			else if (role.equalsIgnoreCase("HOD")) {
+				query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y'");
+				list = query.list();
+			}
+			System.out.println("Serch based on smartid..." + list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		Loggers.loggerEnd();
 		return list;
 	}
-	
+
 	@Override
-	public List<ReportCard> search(String subject, int standard) throws GSmartDatabaseException{
+	public List<ReportCard> search(String subject, int standard) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		List<ReportCard> list=null;
+		List<ReportCard> list = null;
 		try {
 			getConnection();
-			
-			query=session.createQuery("from ReportCard where marksObtained = (Select max(marksObtained) from ReportCard where subject=:subject and isActive='Y' and standard=:standard)");
+
+			query = session.createQuery("from ReportCard where marksObtained = (Select max(marksObtained) "
+					+ "from ReportCard where subject=:subject and isActive='Y' and standard=:standard)");
 			query.setParameter("subject", subject);
 			query.setParameter("standard", standard);
-			list=query.list();
-			System.out.println("list on max marks"+list);
+			list = query.list();
+			System.out.println("list on max marks" + list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		Loggers.loggerEnd();
 		return list;
 	}
-	
-	@Override
-	public List<ReportCard> searchBasedOnStandard(ReportCard card)throws GSmartDatabaseException{
-		Loggers.loggerStart();
-		List<ReportCard> list=null;
-		try{
-			getConnection();
-			query=session.createQuery("from ReportCard where standard=:standard and section=:section and isActive='Y' ");
-			query.setParameter("standard", card.getStandard());
-			query.setParameter("section", card.getSection());
-			list=query.list();
-			return list;
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return list;
-	}
-	
+
 	@Override
 	public void excelToDB(String smartId, MultipartFile fileUpload) throws Exception {
 		XSSFWorkbook workBook = null;
@@ -261,16 +262,24 @@ public class ReportCardDaoImpl implements ReportCardDao {
 				reportCard.setEntryTime(CalendarCalculator.getTimeStamp());
 				reportCard.setIsActive("Y");
 				reportCard.setSmartId(row.getCell(0).getStringCellValue());
-				reportCard.setAcadamicYear(row.getCell(1).getStringCellValue());
-				reportCard.setSubjectGrade(row.getCell(2).getStringCellValue());
-				reportCard.setMaxMarks((int) row.getCell(3).getNumericCellValue());
-				reportCard.setMinMarks((int) row.getCell(4).getNumericCellValue());
-				reportCard.setMarksObtained((int) row.getCell(5).getNumericCellValue());
-				reportCard.setStandard((int) row.getCell(6).getNumericCellValue());
-				reportCard.setStudentName(row.getCell(7).getStringCellValue());
-				reportCard.setSubject(row.getCell(8).getStringCellValue());
-				reportCard.setTeacherName(row.getCell(9).getStringCellValue());
-				reportCard.setTotalGrade(row.getCell(10).getStringCellValue());
+				reportCard.setStudentName(row.getCell(1).getStringCellValue());
+				reportCard.setStandard(row.getCell(2).getStringCellValue());
+				reportCard.setSection(row.getCell(3).getStringCellValue());
+				reportCard.setSubject(row.getCell(4).getStringCellValue());
+				reportCard.setTeacherName(row.getCell(5).getStringCellValue());
+				reportCard.setReportingManagerId(row.getCell(6).getStringCellValue());
+				reportCard.setMaxMarks((int) row.getCell(7).getNumericCellValue());
+				reportCard.setMinMarks((int) row.getCell(8).getNumericCellValue());
+				reportCard.setMarksObtained((int) row.getCell(9).getNumericCellValue());
+				reportCard.setSubjectGrade(row.getCell(10).getStringCellValue());
+				reportCard.setTotalGrade(row.getCell(11).getStringCellValue());
+				
+				
+				
+			
+				
+				
+				
 
 				session.merge(reportCard);
 			}

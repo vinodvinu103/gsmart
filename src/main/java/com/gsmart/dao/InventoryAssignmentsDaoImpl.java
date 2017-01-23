@@ -66,6 +66,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 		try
 		{
 		getConnection();
+		Loggers.loggerValue("inside the dao of add inventory details : ", inventoryAssignments.getQuantity());
 		inventoryAssignments.setEntryTime(CalendarCalculator.getTimeStamp());
 		inventoryAssignments.setIsActive("Y");
 		ch=(InventoryAssignmentsCompoundKey) session.save(inventoryAssignments);
@@ -164,17 +165,19 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	@Override
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException  
 	{
-		Loggers.loggerStart();
+		
 		try
 		{
 			getConnection();
+			Logger.getLogger(InventoryAssignmentsDaoImpl.class).info("trying to delete the record with entry time as : " + inventoryAssignments.getEntryTime());
 			inventoryAssignments.setIsActive("D");
 			inventoryAssignments.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(inventoryAssignments);
 			tx.commit();
 		}
 		catch(Exception e)
-		{
+		{	
+			Logger.getLogger(InventoryAssignmentsDaoImpl.class).info("trying to delete the record with entry time as : " + inventoryAssignments.getEntryTime() + " and ended with exception : " + e);
 			e.printStackTrace();
 		}
 		finally 

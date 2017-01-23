@@ -353,6 +353,7 @@ public class ProfileDaoImp implements ProfileDao {
 		
 		Loggers.loggerEnd();
 		return getProfilesWithRfid();
+
 		
 	}
 
