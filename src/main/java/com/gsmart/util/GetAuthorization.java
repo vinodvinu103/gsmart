@@ -38,7 +38,7 @@ public class GetAuthorization {
 			Loggers.loggerValue("Module: ", module);
 			permissions = getPermission(token, module);
 			httpSession.setAttribute("permissions", permissions);
-
+			System.out.println("permission"+permissions);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
@@ -67,8 +67,6 @@ public class GetAuthorization {
 
 	public boolean authorizationForPut(String tokenNumber, String task, HttpSession httpSession) {
 		
-		Loggers.loggerStart(tokenNumber);
-		Loggers.loggerStart(task);
 		RolePermission rolePermission = null;
 		
 		try{
@@ -76,17 +74,14 @@ public class GetAuthorization {
 			
 			if(task.equalsIgnoreCase("edit"))
 			{
-				Loggers.loggerEnd(rolePermission.getEdit());
 				return rolePermission.getEdit();
 			}
 			else
 			{
-				Loggers.loggerEnd(rolePermission.getDel());
 				return rolePermission.getDel();
 			}
 		} catch(Exception e){
 			e.printStackTrace();
-			Loggers.loggerEnd(false);
 			return false;
 		}
 	}
@@ -107,16 +102,22 @@ public class GetAuthorization {
 		Loggers.loggerStart(token);
 		Loggers.loggerStart(module);
 		
-		RolePermission permissions;
+		RolePermission permissions=null;
+		try{
 		session = sessionFactory.openSession();
 		query = session.createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName) and isActive=:isActive");
 		query.setParameter("role", token.getRole());
-		query.setParameter("isActive", "Y");
+		
 		query.setParameter("moduleName", module);
 		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
+		session.close();
 		
 		Loggers.loggerEnd(permissions);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		return permissions;
 	}
 	

@@ -156,6 +156,10 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 				case "RolePermission":
 					rolePermission.setIcon("white fa fa-unlock-alt fa-3x");
 					break;
+					
+				case "Assign":
+					rolePermission.setIcon("white fa fa-th-list fa-3x");
+					break;	
 				}
 				
 			}

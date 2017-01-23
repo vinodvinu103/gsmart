@@ -77,9 +77,9 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 	
 	@Override
-	public ArrayList<Profile> getProfiles(String role) throws GSmartServiceException {
+	public ArrayList<Profile> getProfiles(String role,String smartId) throws GSmartServiceException {
 		
-		ArrayList<Profile> profileList = profileDao.getProfiles(role);
+		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId);
 		return profileList;
 	}
 

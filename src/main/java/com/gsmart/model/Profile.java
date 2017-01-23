@@ -1,10 +1,10 @@
 package com.gsmart.model;
 
-import java.util.Arrays;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -30,7 +30,7 @@ public class Profile {
 
 	@Column(name = "GENDER")
 	private String gender;
-	
+
 	@Column(name = "MARTIAL_STATUS")
 	private String martialStatus;
 
@@ -102,13 +102,13 @@ public class Profile {
 
 	@Column(name = "TEACHER_ID")
 	private String teacherId;
-	
+
 	@Column(name = "UPD_SMARTID")
 	private String updSmartId;
-	
-	@Column(name = "IMAGE",columnDefinition="mediumblob")
+
+	@Lob @Column(name = "IMAGE", length = 400000)
 	private byte[] image;
-	
+
 	// CONTACT DETAILS
 
 	@Column(name = "EMAIL_ID")
@@ -241,7 +241,6 @@ public class Profile {
 
 	// Admission Details
 
-
 	@Column(name = "SCHOOL_NAME")
 	private String schoolName;
 
@@ -268,67 +267,55 @@ public class Profile {
 
 	@Column(name = "PREVIOUS_YEAR")
 	private String previousYear;
-	
+
 	@Column(name = "ENTRY_TIME")
 	private String entryTime;
-	
+
 	@Column(name = "UPDATED_TIME")
 	private String updatedTime;
-	
+
 	@Column(name = "EXIT_TIME")
 	private String exitTime;
-	
+
 	@Column(name = "IS_ACTIVE")
 	private String isActive;
-	
+
 	@Transient
 	private boolean childFlag;
-	
+
 	@Transient
 	private boolean parentFlag;
-	
 
 	@Transient
 	private double totalAmount;
-	
-	
+
 	@Transient
 	private double paidAmount;
-	
-	
+
 	@Transient
 	private double balanceAmount;
 
-	
-	
 	// -----------------------------------------------------------/
 
-	
-	
 	public String getUpdSmartId() {
 		return updSmartId;
 	}
-
 
 	public boolean isChildFlag() {
 		return childFlag;
 	}
 
-
 	public void setChildFlag(boolean childFlag) {
 		this.childFlag = childFlag;
 	}
-
 
 	public boolean isParentFlag() {
 		return parentFlag;
 	}
 
-
 	public void setParentFlag(boolean parentFlag) {
 		this.parentFlag = parentFlag;
 	}
-
 
 	public String getEntryTime() {
 		return entryTime;
@@ -346,16 +333,13 @@ public class Profile {
 		this.exitTime = exitTime;
 	}
 
-
 	public String getUpdatedTime() {
 		return updatedTime;
 	}
 
-
 	public void setUpdatedTime(String updatedTime) {
 		this.updatedTime = updatedTime;
 	}
-
 
 	public String getIsActive() {
 		return isActive;
@@ -421,11 +405,9 @@ public class Profile {
 		return martialStatus;
 	}
 
-
 	public void setMartialStatus(String martialStatus) {
 		this.martialStatus = martialStatus;
 	}
-
 
 	public String getBloodGroup() {
 		return bloodGroup;
@@ -534,8 +516,6 @@ public class Profile {
 	public String getRole() {
 		return role;
 	}
-
-	
 
 	public void setRole(String role) {
 		this.role = role;
@@ -709,18 +689,13 @@ public class Profile {
 		this.passportNumber = passportNumber;
 	}
 
-
-
-	
 	public String getEcnrStatus() {
 		return ecnrStatus;
 	}
 
-
 	public void setEcnrStatus(String ecnrStatus) {
 		this.ecnrStatus = ecnrStatus;
 	}
-
 
 	public String getVisaDetails() {
 		return visaDetails;
@@ -874,67 +849,53 @@ public class Profile {
 		this.twelvePassYear = twelvePassYear;
 	}
 
-
-
 	public String getUgSchoolName() {
 		return ugSchoolName;
 	}
-
 
 	public void setUgSchoolName(String ugSchoolName) {
 		this.ugSchoolName = ugSchoolName;
 	}
 
-
 	public String getUgPercentage() {
 		return ugPercentage;
 	}
-
 
 	public void setUgPercentage(String ugPercentage) {
 		this.ugPercentage = ugPercentage;
 	}
 
-
 	public String getUgPassYear() {
 		return ugPassYear;
 	}
-
 
 	public void setUgPassYear(String ugPassYear) {
 		this.ugPassYear = ugPassYear;
 	}
 
-
 	public String getPgSchoolName() {
 		return pgSchoolName;
 	}
-
 
 	public void setPgSchoolName(String pgSchoolName) {
 		this.pgSchoolName = pgSchoolName;
 	}
 
-
 	public String getPgPercentage() {
 		return pgPercentage;
 	}
-
 
 	public void setPgPercentage(String pgPercentage) {
 		this.pgPercentage = pgPercentage;
 	}
 
-
 	public String getPgPassYear() {
 		return pgPassYear;
 	}
 
-
 	public void setPgPassYear(String pgPassYear) {
 		this.pgPassYear = pgPassYear;
 	}
-
 
 	public String getExperiance() {
 		return experiance;
@@ -943,7 +904,6 @@ public class Profile {
 	public void setExperiance(String experiance) {
 		this.experiance = experiance;
 	}
-
 
 	public String getSchoolName() {
 		return schoolName;
@@ -973,11 +933,9 @@ public class Profile {
 		return standard;
 	}
 
-
 	public void setStandard(String standard) {
 		this.standard = standard;
 	}
-
 
 	public String getSection() {
 		return section;
@@ -1019,7 +977,6 @@ public class Profile {
 		this.previousYear = previousYear;
 	}
 
-
 	public byte[] getImage() {
 		return image;
 	}
@@ -1028,51 +985,41 @@ public class Profile {
 		this.image = image;
 	}
 
-
 	public Date getPassportIssueDate() {
 		return passportIssueDate;
 	}
-
 
 	public void setPassportIssueDate(Date passportIssueDate) {
 		this.passportIssueDate = passportIssueDate;
 	}
 
-
 	public Date getPassportExpiryDate() {
 		return passportExpiryDate;
 	}
-
 
 	public void setPassportExpiryDate(Date passportExpiryDate) {
 		this.passportExpiryDate = passportExpiryDate;
 	}
 
-
 	public double getTotalAmount() {
 		return totalAmount;
 	}
-
 
 	public void setTotalAmount(double totalAmount) {
 		this.totalAmount = totalAmount;
 	}
 
-
 	public double getPaidAmount() {
 		return paidAmount;
 	}
-
 
 	public void setPaidAmount(double paidAmount) {
 		this.paidAmount = paidAmount;
 	}
 
-
 	public double getBalanceAmount() {
 		return balanceAmount;
 	}
-
 
 	public void setBalanceAmount(double balanceAmount) {
 		this.balanceAmount = balanceAmount;

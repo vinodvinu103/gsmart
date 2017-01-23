@@ -49,13 +49,13 @@ public class LeaveMasterController {
 
 		List<LeaveMaster> leaveMasterList = null;
 
-		RolePermission moduleLeaveMaster = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> leavemaster = new HashMap<>();
 
-		leavemaster.put("moduleLeaveMaster", moduleLeaveMaster);
+		leavemaster.put("modulePermission", modulePermission);
 
-		if (moduleLeaveMaster != null) {
+		if (modulePermission != null) {
 			leaveMasterList = leaveMasterService.getLeaveMasterList();
 
 			leavemaster.put("leaveMasterList", leaveMasterList);
