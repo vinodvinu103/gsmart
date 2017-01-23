@@ -31,4 +31,5 @@ public interface SearchService {
 	ArrayList<Profile> totalfees(Map<String, Profile> profileMap, ArrayList<Profile> fees);
 	
 	public Map<String, Object> getParentInfo(String smartId);
+	
 }

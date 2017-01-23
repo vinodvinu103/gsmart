@@ -169,8 +169,9 @@ public class ProfileDaoImp implements ProfileDao {
 
 	/* for login */
 	public Profile getProfileDetails(String smartId) {
-
+		
 		Loggers.loggerStart(smartId);
+		System.out.println("Smartid>>>>>>"+smartId);
 		Profile profilelist = null;
 		
 		try {

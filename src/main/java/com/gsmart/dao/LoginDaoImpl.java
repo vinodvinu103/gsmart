@@ -28,10 +28,10 @@ public class LoginDaoImpl implements LoginDao {
 
 	@Override
 	public int authenticate(Login loginDetails) throws GSmartDatabaseException {
-		
+		getConnection();
 		Loggers.loggerStart();
 		try {
-			getConnection();
+			
 			int attempt = 0;
 			Query query = session.createQuery("from Login where smartId = :smartId");
 			query.setParameter("smartId", loginDetails.getSmartId());
@@ -69,6 +69,9 @@ public class LoginDaoImpl implements LoginDao {
 			Loggers.loggerException(e.getMessage());
 			return 5;
 
+		}
+		finally {
+			session.close();
 		}
 	}
 
