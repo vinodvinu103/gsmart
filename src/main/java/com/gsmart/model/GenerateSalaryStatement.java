@@ -1,18 +1,16 @@
 package com.gsmart.model;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="SALARY_STRUCTURE")
-@IdClass(CompoundSalaryStructure.class)
-public class SalaryStructure {
+@Table(name="GENERATE_SALARY_STATEMENT")
+@IdClass(CompoundGenerateSalaryStatement.class)
+public class GenerateSalaryStatement {
 
-	
 	@Id
 	@Column(name="SMART_ID")
 	private String smartId;
@@ -24,12 +22,11 @@ public class SalaryStructure {
 	@Id
 	@Column(name="YEAR")
 	private String year;
-	
+
 	@Id
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
-	
-	
+
 	@Column(name="EMP_NAME")
 	private String empName;
 	
@@ -39,17 +36,8 @@ public class SalaryStructure {
 	@Column(name="EMP_ROLE")
 	private String empRole;
 	
-	@Column(name="IS_ACTIVE")
-	private String isActive;
-	
-	@Column(name="EXIT_TIME")
-	private String exitTime;
-	
-	@Column(name="UPDATED_TIME")
-	private String updatedTime;
-	
 	@Column(name="UPD_SMART_ID")
-	private String updSmartId;
+	private Integer updSmartId;
 	
 	@Column(name="BASIC_SALARY")
 	private Double basicSalary;
@@ -65,26 +53,41 @@ public class SalaryStructure {
 	
 	@Column(name="ESI")
 	private Double esi;
-
+	
 	@Column(name="CONVEYANCE")
 	private Double conveyance;
 	
 	@Column(name="IT")
 	private Double it;
 	
-	@Column(name="SPECIAL_ALLOWANCE")
-	private Double specialAllowance;
+	
+	
+	@Column(name="ACTUAL_SALARY")
+	private Double actualSalary;
+	
+	@Column(name="DEDUCTED_SALARY")
+	private Double deductedSalary;
+	
+	@Column(name="PAYABLE")
+	private Double payable;
 	
 	@Column(name="OT_AMOUNT")
 	private Double otAmount;
 	
-	@Column(name="SALARY")
-	private Double salary;
+	@Column(name="OT_ALLOWANCE")
+	private Double otAllowance;
 	
-	@Column(name="STATUTORY")
-	private Double statutory;
+	@Column(name="SPECIAL_ALLOWANCE")
+	private Double specialAllowance;
 	
+	@Column(name="NON_PAID_LEAVES_DAYS")
+	private int nonPaidLeavesDays;
 	
+	@Column(name="NON_PAID_LEAVES_AMOUNT")
+	private Double nonPaidLeavesAmount;
+
+	
+
 	public String getSmartId() {
 		return smartId;
 	}
@@ -133,35 +136,11 @@ public class SalaryStructure {
 		this.empDesignation = empDesignation;
 	}
 
-	public String getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
-
-	public String getExitTime() {
-		return exitTime;
-	}
-
-	public void setExitTime(String exitTime) {
-		this.exitTime = exitTime;
-	}
-
-	public String getUpdatedTime() {
-		return updatedTime;
-	}
-
-	public void setUpdatedTime(String updatedTime) {
-		this.updatedTime = updatedTime;
-	}
-
-	public String getUpdSmartId() {
+	public Integer getUpdSmartId() {
 		return updSmartId;
 	}
 
-	public void setUpdSmartId(String updSmartId) {
+	public void setUpdSmartId(Integer updSmartId) {
 		this.updSmartId = updSmartId;
 	}
 
@@ -205,6 +184,70 @@ public class SalaryStructure {
 		this.esi = esi;
 	}
 
+	public Double getActualSalary() {
+		return actualSalary;
+	}
+
+	public void setActualSalary(Double actualSalary) {
+		this.actualSalary = actualSalary;
+	}
+
+	public Double getDeductedSalary() {
+		return deductedSalary;
+	}
+
+	public void setDeductedSalary(Double deductedSalary) {
+		this.deductedSalary = deductedSalary;
+	}
+
+	public Double getPayable() {
+		return payable;
+	}
+
+	public void setPayable(Double payable) {
+		this.payable = payable;
+	}
+
+	public Double getOtAmount() {
+		return otAmount;
+	}
+
+	public void setOtAmount(Double otAmount) {
+		this.otAmount = otAmount;
+	}
+
+	public Double getOtAllowance() {
+		return otAllowance;
+	}
+
+	public void setOtAllowance(Double otAllowance) {
+		this.otAllowance = otAllowance;
+	}
+
+	public Double getSpecialAllowance() {
+		return specialAllowance;
+	}
+
+	public void setSpecialAllowance(Double specialAllowance) {
+		this.specialAllowance = specialAllowance;
+	}
+
+	public int getNonPaidLeavesDays() {
+		return nonPaidLeavesDays;
+	}
+
+	public void setNonPaidLeavesDays(int nonPaidLeavesDays) {
+		this.nonPaidLeavesDays = nonPaidLeavesDays;
+	}
+
+	public Double getNonPaidLeavesAmount() {
+		return nonPaidLeavesAmount;
+	}
+
+	public void setNonPaidLeavesAmount(Double nonPaidLeavesAmount) {
+		this.nonPaidLeavesAmount = nonPaidLeavesAmount;
+	}
+
 	public Double getConveyance() {
 		return conveyance;
 	}
@@ -221,38 +264,6 @@ public class SalaryStructure {
 		this.it = it;
 	}
 
-	public Double getSpecialAllowance() {
-		return specialAllowance;
-	}
-
-	public void setSpecialAllowance(Double specialAllowance) {
-		this.specialAllowance = specialAllowance;
-	}
-
-	public Double getOtAmount() {
-		return otAmount;
-	}
-
-	public void setOtAmount(Double otAmount) {
-		this.otAmount = otAmount;
-	}
-
-	public Double getSalary() {
-		return basicSalary+hra+pf+pt+esi+specialAllowance+conveyance+it;
-	}
-
-	public void setSalary(Double salary) {
-		this.salary = salary;
-	}
-
-	public Double getStatutory() {
-		return pf+pt+esi+it;
-	}
-
-	public void setStatutory(Double statutory) {
-		this.statutory = statutory;
-	}
-
 	public String getEmpRole() {
 		return empRole;
 	}
@@ -263,14 +274,14 @@ public class SalaryStructure {
 
 	@Override
 	public String toString() {
-		return "SalaryStructure [smartId=" + smartId + ", month=" + month + ", year=" + year + ", entryTime="
+		return "GenerateSalaryStatement [smartId=" + smartId + ", month=" + month + ", year=" + year + ", entryTime="
 				+ entryTime + ", empName=" + empName + ", empDesignation=" + empDesignation + ", empRole=" + empRole
-				+ ", isActive=" + isActive + ", exitTime=" + exitTime + ", updatedTime=" + updatedTime + ", updSmartId="
-				+ updSmartId + ", basicSalary=" + basicSalary + ", hra=" + hra + ", pf=" + pf + ", pt=" + pt + ", esi="
-				+ esi + ", conveyance=" + conveyance + ", it=" + it + ", specialAllowance=" + specialAllowance
-				+ ", otAmount=" + otAmount + ", salary=" + salary + ", statutory=" + statutory + "]";
+				+ ", updSmartId=" + updSmartId + ", basicSalary=" + basicSalary + ", hra=" + hra + ", pf=" + pf
+				+ ", pt=" + pt + ", esi=" + esi + ", conveyance=" + conveyance + ", it=" + it + ", actualSalary="
+				+ actualSalary + ", deductedSalary=" + deductedSalary + ", payable=" + payable + ", otAmount="
+				+ otAmount + ", otAllowance=" + otAllowance + ", specialAllowance=" + specialAllowance
+				+ ", nonPaidLeavesDays=" + nonPaidLeavesDays + ", nonPaidLeavesAmount=" + nonPaidLeavesAmount + "]";
 	}
-
 	
 	
 	

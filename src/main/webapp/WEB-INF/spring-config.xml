@@ -39,8 +39,10 @@
 				<value>com.gsmart.model.FeeMaster</value>
 				<value>com.gsmart.model.LeaveMaster</value>
 				<value>com.gsmart.model.Fee</value>
-				
+				<value>com.gsmart.model.PaySlip</value>
 				<value>com.gsmart.model.Modules</value>
+				<value>com.gsmart.model.SalaryStructure</value>
+				<value>com.gsmart.model.GenerateSalaryStatement</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

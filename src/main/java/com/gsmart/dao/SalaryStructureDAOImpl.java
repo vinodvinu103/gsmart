@@ -32,7 +32,7 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
 		salaryStructure.setIsActive("Y");
-		salaryStructure.getCompoundSalaryStructure().setEntryTime(CalendarCalculator.getTimeStamp());
+		salaryStructure.setEntryTime(CalendarCalculator.getTimeStamp());
 		salaryStructure.setSalary(salaryStructure.getSalary());
 		salaryStructure.setStatutory(salaryStructure.getStatutory());
 		session.save(salaryStructure);
@@ -44,7 +44,7 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		String hql = "from SalaryStructure ss where isActive='Y' and ss.compoundSalaryStructure.entryTime='"+salaryStructure.getCompoundSalaryStructure().getEntryTime()+"'";
+		String hql = "from SalaryStructure ss where isActive='Y' and ss.compoundSalaryStructure.entryTime='"+salaryStructure.getEntryTime()+"'";
 		Query qry = session.createQuery(hql);
 		SalaryStructure oldSalaryStructure = (SalaryStructure) qry.uniqueResult();
 		oldSalaryStructure.setIsActive("N");
@@ -59,7 +59,7 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		String hql = "from SalaryStructure ss where isActive='Y' and ss.compoundSalaryStructure.entryTime='"+salaryStructure.getCompoundSalaryStructure().getEntryTime()+"'";
+		String hql = "from SalaryStructure ss where isActive='Y' and ss.compoundSalaryStructure.entryTime='"+salaryStructure.getEntryTime()+"'";
 		Query qry = session.createQuery(hql);
 		SalaryStructure oldSalaryStructure = (SalaryStructure) qry.uniqueResult();
 		oldSalaryStructure.setIsActive("D");

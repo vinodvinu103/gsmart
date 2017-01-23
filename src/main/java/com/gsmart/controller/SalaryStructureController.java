@@ -38,7 +38,7 @@ Logger logger = Logger.getLogger(SalaryStructureController.class);
 	}
 	
 	@RequestMapping("/addSalaryStructure/{updSmartId}")
-	public ResponseEntity<Map<String,String>> add(@RequestBody SalaryStructure salaryStructure, @PathVariable("updSmartId") int updSmartId)
+	public ResponseEntity<Map<String,String>> add(@RequestBody SalaryStructure salaryStructure, @PathVariable("updSmartId") String updSmartId)
 	{
 		Map<String, String> jsonMap = new HashMap<String, String>();
 		
@@ -55,7 +55,7 @@ Logger logger = Logger.getLogger(SalaryStructureController.class);
 	}
 	
 	@RequestMapping("/editSalaryStructure/{updSmartId}")
-	public ResponseEntity<Map<String,String>> edit(@RequestBody SalaryStructure salaryStructure, @PathVariable("updSmartId") int updSmartId)
+	public ResponseEntity<Map<String,String>> edit(@RequestBody SalaryStructure salaryStructure, @PathVariable("updSmartId") String updSmartId)
 	{
 		Map<String, String> jsonMap = new HashMap<String, String>();
 		
@@ -72,7 +72,7 @@ Logger logger = Logger.getLogger(SalaryStructureController.class);
 	}
 	
 	@RequestMapping("/deleteSalaryStructure/{updSmartId}")
-	public ResponseEntity<Map<String,String>> delete(@RequestBody SalaryStructure salaryStructure, @PathVariable("updSmartId") int updSmartId)
+	public ResponseEntity<Map<String,String>> delete(@RequestBody SalaryStructure salaryStructure, @PathVariable("updSmartId") String updSmartId)
 	{
 		Map<String, String> jsonMap = new HashMap<String, String>();
 		

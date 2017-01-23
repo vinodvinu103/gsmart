@@ -20,7 +20,7 @@ public class PaySlipDAOImpl implements PaySlipDAO{
 	public GenerateSalaryStatement download(PaySlip paySlip) {
 
 		Session session = sessionFactory.openSession();
-		String hql = "from GenerateSalaryStatement gss where gss.compoundGenerateSalaryStatement.empSmartId="+paySlip.getEmpSmartId()+" and gss.compoundGenerateSalaryStatement.month='"+paySlip.getFromMonth()+"' and gss.compoundGenerateSalaryStatement.year='"+paySlip.getFromYear()+"'";
+		String hql = "from GenerateSalaryStatement gss where gss.compoundGenerateSalaryStatement.empSmartId="+paySlip.getSmartId()+" and gss.compoundGenerateSalaryStatement.month='"+paySlip.getFromMonth()+"' and gss.compoundGenerateSalaryStatement.year='"+paySlip.getFromYear()+"'";
 		Query qry = session.createQuery(hql);
 		GenerateSalaryStatement salStmt = (GenerateSalaryStatement) qry.uniqueResult();
 		return salStmt;
@@ -39,7 +39,7 @@ public class PaySlipDAOImpl implements PaySlipDAO{
 	@Override
 	public List<Profile> emailAddress(PaySlip paySlip){
 		Session session = sessionFactory.openSession();
-		String hql = "from Profile where empSmartId="+paySlip.getEmpSmartId();
+		String hql = "from Profile where empSmartId="+paySlip.getSmartId();
 		Query qry= session.createQuery(hql);
 		return qry.list();
 	}

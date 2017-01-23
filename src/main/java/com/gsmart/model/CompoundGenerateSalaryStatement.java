@@ -2,39 +2,26 @@ package com.gsmart.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class CompoundSalaryStructure implements Serializable {
+public class CompoundGenerateSalaryStatement implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="SMART_ID")
 	private String smartId;
 	
-	@Column(name="MONTH")
 	private String month;
 	
-	@Column(name="YEAR")
 	private String year;
 
-	@Column(name="ENTRY_TIME")
 	private String entryTime;
-	
-	public String getEntryTime() {
-		return entryTime;
-	}
 
-	public void setEntryTime(String entryTime) {
-		this.entryTime = entryTime;
-	}
-
-	public String getEmpSmartId() {
+	public String getSmartId() {
 		return smartId;
 	}
 
-	public void setEmpSmartId(String smartId) {
+	public void setSmartId(String smartId) {
 		this.smartId = smartId;
 	}
 
@@ -54,9 +41,13 @@ public class CompoundSalaryStructure implements Serializable {
 		this.year = year;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getEntryTime() {
+		return entryTime;
 	}
-	
+
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
+
 	
 }

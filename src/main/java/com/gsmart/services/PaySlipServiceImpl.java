@@ -81,7 +81,7 @@ public class PaySlipServiceImpl implements PaySlipService {
 logger.info(paySlip);
 				try {
 					PdfWriter.getInstance(document,
-							new FileOutputStream(salStmt.getCompoundGenerateSalaryStatement().getEmpSmartId() + " "
+							new FileOutputStream(salStmt.getSmartId() + " "
 									+ month + " " + year + ".pdf"));
 					logger.info("before catch");
 				} catch (FileNotFoundException | DocumentException e) {
@@ -169,7 +169,7 @@ logger.info(startMonth);
 
 			PdfPCell cell1 = new PdfPCell(new Paragraph("Employee Code", labels));
 			PdfPCell cell2 = new PdfPCell(
-					new Paragraph(salStmt.getCompoundGenerateSalaryStatement().getEmpSmartId().toString(), contents));
+					new Paragraph(salStmt.getSmartId().toString(), contents));
 			PdfPCell cell3 = new PdfPCell(new Paragraph("Employee Name", labels));
 			PdfPCell cell4 = new PdfPCell(new Paragraph(salStmt.getEmpName(), contents));
 			PdfPCell cell5 = new PdfPCell(new Paragraph("Designation", labels));
@@ -396,9 +396,9 @@ logger.info(startMonth);
 			Multipart multipart = new MimeMultipart();
 
 			messageBodyPart = new MimeBodyPart();
-			String file = "/home/gtpl103/" + paySlip.getEmpSmartId() + " " + paySlip.getFromMonth() + " "
+			String file = "/home/gtpl103/" + paySlip.getSmartId() + " " + paySlip.getFromMonth() + " "
 					+ paySlip.getFromYear() + ".pdf";
-			String fileName = paySlip.getEmpSmartId() + " " + paySlip.getFromMonth() + " " + paySlip.getFromYear()
+			String fileName = paySlip.getSmartId() + " " + paySlip.getFromMonth() + " " + paySlip.getFromYear()
 					+ ".pdf";
 			DataSource source = new FileDataSource(file);
 			messageBodyPart.setDataHandler(new DataHandler(source));
