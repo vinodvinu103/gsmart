@@ -57,6 +57,7 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	public boolean userProfileInsert(Profile profile) {
+		Loggers.loggerStart();
 		getConnection();
 		boolean flag = false;
 		try {
@@ -66,15 +67,20 @@ public class ProfileDaoImp implements ProfileDao {
 			{
 				Assign assign=getStandardTeacher(profile.getStandard());
 				profile.setReportingManagerId(assign.getTeacherSmartId());
+				session.save(profile);
 				
+			}else{
+				session.save(profile);
 			}
-			session.save(profile);
+			
 			transaction.commit();
+			
 			flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			flag = false;
 		} 
+		Loggers.loggerEnd();
 		return flag;
 	}
 	

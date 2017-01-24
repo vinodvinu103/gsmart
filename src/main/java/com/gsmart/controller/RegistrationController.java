@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
 import com.gsmart.model.Token;
+import com.gsmart.services.PasswordServices;
 //import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
@@ -49,6 +51,9 @@ public class RegistrationController {
 	
 	@Autowired
 	TokenService tokenService;
+	
+	@Autowired
+	PasswordServices passwordServices;
 
 	@RequestMapping(value = "/employee", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewEmployeeProfiles(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
@@ -100,7 +105,7 @@ public class RegistrationController {
 	}
 
 	@RequestMapping(value = "/addProfile/{updSmartId}", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> addUser(@RequestBody Profile profile,
+	public ResponseEntity<Map<String, String>> addUser(@RequestBody Profile profile, Login login,
 			@PathVariable("updSmartId") String updSmartId) throws GSmartBaseException {
 
 		Loggers.loggerStart(profile.getFirstName());
@@ -114,8 +119,19 @@ public class RegistrationController {
 		String smartId = part[0] + newId;
 
 		profile.setSmartId(smartId);
-		profile.setUpdSmartId(updSmartId);
+		profile.setUpdSmartId(updSmartId);	
+		
+		System.out.println("smartid..............."+smartId);
+		
+		
+		login.setReferenceSmartId(Encrypt.md5(smartId));
+		System.out.println("Encryptsmartid........."+Encrypt.md5(smartId));
+		login.setSmartId(smartId);
+		passwordServices.setPassword(login);
+				
 
+		
+		
 		if (profileServices.insertUserProfileDetails(profile)) {
 			CommonMail commonMail = new CommonMail();
 			try {

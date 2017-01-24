@@ -19,9 +19,32 @@ public class Login implements Serializable {
 
 	@Column(name = "PASSWORD")
 	private String password;
+	
+	@Transient
+	@Column(name = "PASSWORD")
+	private String newPassword;
+
 	@Transient
 	@Column(name = "PASSWORD")
 	private String confirmPassword;
+	
+	@Column(name = "REFERENCESMARTID")
+	private String referenceSmartId;	
+
+	public String getReferenceSmartId() {
+		return referenceSmartId;
+	}
+
+	@Override
+	public String toString() {
+		return "Login [smartId=" + smartId + ", password=" + password + ", newPassword=" + newPassword
+				+ ", confirmPassword=" + confirmPassword + ", referenceSmartId=" + referenceSmartId + ", attempt="
+				+ attempt + ", entryTime=" + entryTime + ", updatedTime=" + updatedTime + "]";
+	}
+
+	public void setReferenceSmartId(String referenceSmartId) {
+		this.referenceSmartId = referenceSmartId;
+	}
 
 	@Column(name = "ATTEMPT")
 	private Integer attempt;
@@ -70,6 +93,14 @@ public class Login implements Serializable {
 
 	public void setUpdatedTime(String updatedTime) {
 		this.updatedTime = updatedTime;
+	}
+	
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 
 	public String getConfirmPassword() {

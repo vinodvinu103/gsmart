@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +19,11 @@ public class PasswordServicesImpl implements PasswordServices {
 		
 	}
 
+	@Override
+	public boolean changePassword(Login login, String smartId) throws GSmartServiceException {
+		
+	return passwordDao.changePassword(login, smartId);
+		
+	}	
+	
 }
