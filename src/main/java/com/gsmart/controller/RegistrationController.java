@@ -1,6 +1,7 @@
 package com.gsmart.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,10 +18,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.model.Assign;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
 import com.gsmart.model.Token;
+import com.gsmart.services.AssignService;
+import com.gsmart.services.HierarchyServices;
 //import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
@@ -43,79 +48,92 @@ public class RegistrationController {
 
 	@Autowired
 	SearchService searchService;
-	
+
 	@Autowired
 	GetAuthorization getAuthorization;
-	
+
 	@Autowired
 	TokenService tokenService;
+	
+	@Autowired
+	AssignService assignService;
+	
+	@Autowired
+	HierarchyServices hierarchyServices;
 
 	@RequestMapping(value = "/employee", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> viewEmployeeProfiles(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> viewEmployeeProfiles(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> jsonMap = new HashMap<>();
-		
-		RolePermission modulePermisson=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		jsonMap.put("modulePermisson", modulePermisson);
 
 		Token Token = tokenService.getToken(tokenNumber);
-		String smartId=Token.getSmartId();
-		
-		if(modulePermisson!=null){
-		jsonMap.put("result", profileServices.getProfiles("employee",smartId));
-		Loggers.loggerEnd(jsonMap);
-		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-		}
-		else{
+		String smartId = Token.getSmartId();
+
+		if (modulePermisson != null) {
+			jsonMap.put("result", profileServices.getProfiles("employee", smartId));
+			Loggers.loggerEnd(jsonMap);
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		} else {
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		}
 
 	}
 
 	@RequestMapping(value = "/student", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> viewStudentProfiles(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> viewStudentProfiles(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> jsonMap = new HashMap<>();
-		
-		RolePermission modulePermisson=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		jsonMap.put("modulePermisson", modulePermisson);
 
 		Token Token = tokenService.getToken(tokenNumber);
-		String smartId=Token.getSmartId();
-		
-		if(modulePermisson!=null){
-		jsonMap.put("result", profileServices.getProfiles("student",smartId));
-		Loggers.loggerEnd(jsonMap);
-		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-		}
-		else{
+		String smartId = Token.getSmartId();
+
+		if (modulePermisson != null) {
+			jsonMap.put("result", profileServices.getProfiles("student", smartId));
+			Loggers.loggerEnd(jsonMap);
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		} else {
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		}
 	}
 
-	@RequestMapping(value = "/addProfile/{updSmartId}", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> addUser(@RequestBody Profile profile,
-			@PathVariable("updSmartId") String updSmartId) throws GSmartBaseException {
+	@RequestMapping(value = "/addProfile", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, String>> addUser(@RequestBody Profile profile, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		String tokenNumber = token.get("Authorization").get(0);
+		Token tokenObj = tokenService.getToken(tokenNumber);
+		String updSmartId = tokenObj.getSmartId();
 
 		Loggers.loggerStart(profile.getFirstName());
 		Loggers.loggerValue("Added by ", updSmartId);
 
 		Map<String, String> jsonMap = new HashMap<>();
-			
-		String id = profileServices.getmaxSamrtId();
-		String[] part = id.split("(?<=\\D)(?=\\d)");
-		int newId = Integer.parseInt(part[1]) + 1;
-		String smartId = part[0] + newId;
 
+		String smartId = String.valueOf((Integer.parseInt(profileServices.getmaxSamrtId()) + 1));
+		if(profile.getRole().equalsIgnoreCase("student")) {
+			profile.setHierarchy(tokenObj.getHierarchy());
+			/*Hierarchy hierarchy = hierarchyServices.getHierarchyByHid(tokenObj.getHierarchy().getHid());
+			Assign assign = assignService.getStaffByClassAndSection(profile.getStandard(), profile.getSection(), hierarchy);
+			profile.setReportingManagerId(assign.getTeacherSmartId());
+			profile.setCounterSigningManagerId(assign.getHodSmartId());*/
+		}
 		profile.setSmartId(smartId);
 		profile.setUpdSmartId(updSmartId);
-
+		profile.setEntryTime(Calendar.getInstance().getTime().toString());
 		if (profileServices.insertUserProfileDetails(profile)) {
 			CommonMail commonMail = new CommonMail();
 			try {

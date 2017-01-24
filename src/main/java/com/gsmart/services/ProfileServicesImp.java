@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.ProfileDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -147,6 +148,11 @@ public class ProfileServicesImp implements ProfileServices {
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
+	}
+
+	@Override
+	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartServiceException {
+		return profileDao.getProfileByHierarchy(hierarchy);
 	}
 
 
