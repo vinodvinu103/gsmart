@@ -1,17 +1,19 @@
 package com.gsmart.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.hibernate.metamodel.relational.Loggable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gsmart.dao.BandDao;
 import com.gsmart.dao.ProfileDao;
+import com.gsmart.model.Band;
 import com.gsmart.model.Fee;
 import com.gsmart.model.FeeMaster;
 //import com.gsmart.model.Notice;
@@ -28,8 +30,14 @@ public class SearchServiceImp implements SearchService {
 
 	@Autowired
 	FeeServices feeServices;
+	
+	@Autowired
+	BandDao bandDao;
+	
+	@Autowired
+	FeeMasterServices feeMasterServices;
 
-	@Autowired /*
+	/* @Autowired 
 				 * @RequestMapping(value = "/searchRep", method =
 				 * RequestMethod.POST) public ResponseEntity<Map<String,
 				 * ArrayList<Profile>>> searchRep(@RequestBody Search search) {
@@ -43,10 +51,11 @@ public class SearchServiceImp implements SearchService {
 				 * HttpStatus.OK);
 				 * 
 				 * }
+	
 				 */
-	FeeMasterServices feeMasterServices;
+	
 
-	;
+	
 	private Map<String, Profile> allProfiles;
 
 	@Override
@@ -198,11 +207,10 @@ public class SearchServiceImp implements SearchService {
 				Loggers.loggerValue("entered in else stmt", "");
 				do {
 					Loggers.loggerValue("entered in doWhile loop", "");
-					ArrayList<Profile> gotoloop=gotoloop(temp1, profiles);
-					if(!gotoloop.isEmpty())
-					{
+					ArrayList<Profile> gotoloop = gotoloop(temp1, profiles);
+					if (!gotoloop.isEmpty()) {
 
-					map.put(++i, gotoloop);
+						map.put(++i, gotoloop);
 
 						Loggers.loggerValue("recievedd gotoloop obj", "");
 
@@ -211,15 +219,14 @@ public class SearchServiceImp implements SearchService {
 						temp1 = map.get(i);
 						Loggers.loggerValue("temp1 value ", temp1);
 						Loggers.loggerValue("endend doWhile loop in else stmt", "");
-					
-					if (boo) {
-						Loggers.loggerValue("entered in if loop in 1ST DO WHILE Loop", "");
-						fees = studentFees(temp1);
-					}
-					}else
-					{
+
+						if (boo) {
+							Loggers.loggerValue("entered in if loop in 1ST DO WHILE Loop", "");
+							fees = studentFees(temp1);
+						}
+					} else {
 						Loggers.loggerValue("sumup ended", "");
-						return childList;	
+						return childList;
 					}
 
 				} while (!boo);
@@ -228,14 +235,32 @@ public class SearchServiceImp implements SearchService {
 					Loggers.loggerValue("entered in second do while loop", "");
 
 					for (int j = 0; j < map.get(i - 1).size(); j++) {
-						
 
 						profileMap.put(map.get(i - 1).get(j).getSmartId(), map.get(i - 1).get(j));
 
 					}
-					Loggers.loggerValue("before gooing to total fees method",fees);
+					Loggers.loggerValue("before gooing to total fees method", fees);
 					System.out.println("hiee");
 					Loggers.loggerValue("profile map before calling total fee in sumup method", profileMap);
+
+					Collections.sort(fees, new Comparator<Profile>() {
+						public int compare(Profile s1, Profile s2) {
+							// Write your logic here.
+							if (s1.getBand() > s2.getBand()) {
+								return 1;
+							} else if(s1.getBand() == s2.getBand()){
+								return 0;
+							} else {
+								return -1;
+							}
+						}
+					});
+					
+					Band band=bandDao.getMaxband();
+					
+					if(band.getRole().toLowerCase().equals("student")) {
+						Collections.reverse(fees);
+					}
 
 					temp2 = totalfees(profileMap, fees);
 
@@ -245,7 +270,6 @@ public class SearchServiceImp implements SearchService {
 
 				} while (i > 1);
 
-				
 				return temp2;
 			}
 		}
@@ -265,7 +289,8 @@ public class SearchServiceImp implements SearchService {
 
 		ArrayList<Fee> feeList = feeServices.getFeeLists("2016-2017");
 
-		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList();
+		System.out.println("before feemaster");
+		ArrayList<FeeMaster> fee =  (ArrayList<FeeMaster>) feeMasterServices.getFeeList();
 
 		Map<String, Fee> feeMap = new HashMap<String, Fee>();
 
@@ -321,17 +346,15 @@ public class SearchServiceImp implements SearchService {
 	public ArrayList<Profile> gotoloop(ArrayList<Profile> childList, Map<String, Profile> profiles)
 			throws GSmartServiceException {
 
-		ArrayList<Profile> childOfChildList=new ArrayList<>();
+		ArrayList<Profile> childOfChildList = new ArrayList<>();
 		Loggers.loggerStart(childList);
 		ArrayList<Profile> childOfChild = new ArrayList<Profile>();
 
 		for (Profile profile : childList) {
 
 			childOfChild = searchEmployeeInfo(profile.getSmartId(), profiles);
-			if(!childOfChild.isEmpty())
-			{
-				for(Profile childProfile : childOfChild)
-				{
+			if (!childOfChild.isEmpty()) {
+				for (Profile childProfile : childOfChild) {
 					System.out.println("child of child");
 					childOfChildList.add(childProfile);
 				}
@@ -351,18 +374,21 @@ public class SearchServiceImp implements SearchService {
 
 			profileMap.get(profile.getReportingManagerId()).setPaidAmount(
 					profileMap.get(profile.getReportingManagerId()).getPaidAmount() + profile.getPaidAmount());
-			
-			System.out.println(profileMap.get(profile.getReportingManagerId())+"paid amount is"+profileMap.get(profile.getReportingManagerId()).getPaidAmount());
+
+			System.out.println(profileMap.get(profile.getReportingManagerId()) + "paid amount is"
+					+ profileMap.get(profile.getReportingManagerId()).getPaidAmount());
 
 			profileMap.get(profile.getReportingManagerId()).setBalanceAmount(
 					profileMap.get(profile.getReportingManagerId()).getBalanceAmount() + profile.getBalanceAmount());
 
-			System.out.println(profileMap.get(profile.getReportingManagerId())+"Balance amount is"+profileMap.get(profile.getReportingManagerId()).getBalanceAmount());
+			System.out.println(profileMap.get(profile.getReportingManagerId()) + "Balance amount is"
+					+ profileMap.get(profile.getReportingManagerId()).getBalanceAmount());
 
 			profileMap.get(profile.getReportingManagerId()).setTotalAmount(
 					profileMap.get(profile.getReportingManagerId()).getTotalAmount() + profile.getTotalAmount());
 
-			System.out.println(profileMap.get(profile.getReportingManagerId())+"Total amount is"+profileMap.get(profile.getReportingManagerId()).getTotalAmount());
+			System.out.println(profileMap.get(profile.getReportingManagerId()) + "Total amount is"
+					+ profileMap.get(profile.getReportingManagerId()).getTotalAmount());
 
 		}
 		ArrayList<Profile> list = new ArrayList<Profile>(profileMap.values());
@@ -370,23 +396,21 @@ public class SearchServiceImp implements SearchService {
 		return list;
 
 	}
-	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees)
-	{
+
+	public Profile totalFessToAdmin(Profile profileMap, ArrayList<Profile> fees) {
 		Loggers.loggerStart();
-		for(Profile profile : fees)
-		{
-			if(profileMap.getSmartId().equals(profile.getReportingManagerId()))
-			{
-				profileMap.setPaidAmount(profileMap.getPaidAmount()+profile.getPaidAmount());
-				profileMap.setBalanceAmount(profileMap.getBalanceAmount()+profile.getBalanceAmount());
-				profileMap.setTotalAmount(profileMap.getTotalAmount()+profile.getTotalAmount());
+		for (Profile profile : fees) {
+			if (profileMap.getSmartId().equals(profile.getReportingManagerId())) {
+				profileMap.setPaidAmount(profileMap.getPaidAmount() + profile.getPaidAmount());
+				profileMap.setBalanceAmount(profileMap.getBalanceAmount() + profile.getBalanceAmount());
+				profileMap.setTotalAmount(profileMap.getTotalAmount() + profile.getTotalAmount());
 			}
 		}
 		Loggers.loggerEnd(profileMap);
 		return profileMap;
-		
+
 	}
-	
+
 	@Override
 	public Map<String, Object> getParentInfo(String smartId) {
 		Map<String, Object> parentInfo = new HashMap<>();
@@ -396,8 +420,7 @@ public class SearchServiceImp implements SearchService {
 		if (parentProfile != null) {
 			String parentSmartId = parentProfile.getSmartId();
 			parentInfo.put("reportingProfiles", profiledao.getReportingProfiles(parentSmartId));
-		}
-		else
+		} else
 			parentInfo.put("reportingProfiles", null);
 		return parentInfo;
 	}
