@@ -1,6 +1,11 @@
 package com.gsmart.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,11 +13,11 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.jpa.internal.schemagen.GenerationSourceFromMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,9 +26,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Attendance;
+import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.services.AttendanceService;
+import com.gsmart.services.HolidayServices;
+import com.gsmart.services.LeaveServices;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
@@ -47,33 +55,41 @@ public class AttendanceController {
 
 	@Autowired
 	ProfileServices profileServices;
+	
+	@Autowired
+	HolidayServices holidayService;
+	
 
-	@RequestMapping(/*value = "/calender/{startdate}/{enddate}",*/ method = RequestMethod.GET)
-	public ResponseEntity<List<Attendance>> getAttendance(@RequestHeader HttpHeaders token/*, HttpSession httpSession,
-			@PathVariable long startdate, @PathVariable long enddate*/) throws GSmartBaseException {
+	@RequestMapping(value = "/calender/{month}/{year}/{smartId}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
+			@PathVariable("month") Integer month, @PathVariable("year") Integer year,
+			@PathVariable("smartId") String smartId,Holiday holiday) throws GSmartBaseException {
 		Loggers.loggerStart();
 
-		/*Map<String, Object> permissions = new HashMap<>();*/
-
-		List<Attendance> attendanceList = null;
+		Map<String, Object> permissions = new HashMap<>();
 
 		/*String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		permissions.put("modulePermission", modulePermission);
+		permissions.put("modulePermission", modulePermission);*/
+		List<Map<String, Object>> attendanceList = null;
+		List<Holiday> holidayList = null;
+		Calendar cal = new GregorianCalendar(year, month, 0);
+		Date date = cal.getTime();
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(year, month - 1, 1);
+		Long startDate = calendar.getTimeInMillis() / 1000;
+		Long endDate = date.getTime() / 1000;
+		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
+		holidayList= holidayService.getHolidayList();
+		
+		permissions.put("attendanceList", attendanceList);
+		permissions.put("holidayList", holidayList);
 
-		if (modulePermission != null)*/ {
-			/*if (startdate == 0 & enddate == 0)*/
-				attendanceList = attendanceService.getAttendance();
-			/*else
-				attendanceList = attendanceService.sortAttendance(startdate, enddate);
-			permissions.put("atteendanceList", attendanceList);
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);*/
-		}
-		Loggers.loggerEnd(attendanceList);
-		return new ResponseEntity<List<Attendance>>(attendanceList, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -82,42 +98,42 @@ public class AttendanceController {
 		Loggers.loggerStart(attendance);
 
 		IAMResponse rsp = null;
-		Map<String, Object> response = new HashMap<>();
+	/*	Map<String, Object> response = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) */{
 
 			Attendance attend = attendanceService.addAttedance(attendance);
 			if (attend != null) {
 				rsp = new IAMResponse("success");
-				response.put("message", rsp);
+				/*response.put("message", rsp);*/
 			} else {
 				rsp = new IAMResponse("Data Already exists");
-				response.put("message", rsp);
+				/*response.put("message", rsp);*/
 
 			}
-		} else {
+		} /*else {
 			rsp = new IAMResponse("Permission Denied");
 			response.put("message", rsp);
 
-		}
+		}*/
 		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>( HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteBand(@RequestBody Attendance attendance,
+	public ResponseEntity<IAMResponse> editDeleteAttendance(@RequestBody Attendance attendance,
 			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
-		String tokenNumber = token.get("Authorization").get(0);
+		/*String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) */{
 			if (task.equals("edit")) {
 				attendanceService.editAttedance(attendance);
 
@@ -125,13 +141,14 @@ public class AttendanceController {
 				attendanceService.deleteAttendance(attendance);
 			}
 			myResponse = new IAMResponse("success");
+			Loggers.loggerEnd(attendance);
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
+		} /*else {
 			myResponse = new IAMResponse("Permission Denied");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		
+	}*/
 		}
-	}
-	
 
 	@RequestMapping(value = "/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId,
@@ -149,9 +166,9 @@ public class AttendanceController {
 		if (modulePermisson != null) {
 			Profile profile = profileServices.getProfileDetails(smartId);
 			Map<String, Profile> profiles = searchService.getAllProfiles();
-            Loggers.loggerValue("profile is ",profile);
+			Loggers.loggerValue("profile is ", profile);
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
-			Loggers.loggerValue("child is",childList);
+			Loggers.loggerValue("child is", childList);
 
 			if (childList.size() != 0) {
 				profile.setChildFlag(true);

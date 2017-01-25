@@ -1,20 +1,20 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Attendance;
+import com.gsmart.model.Holiday;
 import com.gsmart.util.GSmartServiceException;
 
 public interface AttendanceService {
  
-	public List<Attendance> getAttendance() throws GSmartServiceException;
+	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId) throws GSmartServiceException;
 	
 	public Attendance addAttedance(Attendance attedance) throws GSmartServiceException;
 	
 	public void editAttedance(Attendance attendance) throws GSmartServiceException;
 	
     public void deleteAttendance(Attendance attendance) throws GSmartServiceException;
-    
-    public List<Attendance> sortAttendance(long startdate ,long enddate)throws GSmartServiceException;
     
 }

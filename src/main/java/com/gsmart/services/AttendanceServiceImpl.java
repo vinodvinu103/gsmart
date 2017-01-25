@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.AttendanceDao;
 import com.gsmart.model.Attendance;
+import com.gsmart.model.Holiday;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 @Service
@@ -17,8 +19,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	AttendanceDao attendancedao;
 
 	@Override
-	public List<Attendance> getAttendance() throws GSmartServiceException {
-		return attendancedao.getAttendance();
+	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId) throws GSmartServiceException {
+		return attendancedao.getAttendance(startDate, endDate, smartId);
 	}
 
 	@Override
@@ -58,17 +60,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		}
 		
 	}
-	@Override
-	public List<Attendance> sortAttendance(long startdate, long enddate) throws GSmartServiceException {
-		Loggers.loggerStart();
-		try{
-			attendancedao.sortAttendance(startdate, enddate);
-			
-		}catch (Exception e) {
-          e.printStackTrace();
-		}
-		return null;
-	}
+	
 
 	
 }
