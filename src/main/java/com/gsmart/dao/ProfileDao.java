@@ -72,5 +72,6 @@ public interface ProfileDao {
 	public void editRole(Profile profile)throws GSmartDatabaseException;
 
 	public List<Profile> getsearchRep(Search search);
-
+	
+	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
 }

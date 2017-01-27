@@ -11,7 +11,7 @@ public interface LeaveServices {
 	
 	public void editLeave(Leave leave) throws GSmartServiceException;
 	
-	public CompoundLeave addLeave(Leave leave,Integer noOfdays) throws GSmartServiceException;
+	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String smartId) throws GSmartServiceException;
 	
 	public void deleteLeave(Leave leave) throws GSmartServiceException;
 

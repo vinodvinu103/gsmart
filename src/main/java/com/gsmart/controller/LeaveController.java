@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.CompoundLeave;
+import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.LeaveServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
@@ -47,12 +50,10 @@ public class LeaveController {
 		String tokenNumber = token.get("Authorization").get(0);
 		
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-
 		str.length();
 		
 		List<Leave> leaveList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		
 		Map<String, Object> leave = new HashMap<>();
 		leave.put("modulePermission", modulePermission);
 					
@@ -64,7 +65,7 @@ public class LeaveController {
 			return new ResponseEntity<Map<String,Object>>(leave, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<Map<String,Object>>(leave, HttpStatus.OK);
-		}
+		}	
 
 	}
 		
@@ -79,9 +80,10 @@ public class LeaveController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		
+		Token tokenDetails=tokenService.getToken(tokenNumber);
+		String smartId=tokenDetails.getSmartId();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			CompoundLeave cl=leaveServices.addLeave(leave,noOfdays);
+			CompoundLeave cl=leaveServices.addLeave(leave,noOfdays,smartId);
 			if(cl!=null)
 			resp.setMessage("success");
 		else
@@ -94,7 +96,7 @@ public class LeaveController {
 			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 		}
 	}
-	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{task}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public  ResponseEntity<IAMResponse> editLeave(@RequestBody Leave leave, @PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse;
@@ -118,4 +120,9 @@ public class LeaveController {
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
 	}
-}
+	
+	}
+	
+	
+	
+	

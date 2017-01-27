@@ -17,33 +17,26 @@ import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
-
-
 @Repository
-public class LeaveMasterDaoImpl implements LeaveMasterDao{
-	
-	
+public class LeaveMasterDaoImpl implements LeaveMasterDao {
+
 	@Autowired
 	SessionFactory sessionFactory;
-	
 
 	Session session = null;
 	Transaction transaction = null;
 	Query query;
 
-	 
-	
-
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<LeaveMaster> getLeaveMasterList() throws GSmartDatabaseException{
+	public List<LeaveMaster> getLeaveMasterList() throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		 List<LeaveMaster> leavemasterlist = null;
-		 try { 
-			 getconnection();
-			 query=session.createQuery("from LeaveMaster where isActive='Y'");
-			 leavemasterlist = (List<LeaveMaster>) query.list();
-			
+		List<LeaveMaster> leavemasterlist = null;
+		try {
+			getconnection();
+			query = session.createQuery("from LeaveMaster where isActive='Y'");
+			leavemasterlist = (List<LeaveMaster>) query.list();
+
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
@@ -51,28 +44,29 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 			session.close();
 		}
 		Loggers.loggerEnd();
-		return leavemasterlist;	
-		}
-		
+		return leavemasterlist;
+	}
+
 	@Override
 	public CompoundLeaveMaster addLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
 		CompoundLeaveMaster cb = null;
-	
+
 		try {
 			getconnection();
-			query=session.createQuery("FROM LeaveMaster WHERE leaveType=:leaveType AND  daysAllow=:daysAllow AND isActive=:isActive");
+			query = session.createQuery(
+					"FROM LeaveMaster WHERE leaveType=:leaveType AND  daysAllow=:daysAllow AND isActive=:isActive");
 			query.setParameter("leaveType", leaveMaster.getLeaveType());
 			query.setParameter("daysAllow", leaveMaster.getDaysAllow());
-			query.setParameter("isActive","Y");
-			LeaveMaster	 leaveMaster2=(LeaveMaster) query.uniqueResult();
-			if (leaveMaster2 ==null) {
+			query.setParameter("isActive", "Y");
+			LeaveMaster leaveMaster2 = (LeaveMaster) query.uniqueResult();
+			if (leaveMaster2 == null) {
 				leaveMaster.setEntryTime((CalendarCalculator.getTimeStamp()));
 				leaveMaster.setIsActive("Y");
-				cb=(CompoundLeaveMaster)session.save(leaveMaster);
+				cb = (CompoundLeaveMaster) session.save(leaveMaster);
 			}
-		
+
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -86,8 +80,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 		Loggers.loggerEnd();
 		return cb;
 	}
-	
-	
+
 	public void deleteLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		try {
@@ -105,25 +98,21 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 		}
 		Loggers.loggerEnd();
 	}
-	
-	
-	
-
 
 	@Override
-	public void editLeaveMaster(LeaveMaster leaveMaster ) throws GSmartDatabaseException {
+	public void editLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		try {
 			getconnection();
-			LeaveMaster oldleaveMaster= getLeaveMaster(leaveMaster.getEntryTime());
+			LeaveMaster oldleaveMaster = getLeaveMaster(leaveMaster.getEntryTime());
 			oldleaveMaster.setIsActive("N");
 			oldleaveMaster.setUpdateTime(CalendarCalculator.getTimeStamp());
 			session.update(oldleaveMaster);
-			 leaveMaster.setIsActive("Y");
-			session.save( leaveMaster);
+			leaveMaster.setIsActive("Y");
+			session.save(leaveMaster);
 			transaction.commit();
 			session.close();
-	
+
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
@@ -131,31 +120,23 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 
 		}
 	}
-	
-	
-	
-	
-	
+
 	public LeaveMaster getLeaveMaster(String entryTime) {
 		try {
-			
 
 			query = session.createQuery("from LeaveMaster where isActive=:isActive and entryTime=:entryTime");
-		     query.setParameter("entryTime",entryTime);
-		     query.setParameter("isActive","Y");
-			 LeaveMaster leaveMaster = ( LeaveMaster) query.uniqueResult();
-			
-			
+			query.setParameter("entryTime", entryTime);
+			query.setParameter("isActive", "Y");
+			LeaveMaster leaveMaster = (LeaveMaster) query.uniqueResult();
+
 			return leaveMaster;
 
-	
-		
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	private void getconnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();

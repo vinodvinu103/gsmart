@@ -163,7 +163,8 @@ public class HolidayController {
 	 * @param holiday instance of {@link Holiday}
 	 * @return deletion status (success/error) in JSON format
 	 * @see IAMResponse
-	 *//*
+	 */
+	
 	@RequestMapping(method = RequestMethod.DELETE)
 	public ResponseEntity<IAMResponse> deleteBand(@RequestBody Holiday holiday)
 			throws GSmartBaseException {
@@ -174,5 +175,5 @@ public class HolidayController {
 		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 	}
-*/
+
 }
