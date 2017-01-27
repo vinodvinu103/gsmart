@@ -47,6 +47,7 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerValue("returnd to getall Profiles in serviceImpl ", "");
 		for (Profile profile : profiles) {
 			Loggers.loggerValue("smartIds :", profile.getSmartId());
+			
 			allProfiles.put(profile.getSmartId(), profile);
 		}
 		Loggers.loggerEnd("for each loop is executed");
@@ -267,7 +268,6 @@ public class SearchServiceImp implements SearchService {
 
 
 		for (int i = 0; i < feeList.size(); i++) {
-
 			feeMap.put(feeList.get(i).getSmartId(), feeList.get(i));
 		}
 
@@ -304,6 +304,7 @@ public class SearchServiceImp implements SearchService {
 
 		ArrayList<Profile> childOfChildList = new ArrayList<>();
 		Loggers.loggerStart(childList);
+	
 		ArrayList<Profile> childOfChild = new ArrayList<Profile>();
 
 		for (Profile profile : childList) {
@@ -327,17 +328,28 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerStart(fees);
 		Loggers.loggerValue("profile map", profileMap);
 		for (Profile profile : fees) {
-
+            
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having paidAmount of " + profile.getPaidAmount());
+			
 			profileMap.get(profile.getReportingManagerId()).setPaidAmount(
 					profileMap.get(profile.getReportingManagerId()).getPaidAmount() + profile.getPaidAmount());
+			Loggers.loggerValue("total fees of set fees","");
+
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having balanceAmount of " + profile.getBalanceAmount());
 
 
 			profileMap.get(profile.getReportingManagerId()).setBalanceAmount(
 					profileMap.get(profile.getReportingManagerId()).getBalanceAmount() + profile.getBalanceAmount());
+			Loggers.loggerValue("total fees of setbalance fees","");
+
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having TotalAmount of" + profile.getTotalAmount());
 
 
 			profileMap.get(profile.getReportingManagerId()).setTotalAmount(
 					profileMap.get(profile.getReportingManagerId()).getTotalAmount() + profile.getTotalAmount());
+		
+			
+			Loggers.loggerValue("total fees of settotal fees","");
 
 
 		}
