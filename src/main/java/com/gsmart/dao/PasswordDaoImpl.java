@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Login;
 import com.gsmart.util.CalendarCalculator;
+import com.gsmart.model.Profile;
 import com.gsmart.util.Constants;
 import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartDatabaseException;
@@ -52,6 +53,7 @@ public class PasswordDaoImpl implements PasswordDao {
 				refId.setEntryTime(CalendarCalculator.getTimeStamp());
 				session.saveOrUpdate(refId);
 			}
+			session.saveOrUpdate(login);
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -99,6 +101,32 @@ public class PasswordDaoImpl implements PasswordDao {
 		}
 		return pwd;
 		}
-	}
+	
 
+	public Profile forgotPassword(String email) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		Profile emailId = null;
+		try {
+
+			getConnection();
+			
+			System.out.println(email);
+
+			query = session.createQuery("from Profile where emailId=:emailId");
+			query.setParameter("emailId", email);
+			emailId = (Profile) query.uniqueResult();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+
+		}
+		finally {
+			session.close();
+		}
+
+		Loggers.loggerEnd(emailId);
+		return emailId;
+	}
+}
 
