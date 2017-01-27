@@ -58,7 +58,7 @@ public class PasswordController {
 				String smartId = tokenList.getSmartId();
 				String encrptSmartid=Encrypt.md5(smartId);
 				System.out.println("encrpyted smart id........"+encrptSmartid);
-				String decrtptsmartId=Decrypt.md5(encrptSmartid);
+				String decrtptsmartId=Decrypt.MD5(encrptSmartid);
 				System.out.println("Decrypted smart id,,,,,,,,,,,"+decrtptsmartId);
 				//Loggers.loggerStart("encrypted smartId is : " + Encrypt.md5(login.getSmartId()));
 				boolean pwd = passwordServices.changePassword(login, smartId);

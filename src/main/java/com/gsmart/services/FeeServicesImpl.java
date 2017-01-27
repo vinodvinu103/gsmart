@@ -1,12 +1,14 @@
 package com.gsmart.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.FeeDao;
 import com.gsmart.model.Fee;
+import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -52,6 +54,34 @@ public class FeeServicesImpl implements FeeServices{
 		Loggers.loggerStart();
 		return feeDao.getFeeLists(academicYear);
 
+	}
+
+	@Override
+	public int gettotalfee() throws GSmartServiceException {
+		Loggers.loggerStart();
+		List<Fee> feeList=null;
+		int totalFees=0;
+		feeList=feeDao.gettotalfee();
+		for(Fee fee : feeList)
+		{
+			totalFees=totalFees+fee.getTotalFee();	
+		}
+		Loggers.loggerEnd();
+		return  totalFees;
+	}
+
+	@Override
+	public int gettotalpaidfee() throws GSmartServiceException {
+		Loggers.loggerStart();
+		List<Fee> paidList=null;
+		int paidFees=0;
+		paidList=feeDao.gettotalfee();
+		for(Fee fee : paidList)
+		{
+			paidFees=paidFees+fee.getPaidFee();	
+		}
+		Loggers.loggerEnd();
+		return  paidFees;
 	}
 
 }

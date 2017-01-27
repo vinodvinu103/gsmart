@@ -13,5 +13,9 @@ public interface FeeServices {
 	public void addFee(Fee fee) throws GSmartServiceException;
 	
 	public ArrayList<Fee> getFeeLists(String academicYear) throws GSmartServiceException;
+	
+	public int gettotalfee() throws GSmartServiceException;
+	
+	public int gettotalpaidfee() throws GSmartServiceException;
 
 }

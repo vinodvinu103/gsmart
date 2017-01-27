@@ -2,6 +2,7 @@ package com.gsmart.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.FeeDao;
 import com.gsmart.model.Fee;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
@@ -36,6 +38,7 @@ public class FeeController {
 
 	@Autowired
 	FeeServices feeServices;
+	
 
 	@Autowired
 	ProfileServices profileSevices;
@@ -171,5 +174,27 @@ public class FeeController {
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		}
 	}
-
+	
+	@RequestMapping(value = "/totalfee", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> gettotalfee() throws GSmartBaseException {
+		
+		Loggers.loggerStart();
+		Map<String, Object> responseMap = new HashMap<>();
+		int fees;
+		fees = feeServices.gettotalfee();
+		responseMap.put("data", fees);
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String,Object>>(responseMap, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/paidfee", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> gettotalpaidfee() throws GSmartBaseException{
+		Loggers.loggerStart();
+		Map<String, Object> responseMap = new HashMap<>();
+		int paidfees;
+		paidfees=feeServices.gettotalpaidfee();
+		responseMap.put("data", paidfees);
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String,Object>>(responseMap, HttpStatus.OK);
+	}
 }

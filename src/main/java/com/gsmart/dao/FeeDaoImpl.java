@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -15,6 +16,7 @@ import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
+import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Repository
@@ -107,6 +109,18 @@ public class FeeDaoImpl implements FeeDao{
 			e.printStackTrace();
 		}
 		return feeList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fee> gettotalfee() throws GSmartServiceException {
+		Loggers.loggerStart();
+		getconnection();
+		query = session.createQuery("From Fee");
+		List<Fee> list = query.list();
+		session.close();
+		Loggers.loggerEnd();
+		return list;
 	}
 
 }

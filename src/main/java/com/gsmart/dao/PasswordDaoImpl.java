@@ -50,8 +50,7 @@ public class PasswordDaoImpl implements PasswordDao {
 				refId.setPassword(Encrypt.md5(login.getConfirmPassword()));
 				refId.setAttempt(0);
 				refId.setEntryTime(CalendarCalculator.getTimeStamp());
-				refId.setReferenceSmartId(null);
-				session.save(refId);
+				session.saveOrUpdate(refId);
 			}
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
