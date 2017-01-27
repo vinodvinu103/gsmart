@@ -14,4 +14,11 @@ public interface FeeDao {
 	
 	public ArrayList<Fee> getFeeLists(String smartId) throws GSmartDatabaseException;
 
+    public List<Fee> getPaidStudentsList() throws GSmartDatabaseException;
+	
+	public List<Fee> getUnpaidStudentsList() throws GSmartDatabaseException;
+
+	public void editFee(Fee fee) throws GSmartDatabaseException;
+
+	public void deleteFee(Fee fee) throws GSmartDatabaseException;
 }

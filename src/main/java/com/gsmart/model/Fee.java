@@ -27,6 +27,42 @@ public class Fee {
 	@Column(name="NAME")
 	private String name;
 	
+	@Column(name="ISACTIVE")
+	private String IsActive;
+	
+	
+	public String getIsActive() {
+		return IsActive;
+	}
+
+	public void setIsActive(String isActive) {
+		IsActive = isActive;
+	}
+
+	public String getUpdatedTime() {
+		return UpdatedTime;
+	}
+
+	public void setUpdatedTime(String updatedTime) {
+		UpdatedTime = updatedTime;
+	}
+
+	@Column(name="UPDATEDTIME")
+	private String UpdatedTime;
+	
+	@Column(name="EXITTIME")
+	private String ExitTime;
+	
+	public String getExitTime() {
+		return ExitTime;
+	}
+
+	public void setExitTime(String exitTime) {
+		ExitTime = exitTime;
+	}
+
+
+
 	@Column(name="PARENT_NAME")
 	private String parentName;
 	
@@ -251,5 +287,9 @@ public class Fee {
 	public void setParentFlag(boolean parentFlag) {
 		this.parentFlag = parentFlag;
 	}
+
+	
+
+	
 
 }
