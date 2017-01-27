@@ -118,8 +118,8 @@ public class FeeController {
 		}
 	}
 
-	@RequestMapping(value = "/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> feeStructureController(@PathVariable("smartId") String smartId,
+	@RequestMapping(value = "/{smartId}/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> feeStructureController(@PathVariable("smartId") String smartId,@PathVariable("academicYear") String academicYear,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
 		
@@ -137,24 +137,31 @@ public class FeeController {
 		permissions.put("modulePermissions", modulePermissions);
 
 		ArrayList<Profile> fees = new ArrayList<Profile>();
+		
+		ArrayList<Profile> childs = new ArrayList<Profile>();
 
 		ArrayList<Profile> self = new ArrayList<Profile>();
+		Profile selfProfile = new Profile();
 
 		if (modulePermissions != null) {
-			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles();
+			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear);
 			
 			
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("childlist", childList);
 			
 
-			fees = searchService.sumUpFee(childList, profiles);
+			fees = searchService.sumUpFee(childList, profiles,academicYear);
 
 			profileMap.put(smartId, profiles.get(smartId));
+			
+		Profile profile=profiles.get(smartId);
 
-			Loggers.loggerStart("calling totalfees");
+		System.out.println("self profile"+profile);
 
-			self = searchService.totalfees(profileMap, fees);
+		selfProfile = searchService.totalFessToAdmin(profile, fees);
+		
+		self.add(selfProfile);
 
 			Set<String> key = profiles.keySet();
 			for (int i = 0; i < fees.size(); i++) {
@@ -166,13 +173,20 @@ public class FeeController {
 
 						if (!(p.getSmartId().equals(fees.get(i).getSmartId()))) {
 							fees.get(i).setChildFlag(true);
+							
 						}
 					}
 				}
+				if(fees.get(i).getReportingManagerId().equals(smartId))
+				{
+					childs.add(fees.get(i));
+					
+				}
 			}
+			
 
 			permissions.put("selfProfile", self);
-			permissions.put("childProfile", fees);
+			permissions.put("childProfile", childs);
 
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);

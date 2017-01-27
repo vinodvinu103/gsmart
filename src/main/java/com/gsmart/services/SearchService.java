@@ -10,7 +10,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface SearchService {
 	
-	Map<String, Profile> getAllProfiles();
+	Map<String, Profile> getAllProfiles(String academicYear);
 	
 	ArrayList<Profile> getEmployeeInfo(String emp, Map<String, Profile> map);
 
@@ -22,13 +22,14 @@ public interface SearchService {
 	
 	//List<Notice> searchSpecificNotice(ArrayList<String> parentList,List<Notice>notices);
 	
-	ArrayList<Profile> studentFees(ArrayList<Profile> profile) throws GSmartServiceException;
+	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear) throws GSmartServiceException;
 	
 	ArrayList<Profile> gotoloop(ArrayList<Profile> profile ,Map<String, Profile> profiles) throws GSmartServiceException;
 	
-	ArrayList<Profile> sumUpFee(ArrayList<Profile> childList,Map<String, Profile> profiles) throws GSmartServiceException;
+	ArrayList<Profile> sumUpFee(ArrayList<Profile> childList,Map<String, Profile> profiles,String academicYear) throws GSmartServiceException;
 
 	ArrayList<Profile> totalfees(Map<String, Profile> profileMap, ArrayList<Profile> fees);
 	
 	public Map<String, Object> getParentInfo(String smartId);
+	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees);
 }

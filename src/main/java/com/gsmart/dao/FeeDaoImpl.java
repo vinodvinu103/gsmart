@@ -35,9 +35,10 @@ public class FeeDaoImpl implements FeeDao{
 	@Override
 	public ArrayList<Fee> getFeeList(Fee fee) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		ArrayList<Fee> feeList;
 		try{
-			getconnection();
+			
 			query=session.createQuery("from Fee where smartId =:smartId and academicYear =:academicYear");
 			query.setParameter("smartId", fee.getSmartId());
 			query.setParameter("academicYear", fee.getAcademicYear());
@@ -54,8 +55,9 @@ public class FeeDaoImpl implements FeeDao{
 	@Override
 	public void addFee(Fee fee) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		try{
-			getconnection();
+			
 			fee.setEntryTime(CalendarCalculator.getTimeStamp());
 			fee.setDate(CalendarCalculator.getTimeStamp());
 			Profile profile=getReportingManagerId(fee.getSmartId());
@@ -94,11 +96,12 @@ public class FeeDaoImpl implements FeeDao{
 	@Override
 	public ArrayList<Fee> getFeeLists(String academicYear) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		ArrayList<Fee> feeList=null;
 		try
 		{
 		System.out.println(academicYear);
-		getconnection();
+		
 		Loggers.loggerValue("getting connections", "");
 		query=session.createQuery("From Fee where academicYear=:academicYear");
 		query.setParameter("academicYear", academicYear);
@@ -108,6 +111,9 @@ public class FeeDaoImpl implements FeeDao{
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally {
+			session.close();
 		}
 		return feeList;
 	}
