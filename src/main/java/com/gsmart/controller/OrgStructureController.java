@@ -58,7 +58,7 @@ public class OrgStructureController {
 		if(modulePermisson!=null)
 		{
 		Profile profile = profileServices.getProfileDetails(smartId);
-		Map<String, Profile> profiles = searchService.getAllProfiles();
+		Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018");
 
 		ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 
@@ -105,7 +105,7 @@ public class OrgStructureController {
 			Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 			try {
 				if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
-				Map<String, Profile> map = searchService.getAllProfiles();
+				Map<String, Profile> map = searchService.getAllProfiles("2017-2018");
 				ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
 				jsonMap.put("result", profiless);
 				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
@@ -151,7 +151,7 @@ public class OrgStructureController {
 
 		ArrayList<Profile> temp = new ArrayList<Profile>();
 
-		Map<String, Profile> profiles = searchService.getAllProfiles();
+		Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018");
 
 		ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 

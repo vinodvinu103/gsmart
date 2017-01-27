@@ -54,7 +54,7 @@ public interface ProfileDao {
 	/* for login */	
 	public Profile getProfileDetails(String empSmartId);
 
-	public List<Profile> getAllRecord();
+	public List<Profile> getAllRecord(String academicYear);
 
 	
 	/**

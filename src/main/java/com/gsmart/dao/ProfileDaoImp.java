@@ -252,7 +252,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Profile> getAllRecord() {
+	public List<Profile> getAllRecord(String academicYear) {
 		
 		Loggers.loggerStart();
 		getConnection();
@@ -261,7 +261,8 @@ public class ProfileDaoImp implements ProfileDao {
 		
 		try {
 			
-			query = session.createQuery("from Profile where isActive like('Y')");
+			query = session.createQuery("from Profile where isActive like('Y') and academicYear=:academicYear ");
+			query.setParameter("academicYear", academicYear);
 			
 			profile = (List<Profile>) query.list();
 		} catch (Exception e) {

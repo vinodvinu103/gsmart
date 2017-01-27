@@ -109,8 +109,8 @@ public class FeeController {
 		}
 	}
 
-	@RequestMapping(value = "/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> feeStructureController(@PathVariable("smartId") String smartId,
+	@RequestMapping(value = "/{smartId}/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> feeStructureController(@PathVariable("smartId") String smartId,@PathVariable("academicYear") String academicYear,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
 		
@@ -135,14 +135,14 @@ public class FeeController {
 		Profile selfProfile = new Profile();
 
 		if (modulePermissions != null) {
-			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles();
+			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear);
 			
 			
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("childlist", childList);
 			
 
-			fees = searchService.sumUpFee(childList, profiles);
+			fees = searchService.sumUpFee(childList, profiles,academicYear);
 
 			profileMap.put(smartId, profiles.get(smartId));
 			
@@ -170,7 +170,6 @@ public class FeeController {
 				}
 				if(fees.get(i).getReportingManagerId().equals(smartId))
 				{
-					System.out.println("ghiji");
 					childs.add(fees.get(i));
 					
 				}
