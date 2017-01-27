@@ -30,9 +30,22 @@ public class Attendance implements Serializable{
 	@Column(name="isActive")
 	private String isActive;
 	
+	@Column(name="STATUS")
+	private String status;
+	
 	
 
 	
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
 	public long getInDate() {
 		return inDate;
 	}

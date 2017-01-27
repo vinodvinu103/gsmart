@@ -20,11 +20,19 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	@Override
 	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId) throws GSmartServiceException {
-		return attendancedao.getAttendance(startDate, endDate, smartId);
+		 List<Map<String, Object>> attendenanceList=null;
+		try{
+			attendenanceList=attendancedao.getAttendance(startDate, endDate, smartId);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			
+		}
+		return attendenanceList;
 	}
 
 	@Override
-	public Attendance addAttedance(Attendance attendance) throws GSmartServiceException {
+	public Attendance addAttedance(List<Attendance> attendance) throws GSmartServiceException {
 		Loggers.loggerStart();
 		Attendance attend=null;
 		try{
@@ -35,7 +43,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 			e.printStackTrace();
 		}
 		Loggers.loggerEnd();
-		return null;
+		return attend;
 	}
 
 	@Override

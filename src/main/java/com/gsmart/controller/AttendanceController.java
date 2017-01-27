@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +30,6 @@ import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.HolidayServices;
-import com.gsmart.services.LeaveServices;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
@@ -43,7 +41,7 @@ import com.gsmart.util.Loggers;
 @Controller
 @RequestMapping(Constants.ATTENDANCE)
 public class AttendanceController {
-
+	 
 	@Autowired
 	GetAuthorization getAuthorization;
 
@@ -68,12 +66,12 @@ public class AttendanceController {
 
 		Map<String, Object> permissions = new HashMap<>();
 
-		/*String tokenNumber = token.get("Authorization").get(0);
+		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		permissions.put("modulePermission", modulePermission);*/
+		permissions.put("modulePermission", modulePermission);
 		List<Map<String, Object>> attendanceList = null;
 		List<Holiday> holidayList = null;
 		Calendar cal = new GregorianCalendar(year, month, 0);
@@ -89,38 +87,39 @@ public class AttendanceController {
 		permissions.put("attendanceList", attendanceList);
 		permissions.put("holidayList", holidayList);
 
+		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addAssigningReportee(@RequestBody Attendance attendance,
+	public ResponseEntity<Map<String, Object>> addAttendance(@RequestBody Map<String, List<Attendance>> attendanceMap,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-		Loggers.loggerStart(attendance);
+		Loggers.loggerStart(attendanceMap.get("attendanceList"));
 
 		IAMResponse rsp = null;
-	/*	Map<String, Object> response = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) */{
-
-			Attendance attend = attendanceService.addAttedance(attendance);
+		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+      
+			Attendance attend = attendanceService.addAttedance(attendanceMap.get("attendanceList"));
 			if (attend != null) {
 				rsp = new IAMResponse("success");
-				/*response.put("message", rsp);*/
+				response.put("message", rsp);
 			} else {
 				rsp = new IAMResponse("Data Already exists");
-				/*response.put("message", rsp);*/
+				response.put("message", rsp);
 
 			}
-		} /*else {
+		} else {
 			rsp = new IAMResponse("Permission Denied");
 			response.put("message", rsp);
 
-		}*/
+		}
 		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String, Object>>( HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
@@ -129,11 +128,11 @@ public class AttendanceController {
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
-		/*String tokenNumber = token.get("Authorization").get(0);
+		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) */{
+		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				attendanceService.editAttedance(attendance);
 
@@ -143,11 +142,11 @@ public class AttendanceController {
 			myResponse = new IAMResponse("success");
 			Loggers.loggerEnd(attendance);
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} /*else {
+		} else {
 			myResponse = new IAMResponse("Permission Denied");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		
-	}*/
+	}
 		}
 
 	@RequestMapping(value = "/{smartId}", method = RequestMethod.GET)

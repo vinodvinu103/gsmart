@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,15 +32,19 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	Query query;
 	Transaction tx = null;
 	DateFormat format = new SimpleDateFormat("");
+	Calendar calendar = Calendar.getInstance();
 
 	@Override
-	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId) throws GSmartDatabaseException {
+	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId)
+			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Attendance> attendanceList = null;
 		try {
 			getconnection();
-			Loggers.loggerStart("startDate is : " + startDate + " endDate is : " + endDate + " smartId is : " + smartId);
-			query = session.createQuery("from Attendance where isActive=:isActive and smartId=:smartId and inDate between :startDate and :endDate");
+			Loggers.loggerStart(
+					"startDate is : " + startDate + " endDate is : " + endDate + " smartId is : " + smartId);
+			query = session.createQuery(
+					"from Attendance where isActive=:isActive and smartId=:smartId and inDate between :startDate and :endDate");
 			query.setParameter("isActive", "Y");
 			query.setParameter("smartId", smartId);
 			query.setParameter("startDate", startDate);
@@ -49,31 +54,38 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			e.printStackTrace();
 		}
 		Loggers.loggerEnd();
-		return constructAttendanceList((List<Attendance>)attendanceList);
+		return constructAttendanceList((List<Attendance>) attendanceList);
 	}
- 
+
 	@Override
-	public Attendance addAttendance(Attendance attendance) throws GSmartDatabaseException {
+	public Attendance addAttendance(List<Attendance> attendanceList) throws GSmartDatabaseException {
 		getconnection();
-		Attendance attend = null;
 		try {
-			attendance.setInTime(CalendarCalculator.getTimeStamp());
-			String date = CalendarCalculator.getTimeStamp();
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-			Date date1 = df.parse(date);
-			long epoch = date1.getTime() / 1000;
-			attendance.setInDate(epoch);
-			session.save(attendance);
+			for (Attendance attendance : attendanceList) {
+				attendance.setInTime(CalendarCalculator.getTimeStamp().toString());
+				String date = CalendarCalculator.getTimeStamp();
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+				Date date1 = df.parse(date);
+				calendar.setTime(date1);
+				calendar.set(Calendar.MILLISECOND, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				Date date2 = calendar.getTime();
+				long epoch = date2.getTime() / 1000;
+				attendance.setInDate(epoch);
+				attendance.setIsActive("Y");
+				session.save(attendance);
+			}
 			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 
 		}
 
-		return attendance;
+		return null;
 	}
-     
-	
+
 	@Override
 	public void editAttendance(Attendance attendance) throws GSmartDatabaseException {
 		Loggers.loggerStart();
@@ -81,7 +93,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			getconnection();
 			Attendance oldattendance = getAttendance(attendance.getInTime());
 			oldattendance.setIsActive("N");
-			/*oldattendance.setInTime(CalendarCalculator.getTimeStamp());*/
+			/* oldattendance.setInTime(CalendarCalculator.getTimeStamp()); */
 			attendance.setIsActive("Y");
 			attendance.setInTime(CalendarCalculator.getTimeStamp());
 			String date = CalendarCalculator.getTimeStamp();
@@ -89,7 +101,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			Date date1 = df.parse(date);
 			long epoch = date1.getTime() / 1000;
 			attendance.setInDate(epoch);
-			session.save(attendance);
+			session.saveOrUpdate(attendance);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
