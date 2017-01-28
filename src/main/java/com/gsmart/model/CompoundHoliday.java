@@ -28,4 +28,5 @@ public class CompoundHoliday implements Serializable {
 		this.holidayDate = holidayDate;
 	}
 	
+	
 }

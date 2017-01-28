@@ -187,16 +187,14 @@ public class OrgStructureController {
 			if ((p.getFirstName().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
 			}
-			else if ((p.getSmartId().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+			else if ((p.getFirstName().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
 			}
-				
-	
-		else if ((p.getRole().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
-			list.add(p);
+			if ((p.getRole().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+				list.add(p);
+			}
 		}
 		
-	}
 		
 		Set<String> key = profiles.keySet();
 		for (int i = 0; i < list.size(); i++) {

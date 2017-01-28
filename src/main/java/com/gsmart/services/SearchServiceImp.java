@@ -29,24 +29,23 @@ public class SearchServiceImp implements SearchService {
 	@Autowired
 	FeeServices feeServices;
 
-	@Autowired /*
-				 * @RequestMapping(value = "/searchRep", method =
-				 * RequestMethod.POST) public ResponseEntity<Map<String,
-				 * ArrayList<Profile>>> searchRep(@RequestBody Search search) {
-				 * 
-				 * Map<String, ArrayList<Profile>> jsonMap = new HashMap<String,
-				 * ArrayList<Profile>>(); Map<String, Profile> map =
-				 * searchService.searchRep(search); ArrayList<Profile> profiless
-				 * = searchService.getEmployeeInfo(search.getName(), map);
-				 * jsonMap.put("result", profiless); return new
-				 * ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap,
-				 * HttpStatus.OK);
-				 * 
-				 * }
-				 */
+	/*
+	 * @RequestMapping(value = "/searchRep", method = RequestMethod.POST) public
+	 * ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody
+	 * Search search) {
+	 * 
+	 * Map<String, ArrayList<Profile>> jsonMap = new HashMap<String,
+	 * ArrayList<Profile>>(); Map<String, Profile> map =
+	 * searchService.searchRep(search); ArrayList<Profile> profiless =
+	 * searchService.getEmployeeInfo(search.getName(), map);
+	 * jsonMap.put("result", profiless); return new ResponseEntity<Map<String,
+	 * ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
+	 * 
+	 * }
+	 */
+	@Autowired
 	FeeMasterServices feeMasterServices;
 
-	;
 	private Map<String, Profile> allProfiles;
 
 	@Override
@@ -73,11 +72,20 @@ public class SearchServiceImp implements SearchService {
 
 				Profile p = (Profile) map.get(i);
 
-				if ((p.getFirstName().trim().toLowerCase().startsWith(emp.toLowerCase()))) {
-					list.add(p);
-				}
+
+					if ((p.getFirstName().trim().toLowerCase().startsWith(emp.toLowerCase()))) {
+						if (emp != null) {
+							if ((p.getTeacherId().trim().toLowerCase()).startsWith(emp.toLowerCase())) {
+								list.add(p);
+							}
+						} else {
+							list.add(p);
+						}
+					}
 			}
-		} catch (Exception e) {
+		}
+			
+		 catch (Exception e) {
 			e.printStackTrace();
 		}
 		Loggers.loggerEnd();
@@ -205,11 +213,10 @@ public class SearchServiceImp implements SearchService {
 				Loggers.loggerValue("entered in else stmt", "");
 				do {
 					Loggers.loggerValue("entered in doWhile loop", "");
-					ArrayList<Profile> gotoloop=gotoloop(temp1, profiles);
-					if(!gotoloop.isEmpty())
-					{
+					ArrayList<Profile> gotoloop = gotoloop(temp1, profiles);
+					if (!gotoloop.isEmpty()) {
 
-					map.put(++i, gotoloop);
+						map.put(++i, gotoloop);
 
 						Loggers.loggerValue("recievedd gotoloop obj", "");
 
@@ -218,15 +225,14 @@ public class SearchServiceImp implements SearchService {
 						temp1 = map.get(i);
 						Loggers.loggerValue("temp1 value ", temp1);
 						Loggers.loggerValue("endend doWhile loop in else stmt", "");
-					
-					if (boo) {
-						Loggers.loggerValue("entered in if loop in 1ST DO WHILE Loop", "");
-						fees = studentFees(temp1);
-					}
-					}else
-					{
+
+						if (boo) {
+							Loggers.loggerValue("entered in if loop in 1ST DO WHILE Loop", "");
+							fees = studentFees(temp1);
+						}
+					} else {
 						Loggers.loggerValue("sumup ended", "");
-						return childList;	
+						return childList;
 					}
 
 				} while (!boo);
@@ -235,12 +241,11 @@ public class SearchServiceImp implements SearchService {
 					Loggers.loggerValue("entered in second do while loop", "");
 
 					for (int j = 0; j < map.get(i - 1).size(); j++) {
-						
 
 						profileMap.put(map.get(i - 1).get(j).getSmartId(), map.get(i - 1).get(j));
 
 					}
-					Loggers.loggerValue("before gooing to total fees method",fees);
+					Loggers.loggerValue("before gooing to total fees method", fees);
 					System.out.println("hiee");
 					Loggers.loggerValue("profile map before calling total fee in sumup method", profileMap);
 
@@ -252,7 +257,6 @@ public class SearchServiceImp implements SearchService {
 
 				} while (i > 1);
 
-				
 				return temp2;
 			}
 		}
@@ -361,6 +365,20 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerEnd(list);
 		return list;
 
+	}
+
+	@Override
+	public Map<String, Object> getParentInfo(String smartId) {
+		Map<String, Object> parentInfo = new HashMap<>();
+		Loggers.loggerStart();
+		Profile parentProfile = profiledao.getParentInfo(smartId);
+		parentInfo.put("parentProfile", parentProfile);
+		if (parentProfile != null) {
+			String parentSmartId = parentProfile.getSmartId();
+			parentInfo.put("reportingProfiles", profiledao.getReportingProfiles(parentSmartId));
+		} else
+			parentInfo.put("reportingProfiles", null);
+		return parentInfo;
 	}
 
 }
