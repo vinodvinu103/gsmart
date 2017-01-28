@@ -180,7 +180,7 @@ public class SearchServiceImp implements SearchService {
 	 */
 
 	@Override
-	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles)
+	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles,String role,Hierarchy hierarchy)
 			throws GSmartServiceException {
 
 		Loggers.loggerStart();
@@ -210,7 +210,7 @@ public class SearchServiceImp implements SearchService {
 			if (childList.get(0).getRole().toLowerCase().equals("student")) {
 
 				Loggers.loggerValue("childList getting ", "");
-				fees = studentFees(childList);
+				fees = studentFees(childList,role,hierarchy);
 
 				return fees;
 
@@ -233,7 +233,7 @@ public class SearchServiceImp implements SearchService {
 					
 					if (boo) {
 						Loggers.loggerValue("entered in if loop in 1ST DO WHILE Loop", "");
-						fees = studentFees(temp1);
+						fees = studentFees(temp1,role,hierarchy);
 					}
 					/*}else
 					{
@@ -244,7 +244,7 @@ public class SearchServiceImp implements SearchService {
 
 						if (boo) {
 							Loggers.loggerValue("entered in if loop in 1ST DO WHILE Loop", "");
-							fees = studentFees(temp1);
+							fees = studentFees(temp1,role,hierarchy);
 						}
 					} else {
 						Loggers.loggerValue("sumup ended", "");
@@ -285,14 +285,14 @@ public class SearchServiceImp implements SearchService {
 	}
 
 	@Override
-	public ArrayList<Profile> studentFees(ArrayList<Profile> childList) throws GSmartServiceException {
+	public ArrayList<Profile> studentFees(ArrayList<Profile> childList,String role,Hierarchy hierarchy) throws GSmartServiceException {
 
 		Loggers.loggerStart(childList);
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
 		ArrayList<Fee> feeList = feeServices.getFeeLists("2016-2017");
 
-		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList();
+		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList(role,hierarchy);
 
 		Map<String, Fee> feeMap = new HashMap<String, Fee>();
 

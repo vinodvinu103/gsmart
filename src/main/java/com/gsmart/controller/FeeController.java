@@ -149,7 +149,7 @@ public class FeeController {
 			Loggers.loggerValue("childlist", childList);
 			
 
-			fees = searchService.sumUpFee(childList, profiles);
+			fees = searchService.sumUpFee(childList, profiles,tokenObj.getRole(),tokenObj.getHierarchy());
 
 			profileMap.put(smartId, profiles.get(smartId));
 
