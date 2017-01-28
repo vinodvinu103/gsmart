@@ -22,7 +22,6 @@ package com.gsmart.dao;
 
 import java.util.List;
 
-import com.gsmart.model.CompoundHierarchy;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
 
@@ -47,7 +46,7 @@ public interface HierarchyDao {
 	 * @return Nothing
 	 * @throws Exception
 	 */
-	public CompoundHierarchy addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+	public boolean addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 	/**
 	 * @param hierarchy instanceOf {@link Hierarchy}
 	 * @return Nothing
@@ -60,6 +59,8 @@ public interface HierarchyDao {
 	 * @throws Exception
 	 */
 	public void deleteHierarchy(Hierarchy hierarchy)throws GSmartDatabaseException;
+	
+	public Hierarchy getHierarchyByHid(Long hid)throws GSmartDatabaseException;
 
 
 }

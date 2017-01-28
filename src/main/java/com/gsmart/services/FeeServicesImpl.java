@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,11 +48,81 @@ public class FeeServicesImpl implements FeeServices{
 		Loggers.loggerEnd();
 	}
 
-	@Override
+	/*@Override
 	public ArrayList<Fee> getFeeLists(String academicYear) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		return feeDao.getFeeLists(academicYear);
 
 	}
+*/
+	@Override
+	public List<Fee> getPaidStudentsList() throws GSmartServiceException {
+		 Loggers.loggerStart();
+	        List<Fee> paidStudentsList = null;
+			try{
+				paidStudentsList=(List<Fee>) feeDao.getPaidStudentsList();
+				Loggers.loggerStart(paidStudentsList);
+			}catch (GSmartDatabaseException exception) {
+				throw (GSmartServiceException) exception;
+			}catch(Exception e){
+				throw new GSmartServiceException(e.getMessage());
+			}
+			 Loggers.loggerEnd();
+			return paidStudentsList;
+	}
+
+	@Override
+	public List<Fee> getUnpaidStudentsList() throws GSmartServiceException {
+		 Loggers.loggerStart();
+	        List<Fee> unpaidStudentsList = null;
+			try{
+				unpaidStudentsList=(List<Fee>) feeDao.getUnpaidStudentsList();
+				Loggers.loggerStart(unpaidStudentsList);
+			}catch (GSmartDatabaseException exception) {
+				throw (GSmartServiceException) exception;
+			}catch(Exception e){
+				throw new GSmartServiceException(e.getMessage());
+			}
+			 Loggers.loggerEnd();
+			return unpaidStudentsList;
+	}
+
+	@Override
+	public ArrayList<Fee> getFeeLists(String academicYear) throws GSmartServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void editFee(Fee fee) throws GSmartServiceException {
+		Loggers.loggerStart();
+		try {
+			feeDao.editFee(fee);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			e.printStackTrace();
+			//Loggers.loggerException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		
+	}
+
+	@Override
+	public void deleteFee(Fee fee) throws GSmartServiceException {
+		Loggers.loggerStart();
+		try {
+			feeDao.deleteFee(fee);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			
+			Loggers.loggerException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		
+	}
+
+	
 
 }

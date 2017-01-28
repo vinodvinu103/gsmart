@@ -10,7 +10,7 @@ public class InventoryAssignmentsCompoundKey implements Serializable
 {
 	private String category;
 	private String itemType;
-	private int smartId;
+	private String smartId;
 	
 	@Override
 	public int hashCode() {
@@ -18,7 +18,7 @@ public class InventoryAssignmentsCompoundKey implements Serializable
 		int result = 1;
 		result = prime * result + ((category == null) ? 0 : category.hashCode());
 		result = prime * result + ((itemType == null) ? 0 : itemType.hashCode());
-		result = prime * result + smartId;
+		result = prime * result + ((smartId == null) ? 0 : smartId.hashCode());
 		return result;
 	}
 	@Override
