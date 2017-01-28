@@ -107,6 +107,21 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 		Loggers.loggerEnd();
 	}
 
+	@Override
+	public FeeMaster getFeeStructure(String standard) throws GSmartServiceException {
+		Loggers.loggerStart();
+	try{
+		
+		return feeMasterDao.getFeeStructure(standard);
+	}
+	catch (Exception e) {
+		e.printStackTrace();
+		return null;
+		
+	}
+	
+	}
+
 	/*@Override
 	public void fileUpload(FileUpload fileUpload) throws GSmartServiceException {
 

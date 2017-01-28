@@ -3,6 +3,8 @@ package com.gsmart.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartServiceException;
 
@@ -32,5 +34,7 @@ public interface ProfileServices{
 	List<Profile> search( Profile profileList)throws GSmartServiceException;
 
 	public void editRole(Profile profile)throws GSmartServiceException;
+	
+	List<Profile> getProfileByHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
 
 }

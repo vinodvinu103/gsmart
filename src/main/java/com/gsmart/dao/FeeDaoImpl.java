@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Fee;
+import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -59,6 +61,7 @@ public class FeeDaoImpl implements FeeDao{
 			Profile profile=getReportingManagerId(fee.getSmartId());
 			fee.setReportingManagerId(profile.getReportingManagerId());
 			fee.setParentName(profile.getFatherName());
+			fee.setIsActive("Y");
 			session.save(fee);
 			transaction.commit();
 		}catch(ConstraintViolationException e){
@@ -107,6 +110,125 @@ public class FeeDaoImpl implements FeeDao{
 			e.printStackTrace();
 		}
 		return feeList;
+	}
+
+	@Override
+	public List<Fee> getPaidStudentsList() throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<Fee> paidStudentsList=null;
+		try
+		{
+//		System.out.println(academicYear);
+		getconnection();
+		Loggers.loggerValue("getting connections", "");
+		query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y'");
+		//query.setParameter("academicYear", academicYear);
+		paidStudentsList=(List<Fee>) query.list();
+		Loggers.loggerEnd();
+		
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return paidStudentsList;
+	
+	}
+
+	@Override
+	public List<Fee> getUnpaidStudentsList() throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<Fee> unpaidStudentsList=null;
+		try
+		{
+		//System.out.println(academicYear);
+		getconnection();
+		Loggers.loggerValue("getting connections", "");
+		query=session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y'");
+		//query.setParameter("academicYear", academicYear);
+		unpaidStudentsList=(List<Fee>) query.list();
+		Loggers.loggerEnd();
+		
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return unpaidStudentsList;
+	
+	}
+
+	@Override
+	public void editFee(Fee fee) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		try {
+			getconnection();
+			Fee oldFee = getFee(fee.getEntryTime());
+			oldFee.setUpdatedTime(CalendarCalculator.getTimeStamp());
+			oldFee.setIsActive("N");
+			session.update(oldFee);
+			
+			/*feeMaster.setEntryTime(CalendarCalculator.getTimeStamp());
+			feeMaster.setIsActive("Y");
+			session.save(feeMaster);*/
+
+			transaction.commit();
+			addFee(fee);
+			
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+			//session.close();
+		}
+		Loggers.loggerEnd();
+		
+	}
+
+	
+		
+
+		public Fee getFee(String entryTime)
+		{
+			Loggers.loggerStart();
+			query = session.createQuery("from Fee where isActive=:isActive and entryTime =:entryTime");
+			query.setParameter("isActive", "Y");
+			query.setParameter("entryTime", entryTime);
+			Fee fee=(Fee) query.uniqueResult();
+
+			Loggers.loggerValue("feeList", fee);
+			return fee;
+			
+			
+		}
+	
+	
+
+	@Override
+	public void deleteFee(Fee fee) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		try {
+			getconnection();
+			/*query = session.createQuery("update FeeMaster set IsActive=:IsActive, exittime=:exittime where entrytime = :entrytime");
+			query.setParameter("entrytime", feeMaster.getEntrytime());
+		
+			query.setParameter("IsActive", feeMaster.getIsActive());
+			query.setParameter("exittime", feeMaster.getExittime());*/
+			fee.setExitTime(CalendarCalculator.getTimeStamp());
+			fee.setIsActive("D");
+			session.update(fee);
+			transaction.commit();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Loggers.loggerException(e.getMessage());
+		} finally {
+			session.close();
+		}
+		Loggers.loggerEnd();
+		
+		
 	}
 
 }

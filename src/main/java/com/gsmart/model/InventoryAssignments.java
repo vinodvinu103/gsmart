@@ -4,8 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -26,7 +29,8 @@ public class InventoryAssignments implements Serializable
 	private String itemType;
 
 	@Column(name="UPD_SMART_ID")
-	private int updSmartId;
+	private String updSmartId;
+	
 	
 	@Column(name="TEACHER_NAME")
 	private String teacherName;
@@ -54,10 +58,23 @@ public class InventoryAssignments implements Serializable
 	
 	@Id
 	@Column(name="SMART_ID")
-	private Integer smartId;
+	private String smartId;
 	
+
 	@Transient
 	int childFlag;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
 	
 	public int getChildFlag() {
 		return childFlag;
@@ -77,11 +94,17 @@ public class InventoryAssignments implements Serializable
 	public void setItemType(String itemType) {
 		this.itemType = itemType;
 	}
-	public int getUpdSmartId() {
+	public String getUpdSmartId() {
 		return updSmartId;
 	}
-	public void setUpdSmartId(int updSmartId) {
+	public void setUpdSmartId(String updSmartId) {
 		this.updSmartId = updSmartId;
+	}
+	public String getSmartId() {
+		return smartId;
+	}
+	public void setSmartId(String smartId) {
+		this.smartId = smartId;
 	}
 	public String getTeacherName() {
 		return teacherName;
@@ -131,11 +154,6 @@ public class InventoryAssignments implements Serializable
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
 	}
-	public Integer getSmartId() {
-		return smartId;
-	}
-	public void setSmartId(Integer smartId) {
-		this.smartId = smartId;
-	}
+	
 	
 }
