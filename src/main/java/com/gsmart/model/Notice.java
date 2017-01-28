@@ -15,13 +15,52 @@ public class Notice
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
 	@Column(name="SMART_ID")
-	private Integer smartId;
+	private String smartId;
 	@Lob @Column(name="MESSAGE")
 	private String message;
 	@Column(name="EXIT_TIME")
 	private String exitTime;
 	@Column(name="UPDATE_TIME")
 	private String update_time;
+	
+	@Column(name="ROLE")
+	private String role;
+	public String getEntryTime() {
+		return entryTime;
+	}
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
+	public String getSmartId() {
+		return smartId;
+	}
+	public void setSmartId(String smartId) {
+		this.smartId = smartId;
+	}
+	public String getExitTime() {
+		return exitTime;
+	}
+	public void setExitTime(String exitTime) {
+		this.exitTime = exitTime;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	public String getIsActive() {
+		return isActive;
+	}
+	public void setIsActive(String isActive) {
+		this.isActive = isActive;
+	}
+	public String getUpdatedId() {
+		return updatedId;
+	}
+	public void setUpdatedId(String updatedId) {
+		this.updatedId = updatedId;
+	}
 	@Column(name="IS_ACTIVE")
 	private String isActive;
 	@Column(name="TYPE")
@@ -30,7 +69,7 @@ public class Notice
 	@Transient
 	private boolean childFlag;
 	@Column(name="UPDATED_ID")
-	private Integer updatedId;
+	private String updatedId;
 	
 	
 	public boolean isChildFlag() {
@@ -46,10 +85,10 @@ public class Notice
 		this.type = type;
 	}
 
-	public Integer getSmart_id() {
+	public String getSmart_id() {
 		return smartId;
 	}
-	public void setSmart_id(Integer smart_id) {
+	public void setSmart_id(String smart_id) {
 		this.smartId = smart_id;
 	}
 	public String getMessage() {
@@ -82,12 +121,15 @@ public class Notice
 	public void setIs_active(String is_active) {
 		this.isActive = is_active;
 	}
-	public Integer getUpdated_id() {
+	public String getUpdated_id() {
 		return updatedId;
 	}
-	public void setUpdated_id(Integer updated_id) {
+	public void setUpdated_id(String updated_id) {
 		this.updatedId = updated_id;
+	    }
+	
+	
 	}
 	
 	
-}
+

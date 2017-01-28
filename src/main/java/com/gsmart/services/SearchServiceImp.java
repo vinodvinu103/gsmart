@@ -92,6 +92,7 @@ public class SearchServiceImp implements SearchService {
 		try {
 		Set<String> key = map.keySet();
 		
+		
 		/* Loggers.loggerValue("key", key); */
 
 		for (String temp : key) {
