@@ -132,14 +132,14 @@ public class NoticeDaoImpl implements NoticeDao {
 		try{
 			Loggers.loggerStart();
 			getConnection();
-			Notice oldNotice = getNotice(notice.getEntry_time());
-			oldNotice.setUpdate_time(CalendarCalculator.getTimeStamp());
-			oldNotice.setIs_active("N");
-			session.update(oldNotice);
+			//Notice oldNotice = getNotice(notice.getEntry_time());
+			notice.setUpdate_time(CalendarCalculator.getTimeStamp());
+			notice.setIs_active("N");
+			session.update(notice);
 			transaction.commit();
-			
+/*			
 			Loggers.loggerEnd();
-			addNotice(notice,"smartId");
+			addNotice(notice,"smartId");*/
 			
 		}catch (org.hibernate.exception.ConstraintViolationException e){
 		}catch (Throwable e) {
@@ -154,13 +154,13 @@ public class NoticeDaoImpl implements NoticeDao {
 	
 	}
 	
-	private void UpdateNotice(Notice oldNotice){
+/*	private void UpdateNotice(Notice oldNotice){
 		session=sessionFactory.openSession();
 		transaction=session.beginTransaction();
 		session.update(oldNotice);
 		transaction.commit();
 		session.close();
-	}
+	}*/
 	
 	public Notice getNotice(String entryTime){
       try{

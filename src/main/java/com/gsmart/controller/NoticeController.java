@@ -241,6 +241,7 @@ public class NoticeController
 			noticeService.editNotice(notice);
 			jsonMap.put("status", 200);
 			jsonMap.put("result", "success");
+			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		}
 			
