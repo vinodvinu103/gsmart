@@ -12,6 +12,13 @@ import javax.persistence.Transient;
 @Table(name = "PROFILE_MASTER")
 public class Profile {
 
+	@Override
+	public String toString() {
+		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", role=" + role + ", reportingManagerName="
+				+ reportingManagerName + ", reportingManagerId=" + reportingManagerId + ", totalAmount=" + totalAmount
+				+ ", paidAmount=" + paidAmount + ", balanceAmount=" + balanceAmount + "]";
+	}
+
 	@Id
 	@Column(name = "SMART_ID")
 	private String smartId;
