@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundHierarchy;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.util.CalendarCalculator;
@@ -71,14 +72,16 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 		inventoryAssignments.setIsActive("Y");
 		ch=(InventoryAssignmentsCompoundKey) session.save(inventoryAssignments);
 		tx.commit();
-		
-	    } catch (ConstraintViolationException e) {
-		throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
-		} catch (Throwable e) {
-			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		System.out.println("SAVED DATA "+ch);
+		String cat=inventoryAssignments.getCategory();
+		String item=inventoryAssignments.getItemType();
+		int numofQuantity=inventoryAssignments.getQuantity();
+		updateInventory(cat, item, numofQuantity);
+		System.out.println("data is updated   :  "  +ch);
+		session.close();
+	    }catch(Exception e){
+	    	e.printStackTrace();
+	    }
 		Loggers.loggerEnd();
 		return ch;
 	}
@@ -142,15 +145,24 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	}
 
 
-	/*private void updateInventory(InventoryAssignments oldInventory, String isActive) 
-	{
+	private void updateInventory(String cat, String item,int leftQuantity) 
+	{	
+		Loggers.loggerStart();
+		//int leftQuantity=0;
+		Inventory inventory=null;
 		try
-		{
+		{   
 			getConnection();
-			oldInventory.setIsActive(isActive);
-			oldInventory.setUpdatedTime(CalendarCalculator.getTimeStamp());
-			session.update(oldInventory);
+			query=session.createQuery("from Inventory where category=:category and itemType=:itemType and isActive='Y' ");
+			query.setParameter("category", cat);
+			query.setParameter("itemType", item);
+			inventory=(Inventory) query.uniqueResult();
+			int numOfLeftQunt=inventory.getLeftQuantity();
+			inventory.setLeftQuantity(numOfLeftQunt-leftQuantity);
+			inventory.setUpdateTime(CalendarCalculator.getTimeStamp());
+			session.update(inventory);
 			tx.commit();
+			Loggers.loggerEnd();
 		}
 		catch(Exception e)
 		{
@@ -160,7 +172,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 		{
 			session.close();
 		}
-	}*/
+	}
 
 	@Override
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException  

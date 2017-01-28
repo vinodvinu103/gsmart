@@ -7,6 +7,7 @@ import java.util.List;
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Inventory;
 import com.gsmart.util.GSmartDatabaseException;
+import com.gsmart.util.Loggers;
 
 /**
  * 
@@ -49,7 +50,6 @@ public	void deleteInventory(Inventory inventory) throws GSmartDatabaseException;
 	 * @return Nothing
 	 * @throws  user define Exception
 	 */
-	
-	
+
 
 }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.InventoryAssignmentsDao;
+import com.gsmart.dao.InventoryDaoImpl;
+import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.util.GSmartDatabaseException;
@@ -18,6 +20,9 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 
 	@Autowired
 	InventoryAssignmentsDao inventoryAssignmentsDao;
+	
+	@Autowired
+	InventoryDaoImpl inventoryDao;
 
 	@Override
 	public List<InventoryAssignments> getInventoryList() throws GSmartServiceException {
@@ -35,7 +40,9 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments) {
 		InventoryAssignmentsCompoundKey compoundKey=null;
 		try {
+			Loggers.loggerStart(inventoryAssignments);
 			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments);
+			Loggers.loggerEnd(compoundKey);
 		} catch (GSmartDatabaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

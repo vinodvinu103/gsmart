@@ -34,6 +34,31 @@ public class Inventory {
 	@Id
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
+	
+	
+	
+	@Column(name="QUANTITY")
+	private Integer quantity;
+	
+	
+	@Column(name="LEFT_QUANTITY")
+	private Integer leftQuantity;
+
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+
+	public Integer getLeftQuantity() {
+		return leftQuantity;
+	}
+
+	public void setLeftQuantity(Integer leftQuantity) {
+		this.leftQuantity = leftQuantity;
+	}
 
 	/**
 	 * Its a time when the inventory instance is exit
@@ -103,8 +128,14 @@ public class Inventory {
 
 	@Override
 	public String toString() {
-		return " \n Inventory [ {compond, \n \t category=" + category + ",\n \t itemType=" + itemType + ",  \n \tentryTime=" + entryTime + "}, \n exitTime="
-				+ exitTime + ",\n updateTime=" + updateTime + ",  \n isActive=" + isActive + "]";
+		return "Inventory [\n category=" + category + ", \n itemType=" + itemType + ",  \n entryTime=" + entryTime + ", \n quantity="
+				+ quantity + ", \n leftQuantity=" + leftQuantity + ", \n exitTime=" + exitTime + ", \n updateTime=" + updateTime
+				+ ", \n isActive=" + isActive + "]";
 	}
+
+	
+
+
+	
 
 }

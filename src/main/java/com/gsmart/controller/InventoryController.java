@@ -76,6 +76,7 @@ public class InventoryController {
        
 		if (modulePermission!= null) {
 			 inventoryList = inventoryServices.getInventoryList();
+			
 			 permissions.put("inventoryList", inventoryList);
 				Loggers.loggerEnd(inventoryList);
 				return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
@@ -154,6 +155,7 @@ public class InventoryController {
 	}
 
 	
+	}
 	
 /*	 
 	@RequestMapping( method = RequestMethod.DELETE)
@@ -173,4 +175,5 @@ public class InventoryController {
 	}*/
 
 
-}
+
+
