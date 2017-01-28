@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundLeaveMaster;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -36,12 +37,18 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<LeaveMaster> getLeaveMasterList() throws GSmartDatabaseException{
+	public List<LeaveMaster> getLeaveMasterList(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
 		Loggers.loggerStart();
+		getconnection();
 		 List<LeaveMaster> leavemasterlist = null;
 		 try { 
-			 getconnection();
+			 if(role.equalsIgnoreCase("admin"))
+			 {
 			 query=session.createQuery("from LeaveMaster where isActive='Y'");
+			 }else{
+				 query=session.createQuery("from LeaveMaster where isActive='Y' and hierarchy:hierarchy");
+				 query.setParameter("hierarchy", hierarchy.getHid());
+			 }
 			 leavemasterlist = (List<LeaveMaster>) query.list();
 			
 		} catch (Exception e) {

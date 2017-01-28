@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Fee;
-import com.gsmart.model.FeeMaster;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -34,12 +34,20 @@ public class FeeDaoImpl implements FeeDao{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Fee> getFeeList(Fee fee) throws GSmartDatabaseException {
+	public ArrayList<Fee> getFeeList(Fee fee,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		ArrayList<Fee> feeList;
 		try{
-			getconnection();
-			query=session.createQuery("from Fee where smartId =:smartId and academicYear =:academicYear");
+			if(role.equalsIgnoreCase("admin"))
+			{
+				query=session.createQuery("from Fee where smartId =:smartId and academicYear =:academicYear");
+			}
+			else{
+			
+			query=session.createQuery("from Fee where smartId =:smartId and academicYear =:academicYear and hierarchy=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			query.setParameter("smartId", fee.getSmartId());
 			query.setParameter("academicYear", fee.getAcademicYear());
 			feeList=(ArrayList<Fee>) query.list();
@@ -115,26 +123,41 @@ public class FeeDaoImpl implements FeeDao{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fee> gettotalfee() throws GSmartServiceException {
+	public List<Fee> gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		getconnection();
-		query = session.createQuery("From Fee");
+		if(role.equalsIgnoreCase("admin"))
+		{
+		query = session.createQuery("From Fee where isActive=:isActive");
+		}else{
+			query = session.createQuery("From Fee where isActive=:isActive and hierarchy:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+		}
+		query.setParameter("isActive", "Y");
 		List<Fee> list = query.list();
 		session.close();
 		Loggers.loggerEnd();
 		return list;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fee> getPaidStudentsList() throws GSmartDatabaseException {
+	public List<Fee> getPaidStudentsList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		List<Fee> paidStudentsList=null;
 		try
 		{
 //		System.out.println(academicYear);
-		getconnection();
+		
 		Loggers.loggerValue("getting connections", "");
+		if(role.equalsIgnoreCase("admin"))
+		{
 		query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y'");
+		}else{
+			query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y' and hierarchy:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+		}
 		//query.setParameter("academicYear", academicYear);
 		paidStudentsList=(List<Fee>) query.list();
 		Loggers.loggerEnd();
@@ -147,16 +170,22 @@ public class FeeDaoImpl implements FeeDao{
 	
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fee> getUnpaidStudentsList() throws GSmartDatabaseException {
+	public List<Fee> getUnpaidStudentsList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Fee> unpaidStudentsList=null;
+		getconnection();
 		try
 		{
 		//System.out.println(academicYear);
-		getconnection();
-		Loggers.loggerValue("getting connections", "");
-		query=session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y'");
+			if(role.equalsIgnoreCase("admin"))
+			{
+			query=session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y'");
+			}else{
+				query=session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y' and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 		//query.setParameter("academicYear", academicYear);
 		unpaidStudentsList=(List<Fee>) query.list();
 		Loggers.loggerEnd();

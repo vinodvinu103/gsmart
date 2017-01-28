@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.PasswordDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartServiceException;
@@ -16,21 +17,21 @@ public class PasswordServicesImpl implements PasswordServices {
 	PasswordDao passwordDao;
 
 	@Override
-	public void setPassword(Login login)throws GSmartServiceException {
-		passwordDao.setPassword(login);
+	public void setPassword(Login login,Hierarchy hierarchy)throws GSmartServiceException {
+		passwordDao.setPassword(login,hierarchy);
 		
 	}
 	@Override
-	public Profile forgotPassword(String email) throws GSmartServiceException {
+	public Profile forgotPassword(String email,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 
-		return passwordDao.forgotPassword(email);
+		return passwordDao.forgotPassword(email,hierarchy);
 	}
 
 	@Override
-	public boolean changePassword(Login login, String smartId) throws GSmartServiceException {
+	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartServiceException {
 		
-	return passwordDao.changePassword(login, smartId);
+	return passwordDao.changePassword(login, smartId,hierarchy);
 		
 	}	
 	

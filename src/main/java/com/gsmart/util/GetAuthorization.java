@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.TokenService;
@@ -25,11 +26,13 @@ public class GetAuthorization {
 	Session session;
 	Transaction tx;
 	Query query;
+	RolePermission permissions = null;
+	Hierarchy hierarchy=null;
 
 	public RolePermission authorizationForGet(String tokenNumber, HttpSession httpSession) throws GSmartServiceException {
 
 		Loggers.loggerStart(tokenNumber);
-		RolePermission permissions = null;
+		
 
 		try {
 			Token token = tokenService.getToken(tokenNumber);
@@ -38,6 +41,7 @@ public class GetAuthorization {
 			Loggers.loggerValue("Module: ", module);
 			permissions = getPermission(token, module);
 			httpSession.setAttribute("permissions", permissions);
+			httpSession.setAttribute("hierarchy", token);
 			System.out.println("permission"+permissions);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,13 +59,26 @@ public class GetAuthorization {
 		
 		try{
 			rolePermission = (RolePermission) httpSession.getAttribute("permissions");
-			Loggers.loggerEnd(rolePermission.getAdd());
-			return rolePermission.getAdd();
+			hierarchy=(Hierarchy) httpSession.getAttribute("hierarchy");
+			
+			if(rolePermission==null || hierarchy==null)
+			{
+				Token token = tokenService.getToken(tokenNumber);
+				String module = getModuleName();
+				Loggers.loggerValue("Token: ", token);
+				Loggers.loggerValue("Module: ", module);
+				rolePermission = getPermission(token, module);
+				httpSession.setAttribute("permissions", rolePermission);
+				httpSession.setAttribute("hierarchy", token);
+			Loggers.loggerEnd(permissions.getAdd());
+			return permissions.getAdd();
+			}
 		} catch(Exception e){
 			e.printStackTrace();
 			Loggers.loggerEnd(false);
 			return false;
 		}
+		return rolePermission.getAdd();
 	
 	}
 
@@ -71,6 +88,19 @@ public class GetAuthorization {
 		
 		try{
 			rolePermission = (RolePermission) httpSession.getAttribute("permissions");
+         hierarchy=(Hierarchy) httpSession.getAttribute("hierarchy");
+			
+			if(rolePermission==null || hierarchy==null)
+			{
+				Token token = tokenService.getToken(tokenNumber);
+				String module = getModuleName();
+				Loggers.loggerValue("Token: ", token);
+				Loggers.loggerValue("Module: ", module);
+				rolePermission = getPermission(token, module);
+				httpSession.setAttribute("permissions", rolePermission);
+				httpSession.setAttribute("hierarchy", token.getHierarchy());
+			}
+
 			
 			if(task.equalsIgnoreCase("edit"))
 			{

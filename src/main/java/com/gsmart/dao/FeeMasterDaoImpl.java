@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -42,12 +43,18 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FeeMaster> getFeeList() throws GSmartDatabaseException {
+	public List<FeeMaster> getFeeList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<FeeMaster> feeList=null;
 		try {
-			getConnection();
+			if(role.equalsIgnoreCase("admin"))
+			{
 			query = session.createQuery("from FeeMaster where isActive='Y'");
+			}else{
+				query = session.createQuery("from FeeMaster where isActive='Y' and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			feeList = (List<FeeMaster>)query.list();
 
 		} catch (Exception e) {
@@ -71,10 +78,10 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public CompoundFeeMaster addFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		
+		getConnection();
 		CompoundFeeMaster cfm = null;
 		try {
-			getConnection();
+			
 			FeeMaster feeMaster2=null;
 			query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive");
 			query.setParameter("standard", feeMaster.getStandard());
@@ -115,8 +122,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	public void editFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			FeeMaster oldFee = getFeeMas(feeMaster.getEntryTime());
 			oldFee.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			oldFee.setIsActive("N");
@@ -154,8 +162,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public void deleteFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			/*query = session.createQuery("update FeeMaster set IsActive=:IsActive, exittime=:exittime where entrytime = :entrytime");
 			query.setParameter("entrytime", feeMaster.getEntrytime());
 		
@@ -199,10 +208,17 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	}
 
 	@Override
-	public FeeMaster getFeeStructure(String standard) {
+	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) {
 		getConnection();
 		try {
+			if(role.equalsIgnoreCase("admin"))
+			{
 			query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' ");
+			}else{
+				query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+				
+			}
 			FeeMaster fee = (FeeMaster) query.list().get(0);
 			return fee;
 		} catch (Exception e) {

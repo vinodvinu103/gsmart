@@ -3,6 +3,7 @@ package com.gsmart.services;
 import java.util.ArrayList;
 import java.util.Map;
 
+import com.gsmart.model.Hierarchy;
 //import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
@@ -10,7 +11,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface SearchService {
 	
-	Map<String, Profile> getAllProfiles();
+	Map<String, Profile> getAllProfiles(String role,Hierarchy hierarchy);
 	
 	ArrayList<Profile> getEmployeeInfo(String emp, Map<String, Profile> map);
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Fee;
 import com.gsmart.model.FeeMaster;
+import com.gsmart.model.Hierarchy;
 //import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
@@ -66,10 +67,10 @@ public class SearchServiceImp implements SearchService {
 	private Map<String, Profile> allProfiles;
 
 	@Override
-	public Map<String, Profile> getAllProfiles() {
+	public Map<String, Profile> getAllProfiles(String role,Hierarchy hierarchy) {
 		Loggers.loggerStart();
 		allProfiles = new HashMap<String, Profile>();
-		List<Profile> profiles = profiledao.getAllRecord();
+		List<Profile> profiles = profiledao.getAllRecord(role,hierarchy);
 		Loggers.loggerValue("returnd to getall Profiles in serviceImpl ", "");
 		for (Profile profile : profiles) {
 			Loggers.loggerValue("smartIds :", profile.getSmartId());

@@ -138,18 +138,30 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getProfiles(String role, String smartId) {
+	public ArrayList<Profile> getProfiles(String role, String smartId,String role2,Hierarchy hierarchy) {
+		getConnection();
 		try {
 			Loggers.loggerStart(role);
 
 			Loggers.loggerStart("current smartId" + smartId);
-			getConnection();
+			if(role2.equalsIgnoreCase("admin"))
+			{
+				if (role.toLowerCase().equals("student")) {
+					query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
+							+ smartId.substring(0, 2) + "%' ");
+				} else {
+					query = session.createQuery("from Profile where isActive='Y'and role!='student' ");
+				}
+				
+			}else{
 			if (role.toLowerCase().equals("student")) {
 				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
-						+ smartId.substring(0, 2) + "%'");
+						+ smartId.substring(0, 2) + "%' and hierarchy:hierarchy");
 			} else {
-				query = session.createQuery("from Profile where isActive='Y'and role!='student'");
+				query = session.createQuery("from Profile where isActive='Y'and role!='student' and hierarchy:hierarchy");
 			}
+			}
+			query.setParameter("hierarchy", hierarchy.getHid());
 			Loggers.loggerEnd(query.list());
 			return (ArrayList<Profile>) query.list();
 		} catch (Exception e) {
@@ -230,15 +242,25 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Profile> getAllRecord() {
+	public List<Profile> getAllRecord(String role,Hierarchy  hierarchy) {
 
 		Loggers.loggerStart();
+		getConnection();
 
 		List<Profile> profile = null;
 
 		try {
-			getConnection();
-			query = session.createQuery("from Profile where isActive like('Y')");
+			if(role.equalsIgnoreCase("admin"))
+			{
+				query = session.createQuery("from Profile where isActive=:isActive");
+				
+			}else{
+				query = session.createQuery("from Profile where isActive=:isActive and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+			query.setParameter("isActive", "Y");
+			
+			
 
 			profile = (List<Profile>) query.list();
 		} catch (Exception e) {
@@ -322,6 +344,7 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart(hierarchy);

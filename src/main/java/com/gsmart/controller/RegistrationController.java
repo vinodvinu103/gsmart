@@ -20,10 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Login;
 
-import com.gsmart.model.Assign;
 import com.gsmart.model.Fee;
 import com.gsmart.model.FeeMaster;
-import com.gsmart.model.Hierarchy;
 
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
@@ -92,13 +90,12 @@ public class RegistrationController {
 		Map<String, Object> jsonMap = new HashMap<>();
 
 		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		jsonMap.put("modulePermisson", modulePermisson);
 
-		Token Token = tokenService.getToken(tokenNumber);
-		String smartId = Token.getSmartId();
 
 		if (modulePermisson != null) {
-			jsonMap.put("result", profileServices.getProfiles("employee", smartId));
+			jsonMap.put("result", profileServices.getProfiles("employee", tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy()));
 			Loggers.loggerEnd(jsonMap);
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		} else {
@@ -119,11 +116,9 @@ public class RegistrationController {
 		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		jsonMap.put("modulePermisson", modulePermisson);
 
-		Token Token = tokenService.getToken(tokenNumber);
-		String smartId = Token.getSmartId();
-
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		if (modulePermisson != null) {
-			jsonMap.put("result", profileServices.getProfiles("student", smartId));
+			jsonMap.put("result", profileServices.getProfiles("student", tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy()));
 			Loggers.loggerEnd(jsonMap);
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		} else {
@@ -135,14 +130,20 @@ public class RegistrationController {
 	public ResponseEntity<Map<String, String>> addUser(@RequestBody Profile profile, Login login, @RequestHeader HttpHeaders token,
 			HttpSession httpSession, @PathVariable("updSmartId") String updSmartId) throws GSmartBaseException {
 		String tokenNumber = token.get("Authorization").get(0);
-		Token tokenObj = tokenService.getToken(tokenNumber);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String, String> jsonMap = new HashMap<>();
+		if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
+		{
+
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		//String updSmartId = tokenObj.getSmartId();
 
 
 		Loggers.loggerStart(profile.getFirstName());
 		Loggers.loggerValue("Added by ", updSmartId);
 
-		Map<String, String> jsonMap = new HashMap<>();
+		
 
 		String smartId = String.valueOf((Integer.parseInt(profileServices.getmaxSamrtId()) + 1));
 		if (profile.getRole().equalsIgnoreCase("student")) {
@@ -167,14 +168,14 @@ public class RegistrationController {
 		login.setReferenceSmartId(Encrypt.md5(smartId));
 		System.out.println("Encryptsmartid........."+Encrypt.md5(smartId));
 		login.setSmartId(smartId);
-		passwordServices.setPassword(login);
+		passwordServices.setPassword(login,tokenObj.getHierarchy());
 		
 		profile.setUpdSmartId(updSmartId);
 		profile.setEntryTime(Calendar.getInstance().getTime().toString());
 
 		if (profileServices.insertUserProfileDetails(profile)) {
 			if (profile.getRole().equalsIgnoreCase("student")) {
-				FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard());
+				FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(),tokenObj.getRole(),tokenObj.getHierarchy());
 				Fee fee = new Fee();
 				fee.setSmartId(profile.getSmartId());
 				fee.setName(profile.getFirstName());
@@ -207,6 +208,7 @@ public class RegistrationController {
 		}
 
 		jsonMap.put("Id", smartId);
+		}
 
 		Loggers.loggerEnd(jsonMap);
 		return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
@@ -215,27 +217,44 @@ public class RegistrationController {
 
 	@RequestMapping(value = "/updateProfile/{updEmpSmartId}", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> updateProfile(@RequestBody Profile profile,
-			@PathVariable("updEmpSmartId") String updEmpSmartId) throws GSmartBaseException {
+			@PathVariable("updEmpSmartId") String updEmpSmartId,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart(profile);
+		String tokenNumber = token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
 		Loggers.loggerValue("Updated by: ", updEmpSmartId);
 		Map<String, String> jsonResult = new HashMap<>();
+		if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
+		{
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			profile.setHierarchy(tokenObj.getHierarchy());
 		String result = profileServices.updateProfile(profile);
 		jsonResult.put("result", result);
 		Loggers.loggerEnd(jsonResult);
+		}
 		return new ResponseEntity<Map<String, String>>(jsonResult, HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search) {
+	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) {
 
 		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
 		Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
+		if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
+//			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			
 		Map<String, Profile> map = searchService.searchRep(search);
 		ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
 		jsonMap.put("result", profiless);
 		Loggers.loggerEnd();
+		}
 		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
 
 	}

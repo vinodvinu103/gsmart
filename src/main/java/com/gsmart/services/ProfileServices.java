@@ -21,7 +21,7 @@ public interface ProfileServices{
 
 	/*for profile*/
 
-	public ArrayList<Profile> getProfiles(String role,String smartId)throws GSmartServiceException;
+	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy)throws GSmartServiceException;
 
 	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
 	

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundHoliday;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -50,12 +51,18 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Holiday> getHolidayList() throws GSmartDatabaseException {
+	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<Holiday> holidayList=null;
 		try{
-			getConnection();
+			if(role.equalsIgnoreCase("admin"))
+			{
 			query = session.createQuery("from Holiday WHERE isActive='Y' ");
+			}else{
+				query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			holidayList = query.list();
 		}
 	 catch (Throwable e) {
@@ -76,9 +83,10 @@ public class HolidayDaoImpl implements HolidayDao {
 	@Override
 	public CompoundHoliday addHoliday(Holiday holiday) throws GSmartDatabaseException {
 		CompoundHoliday ch=null;
-		Loggers.loggerStart();		
+		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive");
 			query.setParameter("holidayDate", holiday.getHolidayDate());
 			query.setParameter("isActive", "Y");
@@ -113,8 +121,9 @@ public class HolidayDaoImpl implements HolidayDao {
 	@Override
 	public void editHoliday(Holiday holiday) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			Holiday oldholiday= getHolidayList(holiday.getEntryTime());
 			oldholiday.setIsActive("N");
 			oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -157,8 +166,9 @@ public class HolidayDaoImpl implements HolidayDao {
 	@Override
 	public void deleteHoliday(Holiday holiday) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			holiday.setIsActive("D");
 			holiday.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(holiday);
@@ -168,7 +178,7 @@ public class HolidayDaoImpl implements HolidayDao {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
 		} finally {
-			session.save(holiday);
+			session.close();
 		}
 		Loggers.loggerEnd();
 	}

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.CompoundModules;
 import com.gsmart.model.Modules;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.ModulesServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
@@ -51,13 +52,14 @@ public class ModulesController {
 		List<Modules> modulesList = null;
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 		Map<String, Object> modules = new HashMap<>();
 
 		modules.put("modulePermission", modulePermission);
 
 		if (modulePermission != null) {
-			modulesList = modulesServices.getModulesList();
+			modulesList = modulesServices.getModulesList(tokenObj.getRole(),tokenObj.getHierarchy());
 
 			modules.put("modulesList", modulesList);
 			Loggers.loggerEnd(modulesList);
@@ -80,6 +82,9 @@ public class ModulesController {
 		str.length();
 
         if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
+        	
+        	Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+        	modules.setHierarchy(tokenObj.getHierarchy());
 		CompoundModules cb=modulesServices.addModules(modules);
 		
 	        if(cb!=null)
