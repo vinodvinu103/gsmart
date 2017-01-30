@@ -237,7 +237,6 @@ public class NoticeController
 		Map<String, Object> jsonMap = new HashMap<>();
 		
 		try {
-			notice.setUpdated_id(smart_id);
 			noticeService.editNotice(notice);
 			jsonMap.put("status", 200);
 			jsonMap.put("result", "success");
