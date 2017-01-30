@@ -25,6 +25,7 @@ import com.gsmart.model.Token;
 import com.gsmart.services.LeaveServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
+import com.gsmart.util.CronJob;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
@@ -44,7 +45,7 @@ public class LeaveController {
 	
 	@RequestMapping( method = RequestMethod.GET)
 	public ResponseEntity<Map<String,Object>> getLeave(@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+			HttpSession httpSession) throws Exception {
 		Loggers.loggerStart();
 		
 		String tokenNumber = token.get("Authorization").get(0);
@@ -56,7 +57,9 @@ public class LeaveController {
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Map<String, Object> leave = new HashMap<>();
 		leave.put("modulePermission", modulePermission);
-					
+		System.out.println("Hello madam prati...........");
+			CronJob.cronJob();	
+			System.out.println("Bye madam prati...........");
 		if (modulePermission!= null) {
 			leaveList = leaveServices.getLeaveList();
 

@@ -39,8 +39,6 @@ public class LeaveDaoImpl implements LeaveDao {
 
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
 		return leave;
