@@ -19,6 +19,7 @@ import com.gsmart.model.Band;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
+import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -41,13 +42,13 @@ public class NoticeDaoImpl implements NoticeDao {
 	}
 	
 	@Override
-	public void addNotice(Notice notice,String smartId){
+	public void addNotice(Notice notice,Token token){
 		Loggers.loggerStart();
 	
 		getConnection();
 		try{
-			notice.setSmart_id(smartId);
-			
+			notice.setSmart_id(token.getSmartId());
+			notice.setRole(token.getRole());
 			notice.setIs_active("Y");
 			notice.setEntry_time(CalendarCalculator.getTimeStamp()); 
 			session.save(notice);
@@ -132,10 +133,15 @@ public class NoticeDaoImpl implements NoticeDao {
 		try{
 			Loggers.loggerStart();
 			getConnection();
-			//Notice oldNotice = getNotice(notice.getEntry_time());
-			notice.setUpdate_time(CalendarCalculator.getTimeStamp());
-			notice.setIs_active("N");
-			session.update(notice);
+			Notice oldNotice = getNotice(notice.getEntry_time());
+			oldNotice.setUpdate_time(CalendarCalculator.getTimeStamp());
+			oldNotice.setIs_active("N");
+			session.update(oldNotice);
+			
+			notice.setIs_active("Y");
+			notice.setEntry_time(CalendarCalculator.getTimeStamp());
+			session.save(notice);
+			
 			transaction.commit();
 /*			
 			Loggers.loggerEnd();
@@ -169,8 +175,7 @@ public class NoticeDaoImpl implements NoticeDao {
 			query = session.createQuery("from Notice where isActive='Y' and entryTime='" + entryTime + "'");
 			@SuppressWarnings("unchecked")
 			ArrayList<Notice> viewNotice = (ArrayList<Notice>) query.list();
-			transaction.commit();
-			session.close();
+			
 			return viewNotice.get(0);
 		} catch (Exception e) {
 			e.printStackTrace();

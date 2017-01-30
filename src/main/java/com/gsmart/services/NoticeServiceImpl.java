@@ -12,6 +12,7 @@ import com.gsmart.dao.NoticeDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
+import com.gsmart.model.Token;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -24,8 +25,8 @@ public class NoticeServiceImpl implements NoticeService
 	ProfileDao profileDao;
 
 	@Override
-	public void addNotice(Notice notice,String smartid) throws Exception {
-		noticeDao.addNotice(notice,smartid);
+	public void addNotice(Notice notice,Token token) throws Exception {
+		noticeDao.addNotice(notice,token);
 		
 	}
 

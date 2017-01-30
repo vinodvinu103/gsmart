@@ -72,20 +72,11 @@ public class SearchServiceImp implements SearchService {
 
 				Profile p = (Profile) map.get(i);
 
-
-					if ((p.getFirstName().trim().toLowerCase().startsWith(emp.toLowerCase()))) {
-						if (emp != null) {
-							if ((p.getTeacherId().trim().toLowerCase()).startsWith(emp.toLowerCase())) {
-								list.add(p);
-							}
-						} else {
-							list.add(p);
-						}
-					}
+				if ((p.getSmartId().trim().toLowerCase().startsWith(emp.toLowerCase()))) {
+					list.add(p);
+				}
 			}
-		}
-			
-		 catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		Loggers.loggerEnd();
@@ -98,20 +89,19 @@ public class SearchServiceImp implements SearchService {
 		ArrayList<Profile> childList = new ArrayList<Profile>();
 		/* Loggers.loggerValue("profiles in map", map); */
 		try {
-		Set<String> key = map.keySet();
-		
-		
-		/* Loggers.loggerValue("key", key); */
+			Set<String> key = map.keySet();
 
-		for (String temp : key) {
-			Profile p = map.get(temp);
-			if (p.getReportingManagerId().equals(smartId)) {
-				if (!(p.getSmartId().equals(smartId))) {
-					childList.add(p);
+			/* Loggers.loggerValue("key", key); */
+
+			for (String temp : key) {
+				Profile p = map.get(temp);
+				if (p.getReportingManagerId().equals(smartId)) {
+					if (!(p.getSmartId().equals(smartId))) {
+						childList.add(p);
+					}
 				}
+
 			}
-			
-		}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -147,11 +137,17 @@ public class SearchServiceImp implements SearchService {
 		do {
 			Loggers.loggerValue("entered int do while in searchParentInfo", "");
 			p = map.get(smartId);
-			if (!(p.getReportingManagerId().equals(smartId))) {
-				parentList.add(p.getReportingManagerId());
-				smartId = p.getReportingManagerId();
-				temp = true;
-				Loggers.loggerValue("entered into if in do while in searchParentInfo", "");
+			System.out.println("reporting managere id" + p.getReportingManagerId());
+			if (p.getReportingManagerId() != null) {
+				if (!(p.getReportingManagerId().equals(smartId))) {
+					System.out.println("hhhhyhg");
+					parentList.add(p.getReportingManagerId());
+					smartId = p.getReportingManagerId();
+					temp = true;
+					Loggers.loggerValue("entered into if in do while in searchParentInfo", "");
+				} else {
+					temp = false;
+				}
 			} else {
 				temp = false;
 			}

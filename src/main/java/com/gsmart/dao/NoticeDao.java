@@ -6,11 +6,12 @@ import java.util.Map;
 
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
+import com.gsmart.model.Token;
 import com.gsmart.util.GSmartServiceException;
 
 public interface NoticeDao{
 	
-	public void addNotice(Notice notice,String smartId)throws Exception;
+	public void addNotice(Notice notice,Token token)throws Exception;
 
 	public List<Notice> viewNotice(ArrayList<String> smartIdList)throws Exception;
 

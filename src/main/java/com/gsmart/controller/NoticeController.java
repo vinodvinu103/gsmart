@@ -205,9 +205,9 @@ public class NoticeController
 		{
 			
 			Token  token1 = tokenService.getToken(tokenNumber);
-			String smartId = token1.getSmartId();
+			//String smartId = token1.getSmartId();
 			
-			noticeService.addNotice(notice,smartId);
+			noticeService.addNotice(notice,token1);
 			jsonMap.put("status", 200);
 			jsonMap.put("result","success");
 			
@@ -224,8 +224,8 @@ public class NoticeController
 	   }
 	}
 	
-	@RequestMapping(value = "/editNotice/{smart_id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<Map<String,Object>> editNotice(@PathVariable("smart_id") String smart_id,@RequestBody Notice notice,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException{{
+	@RequestMapping(value = "/editNotice", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<Map<String,Object>> editNotice(@RequestBody Notice notice,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException{{
 		
 		
 
