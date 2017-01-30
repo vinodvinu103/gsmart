@@ -41,6 +41,9 @@ public interface FeeMasterServices
 	 */
 	public void deleteFee(FeeMaster feeMaster)throws GSmartServiceException;
 	
+	
+	public FeeMaster getFeeStructure(String standard) throws GSmartServiceException;
+	
 	/*public void fileUpload(FileUpload fileUpload)throws GSmartServiceException;*/
 	
 	/*public List getFile(String fileName) throws GSmartServiceException;*/

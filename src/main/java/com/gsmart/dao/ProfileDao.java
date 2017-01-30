@@ -21,6 +21,7 @@ package com.gsmart.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 //import com.gsmart.model.Search;
@@ -73,5 +74,10 @@ public interface ProfileDao {
 
 	public List<Profile> getsearchRep(Search search);
 	
+
 	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
+
+	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+
+
 }
