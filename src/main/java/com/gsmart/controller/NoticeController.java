@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -22,65 +23,126 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gsmart.dao.NoticeDao;
-import com.gsmart.model.Band;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.NoticeService;
+import com.gsmart.services.ProfileServices;
+import com.gsmart.services.SearchService;
+import com.gsmart.services.TokenService;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
-//import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
-import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
 
 @Controller
 @RequestMapping("/notice")
-
-public class NoticeController {
-	
+public class NoticeController
+{
 	@Autowired
 	NoticeService noticeService;
+	
+	@Autowired
+	TokenService tokenService;
+	
+	
+	@Autowired
+	SearchService searchService;
+
+	@Autowired
+	ProfileServices profileServices;
 	
 	@Autowired
 	GetAuthorization getAuthorization;
 	
 	final Logger logger = Logger.getLogger(NoticeDao.class);
 	
-	/*@RequestMapping(value = "/viewNotice", method = RequestMethod.GET)
-	public ResponseEntity<Map<String,List<Notice>>> viewNotice(@RequestHeader HttpHeaders token,HttpSession httpSession){
-		Map<String,List<Notice>> responseMap = new HashMap<>();
+	@RequestMapping(value = "/viewNotice/{smartId}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> viewNotice(@PathVariable ("smartId") String smartId,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException{
+    Loggers.loggerStart();
+		
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+		
+		Map<String,Object> responseMap = new HashMap<>();
+		
 		List<Notice> list=new ArrayList<Notice>();
 		
 		try 
 		{
+			Map<String, Profile> allprofiles=searchService.getAllProfiles("2017-2018");
+			ArrayList<String> parentSmartIdList =searchService.searchParentInfo(smartId, allprofiles);
 			 
-			list=noticeService.viewNotice();
-			responseMap.put("selfNotice", list);
-			return new ResponseEntity<Map<String,List<Notice>>>(responseMap, HttpStatus.OK);
+			list=noticeService.viewNotice(parentSmartIdList);
+			responseMap.put("data", list);
+			responseMap.put("status", 200);
+			responseMap.put("message","sucess");
+			responseMap.put("modulePermission", modulePermission);
+			return new ResponseEntity<Map<String,Object>>(responseMap, HttpStatus.OK);
 		} 
 		catch (Exception e) 
 		{
  			e.printStackTrace();
  			return null;
 		}
-	}*/
-	@RequestMapping( method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> viewAllNotice(HttpSession httpSession) throws GSmartBaseException {
-		Loggers.loggerStart();
-
-		List<Notice> noticeAllList = null;
-		
-		Map<String, Object> notice = new HashMap<>();
-		
-		noticeAllList = noticeService.viewAllNotice();
-	  		notice.put("noticeAllList", noticeAllList);
-
-	  		Loggers.loggerEnd(noticeAllList);
-		
-			return new ResponseEntity<Map<String,Object>>(notice, HttpStatus.OK);
-		
 	}
+	
+	
+	/*@RequestMapping(value = "/{smartId}")
+	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId ,@RequestHeader HttpHeaders token,HttpSession httpSession)
+			throws GSmartBaseException {
+
+		String tokenNumber=token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		RolePermission modulePermisson=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		
+		Map<String, Object> resultmap = new HashMap<String, Object>();
+		
+		resultmap.put("modulePermisson", modulePermisson);
+		if(modulePermisson!=null)
+		{
+		Profile profile = profileServices.getProfileDetails(smartId);
+		Map<String, Profile> profiles = searchService.getAllProfiles();
+
+		ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
+
+		if (childList.size() != 0) {
+			profile.setChildFlag(true);
+		}
+
+		Set<String> key = profiles.keySet();
+		for (int i = 0; i < childList.size(); i++) {
+
+			for (String j : key) {
+
+				Profile p = (Profile) profiles.get(j);
+				if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
+
+					if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
+						childList.get(i).setChildFlag(true);
+					}
+				}
+			}
+		}
+		
+		
+		resultmap.put("selfProfile", profile);
+		resultmap.put("childList", childList);
+		return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
+		}
+		else
+		{
+			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
+		}
+
+	}*/
 	/*@RequestMapping(value = "/childNotice/{smartId}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String,List<Notice>>> childNotice(@PathVariable("smartId") String smartId, @RequestHeader HttpHeaders token,HttpSession httpSession){
     Map<String,List<Notice>> responseMap = new HashMap<>();
@@ -104,15 +166,25 @@ public class NoticeController {
     	
     
 	}*/
-	@RequestMapping(value = "/viewSpecificNotice/{smart_id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Notice> viewSpecificNotice(@PathVariable("smart_id") Integer smart_id){
+	@RequestMapping(value = "/S/{role}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> viewSpecificNotice(@PathVariable("role") String role){
+		Loggers.loggerStart();
+		
+		
+		
 		List<Notice> list=new ArrayList<Notice>();
+		Map<String, Object> responeMap=new HashMap<>();
 		
 		try 
 		{
+			System.out.println("role coming from frontend"+role);
 			 
-			list=noticeService.viewSpecificNotice(smart_id);
-			return list;
+			list=noticeService.viewSpecificNotice(role);
+			responeMap.put("data", list);
+			responeMap.put("status", 200);
+			responeMap.put("message", "success");
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String,Object>>(responeMap, HttpStatus.OK);
 		} 
 		catch (Exception e) 
 		{
@@ -120,47 +192,70 @@ public class NoticeController {
  			return null;
 		}
 	}
-
+	
 	@RequestMapping(value = "/addNotice", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String,String>> addNotice(@RequestBody Notice notice)
+	public ResponseEntity<Map<String,Object>> addNotice(@RequestBody Notice notice,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException{
 	{
-		
-		Map<String,String> jsonMap=new HashMap<>();
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String,Object> jsonMap=new HashMap<>();
 		try 
 		{
-			noticeService.addNotice(notice);
+			
+			Token  token1 = tokenService.getToken(tokenNumber);
+			//String smartId = token1.getSmartId();
+			
+			noticeService.addNotice(notice,token1);
+			jsonMap.put("status", 200);
 			jsonMap.put("result","success");
-			return new ResponseEntity<Map<String,String>>(jsonMap, HttpStatus.OK);
+			
+			return new ResponseEntity<Map<String,Object>>(jsonMap, HttpStatus.OK);
 		} 
 		catch (Exception e) 
 		{
  			e.printStackTrace();
  			jsonMap.put("result","error");
- 			return new ResponseEntity<Map<String,String>>(jsonMap, HttpStatus.OK);
+ 			jsonMap.put("status", 400);
+ 			return new ResponseEntity<Map<String,Object>>(jsonMap, HttpStatus.OK);
 		}
+		
+	   }
 	}
 	
 	@RequestMapping(value = "/editNotice", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<Map<String, String>> editNotice(@RequestBody Notice notice) {
+	public @ResponseBody ResponseEntity<Map<String,Object>> editNotice(@RequestBody Notice notice,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException{{
 		
-		Map<String, String> jsonMap = new HashMap<>();
+		
+
+		Loggers.loggerStart();
+		
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String, Object> jsonMap = new HashMap<>();
 		
 		try {
-			//notice.setUpdatedId(smart_id);
 			noticeService.editNotice(notice);
+			jsonMap.put("status", 200);
 			jsonMap.put("result", "success");
-			return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		}
 			
 		catch (Exception e) {
 			jsonMap.put("result", "error");
-			return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
+			jsonMap.put("status", 400);
+	
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		}
 
 	}
+}
 	
 	@RequestMapping(value = "/deleteNotice", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<Map<String, String>> deleteNotice(@RequestBody Notice notice,@RequestHeader HttpHeaders Token, HttpSession httpSession ) throws GSmartServiceException {
+	public @ResponseBody ResponseEntity<Map<String, Object>> deleteNotice(@RequestBody Notice notice,@RequestHeader HttpHeaders Token, HttpSession httpSession ) throws GSmartServiceException {
 		
 		
 		
@@ -169,27 +264,22 @@ public class NoticeController {
 		String tokenNumber = Token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-
-		//List<Notice> noticeList = null;
     
-	//	RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-
-		Map<String, String> jsonMap = new HashMap<>();
+		
+		Map<String, Object> jsonMap = new HashMap<>();
 		try {
 			noticeService.deleteNotice(notice);
+			jsonMap.put("status", 200);
 			jsonMap.put("result", "success");
-			return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		}
 			
 		catch (Exception e) {
 			jsonMap.put("result", "error");
-			return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
+			jsonMap.put("status", 400);
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		}
 
 	}
 	
-	
-	
-	
-
 }

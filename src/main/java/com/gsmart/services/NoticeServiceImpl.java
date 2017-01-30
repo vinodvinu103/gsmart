@@ -1,64 +1,89 @@
 package com.gsmart.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import com.gsmart.util.GSmartServiceException;
-import com.gsmart.util.Loggers;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.NoticeDao;
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Notice;
+import com.gsmart.model.Profile;
+import com.gsmart.model.Token;
+import com.gsmart.util.GSmartServiceException;
+import com.gsmart.util.Loggers;
 
 @Service
-public class NoticeServiceImpl implements NoticeService {
-	
+public class NoticeServiceImpl implements NoticeService
+{
 	@Autowired
 	NoticeDao noticeDao;
+	@Autowired
+	ProfileDao profileDao;
 
 	@Override
-	public List<Notice> addNotice(Notice notice) throws GSmartServiceException {
-		noticeDao.addNotice(notice);
-		return null;
+	public void addNotice(Notice notice,Token token) throws Exception {
+		noticeDao.addNotice(notice,token);
 		
 	}
 
 	@Override
-	public List<Notice> viewAllNotice() throws GSmartServiceException {
-		Loggers.loggerStart();
-		return noticeDao.viewAllNotice();
-	
-	}
-
-	@Override
-	public void deleteNotice(Notice notice) throws GSmartServiceException {
-		noticeDao.deleteNotice(notice);
+	public List<Notice> viewNotice(ArrayList<String> smartIdList) throws Exception{
+		return noticeDao.viewNotice(smartIdList);
 		
 	}
 
 	@Override
-	public List<Notice> editNotice(Notice notice) throws GSmartServiceException {
+	public void deleteNotice(Notice notice) throws Exception {
+		 noticeDao.deleteNotice(notice);
+		
+	}
+
+	@Override
+	public void editNotice(Notice notice) throws Exception {
 		noticeDao.editNotice(notice);
-		return null;
+		
 	}
-
-	@Override
-	public List<Notice> viewSpecificNotice(Integer smart_id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*@Override
-	public List<Notice> viewAllNotice() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Notice> childNotice(String smartId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
 	
 
+	@Override
+	public List<Notice> viewSpecificNotice(String role){
+		 
+		return noticeDao.viewSpecificNotice(role);
+	}
+	
+	@Override
+	public ArrayList<Profile> getAllProfiles() {
+		ArrayList<Profile> profileList = profileDao.getAllProfiles();
+		return profileList;
+	}
+	
+	@Override
+	public ArrayList<Profile> getProfiles(String role,String smartId) throws GSmartServiceException {
+		
+		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId);
+		return profileList;
+	}
+
+
+	@Override
+	public Map<String, Object> getParentInfo(String empSmartId) {
+		Map<String, Object> parentInfo = new HashMap<>();
+		Profile parentProfile = profileDao.getParentInfo(empSmartId);
+		parentInfo.put("parentProfile", parentInfo);
+		String parentSmartId = parentProfile.getSmartId();
+		parentInfo.put("reportingProfiles", profileDao.getReportingProfiles(parentSmartId));
+		return parentInfo;
+	}
+
+	@Override
+	public Profile getProfileDetails(String empSmartId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
+
