@@ -37,6 +37,7 @@ public class GetAuthorization {
 			Loggers.loggerValue("Token: ", token);
 			Loggers.loggerValue("Module: ", module);
 			permissions = getPermission(token, module);
+			httpSession.setAttribute("hierarchy", token.getHierarchy());
 			httpSession.setAttribute("permissions", permissions);
 			System.out.println("permission"+permissions);
 		} catch (Exception e) {

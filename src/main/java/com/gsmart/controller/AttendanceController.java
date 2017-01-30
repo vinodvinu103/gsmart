@@ -164,7 +164,7 @@ public class AttendanceController {
 		resultmap.put("modulePermisson", modulePermisson);
 		if (modulePermisson != null) {
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles();
+			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018");
 			Loggers.loggerValue("profile is ", profile);
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("child is", childList);
