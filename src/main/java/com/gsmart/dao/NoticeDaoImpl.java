@@ -172,7 +172,7 @@ public class NoticeDaoImpl implements NoticeDao {
       try{
     	  session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			query = session.createQuery("from Notice where isActive='Y' and entryTime='" + entryTime + "'");
+			query = session.createQuery("from Notice where isActive='Y' and entryTime='" + entryTime + "' ORDER BY entryTime desc");
 			@SuppressWarnings("unchecked")
 			ArrayList<Notice> viewNotice = (ArrayList<Notice>) query.list();
 			
@@ -189,7 +189,7 @@ public class NoticeDaoImpl implements NoticeDao {
 		getConnection();
 		try{
 			
-			query=session.createQuery("from Notice where is_active='Y' and role=:roles");
+			query=session.createQuery("from Notice where is_active='Y' and role=:roles ORDER BY entryTime desc");
 			query.setParameter("roles", role);
 			//query.setMaxResults(6);
 			@SuppressWarnings("unchecked")

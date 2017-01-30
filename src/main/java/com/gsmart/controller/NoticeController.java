@@ -1,6 +1,9 @@
 package com.gsmart.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +183,11 @@ public class NoticeController
 			System.out.println("role coming from frontend"+role);
 			 
 			list=noticeService.viewSpecificNotice(role);
+			for(Notice notice : list ){
+				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+				Date d = f.parse(notice.getEntryTime());
+				notice.setEntryTime(String.valueOf(d.getTime()));
+			}
 			responeMap.put("data", list);
 			responeMap.put("status", 200);
 			responeMap.put("message", "success");
