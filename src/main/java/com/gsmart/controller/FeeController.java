@@ -2,6 +2,7 @@ package com.gsmart.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,11 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Fee;
+import com.gsmart.model.FeeMaster;
+import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
+import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -45,6 +50,10 @@ public class FeeController {
 
 	@Autowired
 	GetAuthorization getAuthorization;
+	
+	@Autowired
+	TokenService tokenService;
+	
 
 	@RequestMapping(value = "/viewFee", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, ArrayList<Fee>>> getFeeList(@RequestBody Fee fee,
@@ -185,5 +194,145 @@ public class FeeController {
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		}
 	}
+	
+	@RequestMapping(value = "/paidfee", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getPaidStudentsList(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		Token tokenObj = tokenService.getToken(tokenNumber);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+
+		List<Fee> PaidStudentsList = null;
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+		Map<String, Object> permission = new HashMap<>();
+		permission.put("modulePermission", modulePermission);
+		if (modulePermission != null) {
+			PaidStudentsList = feeServices.getPaidStudentsList();
+			permission.put("PaidStudentsList", PaidStudentsList);
+
+			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+		} else {
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+		}
+
+	}
+	/*public ResponseEntity<Map<String, ArrayList<Fee>>> getPaidStudentsList(@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+
+	Loggers.loggerStart();
+		Loggers.loggerValue("token", token);
+		Map<String, Profile> profileMap = new HashMap<String, Profile>();
+		Map<String, Object> permissions = new HashMap<String, Object>();
+		String tokenNumber = token.get("Authorization").get(0);
+		Loggers.loggerValue("tokenNumber", tokenNumber);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+
+		
+
+		
+	
+		Map<String, ArrayList<Fee>> jsonMap = new HashMap<String, ArrayList<Fee>>();
+
+	RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+	Map<String, Object> permission = new HashMap<>();
+	permission.put("modulePermission", modulePermission);
+	if (modulePermission != null) {
+		PaidStudentsList = inventoryAssignmentsServices.getPaidStudentsList();
+		permission.put("inventoryList", inventoryList);
+
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+	} else {
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+	}
+
+
+			ArrayList<Fee> PaidStudentsList = (ArrayList<Fee>) feeServices.getPaidStudentsList();
+
+			if (PaidStudentsList.size() != 0) {
+				jsonMap.put("result", PaidStudentsList);
+				Loggers.loggerEnd();
+				return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap, HttpStatus.OK);
+			} else {
+				jsonMap.put("result", null);
+				Loggers.loggerEnd();
+				return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap, HttpStatus.OK);
+			}
+
+		}
+	
+	*/
+	
+
+		
+	
+		
+	@RequestMapping(value = "/unpaidfee", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getUnPaidStudentsList(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
+	Loggers.loggerStart();
+	String tokenNumber = token.get("Authorization").get(0);
+	Token tokenObj = tokenService.getToken(tokenNumber);
+	String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+	str.length();
+
+	List<Fee> unPaidStudentsList = null;
+	RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+	Map<String, Object> permission = new HashMap<>();
+	permission.put("modulePermission", modulePermission);
+	if (modulePermission != null) {
+		unPaidStudentsList = feeServices.getUnpaidStudentsList();
+		permission.put("unPaidStudentsList", unPaidStudentsList);
+
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+	} else {
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+	}
+
+    }
+	
+	@RequestMapping(value="/{task}", method = RequestMethod.PUT)
+	public ResponseEntity<IAMResponse> editFee(@RequestBody Fee fee, @PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+		
+		IAMResponse myResponse;
+		Loggers.loggerStart(fee);
+		
+		String tokenNumber=token.get("Authorization").get(0);
+		
+	    String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		
+		str.length();
+		
+		if(getAuthorization.authorizationForPut(tokenNumber, task, httpSession))
+		{
+		
+		if(task.equals("edit"))
+			feeServices.editFee(fee);
+		else if(task.equals("delete"))
+			feeServices.deleteFee(fee);
+		
+		myResponse = new IAMResponse("success");
+		Loggers.loggerEnd();
+		
+		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+
+		}
+		else
+		{
+			myResponse=new IAMResponse("Permissions denied");
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
+	
 }
+}
+
+
