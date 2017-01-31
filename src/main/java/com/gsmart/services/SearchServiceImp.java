@@ -16,6 +16,7 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Band;
 import com.gsmart.model.Fee;
 import com.gsmart.model.FeeMaster;
+import com.gsmart.model.Hierarchy;
 //import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
@@ -37,6 +38,23 @@ public class SearchServiceImp implements SearchService {
 	@Autowired
 	FeeMasterServices feeMasterServices;
 
+
+	@Autowired /*
+				 * @RequestMapping(value = "/searchRep", method =
+				 * RequestMethod.POST) public ResponseEntity<Map<String,
+				 * ArrayList<Profile>>> searchRep(@RequestBody Search search) {
+				 * 
+				 * Map<String, ArrayList<Profile>> jsonMap = new HashMap<String,
+				 * ArrayList<Profile>>(); Map<String, Profile> map =
+				 * searchService.searchRep(search); ArrayList<Profile> profiles
+				 * = searchService.getEmployeeInfo(search.getName(), map);
+				 * jsonMap.put("result", profiles); return new
+				 * ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap,
+				 * HttpStatus.OK);
+				 * 
+				 * }
+				 */
+
 	/*
 	 * @RequestMapping(value = "/searchRep", method = RequestMethod.POST) public
 	 * ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody
@@ -55,10 +73,10 @@ public class SearchServiceImp implements SearchService {
 	private Map<String, Profile> allProfiles;
 
 	@Override
-	public Map<String, Profile> getAllProfiles(String academicYear) {
+	public Map<String, Profile> getAllProfiles(String academicYear,String role,Hierarchy hierarchy) {
 		Loggers.loggerStart();
 		allProfiles = new HashMap<String, Profile>();
-		List<Profile> profiles = profiledao.getAllRecord(academicYear);
+		List<Profile> profiles = profiledao.getAllRecord(academicYear,role,hierarchy);
 		Loggers.loggerValue("returnd to getall Profiles in serviceImpl ", "");
 		for (Profile profile : profiles) {
 			Loggers.loggerValue("smartIds :", profile.getSmartId());
@@ -166,7 +184,7 @@ public class SearchServiceImp implements SearchService {
 	 */
 
 	@Override
-	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles,String academicYear)
+	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles,String academicYear,String role,Hierarchy hierarchy)
 			throws GSmartServiceException {
 
 		Loggers.loggerStart();
@@ -193,8 +211,7 @@ public class SearchServiceImp implements SearchService {
 
 
 			if (childList.get(0).getRole().toLowerCase().equals("student")) {
-
-				fees = studentFees(childList,academicYear);
+				fees = studentFees(childList,academicYear,role,hierarchy);
 
 				return fees;
 
@@ -213,15 +230,23 @@ public class SearchServiceImp implements SearchService {
 						temp1 = map.get(i);
 						Loggers.loggerValue("temp1 value ", temp1);
 
+					
+					if (boo) {
+						fees = studentFees(temp1,academicYear,role,hierarchy);
+					}
+					/*}else
+					{
+						Loggers.loggerValue("sumup ended", "");
+						return childList;	
+					}*/
 
-						if (boo) {
-							fees = studentFees(temp1,academicYear);
-						}
+
+						
 					} else {
 						Loggers.loggerValue("sumup ended", "");
 						return childList;
-					}
 
+					}
 				} while (!boo);
 				
 			}
@@ -266,24 +291,22 @@ public class SearchServiceImp implements SearchService {
 				} while (i > 1);
 
 				return temp2;
-			
-			
-			}
-		else {
+
+		}else {
 			return childList;
 		}
 		
 	}
 
 	@Override
-	public ArrayList<Profile> studentFees(ArrayList<Profile> childList,String academicYear) throws GSmartServiceException {
+	public ArrayList<Profile> studentFees(ArrayList<Profile> childList,String academicYear,String role,Hierarchy hierarchy) throws GSmartServiceException {
 
 		Loggers.loggerStart(childList);
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
 		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear);
 
-		ArrayList<FeeMaster> fee =  (ArrayList<FeeMaster>) feeMasterServices.getFeeList();
+		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList(role,hierarchy);
 
 		Map<String, Fee> feeMap = new HashMap<String, Fee>();
 
@@ -400,5 +423,7 @@ public class SearchServiceImp implements SearchService {
 			parentInfo.put("reportingProfiles", null);
 		return parentInfo;
 	}
+
+
 
 }

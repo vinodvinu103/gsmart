@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -73,6 +74,7 @@ public class HierarchyController {
 		str.length();
 		List<Hierarchy> hierarchyList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		
 
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);

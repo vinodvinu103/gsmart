@@ -81,9 +81,10 @@ public class RolePermissionController {
 		Map<String, Object> permissions = new HashMap<>();
 		
 		permissions.put("modulePermission", modulePermission);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 		if (modulePermission!= null) {
-			rolePermissionList = rolePermissionServices.getPermissionList();
+			rolePermissionList = rolePermissionServices.getPermissionList(tokenObj.getRole(),tokenObj.getHierarchy());
 
 			permissions.put("rolePermissionList", rolePermissionList);
 			Loggers.loggerEnd(rolePermissionList);
@@ -106,9 +107,8 @@ public class RolePermissionController {
 
 		List<RolePermission> subModules = null;
 		
-		Token tk = tokenService.getToken(tokenNumber);
-		Loggers.loggerValue("Token ", tk.getRole());
-		subModules = rolePermissionServices.getSubModuleNames(tk.getRole());
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(),tokenObj.getHierarchy());
 		
 		
 		return new ResponseEntity<List<RolePermission>>(subModules, HttpStatus.OK);
@@ -136,6 +136,7 @@ public class RolePermissionController {
 		str.length();
 
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			RolePermissionCompound cb = rolePermissionServices.addPermission(permission);
 
 			if (cb != null)

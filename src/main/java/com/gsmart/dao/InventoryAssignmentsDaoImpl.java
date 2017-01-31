@@ -11,6 +11,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.util.CalendarCalculator;
@@ -32,14 +33,20 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<InventoryAssignments> getInventoryList() throws GSmartDatabaseException 
+	public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException 
 	{
 		Loggers.loggerStart();
 		List<InventoryAssignments> inventoryList=null;
+		getConnection();
 		try
 		{
-		getConnection();
+		if(role.equalsIgnoreCase("admin"))
+		{
 		query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y'");
+		}else{
+			query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y' and hierarchy:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+		}
 		inventoryList=(List<InventoryAssignments>)query.list();
 		 
 		 Loggers.loggerEnd();
@@ -60,10 +67,11 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException
 	{
 		Loggers.loggerStart();
+		getConnection();
 		InventoryAssignmentsCompoundKey ch = null;
 		try
 		{
-		getConnection();
+		
 		Loggers.loggerValue("inside the dao of add inventory details : ", inventoryAssignments.getQuantity());
 		inventoryAssignments.setEntryTime(CalendarCalculator.getTimeStamp());
 		inventoryAssignments.setIsActive("Y");
@@ -122,9 +130,10 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	private InventoryAssignments getInventory(String entryTime)throws GSmartDatabaseException
 	{
 		Loggers.loggerStart();
+		getConnection();
 		try
 		{
-			getConnection();
+			
 			query=session.createQuery("from InventoryAssignments where isActive='Y' and ENTRY_TIME='"+entryTime+"'");
 			InventoryAssignments oldInventory=(InventoryAssignments) query.uniqueResult();
 			Loggers.loggerEnd();
@@ -163,10 +172,12 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	@Override
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException  
 	{
+		Loggers.loggerStart();
+		getConnection();
 		
 		try
 		{
-			getConnection();
+			
 			Logger.getLogger(InventoryAssignmentsDaoImpl.class).info("trying to delete the record with entry time as : " + inventoryAssignments.getEntryTime());
 			inventoryAssignments.setIsActive("D");
 			inventoryAssignments.setExitTime(CalendarCalculator.getTimeStamp());

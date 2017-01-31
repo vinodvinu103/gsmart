@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.InventoryServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
@@ -70,12 +71,13 @@ public class InventoryController {
 		str.length();
 		 List<Inventory> inventoryList = null;
      RolePermission	modulePermission=getauthorization.authorizationForGet(tokenNumber, httpSession);
+     Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
           Map<String, Object> permissions = new HashMap<>();
 		
 		permissions.put("modulePermission",modulePermission);
        
 		if (modulePermission!= null) {
-			 inventoryList = inventoryServices.getInventoryList();
+			 inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(),tokenObj.getHierarchy());
 			 permissions.put("inventoryList", inventoryList);
 				Loggers.loggerEnd(inventoryList);
 				return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
@@ -107,6 +109,9 @@ public class InventoryController {
 		
 		
 		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			
+			inventory.setHierarchy(tokenObj.getHierarchy());
 		CompoundInventory cb= inventoryServices.addInventory(inventory);
 		
 		

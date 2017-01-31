@@ -46,7 +46,7 @@ public interface ProfileDao {
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
-	public ArrayList<Profile> getProfiles(String role,String smartId);
+	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy);
 
 	public Profile getParentInfo(String empSmartId);
 
@@ -55,7 +55,7 @@ public interface ProfileDao {
 	/* for login */	
 	public Profile getProfileDetails(String empSmartId);
 
-	public List<Profile> getAllRecord(String academicYear);
+	public List<Profile> getAllRecord(String academicYear,String role,Hierarchy  hierarchy);
 
 	
 	/**

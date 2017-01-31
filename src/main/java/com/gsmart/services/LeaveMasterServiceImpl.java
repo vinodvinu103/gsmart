@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.LeaveMasterDao;
 import com.gsmart.model.CompoundLeaveMaster;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -18,10 +19,10 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 	private LeaveMasterDao leavemasterdao;
 
 	@Override
-	public List<LeaveMaster> getLeaveMasterList() throws GSmartServiceException {
+	public List<LeaveMaster> getLeaveMasterList(String role,Hierarchy hierarchy) throws GSmartServiceException {
 
 		try {
-			return leavemasterdao.getLeaveMasterList();
+			return leavemasterdao.getLeaveMasterList(role,hierarchy);
 
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;

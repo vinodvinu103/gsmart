@@ -61,7 +61,9 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	public boolean userProfileInsert(Profile profile) {
-		boolean flag;
+		Loggers.loggerStart();
+		getConnection();
+		boolean flag = false;
 		try {
 			Loggers.loggerValue("smart id for the profile with name : " + profile.getFirstName(), profile.getSmartId());
 			getConnection();
@@ -74,9 +76,14 @@ public class ProfileDaoImp implements ProfileDao {
 			if (profile.getRole().toUpperCase() == "STUDENT") {
 				Assign assign = getStandardTeacher(profile.getStandard());
 				profile.setReportingManagerId(assign.getTeacherSmartId());
+				session.save(profile);
+				
+			}else{
+				session.save(profile);
 			}
-			session.save(profile);
+			
 			transaction.commit();
+			
 			flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -154,20 +161,31 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getProfiles(String role, String smartId) {
-		Loggers.loggerStart();
+	public ArrayList<Profile> getProfiles(String role, String smartId,String role2,Hierarchy hierarchy) {
 		getConnection();
-	
-
-			
 		try {
+			Loggers.loggerStart(role);
+
+			Loggers.loggerStart("current smartId" + smartId);
+			if(role2.equalsIgnoreCase("admin"))
+			{
+				if (role.toLowerCase().equals("student")) {
+					query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
+							+ smartId.substring(0, 2) + "%' ");
+				} else {
+					query = session.createQuery("from Profile where isActive='Y'and role!='student' ");
+				}
+				
+			}else{
 			if (role.toLowerCase().equals("student")) {
 				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
-						+ smartId.substring(0, 2) + "%'");
+						+ smartId.substring(0, 2) + "%' and hierarchy:hierarchy");
 			} else {
-				query = session.createQuery("from Profile where isActive='Y'and role!='student'");
+				query = session.createQuery("from Profile where isActive='Y'and role!='student' and hierarchy:hierarchy");
 			}
-			Loggers.loggerEnd();
+			}
+			query.setParameter("hierarchy", hierarchy.getHid());
+			Loggers.loggerEnd(query.list());
 			return (ArrayList<Profile>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -259,16 +277,24 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Profile> getAllRecord(String academicYear) {
+	public List<Profile> getAllRecord(String academicYear,String role,Hierarchy  hierarchy) {
+
 		Loggers.loggerStart();
 		getConnection();
-		
+
 		List<Profile> profile = null;
 
 		try {
+			if(role.equalsIgnoreCase("admin"))
+			{
+				query = session.createQuery("from Profile where isActive=:isActive");
+				
+			}else{
+				query = session.createQuery("from Profile where isActive=:isActive and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+			query.setParameter("isActive", "Y");
 			
-			query = session.createQuery("from Profile where isActive like('Y') and academicYear=:academicYear ");
-			query.setParameter("academicYear", academicYear);
 			
 
 			profile = (List<Profile>) query.list();
@@ -372,6 +398,7 @@ public class ProfileDaoImp implements ProfileDao {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart(hierarchy);

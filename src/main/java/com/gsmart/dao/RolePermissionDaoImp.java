@@ -12,6 +12,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
 import com.gsmart.util.CalendarCalculator;
@@ -45,13 +46,20 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RolePermission> getPermissionList() throws GSmartDatabaseException {
+	public List<RolePermission> getPermissionList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		List<RolePermission> rolePermissions = null;
+		getConnection();
 		try {
+			if(role.equalsIgnoreCase("admin"))
+			{
 			
 			query = session.createQuery("from RolePermission where isActive='Y'");
+			}else{
+				query = session.createQuery("from RolePermission where isActive='Y' and hierarchy:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			rolePermissions = (List<RolePermission>) query.list();
 
 		} catch (Exception e) {
@@ -216,13 +224,19 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RolePermission> getSubModuleNames(String role) throws GSmartBaseException {
-		Loggers.loggerStart();
-		getConnection();
+	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartBaseException {
+		
 		List<RolePermission> rolePermissions = null;
+		getConnection();
 		try{
+			if(role.equalsIgnoreCase("admin"))
+			{
+				query = session.createQuery("from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
 			
-			query = session.createQuery("from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
+			}else{
+				query = session.createQuery("from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
 			query.setParameter("moduleName", "Maintenance");
