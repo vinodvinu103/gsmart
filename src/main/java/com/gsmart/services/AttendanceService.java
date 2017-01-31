@@ -15,6 +15,5 @@ public interface AttendanceService {
 	
 	public void editAttedance(Attendance attendance) throws GSmartServiceException;
 	
-    public void deleteAttendance(Attendance attendance) throws GSmartServiceException;
     
 }

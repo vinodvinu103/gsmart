@@ -43,7 +43,7 @@ import com.gsmart.util.Loggers;
 @Controller
 @RequestMapping(Constants.ATTENDANCE)
 public class AttendanceController {
-	 
+
 	@Autowired
 	GetAuthorization getAuthorization;
 
@@ -55,15 +55,14 @@ public class AttendanceController {
 
 	@Autowired
 	ProfileServices profileServices;
-	
+
 	@Autowired
 	HolidayServices holidayService;
-	
 
 	@RequestMapping(value = "/calender/{month}/{year}/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
 			@PathVariable("month") Integer month, @PathVariable("year") Integer year,
-			@PathVariable("smartId") String smartId,Holiday holiday) throws GSmartBaseException {
+			@PathVariable("smartId") String smartId, Holiday holiday) throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		Map<String, Object> permissions = new HashMap<>();
@@ -75,6 +74,7 @@ public class AttendanceController {
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		permissions.put("modulePermission", modulePermission);
+		
 		List<Map<String, Object>> attendanceList = null;
 		List<Holiday> holidayList = null;
 		Calendar cal = new GregorianCalendar(year, month, 0);
@@ -106,7 +106,7 @@ public class AttendanceController {
 		str.length();
 
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-      
+
 			Attendance attend = attendanceService.addAttedance(attendanceMap.get("attendanceList"));
 			if (attend != null) {
 				rsp = new IAMResponse("success");
@@ -122,7 +122,7 @@ public class AttendanceController {
 
 		}
 		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
@@ -131,7 +131,11 @@ public class AttendanceController {
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
+
 		String tokenNumber = token.get("Authorization").get(0);
+		System.out.println("token Number" + tokenNumber);
+		System.out.println("task is" + task);
+		System.out.println("httpSession" + httpSession);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
@@ -139,8 +143,6 @@ public class AttendanceController {
 			if (task.equals("edit")) {
 				attendanceService.editAttedance(attendance);
 
-			} else if (task.equals("delete")) {
-				attendanceService.deleteAttendance(attendance);
 			}
 			myResponse = new IAMResponse("success");
 			Loggers.loggerEnd(attendance);
@@ -148,9 +150,9 @@ public class AttendanceController {
 		} else {
 			myResponse = new IAMResponse("Permission Denied");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		
-	}
+
 		}
+	}
 
 	@RequestMapping(value = "/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId,

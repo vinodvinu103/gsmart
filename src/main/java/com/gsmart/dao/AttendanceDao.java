@@ -16,7 +16,6 @@ public interface AttendanceDao  {
 	
 	public void editAttendance(Attendance attedance) throws GSmartDatabaseException;
 	
-	public void deleteAttendance(Attendance attendance) throws GSmartDatabaseException;
 
 
 }
