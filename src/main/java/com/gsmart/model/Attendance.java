@@ -19,10 +19,10 @@ public class Attendance implements Serializable{
 	private String smartId;
 	
 	@Column(name="inTime")
-	private String inTime;
+	private long inTime;
 	
 	@Column(name="outTime")
-	private String outTime;
+	private long outTime;
 	
 	@Column(name="inDate")
 	private long inDate;
@@ -86,22 +86,22 @@ public class Attendance implements Serializable{
 	}
 
 
-	public String getInTime() {
+	public long getInTime() {
 		return inTime;
 	}
 
 
-	public void setInTime(String inTime) {
+	public void setInTime(long inTime) {
 		this.inTime = inTime;
 	}
 
 
-	public String getOutTime() {
+	public long getOutTime() {
 		return outTime;
 	}
 
 
-	public void setOutTime(String outTime) {
+	public void setOutTime(long outTime) {
 		this.outTime = outTime;
 	}
 

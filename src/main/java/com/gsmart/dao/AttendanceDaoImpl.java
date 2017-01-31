@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Attendance;
-import com.gsmart.model.Holiday;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -34,16 +32,15 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	DateFormat format = new SimpleDateFormat("");
 	Calendar calendar = Calendar.getInstance();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		List<Attendance> attendanceList = null;
 		try {
-			getconnection();
-			Loggers.loggerStart(
-					"startDate is : " + startDate + " endDate is : " + endDate + " smartId is : " + smartId);
-			query = session.createQuery(
+            query = session.createQuery(
 					"from Attendance where isActive=:isActive and smartId=:smartId and inDate between :startDate and :endDate");
 			query.setParameter("isActive", "Y");
 			query.setParameter("smartId", smartId);
@@ -53,6 +50,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		Loggers.loggerEnd();
 		return constructAttendanceList((List<Attendance>) attendanceList);
 	}
@@ -62,8 +60,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		getconnection();
 		try {
 			for (Attendance attendance : attendanceList) {
-				attendance.setInTime(CalendarCalculator.getTimeStamp().toString());
+				attendance.setInTime(Calendar.getInstance().getTimeInMillis()/1000);
 				String date = CalendarCalculator.getTimeStamp();
+			
 				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 				Date date1 = df.parse(date);
 				calendar.setTime(date1);
@@ -81,6 +80,8 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 
+		} finally {
+			session.close();
 		}
 
 		return null;
@@ -89,20 +90,36 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	@Override
 	public void editAttendance(Attendance attendance) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		try {
-			getconnection();
-			Attendance oldattendance = getAttendance(attendance.getInTime());
-			oldattendance.setIsActive("N");
-			/* oldattendance.setInTime(CalendarCalculator.getTimeStamp()); */
-			attendance.setIsActive("Y");
-			attendance.setInTime(CalendarCalculator.getTimeStamp());
-			String date = CalendarCalculator.getTimeStamp();
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-			Date date1 = df.parse(date);
-			long epoch = date1.getTime() / 1000;
-			attendance.setInDate(epoch);
-			session.saveOrUpdate(attendance);
-			session.getTransaction().commit();
+            Attendance oldattendance = getAttendance(attendance.getInDate(), attendance.getSmartId());
+			if (oldattendance != null) {
+				if (oldattendance.getIsActive().equalsIgnoreCase("n")) {
+					oldattendance.setIsActive("Y");
+					session.update(oldattendance);
+				} else {
+					oldattendance.setIsActive("N");
+					session.update(oldattendance);
+				}
+			} else {
+				attendance.setIsActive("Y");
+				attendance.setInTime(Calendar.getInstance().getTimeInMillis()/1000);
+				attendance.setOutTime(Calendar.getInstance().getTimeInMillis()/1000);
+				 String date = CalendarCalculator.getTimeStamp();
+				 SimpleDateFormat df = new
+				 SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS"); 
+				 Date date1 = df.parse(date); /*long epoch = date1.getTime() / 1000;*/
+				 calendar.setTime(date1);
+			     calendar.set(Calendar.MILLISECOND, 0);
+			   	 calendar.set(Calendar.SECOND, 0);
+			   	 calendar.set(Calendar.MINUTE, 0);
+				 calendar.set(Calendar.HOUR_OF_DAY, 0);
+				 Date date2 = calendar.getTime();
+				 long epoch1 = date2.getTime() / 1000;
+				  attendance.setInDate(epoch1); 
+				 session.save(attendance);
+              }
+			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
@@ -112,11 +129,13 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		}
 	}
 
-	public Attendance getAttendance(String inTime) {
+	public Attendance getAttendance(long inDate, String smartId) {
 		Loggers.loggerStart();
-		Loggers.loggerStart(inTime);
+		Loggers.loggerStart(inDate);
 		try {
-			query = session.createQuery("from Attendance where  inTime='" + inTime + "'");
+			query = session.createQuery("from Attendance where  inDate=:inDate and smartId=:smartId");
+			query.setParameter("smartId", smartId);
+			query.setParameter("inDate", inDate);
 			Attendance attendance = (Attendance) query.uniqueResult();
 			return attendance;
 
@@ -126,24 +145,6 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			return null;
 		}
 
-	}
-
-	@Override
-	public void deleteAttendance(Attendance attendance) throws GSmartDatabaseException {
-		Loggers.loggerStart();
-		try {
-			getconnection();
-			attendance.setIsActive("D");
-			attendance.setOutTime(CalendarCalculator.getTimeStamp());
-			session.update(attendance);
-			session.getTransaction().commit();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
-		}
 	}
 
 	private void getconnection() {
@@ -170,11 +171,4 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		return responseList;
 
 	}
-
-	private String convert(Long epoch) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(epoch * 1000);
-		return calendar.getTime().toString();
 	}
-
-}

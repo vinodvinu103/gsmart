@@ -58,16 +58,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		
 	}
 
-	@Override
-	public void deleteAttendance(Attendance attendance) throws GSmartServiceException {
-		Loggers.loggerStart();
-		try{
-			attendancedao.deleteAttendance(attendance);
-		}catch (Exception e) {
-          e.printStackTrace();
-		}
-		
-	}
+	
 	
 
 	
