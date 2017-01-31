@@ -44,7 +44,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 		{
 		query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y'");
 		}else{
-			query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y' and hierarchy:hierarchy");
+			query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 		}
 		inventoryList=(List<InventoryAssignments>)query.list();
@@ -95,7 +95,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	{
 		try{
 	
-		InventoryAssignments oldInventory = getInventory(inventoryAssignments.getEntryTime());
+		InventoryAssignments oldInventory = getInventory(inventoryAssignments.getEntryTime(),inventoryAssignments.getHierarchy());
 		if(oldInventory!=null){
 	        oldInventory.setIsActive("N");
 			oldInventory.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -127,14 +127,15 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 */	
 	
 	
-	private InventoryAssignments getInventory(String entryTime)throws GSmartDatabaseException
+	private InventoryAssignments getInventory(String entryTime,Hierarchy hierarchy)throws GSmartDatabaseException
 	{
 		Loggers.loggerStart();
 		getConnection();
 		try
 		{
 			
-			query=session.createQuery("from InventoryAssignments where isActive='Y' and ENTRY_TIME='"+entryTime+"'");
+			query=session.createQuery("from InventoryAssignments where isActive='Y' and ENTRY_TIME='"+entryTime+"' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			InventoryAssignments oldInventory=(InventoryAssignments) query.uniqueResult();
 			Loggers.loggerEnd();
 			return oldInventory;

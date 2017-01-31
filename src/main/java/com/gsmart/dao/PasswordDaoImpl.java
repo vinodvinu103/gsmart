@@ -34,7 +34,7 @@ public class PasswordDaoImpl implements PasswordDao {
 		getConnection();
 		try {
 			
-			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId) and hierarchy:hierarchy  ");
+			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId) and hierarchy.hid=:hierarchy  ");
 			query.setParameter("referenceSmartId", login.getReferenceSmartId());
 			query.setParameter("SmartId", login.getSmartId());
 			query.setParameter("hierarchy", hierarchy.getHid());
@@ -84,7 +84,7 @@ public class PasswordDaoImpl implements PasswordDao {
 		String pass=Encrypt.md5(login.getPassword());
 		try {
 			
-			query = session.createQuery("from Login where smartId=:smartId and password=:currentPassword and hierarchy:hierarchy");
+			query = session.createQuery("from Login where smartId=:smartId and password=:currentPassword and hierarchy.hid=:hierarchy");
 			query.setParameter("currentPassword", pass);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("smartId", smartId);
@@ -116,7 +116,7 @@ public class PasswordDaoImpl implements PasswordDao {
 			
 			System.out.println(email);
 
-			query = session.createQuery("from Profile where emailId=:emailId and hierarchy:hierarchy");
+			query = session.createQuery("from Profile where emailId=:emailId and hierarchy.hid=:hierarchy");
 			query.setParameter("emailId", email);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			emailId = (Profile) query.uniqueResult();

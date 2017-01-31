@@ -89,9 +89,9 @@ public class FeeServicesImpl implements FeeServices{
 	}
 
 	@Override
-	public ArrayList<Fee> getFeeLists(String academicYear) throws GSmartServiceException {
+	public ArrayList<Fee> getFeeLists(String academicYear,String role,Hierarchy hierarchy) throws GSmartServiceException {
 		// TODO Auto-generated method stub
-		return null;
+		return feeDao.getFeeLists(academicYear,role,hierarchy);
 	}
 
 	@Override

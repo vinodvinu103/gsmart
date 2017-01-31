@@ -74,7 +74,7 @@ public class HierarchyController {
 		str.length();
 		List<Hierarchy> hierarchyList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		
+//		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);

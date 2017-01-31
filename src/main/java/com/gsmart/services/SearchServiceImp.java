@@ -120,12 +120,12 @@ public class SearchServiceImp implements SearchService {
 		return childList;
 	}
 
-	public Map<String, Profile> searchRep(Search search) {
+	public Map<String, Profile> searchRep(Search search,String role,Hierarchy hierarchy) {
 
 		Loggers.loggerStart();
 		allProfiles = new HashMap<String, Profile>();
 
-		List<Profile> profiles = profiledao.getsearchRep(search);
+		List<Profile> profiles = profiledao.getsearchRep(search,role,hierarchy);
 
 		Loggers.loggerValue("", profiles);
 		for (Profile profile : profiles) {
@@ -297,7 +297,7 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerStart(childList);
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
-		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear);
+		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear,role,hierarchy);
 
 		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList(role,hierarchy);
 

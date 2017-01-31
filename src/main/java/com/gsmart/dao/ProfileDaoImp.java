@@ -73,14 +73,14 @@ public class ProfileDaoImp implements ProfileDao {
 			if (query.list().size() > 0) {
 				profile.setHierarchy((Hierarchy) query.list().get(0));
 			}
-			if (profile.getRole().toUpperCase() == "STUDENT") {
-				Assign assign = getStandardTeacher(profile.getStandard());
-				profile.setReportingManagerId(assign.getTeacherSmartId());
-				session.save(profile);
-				
-			}else{
-				session.save(profile);
-			}
+//			if (profile.getRole().toUpperCase() == "STUDENT") {
+//				Assign assign = getStandardTeacher(profile.getStandard());
+//				profile.setReportingManagerId(assign.getTeacherSmartId());
+//				session.save(profile);
+//				
+//			}else{
+//				session.save(profile);
+//			}
 			profile.setEntryTime(CalendarCalculator.getTimeStamp());
 			session.save(profile);
 			transaction.commit();
@@ -96,7 +96,7 @@ public class ProfileDaoImp implements ProfileDao {
 		
 		return flag;
 	}
-
+/*
 	public Assign getStandardTeacher(String standard) {
 		Assign assign = null;
 		Loggers.loggerStart();
@@ -111,7 +111,7 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 		return assign;
 
-	}
+	}*/
 
 	@Override
 	public String updateProfile(Profile profile) {
@@ -157,13 +157,13 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getProfiles(String role, String smartId,String role2,Hierarchy hierarchy) {
+	public ArrayList<Profile> getProfiles(String role, String smartId,String loginUserRole,Hierarchy hierarchy) {
 		getConnection();
 		try {
 			Loggers.loggerStart(role);
 
 			Loggers.loggerStart("current smartId" + smartId);
-			if(role2.equalsIgnoreCase("admin"))
+			if(loginUserRole.equalsIgnoreCase("admin"))
 			{
 				if (role.toLowerCase().equals("student")) {
 					query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
@@ -175,20 +175,23 @@ public class ProfileDaoImp implements ProfileDao {
 			}else{
 			if (role.toLowerCase().equals("student")) {
 				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
-						+ smartId.substring(0, 2) + "%' and hierarchy:hierarchy");
+						+ smartId.substring(0, 2) + "%' and hierarchy.hid=:hierarchy");
 			} else {
-				query = session.createQuery("from Profile where isActive='Y'and role!='student' and hierarchy:hierarchy");
-			}
+				query = session.createQuery("from Profile where isActive='Y'and role!='student' and hierarchy.hid=:hierarchy");
+				
 			}
 			query.setParameter("hierarchy", hierarchy.getHid());
+			}
+			
 			Loggers.loggerEnd(query.list());
+			return (ArrayList<Profile>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		} finally {
 			session.close();
 		}
-		return (ArrayList<Profile>) query.list();
+		
 	}
 
 	@Override
@@ -282,7 +285,7 @@ public class ProfileDaoImp implements ProfileDao {
 				query = session.createQuery("from Profile where isActive=:isActive and academicYear=:academicYear");
 				
 			}else{
-				query = session.createQuery("from Profile where isActive=:isActive and hierarchy:hierarchy and academicYear=:academicYear");
+				query = session.createQuery("from Profile where isActive=:isActive and hierarchy.hid=:hierarchy and academicYear=:academicYear");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			query.setParameter("isActive", "Y");
@@ -303,12 +306,19 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> getsearchRep(Search search) {
+	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy) {
 		Loggers.loggerStart();
 		getConnection();
 		try {
+			if(role.equalsIgnoreCase("admin"))
+			{
 
 			query = session.createQuery("from Profile where isActive like('Y') and band<:band  and school =:school");
+			}else{
+				query = session.createQuery("from Profile where isActive like('Y') and band<:band  and school =:school and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+			
 			query.setParameter("band", search.getBand());
 			query.setParameter("school", search.getSchool());
 			List<Profile> profileList = (List<Profile>) query.list();

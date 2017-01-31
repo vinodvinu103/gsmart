@@ -46,7 +46,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 			 {
 			 query=session.createQuery("from LeaveMaster where isActive='Y'");
 			 }else{
-				 query=session.createQuery("from LeaveMaster where isActive='Y' and hierarchy:hierarchy");
+				 query=session.createQuery("from LeaveMaster where isActive='Y' and hierarchy.hid=:hierarchy");
 				 query.setParameter("hierarchy", hierarchy.getHid());
 			 }
 			 leavemasterlist = (List<LeaveMaster>) query.list();
@@ -66,10 +66,11 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 
 		Loggers.loggerStart();
 		CompoundLeaveMaster cb = null;
-	
+		getconnection();
 		try {
-			getconnection();
-			query=session.createQuery("FROM LeaveMaster WHERE leaveType=:leaveType AND  daysAllow=:daysAllow AND isActive=:isActive");
+			Hierarchy hierarchy=leaveMaster.getHierarchy();
+			query=session.createQuery("FROM LeaveMaster WHERE leaveType=:leaveType AND  daysAllow=:daysAllow AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("leaveType", leaveMaster.getLeaveType());
 			query.setParameter("daysAllow", leaveMaster.getDaysAllow());
 			query.setParameter("isActive","Y");
@@ -122,7 +123,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 		Loggers.loggerStart();
 		try {
 			getconnection();
-			LeaveMaster oldleaveMaster= getLeaveMaster(leaveMaster.getEntryTime());
+			LeaveMaster oldleaveMaster= getLeaveMaster(leaveMaster.getEntryTime(),leaveMaster.getHierarchy());
 			oldleaveMaster.setIsActive("N");
 			oldleaveMaster.setUpdateTime(CalendarCalculator.getTimeStamp());
 			session.update(oldleaveMaster);
@@ -143,12 +144,13 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 	
 	
 	
-	public LeaveMaster getLeaveMaster(String entryTime) {
+	public LeaveMaster getLeaveMaster(String entryTime,Hierarchy hierarchy) {
 		try {
 			
 
-			query = session.createQuery("from LeaveMaster where isActive=:isActive and entryTime=:entryTime");
+			query = session.createQuery("from LeaveMaster where isActive=:isActive and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 		     query.setParameter("entryTime",entryTime);
+		     query.setParameter("hierarchy", hierarchy.getHid());
 		     query.setParameter("isActive","Y");
 			 LeaveMaster leaveMaster = ( LeaveMaster) query.uniqueResult();
 			

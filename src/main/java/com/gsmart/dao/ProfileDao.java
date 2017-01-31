@@ -72,7 +72,7 @@ public interface ProfileDao {
 	 */
 	public void editRole(Profile profile)throws GSmartDatabaseException;
 
-	public List<Profile> getsearchRep(Search search);
+	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
 	
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 

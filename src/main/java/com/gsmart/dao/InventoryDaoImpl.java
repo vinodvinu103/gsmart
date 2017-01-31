@@ -52,7 +52,7 @@ public class InventoryDaoImpl implements InventoryDao {
 			if(role.equalsIgnoreCase("admin")){
 				query = session.createQuery("from Inventory where isActive='Y' ");
 			}else{
-				query = session.createQuery("from Inventory where isActive='Y' and hierarchy:hierarchy ");
+				query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy ");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			
@@ -85,9 +85,10 @@ public class InventoryDaoImpl implements InventoryDao {
 		CompoundInventory cb = null;
 	
 		try {
-			
-			query=session.createQuery("FROM Inventory WHERE category=:category AND itemType=:itemType AND isActive=:isActive");
+			Hierarchy hierarchy=inventory.getHierarchy();
+			query=session.createQuery("FROM Inventory WHERE category=:category AND itemType=:itemType AND isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("category", inventory.getCategory());
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("itemType", inventory.getItemType());
 			query.setParameter("isActive", "Y");
 			Inventory inventory2=(Inventory) query.uniqueResult();
@@ -121,7 +122,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		Loggers.loggerStart();
 		try {
 			getconnection();
-			Inventory oldInvertory = getInventory(inventory.getEntryTime());
+			Inventory oldInvertory = getInventory(inventory.getEntryTime(),inventory.getHierarchy());
 			oldInvertory.setIsActive("N");
 			oldInvertory.setUpdateTime(CalendarCalculator.getTimeStamp());
 			session.update( oldInvertory);
@@ -148,12 +149,13 @@ public class InventoryDaoImpl implements InventoryDao {
 	 * @return Nothing
 	 */
 
-	public Inventory getInventory(String entryTime) {
+	public Inventory getInventory(String entryTime,Hierarchy hierarchy) {
 		try {
 			
 
-			query = session.createQuery("from Inventory where isactive='Y' and entryTime=:entryTime");
+			query = session.createQuery("from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 			query.setParameter("entryTime", entryTime);
+			query.setParameter("hierarchy", hierarchy.getHid());
 			Inventory inventry = (Inventory) query.uniqueResult();
 			
 			

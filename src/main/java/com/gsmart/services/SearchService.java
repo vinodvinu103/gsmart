@@ -17,7 +17,7 @@ public interface SearchService {
 
 	ArrayList<Profile> searchEmployeeInfo(String smartId, Map<String, Profile> beanFactory1);
 
-	Map<String, Profile> searchRep(Search search);
+	Map<String, Profile> searchRep(Search search,String role,Hierarchy hierarchy);
 
 	ArrayList<String> searchParentInfo(String smartId, Map<String, Profile> map);
 	

@@ -248,9 +248,9 @@ public class RegistrationController {
 		str.length();
 		Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 		if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
-//			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			
-		Map<String, Profile> map = searchService.searchRep(search);
+		Map<String, Profile> map = searchService.searchRep(search,tokenObj.getRole(),tokenObj.getHierarchy());
 		ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
 		jsonMap.put("result", profiless);
 		Loggers.loggerEnd();

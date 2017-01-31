@@ -14,7 +14,7 @@ public interface FeeDao {
 	
 	public void addFee(Fee fee) throws GSmartDatabaseException;
 	
-	public ArrayList<Fee> getFeeLists(String smartId) throws GSmartDatabaseException;
+	public ArrayList<Fee> getFeeLists(String acadamicyear,String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 	
 	public List<Fee> gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException;
 

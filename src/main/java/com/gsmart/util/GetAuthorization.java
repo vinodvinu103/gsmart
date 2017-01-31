@@ -40,9 +40,9 @@ public class GetAuthorization {
 			Loggers.loggerValue("Token: ", token);
 			Loggers.loggerValue("Module: ", module);
 			permissions = getPermission(token, module);
-			httpSession.setAttribute("hierarchy", token.getHierarchy());
 			httpSession.setAttribute("permissions", permissions);
 			httpSession.setAttribute("hierarchy", token);
+			System.out.println("hierarchy in token"+httpSession.getAttribute("hierarchy"));
 			System.out.println("permission"+permissions);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,7 +99,7 @@ public class GetAuthorization {
 				Loggers.loggerValue("Module: ", module);
 				rolePermission = getPermission(token, module);
 				httpSession.setAttribute("permissions", rolePermission);
-				httpSession.setAttribute("hierarchy", token.getHierarchy());
+				httpSession.setAttribute("hierarchy", token);
 			}
 
 			

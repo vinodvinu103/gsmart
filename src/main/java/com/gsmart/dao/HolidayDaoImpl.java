@@ -60,7 +60,7 @@ public class HolidayDaoImpl implements HolidayDao {
 			{
 			query = session.createQuery("from Holiday WHERE isActive='Y' ");
 			}else{
-				query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy:hierarchy");
+				query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			holidayList = query.list();
@@ -86,8 +86,9 @@ public class HolidayDaoImpl implements HolidayDao {
 		Loggers.loggerStart();
 		getConnection();
 		try {
-			
-			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive");
+			Hierarchy hierarchy=holiday.getHierarchy();
+			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("holidayDate", holiday.getHolidayDate());
 			query.setParameter("isActive", "Y");
 			Holiday holiday1= (Holiday) query.uniqueResult();
@@ -124,7 +125,7 @@ public class HolidayDaoImpl implements HolidayDao {
 		getConnection();
 		try {
 			
-			Holiday oldholiday= getHolidayList(holiday.getEntryTime());
+			Holiday oldholiday= getHolidayLists(holiday.getEntryTime(),holiday.getHierarchy());
 			oldholiday.setIsActive("N");
 			oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			session.update(oldholiday);
@@ -144,11 +145,12 @@ public class HolidayDaoImpl implements HolidayDao {
 		Loggers.loggerEnd();
 		
 	}
-	public Holiday getHolidayList(String entryTime) {
+	public Holiday getHolidayLists(String entryTime,Hierarchy hierarchy) {
 		try {
-			query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime");
+			query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 			query.setParameter("isActive", "Y");
 			query.setParameter("entryTime", entryTime);
+			query.setParameter("hierarchy", hierarchy.getHid());
 			Holiday holiday = (Holiday) query.uniqueResult();
 			return holiday ;
 		} 

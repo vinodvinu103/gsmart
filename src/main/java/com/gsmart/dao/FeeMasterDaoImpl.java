@@ -52,7 +52,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			{
 			query = session.createQuery("from FeeMaster where isActive='Y'");
 			}else{
-				query = session.createQuery("from FeeMaster where isActive='Y' and hierarchy:hierarchy");
+				query = session.createQuery("from FeeMaster where isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			feeList = (List<FeeMaster>)query.list();
@@ -81,11 +81,12 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		getConnection();
 		CompoundFeeMaster cfm = null;
 		try {
+			Hierarchy hierarchy=feeMaster.getHierarchy();
 			FeeMaster feeMaster2=null;
-			query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive");
+			query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("standard", feeMaster.getStandard());
 			
-			
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("isActive", "Y");
 			feeMaster2= (FeeMaster) query.uniqueResult();
 			if(feeMaster2==null)
@@ -123,8 +124,8 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		Loggers.loggerStart();
 		getConnection();
 		try {
-			
-			FeeMaster oldFee = getFeeMas(feeMaster.getEntryTime());
+			Hierarchy hierarchy=feeMaster.getHierarchy();
+			FeeMaster oldFee = getFeeMas(feeMaster.getEntryTime(),hierarchy);
 			oldFee.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			oldFee.setIsActive("N");
 			session.update(oldFee);
@@ -164,11 +165,6 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		getConnection();
 		try {
 			
-			/*query = session.createQuery("update FeeMaster set IsActive=:IsActive, exittime=:exittime where entrytime = :entrytime");
-			query.setParameter("entrytime", feeMaster.getEntrytime());
-		
-			query.setParameter("IsActive", feeMaster.getIsActive());
-			query.setParameter("exittime", feeMaster.getExittime());*/
 			feeMaster.setExitTime(CalendarCalculator.getTimeStamp());
 			feeMaster.setIsActive("D");
 			session.update(feeMaster);
@@ -184,11 +180,12 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		
 	}
 	
-	public FeeMaster getFeeMas(String entryTime)
+	public FeeMaster getFeeMas(String entryTime,Hierarchy hierarchy)
 	{
 		Loggers.loggerStart();
-		query = session.createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime");
+		query = session.createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime and hierarchy.hid=:hierarchy");
 		query.setParameter("isActive", "Y");
+		query.setParameter("hierarchy", hierarchy.getHid());
 		query.setParameter("entryTime", entryTime);
 		FeeMaster fee=(FeeMaster) query.uniqueResult();
 
@@ -214,7 +211,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			{
 			query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' ");
 			}else{
-				query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy:hierarchy");
+				query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 				
 			}

@@ -45,7 +45,7 @@ public class MyTeamLeaveDaoImpl  implements MyTeamLeaveDao{
 
 			query = session.createQuery("FROM Leave WHERE isActive='Y'");
 			}else{
-				query = session.createQuery("FROM Leave WHERE isActive='Y' and hierarchy:hierarchy");
+				query = session.createQuery("FROM Leave WHERE isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			leavelist = (List<Leave>)query.list();
@@ -64,7 +64,7 @@ public class MyTeamLeaveDaoImpl  implements MyTeamLeaveDao{
 		Loggers.loggerStart();
 		getConnection();
 	try {
-	    
+	    Hierarchy hierarchy=leave.getHierarchy();
 		query = session.createQuery("from Leave where entryTime=:entryTime");
 		leave.setLeaveStatus("rejected");
 		session.update(leave);

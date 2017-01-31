@@ -45,7 +45,7 @@ public class FeeDaoImpl implements FeeDao{
 			}
 			else{
 			
-			query=session.createQuery("from Fee where smartId =:smartId and academicYear =:academicYear and hierarchy=:hierarchy");
+			query=session.createQuery("from Fee where smartId =:smartId and academicYear =:academicYear and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			query.setParameter("smartId", fee.getSmartId());
@@ -102,16 +102,20 @@ public class FeeDaoImpl implements FeeDao{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Fee> getFeeLists(String academicYear) throws GSmartDatabaseException {
+	public ArrayList<Fee> getFeeLists(String academicYear,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getconnection();
 		ArrayList<Fee> feeList=null;
 		try
 		{
-		System.out.println(academicYear);
-		
-		Loggers.loggerValue("getting connections", "");
-		query=session.createQuery("From Fee where academicYear=:academicYear");
+			if(role.equalsIgnoreCase("admin"))
+			{
+		query=session.createQuery("From Fee where academicYear=:academicYear and isActive='Y'");
+			}else
+			{
+				query=session.createQuery("From Fee where academicYear=:academicYear and isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			}
 		query.setParameter("academicYear", academicYear);
 		feeList=(ArrayList<Fee>) query.list();
 		Loggers.loggerEnd();
@@ -135,7 +139,7 @@ public class FeeDaoImpl implements FeeDao{
 		{
 		query = session.createQuery("From Fee where isActive=:isActive");
 		}else{
-			query = session.createQuery("From Fee where isActive=:isActive and hierarchy:hierarchy");
+			query = session.createQuery("From Fee where isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 		}
 		query.setParameter("isActive", "Y");
@@ -160,7 +164,7 @@ public class FeeDaoImpl implements FeeDao{
 		{
 		query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y'");
 		}else{
-			query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y' and hierarchy:hierarchy");
+			query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 		}
 		//query.setParameter("academicYear", academicYear);
@@ -188,7 +192,7 @@ public class FeeDaoImpl implements FeeDao{
 			{
 			query=session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y'");
 			}else{
-				query=session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y' and hierarchy:hierarchy");
+				query=session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 		//query.setParameter("academicYear", academicYear);
