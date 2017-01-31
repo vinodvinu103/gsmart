@@ -254,6 +254,7 @@ public class FeeController {
 
 
 			ArrayList<Fee> PaidStudentsList = (ArrayList<Fee>) feeServices.getPaidStudentsList();
+<<<<<<< HEAD
 
 			if (PaidStudentsList.size() != 0) {
 				jsonMap.put("result", PaidStudentsList);
@@ -298,6 +299,52 @@ public class FeeController {
 		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 	}
 
+=======
+
+			if (PaidStudentsList.size() != 0) {
+				jsonMap.put("result", PaidStudentsList);
+				Loggers.loggerEnd();
+				return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap, HttpStatus.OK);
+			} else {
+				jsonMap.put("result", null);
+				Loggers.loggerEnd();
+				return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap, HttpStatus.OK);
+			}
+
+		}
+	
+	*/
+	
+
+		
+	
+		
+	@RequestMapping(value = "/unpaidfee", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getUnPaidStudentsList(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
+	Loggers.loggerStart();
+	String tokenNumber = token.get("Authorization").get(0);
+	Token tokenObj = tokenService.getToken(tokenNumber);
+	String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+	str.length();
+
+	List<Fee> unPaidStudentsList = null;
+	RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+	Map<String, Object> permission = new HashMap<>();
+	permission.put("modulePermission", modulePermission);
+	if (modulePermission != null) {
+		unPaidStudentsList = feeServices.getUnpaidStudentsList();
+		permission.put("unPaidStudentsList", unPaidStudentsList);
+
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+	} else {
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+	}
+
+>>>>>>> 316c3e4ac05be4417eebf84e3cf7ef7f5362f84b
     }
 	
 	@RequestMapping(value="/{task}", method = RequestMethod.PUT)

@@ -37,27 +37,6 @@ public class SearchServiceImp implements SearchService {
 	@Autowired
 	FeeMasterServices feeMasterServices;
 
-
-	/* @Autowired 
-				 * @RequestMapping(value = "/searchRep", method =
-				 * RequestMethod.POST) public ResponseEntity<Map<String,
-				 * ArrayList<Profile>>> searchRep(@RequestBody Search search) {
-				 * 
-				 * Map<String, ArrayList<Profile>> jsonMap = new HashMap<String,
-				 * ArrayList<Profile>>(); Map<String, Profile> map =
-				 * searchService.searchRep(search); ArrayList<Profile> profiless
-				 * = searchService.getEmployeeInfo(search.getName(), map);
-				 * jsonMap.put("result", profiless); return new
-				 * ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap,
-				 * HttpStatus.OK);
-				 * 
-				 * }
-	
-				 */
-	
-
-	
-
 	/*
 	 * @RequestMapping(value = "/searchRep", method = RequestMethod.POST) public
 	 * ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody
@@ -72,8 +51,6 @@ public class SearchServiceImp implements SearchService {
 	 * 
 	 * }
 	 */
-	
-
 
 	private Map<String, Profile> allProfiles;
 
@@ -225,9 +202,6 @@ public class SearchServiceImp implements SearchService {
 			else {
 				do {
 
-
-					Loggers.loggerValue("entered in doWhile loop", "");
-
 					ArrayList<Profile> gotoloop = gotoloop(temp1, profiles);
 					if (!gotoloop.isEmpty()) {
 
@@ -243,9 +217,8 @@ public class SearchServiceImp implements SearchService {
 						if (boo) {
 							fees = studentFees(temp1,academicYear);
 						}
-					}  else {
+					} else {
 						Loggers.loggerValue("sumup ended", "");
-
 						return childList;
 					}
 

@@ -63,8 +63,7 @@ public class ProfileDaoImp implements ProfileDao {
 	public boolean userProfileInsert(Profile profile) {
 		boolean flag;
 		try {
-	
-			Loggers.loggerStart();
+			Loggers.loggerValue("smart id for the profile with name : " + profile.getFirstName(), profile.getSmartId());
 			getConnection();
 			profile.setIsActive("Y");
 			query = session.createQuery("from Hierarchy where school='" + profile.getHierarchy().getSchool()
@@ -87,6 +86,7 @@ public class ProfileDaoImp implements ProfileDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
+		
 		return flag;
 	}
 
@@ -157,9 +157,10 @@ public class ProfileDaoImp implements ProfileDao {
 	public ArrayList<Profile> getProfiles(String role, String smartId) {
 		Loggers.loggerStart();
 		getConnection();
-		try {
+	
 
 			
+		try {
 			if (role.toLowerCase().equals("student")) {
 				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
 						+ smartId.substring(0, 2) + "%'");
@@ -182,7 +183,6 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerStart();
 		getConnection();
 		try {
-			
 			/*
 			 * Profile currentProfile1 = (Profile)
 			 * session.createQuery("from Profile where smartId='" + smartId +
@@ -192,6 +192,7 @@ public class ProfileDaoImp implements ProfileDao {
 			query = session.createQuery("from Profile where smartId=:smartId and isActive='Y' ");
 			query.setParameter("smartId", smartId);
 			Profile currentProfile = (Profile) query.uniqueResult();
+			Loggers.loggerEnd(currentProfile);
 			if (currentProfile.getReportingManagerId() != smartId)
 				return getProfileDetails(currentProfile.getReportingManagerId());
 			else
@@ -212,7 +213,6 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerStart();
 		getConnection();
 		try {
-			getConnection();
 			ArrayList<Profile> reportingList = null;
 			query = session.createQuery("from Profile where reportingManagerId=:smartId and isActive='Y' ");
 			query.setParameter("smartId", smartId);
@@ -270,6 +270,7 @@ public class ProfileDaoImp implements ProfileDao {
 			query = session.createQuery("from Profile where isActive like('Y') and academicYear=:academicYear ");
 			query.setParameter("academicYear", academicYear);
 			
+
 			profile = (List<Profile>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -306,7 +307,6 @@ public class ProfileDaoImp implements ProfileDao {
 		finally {
 			session.close();
 		}
-		
 	}
 
 	/**
@@ -334,6 +334,8 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 		
 		Loggers.loggerEnd();
+
+		
 
 		return profileList;
 	}
@@ -375,7 +377,10 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerStart(hierarchy);
 		getConnection();
 		query = session.createQuery("from Profile where hierarchy=" + hierarchy.getHid() + " and role!='STUDENT'");
+		Loggers.loggerEnd();
 		return (List<Profile>) query.list();
+
+		
 	}
 
 }
