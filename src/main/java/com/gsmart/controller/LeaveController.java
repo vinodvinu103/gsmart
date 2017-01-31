@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.CompoundLeave;
-import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
@@ -55,13 +54,17 @@ public class LeaveController {
 		
 		List<Leave> leaveList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+
 		Map<String, Object> leave = new HashMap<>();
 		leave.put("modulePermission", modulePermission);
 		System.out.println("Hello madam prati...........");
 			CronJob.cronJob();	
 			System.out.println("Bye madam prati...........");
 		if (modulePermission!= null) {
-			leaveList = leaveServices.getLeaveList();
+			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy());
 
 			leave.put("leaveList", leaveList);
 			Loggers.loggerEnd(leaveList);
@@ -83,11 +86,13 @@ public class LeaveController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		Token tokenDetails=tokenService.getToken(tokenNumber);
-		String smartId=tokenDetails.getSmartId();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			CompoundLeave cl=leaveServices.addLeave(leave,noOfdays,smartId);
-			if(cl!=null)
+
+			
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			leave.setHierarchy(tokenObj.getHierarchy());
+			CompoundLeave cl1=leaveServices.addLeave(leave,noOfdays,tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
+			if(cl1!=null)
 			resp.setMessage("success");
 		else
 			resp.setMessage("Already exists");

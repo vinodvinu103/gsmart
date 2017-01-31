@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 
 public interface ProfileServices{
@@ -21,7 +22,7 @@ public interface ProfileServices{
 
 	/*for profile*/
 
-	public ArrayList<Profile> getProfiles(String role,String smartId)throws GSmartServiceException;
+	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy)throws GSmartServiceException;
 
 	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
 	
@@ -36,5 +37,12 @@ public interface ProfileServices{
 	public void editRole(Profile profile)throws GSmartServiceException;
 	
 	List<Profile> getProfileByHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
+	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
+	
+	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
+	
+	public List<Profile> addRfid(Profile rfid)throws GSmartServiceException;
+	
+	public List<Profile> editRfid(Profile rfid)throws GSmartServiceException;
 
 }

@@ -14,6 +14,7 @@ import com.gsmart.dao.LeaveDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.WeekDaysDao;
 import com.gsmart.model.CompoundLeave;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
@@ -38,10 +39,10 @@ public class LeaveServicesImpl implements LeaveServices {
 	ProfileDao profileDao;
 
 	@Override
-	public List<Leave> getLeaveList() throws GSmartServiceException {
+	public List<Leave> getLeaveList(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return leaveDao.getLeaveList();
+			return leaveDao.getLeaveList(role,hierarchy);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -65,36 +66,30 @@ public class LeaveServicesImpl implements LeaveServices {
 	}
 
 	@Override
-	public CompoundLeave addLeave(Leave leave, Integer noOfdays,String smartId) throws GSmartServiceException {
+	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String smartId,String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
-		CompoundLeave cl = null;
 		Profile profile=null;
 		profile=profileDao.profileDetails(smartId);
 		String school=profile.getSchool();
 		String institution=profile.getInstitution();
+		CompoundLeave cl=null;
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
-
+		
+			
 			startCal.setTime(leave.getStartDate());
 			endCal.setTime(leave.getEndDate());
-
-			System.out.println("Start date: " + startCal);
-			System.out.println("endCal before incrementing: " + endCal);
 			endCal.add(Calendar.DAY_OF_MONTH, 1);
 
-			System.out.println("endCal after incrementing: " + endCal);
 			Calendar holidayDate = Calendar.getInstance();
 
 			long diff = endCal.getTimeInMillis() - startCal.getTimeInMillis();
 			int days = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 
-			System.out.println("days: " + days);
-			System.out.println("School name : "+school+" instituion name  : "+institution);
 			ArrayList<WeekDays> weekOffs = (ArrayList<WeekDays>) weekDays.getWeekdaysForHoliday(school, institution);
 
 			for (WeekDays weekDays : weekOffs) {
-				System.out.println("weekOffs: " + weekDays.getWeekDay());
 			}
 
 			System.out.println("Weekoffs size: " + weekOffs.size());
@@ -118,7 +113,7 @@ public class LeaveServicesImpl implements LeaveServices {
 
 			System.out.println("days: " + days);
 
-			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList();
+			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList(role,hierarchy);
 
 			long eStartDate = getEpoch(leave.getStartDate());
 			long eEndDate = getEpoch(leave.getEndDate());

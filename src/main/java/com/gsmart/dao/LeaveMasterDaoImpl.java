@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundLeaveMaster;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -29,14 +30,20 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<LeaveMaster> getLeaveMasterList() throws GSmartDatabaseException {
+	public List<LeaveMaster> getLeaveMasterList(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
 		Loggers.loggerStart();
-		List<LeaveMaster> leavemasterlist = null;
-		try {
-			getconnection();
-			query = session.createQuery("from LeaveMaster where isActive='Y'");
-			leavemasterlist = (List<LeaveMaster>) query.list();
-
+		getconnection();
+		 List<LeaveMaster> leavemasterlist = null;
+		 try { 
+			 if(role.equalsIgnoreCase("admin"))
+			 {
+			 query=session.createQuery("from LeaveMaster where isActive='Y'");
+			 }else{
+				 query=session.createQuery("from LeaveMaster where isActive='Y' and hierarchy.hid=:hierarchy");
+				 query.setParameter("hierarchy", hierarchy.getHid());
+			 }
+			 leavemasterlist = (List<LeaveMaster>) query.list();
+			
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
@@ -52,11 +59,11 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 
 		Loggers.loggerStart();
 		CompoundLeaveMaster cb = null;
-
+		getconnection();
 		try {
-			getconnection();
-			query = session.createQuery(
-					"FROM LeaveMaster WHERE leaveType=:leaveType AND  daysAllow=:daysAllow AND isActive=:isActive");
+			Hierarchy hierarchy=leaveMaster.getHierarchy();
+			query=session.createQuery("FROM LeaveMaster WHERE leaveType=:leaveType AND  daysAllow=:daysAllow AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("leaveType", leaveMaster.getLeaveType());
 			query.setParameter("daysAllow", leaveMaster.getDaysAllow());
 			query.setParameter("isActive", "Y");
@@ -104,7 +111,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		Loggers.loggerStart();
 		try {
 			getconnection();
-			LeaveMaster oldleaveMaster = getLeaveMaster(leaveMaster.getEntryTime());
+			LeaveMaster oldleaveMaster= getLeaveMaster(leaveMaster.getEntryTime(),leaveMaster.getHierarchy());
 			oldleaveMaster.setIsActive("N");
 			oldleaveMaster.setUpdateTime(CalendarCalculator.getTimeStamp());
 			session.update(oldleaveMaster);
@@ -120,15 +127,22 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 
 		}
 	}
-
-	public LeaveMaster getLeaveMaster(String entryTime) {
+	
+	
+	
+	
+	
+	public LeaveMaster getLeaveMaster(String entryTime,Hierarchy hierarchy) {
 		try {
 
-			query = session.createQuery("from LeaveMaster where isActive=:isActive and entryTime=:entryTime");
-			query.setParameter("entryTime", entryTime);
-			query.setParameter("isActive", "Y");
-			LeaveMaster leaveMaster = (LeaveMaster) query.uniqueResult();
 
+			query = session.createQuery("from LeaveMaster where isActive=:isActive and entryTime=:entryTime and hierarchy.hid=:hierarchy");
+		     query.setParameter("entryTime",entryTime);
+		     query.setParameter("hierarchy", hierarchy.getHid());
+		     query.setParameter("isActive","Y");
+			 LeaveMaster leaveMaster = ( LeaveMaster) query.uniqueResult();
+			
+			
 			return leaveMaster;
 
 		} catch (Exception e) {

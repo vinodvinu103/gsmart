@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.AssignService;
@@ -58,11 +57,13 @@ public class AssignController {
 		List<Assign> assignList = null;
 
 		String tokenNumber = token.get("Authorization").get(0);
-		Token tokenObj = tokenServices.getToken(tokenNumber);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-
+		
+	
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 		permissions.put("modulePermission", modulePermission);
 
@@ -90,7 +91,9 @@ public class AssignController {
 		str.length();
 
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			assign.setHierarchy(tokenObj.getHierarchy());
+			
 			CompoundAssign compoundAssign = assignService.addAssigningReportee(assign);
 			if (compoundAssign != null) {
 				rsp = new IAMResponse("success");
@@ -150,6 +153,7 @@ public class AssignController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		
 
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			response.put("staffList", profileServices.getProfileByHierarchy(hierarchy));

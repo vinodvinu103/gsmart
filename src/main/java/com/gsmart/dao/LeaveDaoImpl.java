@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundLeave;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -29,12 +30,18 @@ public class LeaveDaoImpl implements LeaveDao {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Leave> getLeaveList() throws GSmartDatabaseException {
+	public List<Leave> getLeaveList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<Leave> leave = null;
 		try {
-			getConnection();
+			if(role.equalsIgnoreCase("admin"))
+			{
 			query = session.createQuery("FROM Leave WHERE isActive='Y'");
+			}else{
+				query = session.createQuery("FROM Leave WHERE isActive='Y' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			leave = (List<Leave>) query.list();
 
 		} catch (Exception e) {
@@ -46,11 +53,13 @@ public class LeaveDaoImpl implements LeaveDao {
 
 	public CompoundLeave addLeave(Leave leave,Integer noOfdays) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		CompoundLeave cl = null;
 		try {
-			getConnection();
-			query=session.createQuery("FROM Leave WHERE smartId=:smartId AND isActive=:isActive");
+			Hierarchy hierarchy=leave.getHierarchy();
+			query=session.createQuery("FROM Leave WHERE smartId=:smartId AND isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("smartId", leave.getSmartId());
+			query.setParameter("hierarchy", hierarchy.getHid());
 			//query.setParameter("reportingManagerId", leave.getReportingManagerId());
 			query.setParameter("isActive", "Y");
 			Leave leave1=(Leave)query.uniqueResult();
@@ -98,7 +107,7 @@ public class LeaveDaoImpl implements LeaveDao {
 		Loggers.loggerStart();
 		try {
 			getConnection();
-			Leave oldLeave = getLeave(leave.getEntryTime());
+			Leave oldLeave = getLeave(leave.getEntryTime(),leave.getHierarchy());
 			oldLeave.setIsActive("N");
 			oldLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			session.update(oldLeave);
@@ -118,10 +127,11 @@ public class LeaveDaoImpl implements LeaveDao {
 	}
 
 	
-	public Leave getLeave(String entryTime){
+	public Leave getLeave(String entryTime,Hierarchy hierarchy){
 		Loggers.loggerStart();
 		try{
-			query=session.createQuery("from Leave where isActive='Y' and entryTime='"+entryTime+"'");
+			query=session.createQuery("from Leave where isActive='Y' and entryTime='"+entryTime+"' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			Leave leave = (Leave) query.uniqueResult();
 			return leave;
 			

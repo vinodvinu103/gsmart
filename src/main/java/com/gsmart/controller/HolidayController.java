@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.CompoundHoliday;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.HolidayServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
@@ -73,12 +73,12 @@ public class HolidayController {
 
 		List<Holiday> holidayList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);
 
 		if (modulePermission!= null) {
-			holidayList = holidayServices.getHolidayList();
+			holidayList = holidayServices.getHolidayList(tokenObj.getRole(),tokenObj.getHierarchy());
 
 			permission.put("holidayList", holidayList);
 			Loggers.loggerEnd(holidayList);
@@ -109,6 +109,10 @@ public class HolidayController {
 
 		str.length();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			
+			holiday.setHierarchy(tokenObj.getHierarchy());
 		CompoundHoliday ch = holidayServices.addHoliday(holiday);
 		
 		if(ch!=null)
