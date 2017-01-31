@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.gsmart.model.CompoundHierarchy;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.services.HierarchyServices;
+import com.gsmart.util.CalendarCalculator;
+import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
-import com.gsmart.util.*;
+import com.gsmart.util.GetAuthorization;
+import com.gsmart.util.IAMResponse;
+import com.gsmart.util.Loggers;
 
 /**
  * The HierarchyController class implements an application that displays list of
@@ -106,8 +109,8 @@ public class HierarchyController {
 
 		IAMResponse myResponse;
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			CompoundHierarchy ch = hierarchyServices.addHierarchy(hierarchy);
-			if (ch != null) {
+			boolean status = hierarchyServices.addHierarchy(hierarchy);
+			if (status) {
 				myResponse = new IAMResponse("success");
 			} else {
 				myResponse = new IAMResponse("DATA IS ALREADY EXIST");
