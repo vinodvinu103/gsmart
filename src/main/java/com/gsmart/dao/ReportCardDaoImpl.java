@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
@@ -200,6 +201,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	public List<ReportCard> search(Token tokenDetail) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
+		Hierarchy hierarchy= tokenDetail.getHierarchy();
 		try {
 			getConnection();
 
@@ -210,11 +212,13 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			String role=tokenDetail.getRole();
 			String smartId=tokenDetail.getSmartId();
 			if(role.equalsIgnoreCase("Principal")|role.equalsIgnoreCase("admin")|role.equalsIgnoreCase("owner")){
-			query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y'");
+			query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y' and hierarchy:hierarchy ");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			list = query.list();
 			}
 			else if (role.equalsIgnoreCase("HOD")) {
-				query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y'");
+				query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y' and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
 				list = query.list();
 			}
 			System.out.println("Serch based on smartid..." + list);

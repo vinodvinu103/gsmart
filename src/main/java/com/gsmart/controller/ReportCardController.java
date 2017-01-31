@@ -79,15 +79,14 @@ public class ReportCardController {
 		str.length();
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePremission", modulePermission);
 		try {
-			Token tokenDetail = tokenService.getToken(tokenNumber);
 			// String teacherSmartId=smartId.getSmartId();
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
-				list = reportCardService.search(tokenDetail);
+				list = reportCardService.search(tokenObj);
 				permission.put("reportCard", list);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}
@@ -107,9 +106,12 @@ public class ReportCardController {
 		CompoundReportCard card2 = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		
 		str.length();
 		try {
 			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+				card.setHierarchy(tokenObj.getHierarchy());
 				card2 = reportCardService.addReportCard(card);
 				if (card2 != null)
 					iamResponse = new IAMResponse("success");
@@ -157,11 +159,18 @@ public class ReportCardController {
 
 	@RequestMapping(value = "/excelToDB/{smartId}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Map<String, String>> excelToDB(@PathVariable("smartId") String smartId,
-			@RequestBody MultipartFile fileUpload) {
+			@RequestBody MultipartFile fileUpload,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) {
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
 		Map<String, String> jsonMap = new HashMap<>();
-		try {
+		try {if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
+		{
+//			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			reportCardService.excelToDB(smartId, fileUpload);
 			jsonMap.put("result", "success");
+		}
 			return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -3,6 +3,7 @@ package com.gsmart.dao;
 import java.util.List;
 
 import com.gsmart.model.CompoundHoliday;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.util.GSmartDatabaseException;
 /**
@@ -21,7 +22,7 @@ public interface HolidayDao {
 	 * @throws GSmartDatabaseException
 	 */
 
-	public List<Holiday> getHolidayList() throws GSmartDatabaseException;
+	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 
 
 	/**

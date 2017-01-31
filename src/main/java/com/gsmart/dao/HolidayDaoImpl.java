@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundHoliday;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -50,12 +51,18 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Holiday> getHolidayList() throws GSmartDatabaseException {
+	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<Holiday> holidayList=null;
 		try{
-			getConnection();
+			if(role.equalsIgnoreCase("admin"))
+			{
 			query = session.createQuery("from Holiday WHERE isActive='Y' ");
+			}else{
+				query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			holidayList = query.list();
 		}
 	 catch (Throwable e) {
@@ -76,10 +83,12 @@ public class HolidayDaoImpl implements HolidayDao {
 	@Override
 	public CompoundHoliday addHoliday(Holiday holiday) throws GSmartDatabaseException {
 		CompoundHoliday ch=null;
-		Loggers.loggerStart();		
+		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
-			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive");
+			Hierarchy hierarchy=holiday.getHierarchy();
+			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("holidayDate", holiday.getHolidayDate());
 			query.setParameter("isActive", "Y");
 			Holiday holiday1= (Holiday) query.uniqueResult();
@@ -113,9 +122,10 @@ public class HolidayDaoImpl implements HolidayDao {
 	@Override
 	public void editHoliday(Holiday holiday) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
-			Holiday oldholiday= getHolidayList(holiday.getEntryTime());
+			
+			Holiday oldholiday= getHolidayLists(holiday.getEntryTime(),holiday.getHierarchy());
 			oldholiday.setIsActive("N");
 			oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			session.update(oldholiday);
@@ -135,11 +145,12 @@ public class HolidayDaoImpl implements HolidayDao {
 		Loggers.loggerEnd();
 		
 	}
-	public Holiday getHolidayList(String entryTime) {
+	public Holiday getHolidayLists(String entryTime,Hierarchy hierarchy) {
 		try {
-			query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime");
+			query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 			query.setParameter("isActive", "Y");
 			query.setParameter("entryTime", entryTime);
+			query.setParameter("hierarchy", hierarchy.getHid());
 			Holiday holiday = (Holiday) query.uniqueResult();
 			return holiday ;
 		} 
@@ -157,8 +168,9 @@ public class HolidayDaoImpl implements HolidayDao {
 	@Override
 	public void deleteHoliday(Holiday holiday) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
+			
 			holiday.setIsActive("D");
 			holiday.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(holiday);
@@ -168,7 +180,7 @@ public class HolidayDaoImpl implements HolidayDao {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
 		} finally {
-			session.save(holiday);
+			session.close();
 		}
 		Loggers.loggerEnd();
 	}
