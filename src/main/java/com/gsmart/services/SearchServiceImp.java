@@ -39,7 +39,7 @@ public class SearchServiceImp implements SearchService {
 	FeeMasterServices feeMasterServices;
 
 
-	@Autowired /*
+	/*@Autowired 
 				 * @RequestMapping(value = "/searchRep", method =
 				 * RequestMethod.POST) public ResponseEntity<Map<String,
 				 * ArrayList<Profile>>> searchRep(@RequestBody Search search) {
