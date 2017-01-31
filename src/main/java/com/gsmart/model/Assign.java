@@ -41,7 +41,7 @@ public class Assign {
 
 	@Column(name = "UPDATED_TIME")
 	private String updatedTime;
-
+	
 	@Column(name = "IS_ACTIVE")
 	private String isActive;
 
