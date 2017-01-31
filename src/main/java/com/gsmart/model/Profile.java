@@ -28,42 +28,7 @@ public class Profile {
     @Column(name = "SMART_ID")
 	private String smartId;
 	
-	@Override
-	public String toString() {
-		return "Profile [smartId=" + smartId + ", rfId=" + rfId + ", firstName=" + firstName + ", middleName="
-				+ middleName + ", lastName=" + lastName + ", dob=" + dob + ", gender=" + gender + ", martialStatus="
-				+ martialStatus + ", bloodGroup=" + bloodGroup + ", fatherName=" + fatherName + ", motherName="
-				+ motherName + ", fatherOccupation=" + fatherOccupation + ", motherOccupation=" + motherOccupation
-				+ ", caste=" + caste + ", religion=" + religion + ", nationality=" + nationality + ", languageKnown="
-				+ languageKnown + ", institution=" + institution + ", school=" + school + ", band=" + band
-				+ ", designation=" + designation + ", role=" + role + ", deptName=" + deptName + ", subDeptName="
-				+ subDeptName + ", fatherIncome=" + fatherIncome + ", motherIncome=" + motherIncome + ", guardianName="
-				+ guardianName + ", relationWithGuardian=" + relationWithGuardian + ", fatherMobNumber="
-				+ fatherMobNumber + ", motherMobNumber=" + motherMobNumber + ", teacherId=" + teacherId
-				+ ", updSmartId=" + updSmartId + ", image=" + Arrays.toString(image) + ", emailId=" + emailId
-				+ ", mobileNumber=" + mobileNumber + ", emergencyContactPerson=" + emergencyContactPerson
-				+ ", emergencyContactNumber=" + emergencyContactNumber + ", addLine1=" + addLine1 + ", addLine2="
-				+ addLine2 + ", addLine3=" + addLine3 + ", state=" + state + ", country=" + country + ", city=" + city
-				+ ", pinCode=" + pinCode + ", passportNumber=" + passportNumber + ", passportIssueDate="
-				+ passportIssueDate + ", passportExpiryDate=" + passportExpiryDate + ", ecnrStatus=" + ecnrStatus
-				+ ", visaDetails=" + visaDetails + ", panNumber=" + panNumber + ", aadharNumber=" + aadharNumber
-				+ ", reportingManagerName=" + reportingManagerName + ", reportingManagerId=" + reportingManagerId
-				+ ", counterSigningManagerName=" + counterSigningManagerName + ", counterSigningManagerId="
-				+ counterSigningManagerId + ", functionalManager=" + functionalManager + ", qualification="
-				+ qualification + ", certificationDetails=" + certificationDetails + ", joiningDate=" + joiningDate
-				+ ", domain=" + domain + ", billingDetails=" + billingDetails + ", tenSchoolName=" + tenSchoolName
-				+ ", tenPercentage=" + tenPercentage + ", tenPassYear=" + tenPassYear + ", twelveSchoolName="
-				+ twelveSchoolName + ", twelvePercentage=" + twelvePercentage + ", twelvePassYear=" + twelvePassYear
-				+ ", ugSchoolName=" + ugSchoolName + ", ugPercentage=" + ugPercentage + ", ugPassYear=" + ugPassYear
-				+ ", pgSchoolName=" + pgSchoolName + ", pgPercentage=" + pgPercentage + ", pgPassYear=" + pgPassYear
-				+ ", experiance=" + experiance + ", schoolName=" + schoolName + ", academicYear=" + academicYear
-				+ ", studentId=" + studentId + ", standard=" + standard + ", section=" + section + ", syllabus="
-				+ syllabus + ", previousClass=" + previousClass + ", previousSchool=" + previousSchool
-				+ ", previousYear=" + previousYear + ", entryTime=" + entryTime + ", updatedTime=" + updatedTime
-				+ ", exitTime=" + exitTime + ", isActive=" + isActive + ", childFlag=" + childFlag + ", parentFlag="
-				+ parentFlag + ", totalAmount=" + totalAmount + ", paidAmount=" + paidAmount + ", balanceAmount="
-				+ balanceAmount + "]";
-	}
+	
 
 	@Column(name="RFID")
 	private String rfId;

@@ -28,6 +28,7 @@ import com.gsmart.model.Attendance;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.HolidayServices;
 import com.gsmart.services.ProfileServices;
@@ -37,6 +38,7 @@ import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
+
 
 @Controller
 @RequestMapping(Constants.ATTENDANCE)
@@ -71,6 +73,7 @@ public class AttendanceController {
 		str.length();
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		permissions.put("modulePermission", modulePermission);
 		List<Map<String, Object>> attendanceList = null;
 		List<Holiday> holidayList = null;
@@ -82,7 +85,7 @@ public class AttendanceController {
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
-		holidayList= holidayService.getHolidayList();
+		holidayList= holidayService.getHolidayList(tokenObj.getRole(),tokenObj.getHierarchy());
 		
 		permissions.put("attendanceList", attendanceList);
 		permissions.put("holidayList", holidayList);
@@ -159,12 +162,13 @@ public class AttendanceController {
 
 		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
 
 		resultmap.put("modulePermisson", modulePermisson);
 		if (modulePermisson != null) {
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018");
+			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getRole(),tokenObj.getHierarchy());
 			Loggers.loggerValue("profile is ", profile);
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("child is", childList);

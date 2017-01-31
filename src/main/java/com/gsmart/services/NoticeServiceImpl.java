@@ -61,12 +61,12 @@ public class NoticeServiceImpl implements NoticeService
 		return profileList;
 	}
 	
-	@Override
-	public ArrayList<Profile> getProfiles(String role,String smartId) throws GSmartServiceException {
-		
-		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId);
-		return profileList;
-	}
+//	@Override
+//	public ArrayList<Profile> getProfiles(String role,String smartId) throws GSmartServiceException {
+//		
+//		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId);
+//		return profileList;
+//	}
 
 
 	@Override
