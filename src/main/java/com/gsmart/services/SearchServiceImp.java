@@ -55,20 +55,6 @@ public class SearchServiceImp implements SearchService {
 				 * }
 				 */
 
-	/*
-	 * @RequestMapping(value = "/searchRep", method = RequestMethod.POST) public
-	 * ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody
-	 * Search search) {
-	 * 
-	 * Map<String, ArrayList<Profile>> jsonMap = new HashMap<String,
-	 * ArrayList<Profile>>(); Map<String, Profile> map =
-	 * searchService.searchRep(search); ArrayList<Profile> profiless =
-	 * searchService.getEmployeeInfo(search.getName(), map);
-	 * jsonMap.put("result", profiless); return new ResponseEntity<Map<String,
-	 * ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-	 * 
-	 * }
-	 */
 
 	private Map<String, Profile> allProfiles;
 
@@ -80,6 +66,7 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerValue("returnd to getall Profiles in serviceImpl ", "");
 		for (Profile profile : profiles) {
 			Loggers.loggerValue("smartIds :", profile.getSmartId());
+			
 			allProfiles.put(profile.getSmartId(), profile);
 		}
 		Loggers.loggerEnd("for each loop is executed");
@@ -95,11 +82,8 @@ public class SearchServiceImp implements SearchService {
 			for (String i : key) {
 
 				Profile p = (Profile) map.get(i);
-				if (emp != null) {
-					if ((p.getTeacherId().trim().toLowerCase()).startsWith(emp.toLowerCase())) {
-						list.add(p);
-					}
-				} else {
+
+				if ((p.getSmartId().trim().toLowerCase().startsWith(emp.toLowerCase()))) {
 					list.add(p);
 				}
 			}
@@ -113,16 +97,24 @@ public class SearchServiceImp implements SearchService {
 	@Override
 	public ArrayList<Profile> searchEmployeeInfo(String smartId, Map<String, Profile> map) {
 		Loggers.loggerStart("searchEmployeeInfo ");
-		Set<String> key = map.keySet();
 		ArrayList<Profile> childList = new ArrayList<Profile>();
+		/* Loggers.loggerValue("profiles in map", map); */
+		try {
+			Set<String> key = map.keySet();
 
-		for (String temp : key) {
-			Profile p = map.get(temp);
-			if (p.getReportingManagerId().equals(smartId)) {
-				if (!(p.getSmartId().equals(smartId))) {
-					childList.add(p);
+			/* Loggers.loggerValue("key", key); */
+
+			for (String temp : key) {
+				Profile p = map.get(temp);
+				if (p.getReportingManagerId().equals(smartId)) {
+					if (!(p.getSmartId().equals(smartId))) {
+						childList.add(p);
+					}
 				}
+
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		Loggers.loggerEnd("searchEmployeeInfo ended");
 		return childList;
@@ -156,11 +148,17 @@ public class SearchServiceImp implements SearchService {
 		do {
 			Loggers.loggerValue("entered int do while in searchParentInfo", "");
 			p = map.get(smartId);
-			if (!(p.getReportingManagerId().equals(smartId))) {
-				parentList.add(p.getReportingManagerId());
-				smartId = p.getReportingManagerId();
-				temp = true;
-				Loggers.loggerValue("entered into if in do while in searchParentInfo", "");
+			System.out.println("reporting managere id" + p.getReportingManagerId());
+			if (p.getReportingManagerId() != null) {
+				if (!(p.getReportingManagerId().equals(smartId))) {
+					System.out.println("hhhhyhg");
+					parentList.add(p.getReportingManagerId());
+					smartId = p.getReportingManagerId();
+					temp = true;
+					Loggers.loggerValue("entered into if in do while in searchParentInfo", "");
+				} else {
+					temp = false;
+				}
 			} else {
 				temp = false;
 			}
@@ -218,7 +216,6 @@ public class SearchServiceImp implements SearchService {
 			} 
 			else {
 				do {
-
 					ArrayList<Profile> gotoloop = gotoloop(temp1, profiles);
 					if (!gotoloop.isEmpty()) {
 
@@ -243,7 +240,6 @@ public class SearchServiceImp implements SearchService {
 
 						
 					} else {
-						Loggers.loggerValue("sumup ended", "");
 						return childList;
 
 					}
@@ -259,7 +255,6 @@ public class SearchServiceImp implements SearchService {
 						profileMap.put(map.get(i - 1).get(j).getSmartId(), map.get(i - 1).get(j));
 
 					}
-
 
 					Collections.sort(fees, new Comparator<Profile>() {
 						public int compare(Profile s1, Profile s2) {
@@ -279,8 +274,6 @@ public class SearchServiceImp implements SearchService {
 					if(band.getRole().toLowerCase().equals("student")) {
 						Collections.reverse(fees);
 					}
-
-
 
 					temp2 = totalfees(profileMap, fees);
 
@@ -314,7 +307,6 @@ public class SearchServiceImp implements SearchService {
 
 
 		for (int i = 0; i < feeList.size(); i++) {
-
 			feeMap.put(feeList.get(i).getSmartId(), feeList.get(i));
 		}
 
@@ -351,6 +343,7 @@ public class SearchServiceImp implements SearchService {
 
 		ArrayList<Profile> childOfChildList = new ArrayList<>();
 		Loggers.loggerStart(childList);
+	
 		ArrayList<Profile> childOfChild = new ArrayList<Profile>();
 
 		for (Profile profile : childList) {
@@ -374,17 +367,28 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerStart(fees);
 		Loggers.loggerValue("profile map", profileMap);
 		for (Profile profile : fees) {
-
+            
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having paidAmount of " + profile.getPaidAmount());
+			
 			profileMap.get(profile.getReportingManagerId()).setPaidAmount(
 					profileMap.get(profile.getReportingManagerId()).getPaidAmount() + profile.getPaidAmount());
+			Loggers.loggerValue("total fees of set fees","");
+
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having balanceAmount of " + profile.getBalanceAmount());
 
 
 			profileMap.get(profile.getReportingManagerId()).setBalanceAmount(
 					profileMap.get(profile.getReportingManagerId()).getBalanceAmount() + profile.getBalanceAmount());
+			Loggers.loggerValue("total fees of setbalance fees","");
+
+			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having TotalAmount of" + profile.getTotalAmount());
 
 
 			profileMap.get(profile.getReportingManagerId()).setTotalAmount(
 					profileMap.get(profile.getReportingManagerId()).getTotalAmount() + profile.getTotalAmount());
+		
+			
+			Loggers.loggerValue("total fees of settotal fees","");
 
 
 		}
@@ -393,7 +397,6 @@ public class SearchServiceImp implements SearchService {
 		return list;
 
 	}
-
 
 	public Profile totalFessToAdmin(Profile profileMap, ArrayList<Profile> fees) {
 		Loggers.loggerStart();
@@ -408,7 +411,6 @@ public class SearchServiceImp implements SearchService {
 		return profileMap;
 
 	}
-
 
 	@Override
 	public Map<String, Object> getParentInfo(String smartId) {

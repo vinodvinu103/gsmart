@@ -26,6 +26,7 @@ import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.GSmartBaseException;
+import com.gsmart.util.Loggers;
 import com.gsmart.util.GetAuthorization;
 
 @Controller
@@ -37,69 +38,67 @@ public class OrgStructureController {
 
 	@Autowired
 	ProfileServices profileServices;
-	
+
 	@Autowired
 	GetAuthorization getAuthorization;
 
-	//private static final Logger logger = Logger.getLogger(OrgStructureController.class);
+	// private static final Logger logger =
+	// Logger.getLogger(OrgStructureController.class);
 
 	@RequestMapping(value = "/{smartId}")
-	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId ,@RequestHeader HttpHeaders token,HttpSession httpSession)
-			throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		
 		RolePermission modulePermisson=getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
-		
+
 		resultmap.put("modulePermisson", modulePermisson);
 		if(modulePermisson!=null)
 		{
 		Profile profile = profileServices.getProfileDetails(smartId);
 		Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getRole(),tokenObj.getHierarchy());
 
-		ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
+			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 
-		if (childList.size() != 0) {
-			profile.setChildFlag(true);
-		}
+			if (childList.size() != 0) {
+				profile.setChildFlag(true);
+			}
 
-		Set<String> key = profiles.keySet();
-		for (int i = 0; i < childList.size(); i++) {
+			Set<String> key = profiles.keySet();
+			for (int i = 0; i < childList.size(); i++) {
 
-			for (String j : key) {
+				for (String j : key) {
 
-				Profile p = (Profile) profiles.get(j);
-				if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
+					Profile p = (Profile) profiles.get(j);
+					if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
 
-					if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
-						childList.get(i).setChildFlag(true);
+						if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
+							childList.get(i).setChildFlag(true);
+						}
 					}
 				}
 			}
-		}
-		
-		
-		resultmap.put("selfProfile", profile);
-		resultmap.put("childList", childList);
-		return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
-		}
-		else
-		{
+
+			resultmap.put("selfProfile", profile);
+			resultmap.put("childList", childList);
+			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
+		} else {
 			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
 		}
 
 	}
 
 	@RequestMapping(value = "/searchname", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> Search(@RequestBody Search search,@RequestHeader HttpHeaders token,HttpSession httpSession) {
-		{
-
-			String tokenNumber=token.get("Authorization").get(0);
-			String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+	public ResponseEntity<Map<String, ArrayList<Profile>>> Search(@RequestBody Search search,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) {
+		
+			String tokenNumber = token.get("Authorization").get(0);
+			String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 			str.length();
 			
 			Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
@@ -120,29 +119,27 @@ public class OrgStructureController {
 				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
 			}
 
-		}
+		
 	}
-/*
-	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search) {
-		{
-			Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
-			try {
-
-				Map<String, Profile> map = searchService.searchRep(search);
-				logger.info(map.size());
-				ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
-				jsonMap.put("result", profiless);
-				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-			} catch (Exception e) {
-				e.printStackTrace();
-				jsonMap.put("result", null);
-				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-			}
-
-		}
-
-	}*/
+	/*
+	 * @RequestMapping(value = "/searchRep", method = RequestMethod.POST) public
+	 * ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody
+	 * Search search) { { Map<String, ArrayList<Profile>> jsonMap = new
+	 * HashMap<String, ArrayList<Profile>>(); try {
+	 * 
+	 * Map<String, Profile> map = searchService.searchRep(search);
+	 * logger.info(map.size()); ArrayList<Profile> profiless =
+	 * searchService.getEmployeeInfo(search.getName(), map);
+	 * jsonMap.put("result", profiless); return new ResponseEntity<Map<String,
+	 * ArrayList<Profile>>>(jsonMap, HttpStatus.OK); } catch (Exception e) {
+	 * e.printStackTrace(); jsonMap.put("result", null); return new
+	 * ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
+	 * }
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
 
 	@RequestMapping(value = "/search/{smartId}", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search,
@@ -162,6 +159,7 @@ public class OrgStructureController {
 
 		ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 
+		Loggers.loggerValue("childList got from search Employee", "");
 		ArrayList<Profile> temp1 = childList;
 
 		ArrayList<Profile> temp2 = new ArrayList<>();
@@ -172,6 +170,7 @@ public class OrgStructureController {
 
 				smartId = temp1.get(i).getSmartId();
 				temp = searchService.searchEmployeeInfo(smartId, profiles);
+
 				temp2.clear();
 				temp2.addAll(temp);
 				childList.addAll(temp);
@@ -182,18 +181,16 @@ public class OrgStructureController {
 		ArrayList<Profile> list = new ArrayList<Profile>();
 
 		for (Profile p : childList) {
-			if ((p.getSmartId().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+			if ((p.getFirstName().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
-			}
-			else if ((p.getFirstName().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+			} else if ((p.getFirstName().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
 			}
 			if ((p.getRole().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
 			}
 		}
-		
-		
+
 		Set<String> key = profiles.keySet();
 		for (int i = 0; i < list.size(); i++) {
 
