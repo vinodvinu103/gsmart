@@ -52,7 +52,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		List<RolePermission> rolePermissions = null;
 		getConnection();
 		try {
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 			
 			query = session.createQuery("from RolePermission where isActive='Y'");
@@ -230,7 +230,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		List<RolePermission> rolePermissions = null;
 		getConnection();
 		try{
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 				query = session.createQuery("from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
 			

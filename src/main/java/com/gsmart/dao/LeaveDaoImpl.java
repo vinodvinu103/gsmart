@@ -35,7 +35,7 @@ public class LeaveDaoImpl implements LeaveDao {
 		getConnection();
 		List<Leave> leave = null;
 		try {
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 			query = session.createQuery("FROM Leave WHERE isActive='Y'");
 			}else{

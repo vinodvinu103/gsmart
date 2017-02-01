@@ -33,7 +33,7 @@ public class AssignDaoImpl implements AssignDao {
 		List<Assign> assignList = null;
 		try {
 			getConnection();
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin")|| role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 				query = session.createQuery("from Assign where isActive=:isActive");
 			else {
 				query = session.createQuery("from Assign where isActive=:isActive and hierarchy:hierarchy");

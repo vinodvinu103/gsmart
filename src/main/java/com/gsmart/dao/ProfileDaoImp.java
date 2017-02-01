@@ -171,7 +171,7 @@ public class ProfileDaoImp implements ProfileDao {
 			Loggers.loggerStart(role);
 
 			Loggers.loggerStart("current smartId" + smartId);
-			if(loginUserRole.equalsIgnoreCase("admin"))
+			if(loginUserRole.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 				if (role.toLowerCase().equals("student")) {
 					query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
@@ -288,7 +288,7 @@ public class ProfileDaoImp implements ProfileDao {
 		List<Profile> profile = null;
 
 		try {
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 				query = session.createQuery("from Profile where isActive=:isActive and academicYear=:academicYear");
 				
@@ -318,7 +318,7 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerStart();
 		getConnection();
 		try {
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 
 			query = session.createQuery("from Profile where isActive like('Y') and band<:band  and school =:school");

@@ -42,7 +42,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 		getconnection();
 		 List<LeaveMaster> leavemasterlist = null;
 		 try { 
-			 if(role.equalsIgnoreCase("admin"))
+			 if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			 {
 			 query=session.createQuery("from LeaveMaster where isActive='Y'");
 			 }else{

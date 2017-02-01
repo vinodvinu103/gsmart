@@ -40,7 +40,7 @@ public class MyTeamLeaveDaoImpl  implements MyTeamLeaveDao{
 		List<Leave> leavelist=null;
 		getConnection();
 		try {
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 
 			query = session.createQuery("FROM Leave WHERE isActive='Y'");
