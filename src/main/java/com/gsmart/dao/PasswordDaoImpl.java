@@ -9,6 +9,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Login;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.model.Profile;
@@ -28,13 +29,15 @@ public class PasswordDaoImpl implements PasswordDao {
 	Query query;
 
 	@Override
-	public void setPassword(Login login) throws GSmartDatabaseException {
+	public void setPassword(Login login,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		try {
-			getConnection();
-			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId) ");
+			
+			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId) and hierarchy.hid=:hierarchy  ");
 			query.setParameter("referenceSmartId", login.getReferenceSmartId());
 			query.setParameter("SmartId", login.getSmartId());
+			query.setParameter("hierarchy", hierarchy.getHid());
 			System.out.println("encrypted smartid"+login.getSmartId());
 			Login refId=(Login) query.uniqueResult();
 			
@@ -72,18 +75,18 @@ public class PasswordDaoImpl implements PasswordDao {
 	}
 
 	@Override
-	public boolean changePassword(Login login, String smartId) throws GSmartDatabaseException {
+	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart(login);
 		Login currentPassword = null;
 		boolean pwd = false;
-		System.out.println("smartid"+smartId);
-		System.out.println("password.........."+login.getPassword());
+		getConnection();
+		
 		String pass=Encrypt.md5(login.getPassword());
-		System.out.println("encrypted password.........."+pass);
 		try {
-			getConnection();
-			query = session.createQuery("from Login where smartId=:smartId and password=:currentPassword");
+			
+			query = session.createQuery("from Login where smartId=:smartId and password=:currentPassword and hierarchy.hid=:hierarchy");
 			query.setParameter("currentPassword", pass);
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("smartId", smartId);
 			currentPassword = (Login) query.uniqueResult();
 
@@ -103,17 +106,19 @@ public class PasswordDaoImpl implements PasswordDao {
 		}
 	
 
-	public Profile forgotPassword(String email) throws GSmartDatabaseException {
+	public Profile forgotPassword(String email,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		Profile emailId = null;
 		try {
 
-			getConnection();
+			
 			
 			System.out.println(email);
 
-			query = session.createQuery("from Profile where emailId=:emailId");
+			query = session.createQuery("from Profile where emailId=:emailId and hierarchy.hid=:hierarchy");
 			query.setParameter("emailId", email);
+			query.setParameter("hierarchy", hierarchy.getHid());
 			emailId = (Profile) query.uniqueResult();
 
 		} catch (Exception e) {

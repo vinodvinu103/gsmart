@@ -7,10 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -25,15 +21,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Login;
 import com.gsmart.model.Token;
 import com.gsmart.services.PasswordServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.model.Profile;
-import com.gsmart.services.PasswordServices;
-import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.CommonMail;
-import com.gsmart.util.Decrypt;
 import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
+import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
 @Controller
@@ -43,8 +36,9 @@ public class PasswordController {
 	@Autowired
 	PasswordServices passwordServices;
 
+	
 	@Autowired
-	TokenService tokenService;
+	GetAuthorization getAuthorization;
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> setPassword(@RequestBody Login login, @RequestHeader HttpHeaders token,
@@ -52,25 +46,19 @@ public class PasswordController {
 			throws GSmartBaseException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		Loggers.loggerStart(login);
-		System.out.println("Confirm password..."+login.getConfirmPassword());
-		System.out.println("password..."+login.getPassword());
-		System.out.println("smartid..."+login.getSmartId());
-		System.out.println("newpassword..."+login.getNewPassword());
+		String tokenNumber=token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
 		Map<String, Object> responseMap = new HashMap<>();
-		String tokenNumber = null;
-		if (token.get("Authorization") != null) {
-			System.out.println("in side if condition.....");
-			tokenNumber = token.get("Authorization").get(0);
-			Token tokenList = null;
+		if (tokenNumber != null) {
 			try {
-				tokenList = tokenService.getToken(tokenNumber);
-				String smartId = tokenList.getSmartId();
-				String encrptSmartid=Encrypt.md5(smartId);
-				System.out.println("encrpyted smart id........"+encrptSmartid);
-				String decrtptsmartId=Decrypt.MD5(encrptSmartid);
-				System.out.println("Decrypted smart id,,,,,,,,,,,"+decrtptsmartId);
-				//Loggers.loggerStart("encrypted smartId is : " + Encrypt.md5(login.getSmartId()));
-				boolean pwd = passwordServices.changePassword(login, smartId);
+				if(getAuthorization.authorizationForPost(tokenNumber, httpSession));
+				{
+					Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+				String smartId = tokenObj.getSmartId();
+				login.setHierarchy(tokenObj.getHierarchy());
+				boolean pwd = passwordServices.changePassword(login, smartId,tokenObj.getHierarchy());
 				if (pwd) {
 					responseMap.put("status", 200);
 					responseMap.put("message", "valid password");
@@ -78,14 +66,16 @@ public class PasswordController {
 					responseMap.put("status", 404);
 					responseMap.put("message", "Enter Valid Password");
 				}
+				}
 
 			} catch (GSmartServiceException e) {
 				e.printStackTrace();
 			}
 		} 
-		else {			
+		else {	
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			login.setSmartId(login.getSmartId());			
-			passwordServices.setPassword(login);
+			passwordServices.setPassword(login,tokenObj.getHierarchy());
 			System.out.println(login);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucessfully registered");
@@ -99,11 +89,19 @@ public class PasswordController {
 	
 	
 	@RequestMapping(value="/email",method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> forgotPassword(@RequestBody String email) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> forgotPassword(@RequestBody String email,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		Profile profile=null;
 		Map<String, Object> responseMap = new HashMap<>();
-		profile=passwordServices.forgotPassword(email);
+		String tokenNumber=token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
+		{
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			
+		profile=passwordServices.forgotPassword(email,tokenObj.getHierarchy());
 		Loggers.loggerValue("emaild id matched details", profile);
 		if(profile!=null && profile.getEmailId().equals(email))
 		{	
@@ -123,6 +121,7 @@ public class PasswordController {
 		{	
 			responseMap.put("status", 404);
 			responseMap.put("message", "Enter registered EmailId");
+		}
 		}
 		
 		Loggers.loggerEnd();

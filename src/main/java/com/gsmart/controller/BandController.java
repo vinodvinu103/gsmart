@@ -82,6 +82,8 @@ public class BandController {
 		if (modulePermission != null) {
 			System.out.println("success");
 			bandList = bandServices.getBandList();
+			permissions.put("status", 200);
+			permissions.put("message", "success");
 			permissions.put("bandList",bandList);
 			Loggers.loggerEnd(bandList);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);

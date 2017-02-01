@@ -45,6 +45,7 @@
 				<value>com.gsmart.model.ReportCard</value>
 				<value>com.gsmart.model.LeaveDetails</value>
 				<value>com.gsmart.model.Leave</value>
+				<value>com.gsmart.model.Notice</value>
 				<value>com.gsmart.model.Assign</value>
 				
 
@@ -52,7 +53,7 @@
 		</property>
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
