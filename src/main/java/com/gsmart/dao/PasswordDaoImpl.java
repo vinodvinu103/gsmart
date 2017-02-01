@@ -50,7 +50,6 @@ public class PasswordDaoImpl implements PasswordDao {
 			}else
 			{
 				
-//				login.setcuPassword(Encrypt.md5(String.valueOf(login.getPassword())));
 				refId.setPassword(Encrypt.md5(login.getConfirmPassword()));
 				refId.setAttempt(0);
 				refId.setEntryTime(CalendarCalculator.getTimeStamp());
@@ -79,8 +78,7 @@ public class PasswordDaoImpl implements PasswordDao {
 		Loggers.loggerStart(login);
 		Login currentPassword = null;
 		boolean pwd = false;
-		getConnection();
-		
+		getConnection();		
 		String pass=Encrypt.md5(login.getPassword());
 		try {
 			
@@ -98,7 +96,6 @@ public class PasswordDaoImpl implements PasswordDao {
 				pwd = true;
 			}
 			Loggers.loggerEnd();
-			return pwd;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -106,25 +103,19 @@ public class PasswordDaoImpl implements PasswordDao {
 		}
 	
 
-	public Profile forgotPassword(String email,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Profile emailLink(String email) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		Profile emailId = null;
 		try {
 
-			
-			
-			System.out.println(email);
-
-			query = session.createQuery("from Profile where emailId=:emailId and hierarchy.hid=:hierarchy");
+		    System.out.println(email);
+			query = session.createQuery("from Profile where emailId=:emailId ");
 			query.setParameter("emailId", email);
-			query.setParameter("hierarchy", hierarchy.getHid());
 			emailId = (Profile) query.uniqueResult();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-
 		}
 		finally {
 			session.close();
