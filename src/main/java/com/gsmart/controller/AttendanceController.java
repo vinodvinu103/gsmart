@@ -88,6 +88,7 @@ public class AttendanceController {
 		holidayList= holidayService.getHolidayList(tokenObj.getRole(),tokenObj.getHierarchy());
 		
 		permissions.put("attendanceList", attendanceList);
+		System.out.println("attendanceList:"+ attendanceList);
 		permissions.put("holidayList", holidayList);
 
 		Loggers.loggerEnd();
@@ -127,14 +128,13 @@ public class AttendanceController {
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<IAMResponse> editDeleteAttendance(@RequestBody Attendance attendance,
-			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
+	@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
 
 		String tokenNumber = token.get("Authorization").get(0);
 		System.out.println("token Number" + tokenNumber);
-		System.out.println("task is" + task);
+		System.out.println("task is " + task);
 		System.out.println("httpSession" + httpSession);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
