@@ -27,7 +27,7 @@ public class GetAuthorization {
 	Transaction tx;
 	Query query;
 	RolePermission permissions = null;
-	Hierarchy hierarchy=null;
+	Token tokenObj=null;
 
 	public RolePermission authorizationForGet(String tokenNumber, HttpSession httpSession) throws GSmartServiceException {
 
@@ -60,9 +60,9 @@ public class GetAuthorization {
 		
 		try{
 			rolePermission = (RolePermission) httpSession.getAttribute("permissions");
-			hierarchy=(Hierarchy) httpSession.getAttribute("hierarchy");
+			tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			
-			if(rolePermission==null || hierarchy==null)
+			if(rolePermission==null || tokenObj==null)
 			{
 				Token token = tokenService.getToken(tokenNumber);
 				String module = getModuleName();
@@ -89,9 +89,9 @@ public class GetAuthorization {
 		
 		try{
 			rolePermission = (RolePermission) httpSession.getAttribute("permissions");
-         hierarchy=(Hierarchy) httpSession.getAttribute("hierarchy");
+			tokenObj= (Token) httpSession.getAttribute("hierarchy");
 			
-			if(rolePermission==null || hierarchy==null)
+			if(rolePermission==null || tokenObj==null)
 			{
 				Token token = tokenService.getToken(tokenNumber);
 				String module = getModuleName();
