@@ -98,10 +98,12 @@ public class RolePermissionController {
 	public ResponseEntity<List<RolePermission>> getSubModels(@RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		
-		Loggers.loggerStart();
+		Loggers.loggerStart(httpSession);
 		String tokenNumber = token.get("Authorization").get(0);
 		
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		
+	getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		str.length();
 

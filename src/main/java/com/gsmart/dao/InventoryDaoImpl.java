@@ -49,7 +49,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		getconnection();
 		List<Inventory> inventoryList;
 		try {
-			if(role.equalsIgnoreCase("admin")){
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")){
 				query = session.createQuery("from Inventory where isActive='Y' ");
 			}else{
 				query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy ");

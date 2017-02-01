@@ -40,7 +40,7 @@ public interface HierarchyDao {
 	 * @return list of Hierarchy entities available in the {@link Hierarchy} Table
 	 * @throws Exception
 	 */
-	public List<Hierarchy> getHierarchyList() throws GSmartDatabaseException;
+	public List<Hierarchy> getHierarchyList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 	/**
 	 * @param hierarchy instanceOf {@link Hierarchy}
 	 * @return Nothing

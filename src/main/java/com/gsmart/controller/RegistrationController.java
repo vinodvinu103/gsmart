@@ -188,11 +188,10 @@ public class RegistrationController {
 			 */
 		}
 		
-		
+		profile.setSmartId(smartId);
 		profile.setEntryTime(Calendar.getInstance().getTime().toString());
 
 		if (profileServices.insertUserProfileDetails(profile)) {
-			profile.setSmartId(smartId);
 
 			login.setReferenceSmartId(Encrypt.md5(smartId));
 			login.setSmartId(smartId);
