@@ -60,9 +60,9 @@ public class LeaveController {
 
 		Map<String, Object> leave = new HashMap<>();
 		leave.put("modulePermission", modulePermission);
-		System.out.println("Hello madam prati...........");
+		
 			CronJob.cronJob();	
-			System.out.println("Bye madam prati...........");
+			
 		if (modulePermission!= null) {
 			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy());
 

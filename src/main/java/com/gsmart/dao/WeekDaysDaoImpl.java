@@ -25,6 +25,7 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	Transaction transaction = null;
 	Query query;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<WeekDays> getWeekList() throws GSmartDatabaseException {
 		Loggers.loggerStart();
