@@ -39,7 +39,7 @@ public class FeeDaoImpl implements FeeDao{
 		getconnection();
 		ArrayList<Fee> feeList;
 		try{
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 				query=session.createQuery("from Fee where smartId =:smartId and academicYear =:academicYear");
 			}
@@ -108,7 +108,7 @@ public class FeeDaoImpl implements FeeDao{
 		ArrayList<Fee> feeList=null;
 		try
 		{
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 		query=session.createQuery("From Fee where academicYear=:academicYear and isActive='Y'");
 			}else
@@ -135,7 +135,7 @@ public class FeeDaoImpl implements FeeDao{
 	public List<Fee> gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		getconnection();
-		if(role.equalsIgnoreCase("admin"))
+		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 		{
 		query = session.createQuery("From Fee where isActive=:isActive");
 		}else{
@@ -160,7 +160,7 @@ public class FeeDaoImpl implements FeeDao{
 //		System.out.println(academicYear);
 		
 		Loggers.loggerValue("getting connections", "");
-		if(role.equalsIgnoreCase("admin"))
+		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 		{
 		query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y'");
 		}else{
@@ -188,7 +188,7 @@ public class FeeDaoImpl implements FeeDao{
 		try
 		{
 		//System.out.println(academicYear);
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 			query=session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y'");
 			}else{

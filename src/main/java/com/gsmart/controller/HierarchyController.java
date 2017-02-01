@@ -74,19 +74,19 @@ public class HierarchyController {
 		str.length();
 		List<Hierarchy> hierarchyList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-//		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);
 
-		if (modulePermission != null) {
-			hierarchyList = hierarchyServices.getHierarchyList();
+//		if (modulePermission != null) {
+			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(),tokenObj.getHierarchy());
 			permission.put("hierarchyList", hierarchyList);
 			Loggers.loggerEnd(hierarchyList);
 			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		}
+//		} else {
+//			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+//		}
 
 	}
 

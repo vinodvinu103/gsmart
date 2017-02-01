@@ -48,7 +48,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		getConnection();
 		List<FeeMaster> feeList=null;
 		try {
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 			query = session.createQuery("from FeeMaster where isActive='Y'");
 			}else{
@@ -207,7 +207,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) {
 		getConnection();
 		try {
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 			query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' ");
 			}else{

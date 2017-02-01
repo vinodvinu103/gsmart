@@ -56,7 +56,7 @@ public class HolidayDaoImpl implements HolidayDao {
 		getConnection();
 		List<Holiday> holidayList=null;
 		try{
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 			query = session.createQuery("from Holiday WHERE isActive='Y' ");
 			}else{
@@ -97,10 +97,8 @@ public class HolidayDaoImpl implements HolidayDao {
 			}
 			holiday.setEntryTime(CalendarCalculator.getTimeStamp());
 			holiday.setIsActive("Y");
-			ch=(CompoundHoliday) session.save(holiday);
-			
-			
-			
+			ch=(CompoundHoliday) 
+			session.save(holiday);
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 		throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);

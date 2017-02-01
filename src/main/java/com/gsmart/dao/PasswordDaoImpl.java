@@ -41,24 +41,25 @@ public class PasswordDaoImpl implements PasswordDao {
 			System.out.println("encrypted smartid"+login.getSmartId());
 			Login refId=(Login) query.uniqueResult();
 			
-			System.out.println(refId);
-			if(refId.getReferenceSmartId()==null)
+			if(refId!=null)
 			{
-				login.setSmartId(login.getSmartId());
-				login.setReferenceSmartId(login.getReferenceSmartId());
-			session.save(login);
-			}else
-			{
-				
 				refId.setPassword(Encrypt.md5(login.getConfirmPassword()));
 				refId.setAttempt(0);
 				refId.setEntryTime(CalendarCalculator.getTimeStamp());
 				session.saveOrUpdate(refId);
+				
+			}else
+			{
+				
+				System.out.println("refild is null");
+				login.setSmartId(login.getSmartId());
+				login.setReferenceSmartId(login.getReferenceSmartId());
+				login.setHierarchy(hierarchy);
+			    session.save(login);
+//				login.setcuPassword(Encrypt.md5(String.valueOf(login.getPassword())));
+				
 			}
-			session.saveOrUpdate(login);
 			transaction.commit();
-		} catch (ConstraintViolationException e) {
-			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
