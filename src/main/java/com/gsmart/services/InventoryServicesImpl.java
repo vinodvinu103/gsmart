@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.InventoryDao;
 import com.gsmart.model.CompoundInventory;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -32,11 +33,11 @@ public class InventoryServicesImpl implements InventoryServices {
 	 */
         
 	@Override
-	public List<Inventory> getInventoryList() throws GSmartServiceException {
+	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
 			Loggers.loggerEnd();
-			return inventoryDao.getInventoryList();
+			return inventoryDao.getInventoryList(role,hierarchy);
 		} catch (GSmartDatabaseException Exception ) {
 			throw(GSmartServiceException) Exception;
 			

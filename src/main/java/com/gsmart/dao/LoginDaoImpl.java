@@ -110,7 +110,6 @@ public class LoginDaoImpl implements LoginDao {
 		List<Profile> list=null;
 		try {
 			query=session.createQuery("from Profile where isActive='Y'");
-			list=query.list();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

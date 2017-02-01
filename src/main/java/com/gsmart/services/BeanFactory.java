@@ -30,7 +30,7 @@ public class BeanFactory {
 	Logger logger = Logger.getLogger(BeanFactory.class);
 
 	public void getAllBeanFactory() {
-		try {
+		/*try {
 			boolean flag = true;
 			beanFactory = new HashMap<String, Profile>();
 			//get all active records in profile table
@@ -38,7 +38,7 @@ public class BeanFactory {
 
 			childList = new HashMap<String, Boolean>();
 			
-			/* puts profile data corresponding to its smartId and sets the flag*/
+			 puts profile data corresponding to its smartId and sets the flag
 			for (Profile profile : profiles) {
 				beanFactory.put(profile.getSmartId(), profile);
 				
@@ -51,7 +51,7 @@ public class BeanFactory {
 				}
 				childList.put(profile.getSmartId(), false);
 			}
-			/* gets the active leave details */
+			 gets the active leave details 
 			
 			
 			customizePermissions = new HashMap<String, Map<String, RolePermission>>();
@@ -75,7 +75,7 @@ public class BeanFactory {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	public Map<String, Profile> getBeanFactory() {

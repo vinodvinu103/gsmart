@@ -67,9 +67,10 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public List<Hierarchy> getHierarchyList() throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<Hierarchy> hierarchyList;
 		try {
-			getConnection();
+			
 			query = session.createQuery("from Hierarchy where isActive='Y'");
 			hierarchyList = query.list();
 
@@ -94,9 +95,10 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public boolean addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		boolean status;
 		try {
-			getConnection();
+			
 			Hierarchy hierarchy1 = fetch(hierarchy);
 			if (hierarchy1 != null) {
 				return false;
@@ -180,7 +182,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			query = session.createQuery("from Hierarchy where IS_ACTIVE='Y' and ENTRY_TIME='" + entryTime + "'");
 			ArrayList<Hierarchy> hierarchyList = (ArrayList<Hierarchy>) query.list();
 			transaction.commit();
-			session.close();
+		
 			return hierarchyList.get(0);
 		} catch (Exception e) {
 			e.printStackTrace();

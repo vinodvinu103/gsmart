@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Leave;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.LeaveServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
@@ -52,12 +53,12 @@ public class LeaveController {
 		
 		List<Leave> leaveList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> leave = new HashMap<>();
 		leave.put("modulePermission", modulePermission);
 					
 		if (modulePermission!= null) {
-			leaveList = leaveServices.getLeaveList();
+			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy());
 
 			leave.put("leaveList", leaveList);
 			Loggers.loggerEnd(leaveList);
@@ -81,7 +82,10 @@ public class LeaveController {
 		str.length();
 		
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			CompoundLeave cl=leaveServices.addLeave(leave,noOfdays);
+			
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			leave.setHierarchy(tokenObj.getHierarchy());
+			CompoundLeave cl=leaveServices.addLeave(leave,noOfdays,tokenObj.getRole(),tokenObj.getHierarchy());
 			if(cl!=null)
 			resp.setMessage("success");
 		else
