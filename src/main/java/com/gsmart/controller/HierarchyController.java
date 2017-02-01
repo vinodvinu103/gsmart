@@ -79,14 +79,14 @@ public class HierarchyController {
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);
 
-		if (modulePermission != null) {
+//		if (modulePermission != null) {
 			hierarchyList = hierarchyServices.getHierarchyList();
 			permission.put("hierarchyList", hierarchyList);
 			Loggers.loggerEnd(hierarchyList);
 			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		}
+//		} else {
+//			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+//		}
 
 	}
 

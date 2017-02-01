@@ -65,13 +65,19 @@ public class ProfileDaoImp implements ProfileDao {
 		getConnection();
 		boolean flag = false;
 		try {
-			Loggers.loggerValue("smart id for the profile with name : " + profile.getFirstName(), profile.getSmartId());
-			getConnection();
+			query=session.createQuery("from Profile where emailId=:emailId");
+			query.setParameter("emailId", profile.getEmailId());
+			Profile profile2=(Profile) query.uniqueResult();
+			if(profile2!=null)
+			{
+				flag=false;
+			}else{
 			profile.setIsActive("Y");
 			query = session.createQuery("from Hierarchy where school='" + profile.getHierarchy().getSchool()
 					+ "' and institution='" + profile.getHierarchy().getInstitution() + "'");
 			if (query.list().size() > 0) {
 				profile.setHierarchy((Hierarchy) query.list().get(0));
+				System.out.println(query.list().get(0));
 			}
 //			if (profile.getRole().toUpperCase() == "STUDENT") {
 //				Assign assign = getStandardTeacher(profile.getStandard());
@@ -81,11 +87,13 @@ public class ProfileDaoImp implements ProfileDao {
 //			}else{
 //				session.save(profile);
 //			}
+			System.out.println(profile);
 			profile.setEntryTime(CalendarCalculator.getTimeStamp());
 			session.save(profile);
 			transaction.commit();
 			
 			flag = true;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			flag = false;
