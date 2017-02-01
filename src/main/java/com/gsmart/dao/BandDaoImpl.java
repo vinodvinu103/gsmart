@@ -89,7 +89,7 @@ public class BandDaoImpl implements BandDao {
 				cb = (CompoundBand) session.save(band);
 				Loggers.loggerEnd(oldBand);
 			}
-
+            session.save(band);
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
