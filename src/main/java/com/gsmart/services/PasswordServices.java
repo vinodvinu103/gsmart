@@ -8,7 +8,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface PasswordServices {
 
-	public void setPassword(Login login,Hierarchy hierarchy) throws GSmartServiceException;
+	public void setPassword(Login login) throws GSmartServiceException;
 	
 	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartServiceException;
 

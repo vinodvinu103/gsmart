@@ -17,9 +17,9 @@ public class PasswordServicesImpl implements PasswordServices {
 	PasswordDao passwordDao;
 
 	@Override
-	public void setPassword(Login login,Hierarchy hierarchy)throws GSmartServiceException {
+	public void setPassword(Login login)throws GSmartServiceException {
 		
-		passwordDao.setPassword(login,hierarchy);
+		passwordDao.setPassword(login);
 		
 	}
 	

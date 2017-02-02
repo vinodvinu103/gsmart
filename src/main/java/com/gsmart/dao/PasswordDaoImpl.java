@@ -28,17 +28,20 @@ public class PasswordDaoImpl implements PasswordDao {
 	Transaction transaction = null;
 	Query query;
 
+	public void getConnection() {
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+	}
+	
 	@Override
-	public void setPassword(Login login,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public void setPassword(Login login) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		try {
 			
-			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId) and hierarchy.hid=:hierarchy  ");
+			query=session.createQuery("from Login where referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId");
 			query.setParameter("referenceSmartId", login.getReferenceSmartId());
 			query.setParameter("SmartId", login.getSmartId());
-			query.setParameter("hierarchy", hierarchy.getHid());
-			System.out.println("encrypted smartid"+login.getSmartId());
 			Login refId=(Login) query.uniqueResult();
 			
 			if(refId!=null)
@@ -54,9 +57,7 @@ public class PasswordDaoImpl implements PasswordDao {
 				System.out.println("refild is null");
 				login.setSmartId(login.getSmartId());
 				login.setReferenceSmartId(login.getReferenceSmartId());
-				login.setHierarchy(hierarchy);
 			    session.save(login);
-//				login.setcuPassword(Encrypt.md5(String.valueOf(login.getPassword())));
 				
 			}
 			transaction.commit();
@@ -67,11 +68,6 @@ public class PasswordDaoImpl implements PasswordDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
-	}
-
-	public void getConnection() {
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
 	}
 
 	@Override
@@ -103,7 +99,7 @@ public class PasswordDaoImpl implements PasswordDao {
 		return pwd;
 		}
 	
-
+	@Override
 	public Profile emailLink(String email) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();

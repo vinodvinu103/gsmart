@@ -46,16 +46,14 @@ public class PasswordController {
 			throws GSmartBaseException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		Loggers.loggerStart(login);
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
 		
 		Map<String, Object> responseMap = new HashMap<>();
-		if (tokenNumber != null) {
+		if (token.get("Authorization")!= null) {
 			try {
+				String tokenNumber=token.get("Authorization").get(0);
 				if(getAuthorization.authorizationForPost(tokenNumber, httpSession));
 				{
-					Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 				String smartId = tokenObj.getSmartId();
 				login.setHierarchy(tokenObj.getHierarchy());
 				boolean pwd = passwordServices.changePassword(login, smartId,tokenObj.getHierarchy());
@@ -73,9 +71,8 @@ public class PasswordController {
 			}
 		} 
 		else {	
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			login.setSmartId(login.getSmartId());			
-			passwordServices.setPassword(login,tokenObj.getHierarchy());
+			passwordServices.setPassword(login);
 			System.out.println(login);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucessfully registered");
