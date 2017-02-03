@@ -75,7 +75,7 @@ public class PasswordController {
 		else {	
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			login.setSmartId(login.getSmartId());			
-			passwordServices.setPassword(login,tokenObj.getHierarchy());
+			passwordServices.setPassword(login, null);
 			System.out.println(login);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucessfully registered");
