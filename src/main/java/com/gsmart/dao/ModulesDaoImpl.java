@@ -38,7 +38,7 @@ public class ModulesDaoImpl implements ModulesDao{
 		 getconnection();
 		 List<Modules> moduleslist = null;
 		 try { 
-			if(role.equalsIgnoreCase("admin"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 			 query=session.createQuery("from Modules");
 			}else{

@@ -65,22 +65,29 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Hierarchy> getHierarchyList() throws GSmartDatabaseException {
+	public List<Hierarchy> getHierarchyList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		List<Hierarchy> hierarchyList;
 		try {
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			{
+				query = session.createQuery("from Hierarchy where isActive='Y'");
+			}else{
+				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
+				query.setParameter("hid", hierarchy.getHid());
+			}
 			
-			query = session.createQuery("from Hierarchy where isActive='Y'");
 			hierarchyList = query.list();
 
 		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 
 			session.close();
 		}
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(hierarchyList);
 		return hierarchyList;
 	}
 

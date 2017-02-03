@@ -65,34 +65,33 @@ public class ProfileDaoImp implements ProfileDao {
 		getConnection();
 		boolean flag = false;
 		try {
-			query=session.createQuery("from Profile where emailId=:emailId");
+			query = session.createQuery("from Profile where emailId=:emailId");
 			query.setParameter("emailId", profile.getEmailId());
-			Profile profile2=(Profile) query.uniqueResult();
-			if(profile2!=null)
-			{
-				flag=false;
-			}else{
-			profile.setIsActive("Y");
-			query = session.createQuery("from Hierarchy where school='" + profile.getHierarchy().getSchool()
-					+ "' and institution='" + profile.getHierarchy().getInstitution() + "'");
-			if (query.list().size() > 0) {
-				profile.setHierarchy((Hierarchy) query.list().get(0));
-				System.out.println(query.list().get(0));
-			}
-//			if (profile.getRole().toUpperCase() == "STUDENT") {
-//				Assign assign = getStandardTeacher(profile.getStandard());
-//				profile.setReportingManagerId(assign.getTeacherSmartId());
-//				session.save(profile);
-//				
-//			}else{
-//				session.save(profile);
-//			}
-			System.out.println(profile);
-			profile.setEntryTime(CalendarCalculator.getTimeStamp());
-			session.save(profile);
-			transaction.commit();
-			
-			flag = true;
+			Profile profile2 = (Profile) query.uniqueResult();
+			if (profile2 != null) {
+				flag = false;
+			} else {
+				profile.setIsActive("Y");
+				query = session.createQuery("from Hierarchy where school='" + profile.getHierarchy().getSchool()
+						+ "' and institution='" + profile.getHierarchy().getInstitution() + "'");
+				if (query.list().size() > 0) {
+					profile.setHierarchy((Hierarchy) query.list().get(0));
+					System.out.println(query.list().get(0));
+				}
+				// if (profile.getRole().toUpperCase() == "STUDENT") {
+				// Assign assign = getStandardTeacher(profile.getStandard());
+				// profile.setReportingManagerId(assign.getTeacherSmartId());
+				// session.save(profile);
+				//
+				// }else{
+				// session.save(profile);
+				// }
+				System.out.println(profile);
+				profile.setEntryTime(CalendarCalculator.getTimeStamp());
+				session.save(profile);
+				transaction.commit();
+
+				flag = true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -101,25 +100,20 @@ public class ProfileDaoImp implements ProfileDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
-		
+
 		return flag;
 	}
-/*
-	public Assign getStandardTeacher(String standard) {
-		Assign assign = null;
-		Loggers.loggerStart();
-		try {
-			query = session.createQuery("from Assign where standard=:standard");
-			query.setParameter("standard", standard);
-			assign = (Assign) query.uniqueResult();
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-		Loggers.loggerEnd();
-		return assign;
-
-	}*/
+	/*
+	 * public Assign getStandardTeacher(String standard) { Assign assign = null;
+	 * Loggers.loggerStart(); try { query =
+	 * session.createQuery("from Assign where standard=:standard");
+	 * query.setParameter("standard", standard); assign = (Assign)
+	 * query.uniqueResult(); } catch (Exception e) {
+	 * 
+	 * e.printStackTrace(); } Loggers.loggerEnd(); return assign;
+	 * 
+	 * }
+	 */
 
 	@Override
 	public String updateProfile(Profile profile) {
@@ -165,32 +159,33 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getProfiles(String role, String smartId,String loginUserRole,Hierarchy hierarchy) {
+	public ArrayList<Profile> getProfiles(String role, String smartId, String loginUserRole, Hierarchy hierarchy) {
 		getConnection();
 		try {
 			Loggers.loggerStart(role);
 
 			Loggers.loggerStart("current smartId" + smartId);
-			if(loginUserRole.equalsIgnoreCase("admin"))
-			{
+			if (loginUserRole.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner")
+					|| role.equalsIgnoreCase("director")) {
 				if (role.toLowerCase().equals("student")) {
 					query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
 							+ smartId.substring(0, 2) + "%' ");
 				} else {
 					query = session.createQuery("from Profile where isActive='Y'and role!='student' ");
 				}
-				
-			}else{
-			if (role.toLowerCase().equals("student")) {
-				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
-						+ smartId.substring(0, 2) + "%' and hierarchy.hid=:hierarchy");
+
 			} else {
-				query = session.createQuery("from Profile where isActive='Y'and role!='student' and hierarchy.hid=:hierarchy");
-				
+				if (role.toLowerCase().equals("student")) {
+					query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
+							+ smartId.substring(0, 2) + "%' and hierarchy.hid=:hierarchy");
+				} else {
+					query = session.createQuery(
+							"from Profile where isActive='Y'and role!='student' and hierarchy.hid=:hierarchy");
+
+				}
+				query.setParameter("hierarchy", hierarchy.getHid());
 			}
-			query.setParameter("hierarchy", hierarchy.getHid());
-			}
-			
+
 			Loggers.loggerEnd(query.list());
 			return (ArrayList<Profile>) query.list();
 		} catch (Exception e) {
@@ -199,7 +194,7 @@ public class ProfileDaoImp implements ProfileDao {
 		} finally {
 			session.close();
 		}
-		
+
 	}
 
 	@Override
@@ -265,8 +260,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			session.close();
 		}
 		Loggers.loggerEnd();
@@ -280,7 +274,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Profile> getAllRecord(String academicYear,String role,Hierarchy  hierarchy) {
+	public List<Profile> getAllRecord(String academicYear, String role, Hierarchy hierarchy) {
 
 		Loggers.loggerStart();
 		getConnection();
@@ -288,48 +282,47 @@ public class ProfileDaoImp implements ProfileDao {
 		List<Profile> profile = null;
 
 		try {
-			if(role.equalsIgnoreCase("admin"))
-			{
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
 				query = session.createQuery("from Profile where isActive=:isActive and academicYear=:academicYear");
-				
-			}else{
-				query = session.createQuery("from Profile where isActive=:isActive and hierarchy.hid=:hierarchy and academicYear=:academicYear");
+
+			} else {
+				query = session.createQuery(
+						"from Profile where isActive=:isActive and hierarchy.hid=:hierarchy and academicYear=:academicYear");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			query.setParameter("isActive", "Y");
-			
-			
+
 			query.setParameter("academicYear", academicYear);
 
 			profile = (List<Profile>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		} 
-		finally {
+		} finally {
 			session.close();
 		}
-		
+
 		return profile;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy) {
+	public List<Profile> getsearchRep(Search search, String role, Hierarchy hierarchy) {
 		Loggers.loggerStart();
 		getConnection();
 		try {
-			if(role.equalsIgnoreCase("admin"))
-			{
-
-			query = session.createQuery("from Profile where isActive like('Y') and band<:band  and school =:school");
-			}else{
-				query = session.createQuery("from Profile where isActive like('Y') and band<:band  and school =:school and hierarchy.hid=:hierarchy");
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
+				query = session
+						.createQuery("from Profile where isActive like('Y') and band<:band and school =:school");
+			} else {
+				query = session.createQuery(
+						"from Profile where isActive like('Y') and band<:band and school=:school and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
-			
 			query.setParameter("band", search.getBand());
 			query.setParameter("school", search.getSchool());
 			List<Profile> profileList = (List<Profile>) query.list();
+			session.close();
+			getConnection();
 			query = session.createQuery("from Profile where isActive like('Y') and role='ADMIN'");
 			profileList.addAll((List<Profile>) query.list());
 			Loggers.loggerEnd();
@@ -337,8 +330,7 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		}
-		finally {
+		} finally {
 			session.close();
 		}
 	}
@@ -362,14 +354,12 @@ public class ProfileDaoImp implements ProfileDao {
 
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		} 
-		finally {
+		} finally {
 			session.close();
 		}
-		
+
 		Loggers.loggerEnd();
 
-		
 		return profileList;
 	}
 
@@ -397,11 +387,10 @@ public class ProfileDaoImp implements ProfileDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		}
-		finally {
+		} finally {
 			session.close();
 		}
-		
+
 	}
 	
 	@Override
@@ -434,38 +423,36 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 		return (List<Profile>) query.list();
 
-		
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException{
-		//Loggers.loggerStart(profile);
+	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException {
+		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithoutRfid;
 		try {
 			getConnection();
 			query = session.createQuery(" from Profile where rfId is null AND isActive='Y' AND role='STUDENT'");
 			profileListWithoutRfid = query.list();
 
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		} 
-		
+		}
+
 		Loggers.loggerEnd(profileListWithoutRfid);
 		return profileListWithoutRfid;
-		//return null;
+		// return null;
 	}
-	
-	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException{
-		
-		 //List<Profile> profileListWithoutRfid = null;
-		
+
+	public List<Profile> addRfid(Profile rfid) throws GSmartDatabaseException {
+
+		// List<Profile> profileListWithoutRfid = null;
+
 		try {
 			getConnection();
 
 			session.update(rfid);
-		
+
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -477,13 +464,12 @@ public class ProfileDaoImp implements ProfileDao {
 			session.close();
 		}
 		return getProfilesWithoutRfid();
-		
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException{
-//		Loggers.loggerStart(profile);
+	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
+		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithRfid;
 		try {
 			getConnection();
@@ -493,22 +479,22 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		} 
-		
+		}
+
 		Loggers.loggerEnd(profileListWithRfid);
 		return profileListWithRfid;
-		
-	}	
+
+	}
 
 	@Override
 	public List<Profile> editRfid(Profile rfid) throws GSmartDatabaseException {
-	//Loggers.loggerStart(profile);
-		
+		// Loggers.loggerStart(profile);
+
 		try {
 			getConnection();
 
 			session.update(rfid);
-		
+
 			transaction.commit();
 
 		} catch (ConstraintViolationException e) {
@@ -516,12 +502,10 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		
+
 		Loggers.loggerEnd();
 		return getProfilesWithRfid();
 
-		
 	}
-
 
 }

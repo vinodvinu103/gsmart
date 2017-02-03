@@ -40,7 +40,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 		getConnection();
 		try
 		{
-		if(role.equalsIgnoreCase("admin"))
+		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 		{
 		query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y'");
 		}else{

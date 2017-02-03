@@ -21,7 +21,7 @@ public interface HierarchyServices {
 	 * @return list of Hierarchy entities available in the Hierarchy Table
 	 * @throws GSmartServiceException
 	 */	
-	public List<Hierarchy> getHierarchyList() throws GSmartServiceException;
+	public List<Hierarchy> getHierarchyList(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	/**
 	 * @param hierarchy instanceOf {@link Hierarchy}
 	 * @return nothing
