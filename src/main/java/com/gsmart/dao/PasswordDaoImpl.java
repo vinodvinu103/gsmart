@@ -34,10 +34,9 @@ public class PasswordDaoImpl implements PasswordDao {
 		getConnection();
 		try {
 			
-			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId) and hierarchy.hid=:hierarchy  ");
+			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId)  ");
 			query.setParameter("referenceSmartId", login.getReferenceSmartId());
 			query.setParameter("SmartId", login.getSmartId());
-			query.setParameter("hierarchy", hierarchy.getHid());
 			System.out.println("encrypted smartid"+login.getSmartId());
 			Login refId=(Login) query.uniqueResult();
 			
