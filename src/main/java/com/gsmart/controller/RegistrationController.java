@@ -173,6 +173,10 @@ public class RegistrationController {
 			String smartId = String.valueOf((Integer.parseInt(profileServices.getmaxSamrtId()) + 1));
 			if (profile.getRole().equalsIgnoreCase("student")) {
 				profile.setHierarchy(tokenObj.getHierarchy());
+				Loggers.loggerStart("institution by hierarchy is : " + tokenObj.getHierarchy().getInstitution());
+				Loggers.loggerStart("school by hierarchy is : " + tokenObj.getHierarchy().getSchool());
+				profile.setSchool(tokenObj.getHierarchy().getSchool());
+				profile.setInstitution(tokenObj.getHierarchy().getInstitution());
 				/*
 				 * Hierarchy hierarchy =
 				 * hierarchyServices.getHierarchyByHid(tokenObj.getHierarchy().
