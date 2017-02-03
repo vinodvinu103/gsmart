@@ -168,19 +168,17 @@ public class ProfileDaoImp implements ProfileDao {
 			if (loginUserRole.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner")
 					|| role.equalsIgnoreCase("director")) {
 				if (role.toLowerCase().equals("student")) {
-					query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
-							+ smartId.substring(0, 2) + "%' ");
+					query = session.createQuery("from Profile where isActive='Y'and lower(role)='student'");
 				} else {
-					query = session.createQuery("from Profile where isActive='Y'and role!='student' ");
+					query = session.createQuery("from Profile where isActive='Y'and lower(role)!='student' ");
 				}
 
 			} else {
 				if (role.toLowerCase().equals("student")) {
-					query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"
-							+ smartId.substring(0, 2) + "%' and hierarchy.hid=:hierarchy");
+					query = session.createQuery("from Profile where isActive='Y'and lower(role)='student' and hierarchy.hid=:hierarchy");
 				} else {
 					query = session.createQuery(
-							"from Profile where isActive='Y'and role!='student' and hierarchy.hid=:hierarchy");
+							"from Profile where isActive='Y'and lower(role)!='student' and hierarchy.hid=:hierarchy");
 
 				}
 				query.setParameter("hierarchy", hierarchy.getHid());
