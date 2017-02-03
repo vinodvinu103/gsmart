@@ -90,8 +90,8 @@ public class LeaveServicesImpl implements LeaveServices {
 			ArrayList<WeekDays> weekOffs = (ArrayList<WeekDays>) weekDays.getWeekdaysForHoliday(school, institution);
 
 			for (WeekDays weekDays : weekOffs) {
+				System.out.println("Weekdays " + weekDays.getWeekDay());
 			}
-
 			System.out.println("Weekoffs size: " + weekOffs.size());
 			endCal.setTime(leave.getEndDate());
 			for (int i = 0; i < weekOffs.size(); i++) {
@@ -109,16 +109,18 @@ public class LeaveServicesImpl implements LeaveServices {
 				}
 
 				startCal.setTime(leave.getStartDate());
-			}
+			}//for
 
 			System.out.println("days: " + days);
 
 			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList(role,hierarchy);
 
 			long eStartDate = getEpoch(leave.getStartDate());
+			System.out.println("start date >>>>>>>......"+leave.getStartDate());
 			long eEndDate = getEpoch(leave.getEndDate());
+			System.out.println("end  date .......>>>>>>>"+leave.getEndDate());
 			for (Holiday holiday : list) {
-				System.out.println("############ in side foreachloop ");
+				System.out.println("############ in side foreachloop "+holiday.getHolidayDate());
 				long holiDate = getEpoch(holiday.getHolidayDate());
 				holidayDate.setTime(holiday.getHolidayDate());
 				if ((eStartDate <= holiDate) && (holiDate <= eEndDate)) {
@@ -149,7 +151,7 @@ public class LeaveServicesImpl implements LeaveServices {
 		}
 		Loggers.loggerEnd();
 		return cl;
-	}
+	}//compound leave
 
 	@Override
 	public void deleteLeave(Leave leave) throws GSmartServiceException {
@@ -163,15 +165,15 @@ public class LeaveServicesImpl implements LeaveServices {
 			Loggers.loggerException(e.getMessage());
 			throw new GSmartServiceException(e.getMessage());
 
-		}
+		}//catch
 		Loggers.loggerEnd();
 
-	}
+	}//delete
 	
 	public long getEpoch(Date date) {
 		long epoch = date.getTime();
 		System.out.println("saakappa e timeformate " + epoch);
 		return epoch;
-	}
+	}//epoch 
 
 }

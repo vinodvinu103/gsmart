@@ -29,9 +29,10 @@ public class LeaveDaoImpl implements LeaveDao {
 	Transaction transaction;
 	
 	@SuppressWarnings("unchecked")
-	@Override
 	public List<Leave> getLeaveList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
+		Loggers.loggerStart(role);
+		
+		System.out.println("vgyhuhuygy");
 		getConnection();
 		List<Leave> leave = null;
 		try {
@@ -162,6 +163,8 @@ public class LeaveDaoImpl implements LeaveDao {
 		}
 		Loggers.loggerEnd();
 	}
+
+	
 
 
 }

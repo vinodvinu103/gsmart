@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.CompoundLeave;
+import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
@@ -42,9 +43,9 @@ public class LeaveController {
 	@Autowired
 	TokenService tokenService;
 	
+	
 	@RequestMapping( method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> getLeave(@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws Exception {
+	public ResponseEntity<Map<String,Object>> getLeave(@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
 		String tokenNumber = token.get("Authorization").get(0);
@@ -61,11 +62,11 @@ public class LeaveController {
 		Map<String, Object> leave = new HashMap<>();
 		leave.put("modulePermission", modulePermission);
 		
-			CronJob.cronJob();	
+		//	CronJob.cronJob();	
 			
 		if (modulePermission!= null) {
 			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy());
-
+			
 			leave.put("leaveList", leaveList);
 			Loggers.loggerEnd(leaveList);
 			return new ResponseEntity<Map<String,Object>>(leave, HttpStatus.OK);
@@ -91,6 +92,7 @@ public class LeaveController {
 			
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			leave.setHierarchy(tokenObj.getHierarchy());
+			System.out.println("leave details>>>>>>>>>>>>>."+leave);
 			CompoundLeave cl1=leaveServices.addLeave(leave,noOfdays,tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
 			if(cl1!=null)
 			resp.setMessage("success");
