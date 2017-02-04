@@ -56,6 +56,12 @@ public class NoticeServiceImpl implements NoticeService
 	}
 	
 	@Override
+	public List<Notice> viewMyNotice(String role) {
+		return noticeDao.viewMyNotice(role);
+	}
+
+	
+	@Override
 	public ArrayList<Profile> getAllProfiles() {
 		ArrayList<Profile> profileList = profileDao.getAllProfiles();
 		return profileList;
@@ -84,6 +90,7 @@ public class NoticeServiceImpl implements NoticeService
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 	
 

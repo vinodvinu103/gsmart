@@ -104,6 +104,7 @@ public class FeeController {
 		str.length();
 		IAMResponse myResponse;
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			
 			try {
 				feeServices.addFee(fee);
 				myResponse = new IAMResponse("Success");

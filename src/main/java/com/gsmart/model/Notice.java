@@ -75,6 +75,7 @@ public class Notice
 	public boolean isChildFlag() {
 		return childFlag;
 	}
+	
 	public void setChildFlag(boolean childFlag) {
 		this.childFlag = childFlag;
 	}
@@ -127,7 +128,12 @@ public class Notice
 	public void setUpdated_id(String updated_id) {
 		this.updatedId = updated_id;
 	    }
-	
+	@Override
+	public String toString() {
+		return "Notice [entryTime=" + entryTime + ", smartId=" + smartId + ", message=" + message + ", exitTime="
+				+ exitTime + ", update_time=" + update_time + ", role=" + role + ", isActive=" + isActive + ", type="
+				+ type + ", childFlag=" + childFlag + ", updatedId=" + updatedId + "]";
+	}
 	
 	}
 	

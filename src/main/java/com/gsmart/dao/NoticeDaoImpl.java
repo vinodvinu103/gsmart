@@ -70,12 +70,13 @@ public class NoticeDaoImpl implements NoticeDao {
 		try{
 			query=session.createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) ORDER BY entryTime desc");
 			query.setParameterList("smartIdList", smartIdList);
+			
 			//FROM UserDetails user ORDER BY user.userName DESC
 			//query.setMaxResults(6);
 			@SuppressWarnings("unchecked")
 			List<Notice> notices=query.list();
 			transaction.commit();
-			Loggers.loggerEnd();
+			Loggers.loggerEnd(notices);
 			return notices;
 		}catch(Exception e){
 			e.printStackTrace();
@@ -85,6 +86,29 @@ public class NoticeDaoImpl implements NoticeDao {
 			session.close();
 		}
 		
+	}
+	
+	@Override
+	public List<Notice> viewMyNotice(String smartId) {
+		Loggers.loggerStart();
+		getConnection();
+		try{
+			Loggers.loggerStart(smartId);
+			query=session.createQuery("from Notice where is_active='Y' and smartId=:smartId ORDER BY entryTime desc");
+			query.setParameter("smartId", smartId);
+			//query.setMaxResults(6);
+			@SuppressWarnings("unchecked")
+			List<Notice> list=query.list();
+			transaction.commit();
+			Loggers.loggerEnd(list);
+			return list;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		finally {
+			session.close();
+		}
 	}
 
 	@Override
@@ -106,26 +130,6 @@ public class NoticeDaoImpl implements NoticeDao {
 			session.close();
 		}
 	}
-
-	/*@Override
-	public void editNotice(Notice notice){
-		Loggers.loggerStart();
-		try{
-			getConnection();
-			notice.setIs_active("N");
-			notice.setUpdate_time(CalendarCalculator.getTimeStamp());
-			session.update(notice);
-			transaction.commit();
-			Loggers.loggerEnd();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		finally {
-			session.close();
-		}
-
-	}
-*/
 
 	@Override
 	public Notice editNotice(Notice notice)throws GSmartBaseException{
@@ -159,14 +163,6 @@ public class NoticeDaoImpl implements NoticeDao {
 	return notice;
 	
 	}
-	
-/*	private void UpdateNotice(Notice oldNotice){
-		session=sessionFactory.openSession();
-		transaction=session.beginTransaction();
-		session.update(oldNotice);
-		transaction.commit();
-		session.close();
-	}*/
 	
 	public Notice getNotice(String entryTime){
       try{
@@ -320,6 +316,8 @@ public Profile getProfileDetails(String smartId) {
 	   Loggers.loggerEnd("profile fetched from DB");
      	return profile;
     }
+
+
 
 }
 	

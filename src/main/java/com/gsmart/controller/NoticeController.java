@@ -62,7 +62,43 @@ public class NoticeController
 	final Logger logger = Logger.getLogger(NoticeDao.class);
 	
 	@RequestMapping(value = "/viewNotice/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> viewNotice(@PathVariable ("smartId") String smartId,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException{
+	public ResponseEntity<Map<String,Object>> viewNotice(@PathVariable ("smartId") String smartId, @RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {
+    Loggers.loggerStart();
+		
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+		
+		Map<String,Object> responseMap = new HashMap<>();
+		
+		List<Notice> list=new ArrayList<Notice>();
+		
+	try 
+		{
+			Map<String, Profile> allprofiles=searchService.getAllProfiles();
+			ArrayList<String> parentSmartIdList =searchService.searchParentInfo(smartId, allprofiles);
+			 
+			parentSmartIdList.remove(smartId);
+			list=noticeService.viewNotice(parentSmartIdList);
+			System.out.printf("smart id list :",list);
+			responseMap.put("data", list);
+			responseMap.put("status", 200);
+			responseMap.put("message","sucess");
+			responseMap.put("modulePermission", modulePermission);
+			return new ResponseEntity<Map<String,Object>>(responseMap, HttpStatus.OK);
+		} 
+		catch (Exception e) 
+		{
+ 			e.printStackTrace();
+ 			return null;
+		}
+	}
+	
+	@RequestMapping(value = "/viewMyNotice/{smartId}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> viewMyNotice(@PathVariable ("smartId") String smartId,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException{
     Loggers.loggerStart();
 		
 		String tokenNumber = token.get("Authorization").get(0);
@@ -78,10 +114,7 @@ public class NoticeController
 		
 		try 
 		{
-			Map<String, Profile> allprofiles=searchService.getAllProfiles();
-			ArrayList<String> parentSmartIdList =searchService.searchParentInfo(smartId, allprofiles);
-			 
-			list=noticeService.viewNotice(parentSmartIdList);
+		list=noticeService.viewMyNotice(smartId);
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
 			responseMap.put("message","sucess");
