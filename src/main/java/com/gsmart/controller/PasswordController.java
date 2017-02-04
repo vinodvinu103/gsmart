@@ -72,7 +72,7 @@ public class PasswordController {
 		} 
 		else {	
 			login.setSmartId(login.getSmartId());			
-			passwordServices.setPassword(login);
+			passwordServices.setPassword(login, null);
 			System.out.println(login);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucessfully registered");

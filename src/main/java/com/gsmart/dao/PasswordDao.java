@@ -8,7 +8,7 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface PasswordDao {
 
-	public void setPassword(Login login) throws GSmartDatabaseException;
+	public void setPassword(Login login,Hierarchy hierarchy) throws GSmartDatabaseException;
 
 	
 	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartDatabaseException;

@@ -329,11 +329,13 @@ public class SearchServiceImp implements SearchService {
 				fees.add(profile);
 			} else {
 				profile.setTotalAmount(feeMasterMap.get(profile.getStandard()));
+				profile.setBalanceAmount(feeMasterMap.get(profile.getStandard()));
 
 				fees.add(profile);
 			}
 		}
 
+		Loggers.loggerEnd();
 		return fees;
 	}
 
@@ -368,20 +370,17 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerValue("profile map", profileMap);
 		for (Profile profile : fees) {
             
-			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having paidAmount of " + profile.getPaidAmount());
 			
 			profileMap.get(profile.getReportingManagerId()).setPaidAmount(
 					profileMap.get(profile.getReportingManagerId()).getPaidAmount() + profile.getPaidAmount());
 			Loggers.loggerValue("total fees of set fees","");
 
-			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having balanceAmount of " + profile.getBalanceAmount());
 
 
 			profileMap.get(profile.getReportingManagerId()).setBalanceAmount(
 					profileMap.get(profile.getReportingManagerId()).getBalanceAmount() + profile.getBalanceAmount());
 			Loggers.loggerValue("total fees of setbalance fees","");
 
-			System.out.println("profile details in total fees for smartId: "+ profile.getSmartId() + " , with reporting manager Id: " + profile.getReportingManagerId() + " , having TotalAmount of" + profile.getTotalAmount());
 
 
 			profileMap.get(profile.getReportingManagerId()).setTotalAmount(

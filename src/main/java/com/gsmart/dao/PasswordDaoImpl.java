@@ -34,14 +34,15 @@ public class PasswordDaoImpl implements PasswordDao {
 	}
 	
 	@Override
-	public void setPassword(Login login) throws GSmartDatabaseException {
+	public void setPassword(Login login,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		try {
 			
-			query=session.createQuery("from Login where referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId");
+			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId)  ");
 			query.setParameter("referenceSmartId", login.getReferenceSmartId());
 			query.setParameter("SmartId", login.getSmartId());
+			System.out.println("encrypted smartid"+login.getSmartId());
 			Login refId=(Login) query.uniqueResult();
 			
 			if(refId!=null)
@@ -56,6 +57,7 @@ public class PasswordDaoImpl implements PasswordDao {
 				
 				System.out.println("refild is null");
 				login.setSmartId(login.getSmartId());
+				login.setHierarchy(hierarchy);
 				login.setReferenceSmartId(login.getReferenceSmartId());
 			    session.save(login);
 				

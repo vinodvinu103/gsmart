@@ -65,8 +65,15 @@ public class FeeDaoImpl implements FeeDao{
 		Loggers.loggerStart();
 		getconnection();
 		try{
-			
-			fee.setEntryTime(CalendarCalculator.getTimeStamp());
+	
+			if(fee.getPaidFee()>0)
+			{
+				fee.setBalanceFee(fee.getBalanceFee()-fee.getPaidFee());
+			}else
+			{
+				fee.setBalanceFee(fee.getTotalFee());
+			}
+     		fee.setEntryTime(CalendarCalculator.getTimeStamp());
 			fee.setDate(CalendarCalculator.getTimeStamp());
 			Profile profile=getReportingManagerId(fee.getSmartId());
 			fee.setReportingManagerId(profile.getReportingManagerId());
@@ -196,8 +203,8 @@ public class FeeDaoImpl implements FeeDao{
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 		//query.setParameter("academicYear", academicYear);
-		unpaidStudentsList=(List<Fee>) query.list();
-		Loggers.loggerEnd();
+		unpaidStudentsList=query.list();
+		Loggers.loggerEnd(unpaidStudentsList);
 		
 		}
 		catch (Exception e) {
