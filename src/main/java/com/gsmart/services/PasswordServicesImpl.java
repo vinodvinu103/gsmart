@@ -18,21 +18,22 @@ public class PasswordServicesImpl implements PasswordServices {
 
 	@Override
 	public void setPassword(Login login,Hierarchy hierarchy)throws GSmartServiceException {
+		
 		passwordDao.setPassword(login,hierarchy);
 		
 	}
-	@Override
-	public Profile forgotPassword(String email,Hierarchy hierarchy) throws GSmartServiceException {
-		Loggers.loggerStart();
-
-		return passwordDao.forgotPassword(email,hierarchy);
-	}
-
+	
 	@Override
 	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartServiceException {
 		
 	return passwordDao.changePassword(login, smartId,hierarchy);
 		
 	}	
+	
+	@Override
+	public Profile emailLink(String email) throws GSmartServiceException {
+		Loggers.loggerStart();
+		return passwordDao.emailLink(email);
+	}
 	
 }
