@@ -51,6 +51,9 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		Loggers.loggerEnd();
 		return performancerecordList;
 	}
+	
+	
+	
 
 	@Override
 	public void addAppraisalRecord(PerformanceRecord appraisal) throws GSmartDatabaseException {
@@ -146,5 +149,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 	}
+
+
 
 }

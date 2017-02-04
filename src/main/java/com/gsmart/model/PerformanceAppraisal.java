@@ -22,55 +22,46 @@ public class PerformanceAppraisal {
 	@Column(name = "ENTRY_TIME")
 	private Long entryTime;
 
-	@Column(name = "SCHOOL_PERFARMANCE")
+	@Column(name = "SCHOOL_PERFARMANCE", columnDefinition = "text")
 	private String schoolPerformance;
 
-	@Column(name = "CHARITY")
+	@Column(name = "CHARITY", columnDefinition = "text")
 	private String charity;
 
-	@Column(name = "SPORTS")
+	@Column(name = "SPORTS", columnDefinition = "text")
 	private String sports;
 
 	@Column(name = "ISACTIVE")
 	private String isActive;
-	
+
 	@Column(name = "EXIT_TIME")
-	private String exitTime;
-	
+	private Long exitTime;
+
 	@Column(name = "UPDATE_TIME")
 	private Long updateTime;
 
-	public Long getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Long updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	public String getExitTime() {
-		return exitTime;
-	}
-
-	public void setExitTime(String exitTime) {
-		this.exitTime = exitTime;
-	}
-
-	public String getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
-
-	
 	public String getReportingManagerID() {
 		return reportingManagerID;
 	}
 
 	public void setReportingManagerID(String reportingManagerID) {
 		this.reportingManagerID = reportingManagerID;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public Long getEntryTime() {
+		return entryTime;
+	}
+
+	public void setEntryTime(Long entryTime) {
+		this.entryTime = entryTime;
 	}
 
 	public String getSchoolPerformance() {
@@ -97,26 +88,35 @@ public class PerformanceAppraisal {
 		this.sports = sports;
 	}
 
-	public String getYear() {
-		return year;
+	public String getIsActive() {
+		return isActive;
 	}
 
-	public void setYear(String year) {
-		this.year = year;
+	public void setIsActive(String isActive) {
+		this.isActive = isActive;
 	}
 
-	public Long getEntryTime() {
-		return entryTime;
+	public Long getExitTime() {
+		return exitTime;
 	}
 
-	public void setEntryTime(Long currentEpoch) {
-		this.entryTime = entryTime;
-
-	}
-
-	public void setExitTime(Long currentEpoch) {
+	public void setExitTime(Long exitTime) {
 		this.exitTime = exitTime;
+	}
 
+	public Long getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Long updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Override
+	public String toString() {
+		return "PerformanceAppraisal [reportingManagerID=" + reportingManagerID + ", year=" + year + ", entryTime="
+				+ entryTime + ", schoolPerformance=" + schoolPerformance + ", charity=" + charity + ", sports=" + sports
+				+ ", isActive=" + isActive + ", exitTime=" + exitTime + ", updateTime=" + updateTime + "]";
 	}
 
 }

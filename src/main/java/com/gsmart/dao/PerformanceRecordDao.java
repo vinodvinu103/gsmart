@@ -15,6 +15,8 @@ public interface PerformanceRecordDao {
 	public void editAppraisalRecord(PerformanceAppraisal appraisal)throws GSmartDatabaseException;
 
 	public void deletAppraisalRecord(PerformanceAppraisal appraisal)throws GSmartDatabaseException;
+
+	
 		
 
 

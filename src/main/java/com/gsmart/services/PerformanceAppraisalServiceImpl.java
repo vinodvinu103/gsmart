@@ -35,15 +35,28 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 
 		}
 	}
+	@Override
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year) throws GSmartServiceException {
+		Loggers.loggerStart();
+		try {
+			return appraisalDao.getTeamAppraisalList(smartId,year);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			Loggers.loggerException(e.getMessage());
+			throw new GSmartServiceException(e.getMessage());
+
+		}
+	}
 
 	@Override
-	public void addAppraisal(PerformanceAppraisal appraisal) throws GSmartServiceException {
+	public void addAppraisal(PerformanceAppraisal performanceAppraisal) throws GSmartServiceException {
 		Loggers.loggerStart();
 
-		CompoundPerformanceAppraisal ca = null;
+		
 
 		try {
-			 appraisalDao.addAppraisal(appraisal);
+			 appraisalDao.addAppraisal(performanceAppraisal);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -86,6 +99,8 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 
 		Loggers.loggerEnd();
 	}
+
+
 
 	
 

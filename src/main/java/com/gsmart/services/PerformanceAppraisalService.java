@@ -11,11 +11,13 @@ public interface PerformanceAppraisalService {
 
 	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year) throws GSmartServiceException;
 
-	public void addAppraisal(PerformanceAppraisal appraisal) throws GSmartServiceException;
+	public void addAppraisal(PerformanceAppraisal performanceAppraisal) throws GSmartServiceException;
 
 	public void editAppraisal(PerformanceAppraisal appraisal) throws GSmartServiceException;
 
 	public void deleteAppraisal(PerformanceAppraisal appraisal) throws GSmartServiceException;
+
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year)throws GSmartServiceException;
 
 
 

@@ -32,6 +32,9 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 	}
 	
 }
+	
+	
+	
 	@Override
 	public void addAppraisalRecord(PerformanceRecord appraisal) throws GSmartServiceException {
 		try {
@@ -69,4 +72,5 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 		Loggers.loggerEnd();
 		
 	}
+	
 }

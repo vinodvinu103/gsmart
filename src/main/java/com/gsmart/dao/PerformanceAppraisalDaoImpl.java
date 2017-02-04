@@ -54,16 +54,41 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 		Loggers.loggerEnd();
 		return appraisalList;
 	}
+	@Override
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<PerformanceAppraisal> teamappraisalList = null;
+		getConnection();
+		try {
+			
+		
+			Loggers.loggerStart(smartId);
+			Loggers.loggerStart(year);
+			query = session.createQuery(
+					"from PerformanceAppraisal where isActive=:isActive AND reportingManagerID=:smartId AND year=:year");
+			query.setParameter("smartId",smartId);
+			query.setParameter("year", year);
+			query.setParameter("isActive", "Y");
+			teamappraisalList = (List<PerformanceAppraisal>) query.list();
+			Loggers.loggerEnd(teamappraisalList);
+
+		} catch (Exception e) {
+			Loggers.loggerException(e.getMessage());
+		} finally {
+			session.close();
+		}
+		Loggers.loggerEnd();
+		return teamappraisalList;
+	}
 
 	@Override
-	public void addAppraisal(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
-
+	public void addAppraisal(PerformanceAppraisal performanceAppraisal) throws GSmartDatabaseException {
+		getConnection();
 		try {
-			getConnection();
-			appraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
-
-			session.save(appraisal);
-			Loggers.loggerEnd(appraisal);
+			performanceAppraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
+			performanceAppraisal.setIsActive("Y");
+			session.save(performanceAppraisal);
+			Loggers.loggerEnd(performanceAppraisal);
 			transaction.commit();
 		}
 
@@ -93,18 +118,21 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 			appraisal.setIsActive("Y");
 			session.save(appraisal);
 			transaction.commit();
-			session.close();
-
+			//session.close();
+      
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
+		}finally {
+			session.close();
 		}
-
+		 Loggers.loggerEnd();
 	}
 
 	public PerformanceAppraisal getAppraisal(Long entryTime) {
+		Loggers.loggerStart(entryTime);
 		try {
 
 			query = session.createQuery("from PerformanceAppraisal where isActive=:isActive and entryTime=:entryTime");
@@ -145,5 +173,7 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 	}
+
+
 
 }
