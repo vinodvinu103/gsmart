@@ -2,12 +2,13 @@ package com.gsmart.dao;
 
 import java.util.List;
 import com.gsmart.model.CompoundPerformanceAppraisal;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.util.GSmartDatabaseException;
 
 public interface PerformanceAppraisalDao {
 
-	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year) throws GSmartDatabaseException;
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 
 	public void addAppraisal(PerformanceAppraisal performanceAppraisal) throws GSmartDatabaseException;
 
@@ -15,6 +16,6 @@ public interface PerformanceAppraisalDao {
 
 	public void deleteAppraisal(PerformanceAppraisal appraisal) throws GSmartDatabaseException;
 
-	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year) throws GSmartDatabaseException;
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 
 }

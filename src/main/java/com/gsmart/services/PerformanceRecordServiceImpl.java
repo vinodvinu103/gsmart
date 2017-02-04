@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.PerformanceRecordDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.util.GSmartDatabaseException;
@@ -17,10 +18,10 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 	@Autowired
 	PerformanceRecordDao performancerecordao;
 	@Override
-	public List<PerformanceRecord> getPerformanceRecord(String smartId,String year) throws GSmartServiceException {
+	public List<PerformanceRecord> getPerformanceRecord(String smartId,String year,String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-	return	performancerecordao.getPerformanceRecord(smartId,year);
+	return	performancerecordao.getPerformanceRecord(smartId,year,role,hierarchy);
 		
 	
 	} catch (GSmartDatabaseException exception) {

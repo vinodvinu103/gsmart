@@ -10,6 +10,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.util.CalendarCalculator;
@@ -27,7 +28,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PerformanceRecord> getPerformanceRecord(String smartId, String year) throws GSmartDatabaseException {
+	public List<PerformanceRecord> getPerformanceRecord(String smartId, String year,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		List<PerformanceRecord> performancerecordList = null;
 		Loggers.loggerStart();
 		getConnection();
@@ -35,8 +36,15 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 			
 			System.out.println();
 			Loggers.loggerStart();
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director") || role.equalsIgnoreCase("owner"))
+			{
+				query = session
+						.createQuery("from PerformanceRecord where smartId=:smartId AND year=:year AND isActive=:isActive");
+			}else{
 			query = session
-					.createQuery("from PerformanceRecord where smartId=:smartId AND year=:year AND isActive=:isActive");
+					.createQuery("from PerformanceRecord where smartId=:smartId AND year=:year AND isActive=:isActive and hierarchy.hid=hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			query.setParameter("smartId", smartId);
 			query.setParameter("year", year);
 			query.setParameter("isActive", "Y");

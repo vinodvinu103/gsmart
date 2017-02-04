@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundPerformanceAppraisal;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.util.CalendarCalculator;
@@ -29,7 +30,7 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year) throws GSmartDatabaseException {
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<PerformanceAppraisal> appraisalList = null;
 		getConnection();
@@ -38,8 +39,18 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 		
 			Loggers.loggerStart(reportingId);
 			Loggers.loggerStart(year);
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director") || role.equalsIgnoreCase("owner"))
+			{
 			query = session.createQuery(
+					
 					"from PerformanceAppraisal where isActive=:isActive AND reportingManagerID=:reportingManagerID AND year=:year");
+			
+			}else{
+				query = session.createQuery(
+						
+						"from PerformanceAppraisal where isActive=:isActive AND reportingManagerID=:reportingManagerID AND year=:year and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			query.setParameter("reportingManagerID",reportingId);
 			query.setParameter("year", year);
 			query.setParameter("isActive", "Y");
@@ -55,7 +66,7 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 		return appraisalList;
 	}
 	@Override
-	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year) throws GSmartDatabaseException {
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<PerformanceAppraisal> teamappraisalList = null;
 		getConnection();
@@ -64,8 +75,15 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 		
 			Loggers.loggerStart(smartId);
 			Loggers.loggerStart(year);
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director") || role.equalsIgnoreCase("owner"))
+			{
+				query = session.createQuery(
+						"from PerformanceAppraisal where isActive=:isActive AND reportingManagerID=:smartId AND year=:year");
+			}else{
 			query = session.createQuery(
-					"from PerformanceAppraisal where isActive=:isActive AND reportingManagerID=:smartId AND year=:year");
+					"from PerformanceAppraisal where isActive=:isActive AND reportingManagerID=:smartId AND year=:year and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			query.setParameter("smartId",smartId);
 			query.setParameter("year", year);
 			query.setParameter("isActive", "Y");

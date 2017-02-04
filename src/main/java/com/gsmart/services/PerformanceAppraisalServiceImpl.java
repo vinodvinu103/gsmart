@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.PerformanceAppraisalDao;
 import com.gsmart.model.CompoundPerformanceAppraisal;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -23,10 +24,10 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 
 	
 	@Override
-	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year) throws GSmartServiceException {
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return appraisalDao.getAppraisalList(reportingId,year);
+			return appraisalDao.getAppraisalList(reportingId,year,role,hierarchy);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -36,10 +37,10 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 		}
 	}
 	@Override
-	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year) throws GSmartServiceException {
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return appraisalDao.getTeamAppraisalList(smartId,year);
+			return appraisalDao.getTeamAppraisalList(smartId,year,role,hierarchy);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {

@@ -78,16 +78,16 @@ public class PerformanceController {
 		List<PerformanceAppraisal> appraisalList = null;
 		List<PerformanceRecord> performancerecordList = null;
 		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		
 		Map<String, Object> permissions = new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
 		IAMResponse rsp = new IAMResponse();
-		Token token1 = tokenService.getToken(tokenNumber);
-		// String smartId = token1.getSmartId();
-		String reportingId = token1.getReportingManagerId();
+		
 		if (modulePermission != null) {
 
-			appraisalList = appraisalservice.getAppraisalList(reportingId, year);
-			performancerecordList = performancerecord.getPerformanceRecord(smartId, year);
+			appraisalList = appraisalservice.getAppraisalList(tokenObj.getReportingManagerId(), year,tokenObj.getRole(),tokenObj.getHierarchy());
+			performancerecordList = performancerecord.getPerformanceRecord(smartId, year,tokenObj.getRole(),tokenObj.getHierarchy());
 			jsonMap.put("appraisalList", appraisalList);
 			jsonMap.put("performancerecord", performancerecordList);
 			Loggers.loggerEnd(jsonMap);
@@ -114,6 +114,8 @@ public class PerformanceController {
 		 performanceAppraisal.setReportingManagerID(smartId);
 		
 		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			performanceAppraisal.setHierarchy(tokenObj.getHierarchy());
 			appraisalservice.addAppraisal( performanceAppraisal);
 			resp.setMessage("success");
 		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
@@ -170,16 +172,17 @@ public class PerformanceController {
 		List<Profile> teamrecordList = null;
 		List<PerformanceAppraisal> teamappraisalList = null;
 		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		permissions.put("modulePermission", modulePermission);
 		IAMResponse rsp = new IAMResponse();
 
 		if (modulePermission != null) {
 
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles();
+			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getRole(),tokenObj.getHierarchy());
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
-			teamappraisalList  = appraisalservice.getTeamAppraisalList(smartId, year);
+			teamappraisalList  = appraisalservice.getTeamAppraisalList(smartId, year,tokenObj.getRole(),tokenObj.getHierarchy());
 			jsonMap.put("performancerecord", childList);
 			jsonMap.put("teamAppraisalLiat", teamappraisalList);
 			Loggers.loggerEnd(permissions);
@@ -190,12 +193,11 @@ public class PerformanceController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addAppraisalRecord(@RequestBody PerformanceRecord appraisal,
+	public ResponseEntity<Map<String, Object>> addAppraisalRecord(@RequestBody PerformanceRecord appraisal,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(appraisal);
 
-		IAMResponse myResponse;
-		IAMResponse resp = new IAMResponse();
+		Map<String, Object> resp=new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -206,16 +208,18 @@ public class PerformanceController {
 		appraisal.setReportingManagerID(reportingId);
 
 		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			Loggers.loggerStart(appraisal);
 			Loggers.loggerStart(smartId);
+			appraisal.setHierarchy(tokenObj.getHierarchy());
 			performancerecord.addAppraisalRecord(appraisal);
 
-			resp.setMessage("success");
+			resp.put("message", "success");
 			Loggers.loggerEnd();
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
 		} else {
-			resp.setMessage("Permission Denied");
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+			resp.put("message", "permission denied");
+			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
 		}
 
 	}
