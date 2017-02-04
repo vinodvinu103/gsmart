@@ -17,12 +17,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.gsmart.model.CompoundHierarchy;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.HierarchyServices;
+import com.gsmart.util.CalendarCalculator;
+import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
-import com.gsmart.util.*;
+import com.gsmart.util.GetAuthorization;
+import com.gsmart.util.IAMResponse;
+import com.gsmart.util.Loggers;
 
 /**
  * The HierarchyController class implements an application that displays list of
@@ -70,18 +74,19 @@ public class HierarchyController {
 		str.length();
 		List<Hierarchy> hierarchyList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);
 
-		if (modulePermission != null) {
-			hierarchyList = hierarchyServices.getHierarchyList();
+//		if (modulePermission != null) {
+			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(),tokenObj.getHierarchy());
 			permission.put("hierarchyList", hierarchyList);
 			Loggers.loggerEnd(hierarchyList);
 			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		}
+//		} else {
+//			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+//		}
 
 	}
 
@@ -106,8 +111,8 @@ public class HierarchyController {
 
 		IAMResponse myResponse;
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			CompoundHierarchy ch = hierarchyServices.addHierarchy(hierarchy);
-			if (ch != null) {
+			boolean status = hierarchyServices.addHierarchy(hierarchy);
+			if (status) {
 				myResponse = new IAMResponse("success");
 			} else {
 				myResponse = new IAMResponse("DATA IS ALREADY EXIST");

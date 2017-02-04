@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.MyTeamLeaveDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
 import com.gsmart.model.LeaveDetails;
 import com.gsmart.model.RolePermission;
@@ -17,11 +18,11 @@ public class MyTeamLeaveServicesImpl implements MyTeamLeaveServices {
 	MyTeamLeaveDao myteamleaveDao;
 	
 	@Override
-	public List<Leave> getLeavelist() throws GSmartServiceException{
+	public List<Leave> getLeavelist(String role,Hierarchy hierarchy) throws GSmartServiceException{
 		Loggers.loggerStart();
 		List<Leave> list = null;
 		try {
-		list= myteamleaveDao.getLeavelist();
+		list= myteamleaveDao.getLeavelist(role,hierarchy);
 		/*for (Leave leave : list) {
 			
 			switch(leave.getLeaveStatus()){

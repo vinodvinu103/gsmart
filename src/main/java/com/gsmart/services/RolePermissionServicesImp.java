@@ -1,10 +1,10 @@
-
 package com.gsmart.services;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.gsmart.dao.RolePermissionDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
 import com.gsmart.util.GSmartDatabaseException;
@@ -28,12 +28,12 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	 * @return calls {@link PermissionDao}'s <code>getPermissionList()</code> method
 	 */
 	@Override
-	public List<RolePermission> getPermissionList()  throws GSmartServiceException{ 
+	public List<RolePermission> getPermissionList(String role,Hierarchy hierarchy)  throws GSmartServiceException{ 
 		
 		Loggers.loggerStart();
 		try {
 			Loggers.loggerEnd();
-			return rolePermissionDao.getPermissionList();
+			return rolePermissionDao.getPermissionList(role,hierarchy);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -122,12 +122,12 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	}
 	
 	@Override
-	public List<RolePermission> getSubModuleNames(String role) throws GSmartServiceException {
+	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartServiceException {
 
 		List<RolePermission> list = null;
 		
 		try{
-			list = rolePermissionDao.getSubModuleNames(role);
+			list = rolePermissionDao.getSubModuleNames(role,hierarchy);
 			
 			for (RolePermission rolePermission : list) {
 				
@@ -156,7 +156,9 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 				case "RolePermission":
 					rolePermission.setIcon("white fa fa-unlock-alt fa-3x");
 					break;
-					
+				case "RFID":
+					rolePermission.setIcon("white fa fa-home fa-3x");
+					break;					
 				case "Assign":
 					rolePermission.setIcon("white fa fa-th-list fa-3x");
 					break;	

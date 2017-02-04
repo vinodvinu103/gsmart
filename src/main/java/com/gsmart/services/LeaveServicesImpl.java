@@ -1,6 +1,5 @@
 package com.gsmart.services;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.gsmart.dao.HolidayDaoImpl;
 import com.gsmart.dao.LeaveDao;
 import com.gsmart.model.CompoundLeave;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
 import com.gsmart.util.GSmartDatabaseException;
@@ -27,10 +27,10 @@ public class LeaveServicesImpl implements LeaveServices {
 	
 	
 	@Override
-	public List<Leave> getLeaveList() throws GSmartServiceException {
+	public List<Leave> getLeaveList(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return leaveDao.getLeaveList();
+			return leaveDao.getLeaveList(role,hierarchy);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -53,16 +53,15 @@ public class LeaveServicesImpl implements LeaveServices {
 		}
 	}
 	@Override
-	public CompoundLeave addLeave(Leave leave,Integer noOfdays) throws GSmartServiceException {
+	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		CompoundLeave cl=null;
-		 List<Holiday>list=getholidaylist.getHolidayList();
+		 List<Holiday>list=getholidaylist.getHolidayList(role,hierarchy);
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
 		
 			
-			 SimpleDateFormat s=new SimpleDateFormat("dd/MM/yyyy");
 			  Calendar holidayDate = Calendar.getInstance();
 			  
         	

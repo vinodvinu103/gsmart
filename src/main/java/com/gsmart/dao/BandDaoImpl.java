@@ -89,7 +89,7 @@ public class BandDaoImpl implements BandDao {
 				cb = (CompoundBand) session.save(band);
 				Loggers.loggerEnd(oldBand);
 			}
-
+            session.save(band);
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -173,6 +173,24 @@ public class BandDaoImpl implements BandDao {
 	public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
+	}
+
+	@Override
+	public Band getMaxband() throws GSmartDatabaseException {
+		Band band=null;
+		try {
+			Loggers.loggerStart();
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			query=session.createQuery("FROM Band WHERE bandId IN (SELECT MIN(bandId) FROM Band where isActive='Y')");
+			band=(Band) query.list().get(0);
+			transaction.commit();
+			session.close();
+			Loggers.loggerEnd();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return band;
 	}
 
 }

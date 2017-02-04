@@ -4,7 +4,12 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -19,9 +24,32 @@ public class Login implements Serializable {
 
 	@Column(name = "PASSWORD")
 	private String password;
+	
+	@Transient
+	@Column(name = "PASSWORD")
+	private String newPassword;
+
 	@Transient
 	@Column(name = "PASSWORD")
 	private String confirmPassword;
+	
+	@Column(name = "REFERENCESMARTID")
+	private String referenceSmartId;	
+
+	public String getReferenceSmartId() {
+		return referenceSmartId;
+	}
+
+	@Override
+	public String toString() {
+		return "Login [smartId=" + smartId + ", password=" + password + ", newPassword=" + newPassword
+				+ ", confirmPassword=" + confirmPassword + ", referenceSmartId=" + referenceSmartId + ", attempt="
+				+ attempt + ", entryTime=" + entryTime + ", updatedTime=" + updatedTime + "]";
+	}
+
+	public void setReferenceSmartId(String referenceSmartId) {
+		this.referenceSmartId = referenceSmartId;
+	}
 
 	@Column(name = "ATTEMPT")
 	private Integer attempt;
@@ -31,6 +59,18 @@ public class Login implements Serializable {
 
 	@Column(name = "UPDATED_TIME")
 	private String updatedTime;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
 
 	public String getSmartId() {
 		return smartId;
@@ -70,6 +110,14 @@ public class Login implements Serializable {
 
 	public void setUpdatedTime(String updatedTime) {
 		this.updatedTime = updatedTime;
+	}
+	
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 
 	public String getConfirmPassword() {

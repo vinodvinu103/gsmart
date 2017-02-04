@@ -73,6 +73,7 @@ public class PrivilegeController {
 		str.length();
 		List<Profile> profileList = null;
         RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+        
 		
 		Map<String, Object> privilege = new HashMap<>();
 		privilege.put("modulePermission", modulePermission);

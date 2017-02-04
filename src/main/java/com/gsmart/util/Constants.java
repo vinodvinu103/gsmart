@@ -3,6 +3,7 @@ package com.gsmart.util;
 public class Constants {
 
 	public static final String BAND = "/band";
+	public static final String RFID = "/rfid";
 	public static final String FEE_MASTER = "/feeMaster";
 	public static final String INVENTORY = "/inventory";
 	public static final String SETGOAL = "/setgoal";
@@ -26,6 +27,8 @@ public class Constants {
 	public static final String MYTEAMLEAVE = "/myteamleave";
 	public static final String INVENTORYASSIGN = "/inventoryassignment";
 	public static final String ASSIGN="/assign";
+	public static final String PASSWORD="/password";
+	public static final String ATTENDANCE="/attendance";
 
 }
 
