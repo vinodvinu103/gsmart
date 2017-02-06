@@ -14,6 +14,6 @@ public interface PasswordDao {
 	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartDatabaseException;
 
 
-	public Profile forgotPassword(String email,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public Profile emailLink(String email) throws GSmartDatabaseException;
 
 }

@@ -46,16 +46,14 @@ public class PasswordController {
 			throws GSmartBaseException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		Loggers.loggerStart(login);
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
 		
 		Map<String, Object> responseMap = new HashMap<>();
-		if (tokenNumber != null) {
+		if (token.get("Authorization")!= null) {
 			try {
+				String tokenNumber=token.get("Authorization").get(0);
 				if(getAuthorization.authorizationForPost(tokenNumber, httpSession));
 				{
-					Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 				String smartId = tokenObj.getSmartId();
 				login.setHierarchy(tokenObj.getHierarchy());
 				boolean pwd = passwordServices.changePassword(login, smartId,tokenObj.getHierarchy());
@@ -73,7 +71,6 @@ public class PasswordController {
 			}
 		} 
 		else {	
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			login.setSmartId(login.getSmartId());			
 			passwordServices.setPassword(login, null);
 			System.out.println(login);
@@ -81,27 +78,15 @@ public class PasswordController {
 			responseMap.put("message", "sucessfully registered");
 		}
 		return new ResponseEntity<Map<String,Object>>(responseMap, HttpStatus.OK);
-	}
-	
-	
-	
-	
-	
+	}	
 	
 	@RequestMapping(value="/email",method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> forgotPassword(@RequestBody String email,@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
-		Loggers.loggerStart();
+	public ResponseEntity<Map<String, Object>> emailLink(@RequestBody String email) throws GSmartBaseException {
+		Loggers.loggerStart(email);
 		Profile profile=null;
 		Map<String, Object> responseMap = new HashMap<>();
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
-		if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
-		{
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			
-		profile=passwordServices.forgotPassword(email,tokenObj.getHierarchy());
+		profile=passwordServices.emailLink(email);
 		Loggers.loggerValue("emaild id matched details", profile);
 		if(profile!=null && profile.getEmailId().equals(email))
 		{	
@@ -113,7 +98,6 @@ public class PasswordController {
 				try {
 					commonMail.passwordMail(profile,smartId);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			
@@ -121,8 +105,7 @@ public class PasswordController {
 		{	
 			responseMap.put("status", 404);
 			responseMap.put("message", "Enter registered EmailId");
-		}
-		}
+		}		
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);

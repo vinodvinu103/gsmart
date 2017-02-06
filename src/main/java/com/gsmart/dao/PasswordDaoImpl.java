@@ -28,6 +28,11 @@ public class PasswordDaoImpl implements PasswordDao {
 	Transaction transaction = null;
 	Query query;
 
+	public void getConnection() {
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+	}
+	
 	@Override
 	public void setPassword(Login login,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
@@ -52,10 +57,9 @@ public class PasswordDaoImpl implements PasswordDao {
 				
 				System.out.println("refild is null");
 				login.setSmartId(login.getSmartId());
-				login.setReferenceSmartId(login.getReferenceSmartId());
 				login.setHierarchy(hierarchy);
+				login.setReferenceSmartId(login.getReferenceSmartId());
 			    session.save(login);
-//				login.setcuPassword(Encrypt.md5(String.valueOf(login.getPassword())));
 				
 			}
 			transaction.commit();
@@ -68,18 +72,12 @@ public class PasswordDaoImpl implements PasswordDao {
 		Loggers.loggerEnd();
 	}
 
-	public void getConnection() {
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
-	}
-
 	@Override
 	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart(login);
 		Login currentPassword = null;
 		boolean pwd = false;
-		getConnection();
-		
+		getConnection();		
 		String pass=Encrypt.md5(login.getPassword());
 		try {
 			
@@ -97,33 +95,26 @@ public class PasswordDaoImpl implements PasswordDao {
 				pwd = true;
 			}
 			Loggers.loggerEnd();
-			return pwd;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return pwd;
 		}
 	
-
-	public Profile forgotPassword(String email,Hierarchy hierarchy) throws GSmartDatabaseException {
+	@Override
+	public Profile emailLink(String email) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		Profile emailId = null;
 		try {
 
-			
-			
-			System.out.println(email);
-
-			query = session.createQuery("from Profile where emailId=:emailId and hierarchy.hid=:hierarchy");
+		    System.out.println(email);
+			query = session.createQuery("from Profile where emailId=:emailId ");
 			query.setParameter("emailId", email);
-			query.setParameter("hierarchy", hierarchy.getHid());
 			emailId = (Profile) query.uniqueResult();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-
 		}
 		finally {
 			session.close();
