@@ -74,14 +74,21 @@ public interface ProfileDao {
 
 	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
 	
+
+	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
+
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+
+
+
 
 	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
 	
 	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException;
-//	
+	
 	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 	
+
 }
