@@ -36,8 +36,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	@Override
 	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		List<Attendance> attendanceList = null;
 		try {
             query = session.createQuery(
@@ -49,6 +50,8 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			attendanceList = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		
 		Loggers.loggerEnd();
@@ -89,8 +92,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 
 	@Override
 	public void editAttendance(Attendance attendance) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		try {
             Attendance oldattendance = getAttendance(attendance.getInDate(), attendance.getSmartId());
 			if (oldattendance != null) {

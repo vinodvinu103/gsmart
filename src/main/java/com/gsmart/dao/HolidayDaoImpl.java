@@ -52,8 +52,9 @@ public class HolidayDaoImpl implements HolidayDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		List<Holiday> holidayList=null;
 		try{
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -82,9 +83,10 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@Override
 	public CompoundHoliday addHoliday(Holiday holiday) throws GSmartDatabaseException {
+		getConnection();
 		CompoundHoliday ch=null;
 		Loggers.loggerStart();
-		getConnection();
+		
 		try {
 			Hierarchy hierarchy=holiday.getHierarchy();
 			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
@@ -119,8 +121,9 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@Override
 	public void editHoliday(Holiday holiday) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 			
 			Holiday oldholiday= getHolidayLists(holiday.getEntryTime(),holiday.getHierarchy());
@@ -165,8 +168,9 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@Override
 	public void deleteHoliday(Holiday holiday) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 			
 			holiday.setIsActive("D");

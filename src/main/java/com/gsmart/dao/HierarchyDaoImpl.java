@@ -66,8 +66,9 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Hierarchy> getHierarchyList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		List<Hierarchy> hierarchyList;
 		try {
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -101,8 +102,9 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	@Override
 	public boolean addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		boolean status;
 		try {
 			
@@ -156,8 +158,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	}
 
 	private Hierarchy updateHierarchy(Hierarchy oldHierarchy, Hierarchy hierarchy) throws GSmartDatabaseException {
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
+		getConnection();
 		Hierarchy ch = null;
 		try {
 			Hierarchy hierarchy1 = fetch(hierarchy);
@@ -201,18 +202,20 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public void deleteHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 
+		getConnection();
 		try {
 			Loggers.loggerStart();
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
+			
 			hierarchy.setExitTime(CalendarCalculator.getTimeStamp());
 			hierarchy.setIsActive("D");
 			session.update(hierarchy);
 			transaction.commit();
-			session.close();
+			
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 
 	}
@@ -226,23 +229,39 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	}
 
 	public Hierarchy fetch(Hierarchy hierarchy) {
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
+	getConnection();
+	Hierarchy hierarchyList=null;
+	try {
 		query = session.createQuery(
 				"FROM Hierarchy WHERE institution=:institution AND school=:school AND isActive=:isActive");
 		query.setParameter("school", hierarchy.getSchool());
 		query.setParameter("isActive", "Y");
 		query.setParameter("institution", hierarchy.getInstitution());
-		return (Hierarchy) query.uniqueResult();
+		hierarchyList=(Hierarchy) query.uniqueResult();
+	}catch (Exception e) {
+
+		e.printStackTrace();
+	}finally {
+		session.close();
+	}
+		return hierarchyList; 
 
 	}
 
 	@Override
 	public Hierarchy getHierarchyByHid(Long hid) throws GSmartDatabaseException {
 		getConnection();
+		Hierarchy hierarchyList=null;
+		try {
 		query = session.createQuery(
 				"FROM Hierarchy WHERE hid=:hid");
 		query.setParameter("hid", hid);
-		return (Hierarchy) query.uniqueResult();
+		hierarchyList=(Hierarchy) query.uniqueResult();
+		}catch (Exception e) {
+
+			e.printStackTrace();
+			
+		}
+		return hierarchyList;
 	}
 }
