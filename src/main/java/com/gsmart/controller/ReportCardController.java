@@ -26,7 +26,6 @@ import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.RolePermission;
-import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.ReportCardService;
 import com.gsmart.services.SearchService;
