@@ -12,6 +12,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.ReportCardService;
 import com.gsmart.services.SearchService;
@@ -72,15 +74,14 @@ public class ReportCardController {
 		str.length();
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePremission", modulePermission);
 		try {
-			//Token tokenDetail = tokenService.getToken(tokenNumber);
 			// String teacherSmartId=smartId.getSmartId();
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
-				list = reportCardService.reportCardList();
+				list = reportCardService.search(tokenObj);
 				permission.put("reportCard", list);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}
@@ -100,9 +101,12 @@ public class ReportCardController {
 		CompoundReportCard card2 = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		
 		str.length();
 		try {
 			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+				card.setHierarchy(tokenObj.getHierarchy());
 				card2 = reportCardService.addReportCard(card);
 				if (card2 != null)
 					iamResponse = new IAMResponse("success");
@@ -148,33 +152,31 @@ public class ReportCardController {
 		return new ResponseEntity<IAMResponse>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/excelToDB/{smartId}", method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> excelToDB(@PathVariable("smartId") String smartId,
-			@RequestBody MultipartFile fileUpload, @RequestHeader HttpHeaders token, HttpSession httpSession) {
-		Loggers.loggerStart();
-		IAMResponse iamResponse = null;
+	@RequestMapping(value = "/excelToDB/{smartId}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Map<String, String>> excelToDB(@PathVariable("smartId") String smartId,
+			@RequestBody MultipartFile fileUpload,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		try {
-			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-				reportCardService.excelToDB(smartId, fileUpload);
-				iamResponse = new IAMResponse("success");
-			} else {
-				iamResponse = new IAMResponse("Please Try Again...");
-			}
-			Loggers.loggerEnd();
-			return new ResponseEntity<IAMResponse>(iamResponse, HttpStatus.OK);
+		Map<String, String> jsonMap = new HashMap<>();
+		try {if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
+		{
+//			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			reportCardService.excelToDB(smartId, fileUpload);
+			jsonMap.put("result", "success");
+		}
+			return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			return new ResponseEntity<IAMResponse>(iamResponse, HttpStatus.OK);
+			return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
 		}
 
 	}
 
-	@RequestMapping(value = "/getStructure/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getReportCardStructure(@PathVariable("smartId") String smartId,
+	@RequestMapping(value = "/getStructure/{smartId}/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getReportCardStructure(@PathVariable("smartId") String smartId,@PathVariable("academicYear") String academicYear,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
 		Loggers.loggerStart();
 		System.out.println("smartid..." + smartId);
@@ -185,6 +187,7 @@ public class ReportCardController {
 		str.length();
 
 		RolePermission modulePermissions = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
 
 		resultmap.put("modulePermissions", modulePermissions);
@@ -192,7 +195,7 @@ public class ReportCardController {
 		try {
 			Profile profile = profileServices.getProfileDetails(smartId);
 
-			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles();
+			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear,tokenObj.getRole(),tokenObj.getHierarchy());
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			if (childList.size() != 0) {

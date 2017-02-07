@@ -44,10 +44,11 @@ public class BandDaoImpl implements BandDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Band> getBandList() throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		List<Band> bandList;
 		try {
-			getConnection();
+			
 
 			query = session.createQuery("from Band where isActive='Y'");
 			bandList = query.list();
@@ -71,9 +72,10 @@ public class BandDaoImpl implements BandDao {
 	 */
 	@Override
 	public CompoundBand addBand(Band band) throws GSmartDatabaseException {
+		getConnection();
 		CompoundBand cb = null;
 		try {
-			getConnection();
+			
 
 			query = session.createQuery(
 					"FROM Band WHERE bandId=:bandId AND isActive=:isActive AND designation=:designation AND role=:role ");
@@ -89,7 +91,7 @@ public class BandDaoImpl implements BandDao {
 				cb = (CompoundBand) session.save(band);
 				Loggers.loggerEnd(oldBand);
 			}
-
+            session.save(band);
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -107,6 +109,7 @@ public class BandDaoImpl implements BandDao {
 
 	@Override
 	public Band editBand(Band band) throws GSmartDatabaseException {
+		
 		try {
 			Loggers.loggerStart();
 		
@@ -155,10 +158,10 @@ public class BandDaoImpl implements BandDao {
 	/* DELETE DATA FROM THE DATABASE */
 	@Override
 	public void deleteBand(Band band) throws GSmartDatabaseException {
+		getConnection();
 		try {
 			Loggers.loggerStart();
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
+			
 			band.setExitTime(CalendarCalculator.getTimeStamp());
 			band.setIsActive("D");
 			session.update(band);
@@ -167,12 +170,34 @@ public class BandDaoImpl implements BandDao {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 	}
 
 	public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
+	}
+
+	@Override
+	public Band getMaxband() throws GSmartDatabaseException {
+		getConnection();
+		Band band=null;
+		try {
+			Loggers.loggerStart();
+			
+			query=session.createQuery("FROM Band WHERE bandId IN (SELECT MIN(bandId) FROM Band where isActive='Y')");
+			band=(Band) query.list().get(0);
+			transaction.commit();
+			session.close();
+			Loggers.loggerEnd();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return band;
 	}
 
 }

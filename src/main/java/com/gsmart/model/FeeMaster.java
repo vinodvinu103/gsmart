@@ -2,8 +2,13 @@ package com.gsmart.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -37,6 +42,29 @@ public class FeeMaster {
 	
 	@Column(name = "TUITION_FEE")
 	private Integer tuitionFee;
+	
+	@Column(name = "INSTITUTION")
+	private String institution;
+	
+	
+	public String getInstitution() {
+		return institution;
+	}
+
+	public void setInstitution(String institution) {
+		this.institution = institution;
+	}
+
+	public String getSchool() {
+		return school;
+	}
+
+	public void setSchool(String school) {
+		this.school = school;
+	}
+
+	@Column(name = "SCHOOL")
+	private String school;
 	/**
 	 * Transportation fee is a fee of each student
 	 */
@@ -70,6 +98,18 @@ public class FeeMaster {
 	
 	@Column(name = "ID_CARD_FEE")
 	private Integer idCardFee;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
 	
 	
 	public Integer getIdCardFee() {

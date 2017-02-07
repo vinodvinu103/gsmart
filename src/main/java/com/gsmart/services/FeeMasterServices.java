@@ -3,6 +3,7 @@ package com.gsmart.services;
 import java.util.List;
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartServiceException;
 /**
  * Provides services for {@link FeeMasterController}.
@@ -19,7 +20,7 @@ public interface FeeMasterServices
 	 * @throws GSmartServiceException
 	 */
 	
-	public List<FeeMaster> getFeeList() throws GSmartServiceException;
+	public List<FeeMaster> getFeeList(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	/**
 	 * @param feeMaster instanceOf {@link FeeMaster}
 	 * @return nothing
@@ -40,6 +41,9 @@ public interface FeeMasterServices
 	 * @throws GSmartServiceException
 	 */
 	public void deleteFee(FeeMaster feeMaster)throws GSmartServiceException;
+	
+	
+	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) throws GSmartServiceException;
 	
 	/*public void fileUpload(FileUpload fileUpload)throws GSmartServiceException;*/
 	
