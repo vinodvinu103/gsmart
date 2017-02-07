@@ -71,6 +71,7 @@ public class NoticeController
 		
 		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		
 		Map<String,Object> responseMap = new HashMap<>();
 		
@@ -78,7 +79,7 @@ public class NoticeController
 		
 	try 
 		{
-			Map<String, Profile> allprofiles=searchService.getAllProfiles();
+			Map<String, Profile> allprofiles=searchService.getAllProfiles("2017-2018",tokenObj.getRole(),tokenObj.getHierarchy());
 			ArrayList<String> parentSmartIdList =searchService.searchParentInfo(smartId, allprofiles);
 			 
 			parentSmartIdList.remove(smartId);
@@ -305,7 +306,6 @@ public class NoticeController
 		String tokenNumber = Token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-
     
 		
 		Map<String, Object> jsonMap = new HashMap<>();
@@ -323,8 +323,5 @@ public class NoticeController
 		}
 
 	}
-	
-	
-	
 	
 }

@@ -65,21 +65,29 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Hierarchy> getHierarchyList() throws GSmartDatabaseException {
+	public List<Hierarchy> getHierarchyList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<Hierarchy> hierarchyList;
 		try {
-			getConnection();
-			query = session.createQuery("from Hierarchy where isActive='Y'");
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			{
+				query = session.createQuery("from Hierarchy where isActive='Y'");
+			}else{
+				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
+				query.setParameter("hid", hierarchy.getHid());
+			}
+			
 			hierarchyList = query.list();
 
 		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 
 			session.close();
 		}
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(hierarchyList);
 		return hierarchyList;
 	}
 
@@ -94,9 +102,10 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public boolean addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		boolean status;
 		try {
-			getConnection();
+			
 			Hierarchy hierarchy1 = fetch(hierarchy);
 			if (hierarchy1 != null) {
 				return false;
@@ -180,7 +189,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			query = session.createQuery("from Hierarchy where IS_ACTIVE='Y' and ENTRY_TIME='" + entryTime + "'");
 			ArrayList<Hierarchy> hierarchyList = (ArrayList<Hierarchy>) query.list();
 			transaction.commit();
-			session.close();
+		
 			return hierarchyList.get(0);
 		} catch (Exception e) {
 			e.printStackTrace();

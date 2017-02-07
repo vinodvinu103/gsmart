@@ -67,12 +67,12 @@ public class NoticeServiceImpl implements NoticeService
 		return profileList;
 	}
 	
-	@Override
-	public ArrayList<Profile> getProfiles(String role,String smartId) throws GSmartServiceException {
-		
-		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId);
-		return profileList;
-	}
+//	@Override
+//	public ArrayList<Profile> getProfiles(String role,String smartId) throws GSmartServiceException {
+//		
+//		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId);
+//		return profileList;
+//	}
 
 
 	@Override
@@ -91,34 +91,5 @@ public class NoticeServiceImpl implements NoticeService
 		return null;
 	}
 
-
-	
-
-	/*@Override
-	public Profile getProfileDetails(String empSmartId) {
-		// TODO Auto-generated method stub
-		return noticeDao.getProfileDetails(empSmartId);
-	}
-	*/
-	
-	
 }
-
-
-	/*@Override
-	public List<Notice> viewAllNotice()throws Exception {
-		
-		return noticeDao.viewAllNotice();
-	}
-
-	@Override
-	public List<Notice> childNotice(String smartId) throws Exception {
-		Loggers.loggerStart();
-		return noticeDao.childNotice(smartId);
-	
-	}
-	
-	*/
-	
-
 

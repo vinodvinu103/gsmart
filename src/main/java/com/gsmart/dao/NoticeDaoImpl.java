@@ -315,11 +315,14 @@ public Profile getProfileDetails(String smartId) {
 	
 	   Loggers.loggerEnd("profile fetched from DB");
      	return profile;
+     
+     	
     }
 
-
-
+ 
 }
+
+
 	
 
 /*
