@@ -2,6 +2,10 @@ package com.gsmart.dao;
 
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaUpdate;
+
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -33,7 +38,7 @@ public class AssignDaoImpl implements AssignDao {
 		List<Assign> assignList = null;
 		try {
 			getConnection();
-			if(role.equalsIgnoreCase("admin")|| role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 				query = session.createQuery("from Assign where isActive=:isActive");
 			else {
 				query = session.createQuery("from Assign where isActive=:isActive and hierarchy:hierarchy");
@@ -92,13 +97,11 @@ public class AssignDaoImpl implements AssignDao {
 			oldAssign.setIsActive("N");
 			oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			session.update(oldAssign);
-			
+
 			assign.setEntryTime(CalendarCalculator.getTimeStamp());
 			assign.setIsActive("Y");
 			session.save(assign);
 			session.getTransaction().commit();
-			
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -164,6 +167,64 @@ public class AssignDaoImpl implements AssignDao {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public void editAssigningTeacher(Assign assign, Hierarchy hierarchy)
+			throws GSmartDatabaseException {
+		Loggers.loggerStart("assign"+assign);
+		//Loggers.loggerStart("profile"+profile);
+	//	Profile profile2=null;
+		System.out.println("teacher Smartid >>>>>>>>>"+assign.getTeacherSmartId());
+		Loggers.loggerStart();
+		try {
+			
+			getConnection();
+			assign.setUpdatedTime(CalendarCalculator.getTimeStamp());
+			session.update(assign);
+			transaction.commit();
+			
+			getConnection();
+			/*
+			 * query = session.createQuery(
+			 * "UPDATE Assign SET teacherSmartId=:teacherSmartId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section"
+			 * );
+			 */
+			
+			query = session.createQuery(
+					"UPDATE Profile SET reportingManagerId=:reportingManagerId , counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
+
+			/*
+			 * query.setParameter("teacherSmartId",assign.getTeacherSmartId());
+			 */
+			query.setParameter("counterSigningManagerId", assign.getHodSmartId());
+			query.setParameter("reportingManagerId", assign.getTeacherSmartId());
+			query.setParameter("standard", assign.getStandard());
+			query.setParameter("section", assign.getSection());
+			query.setParameter("hierarchy", hierarchy.getHid());
+			int result = query.executeUpdate();
+			transaction.commit();
+			//session.close();
+			/*
+			 * query1.setParameter("teacherSmartId",assign.getTeacherSmartId());
+			 * query.setParameter("reportingManagerId",
+			 * assign.getReportingManagerId()); query.setParameter("standard",
+			 * assign.getStandard()); query.setParameter("section",
+			 * assign.getSection()); query.setParameter("hierarchy",
+			 * hierarchy.getHid());
+			 */
+
+			// session.update(oldAssign);
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			// throw new GSmartDatabaseException(e.getMessage());
+			Loggers.loggerException(e.getMessage());
+		} finally {
+			session.close();
+		}
+
 	}
 
 }

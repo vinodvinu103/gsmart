@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.AssignService;
@@ -126,7 +127,7 @@ public class AssignController {
 		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				assignService.editAssigningReportee(assign);
-
+				
 			} else if (task.equals("delete")) {
 				assignService.deleteAssigningReportee(assign);
 
@@ -164,6 +165,36 @@ public class AssignController {
 		}
 
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+
+	}
+	@RequestMapping(value = "/om/{task}", method = RequestMethod.PUT)
+	public ResponseEntity<IAMResponse> editTeacher(@RequestBody Assign assign ,Hierarchy hierarchy, @PathVariable("task") String task
+			,@RequestHeader HttpHeaders token, HttpSession httpSession	) throws GSmartBaseException {
+		Loggers.loggerStart();
+	//	Loggers.loggerValue("profilevalue", profile);
+		IAMResponse myResponse = null;
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+		if (task.equals("edit")) {
+				assignService.editAssigningTeacher(assign,hierarchy);
+
+			} else if (task.equals("delete")) {
+				assignService.deleteAssigningReportee(assign);
+
+			}
+
+			myResponse = new IAMResponse("success");
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
+
+		else {
+			myResponse = new IAMResponse("Permission Denied");
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
 
 	}
 }
