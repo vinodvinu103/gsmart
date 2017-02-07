@@ -44,8 +44,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FeeMaster> getFeeList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		List<FeeMaster> feeList=null;
 		try {
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -77,8 +78,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	 */
 	@Override
 	public CompoundFeeMaster addFee(FeeMaster feeMaster) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		CompoundFeeMaster cfm = null;
 		try {
 			Hierarchy hierarchy=feeMaster.getHierarchy();
@@ -121,8 +123,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public void editFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 			Hierarchy hierarchy=feeMaster.getHierarchy();
 			FeeMaster oldFee = getFeeMas(feeMaster.getEntryTime(),hierarchy);

@@ -22,17 +22,18 @@
 		<property name="username" value="postgres" />
 		<property name="password" value="postgres" />
 	</bean>
-
+	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<list>
+		
 				<value>com.gsmart.model.RolePermission</value>
 				<value>com.gsmart.model.Login</value>
 				<value>com.gsmart.model.Profile</value>
 				<value>com.gsmart.model.Token</value>
-                <value>com.gsmart.model.Holiday</value>
+				<value>com.gsmart.model.Holiday</value>
 				<value>com.gsmart.model.Inventory</value>
 				<value>com.gsmart.model.Hierarchy</value>
 				<value>com.gsmart.model.Band</value>
@@ -47,8 +48,9 @@
 				<value>com.gsmart.model.Leave</value>
 				<value>com.gsmart.model.Notice</value>
 				<value>com.gsmart.model.Assign</value>
-				
-
+				<value>com.gsmart.model.Assign</value>
+				<value>com.gsmart.model.WeekDays</value>
+				<value>com.gsmart.model.Assign</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

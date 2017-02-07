@@ -35,9 +35,10 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	@Override
 	public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException 
 	{
+		getConnection();
 		Loggers.loggerStart();
 		List<InventoryAssignments> inventoryList=null;
-		getConnection();
+		
 		try
 		{
 		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -66,8 +67,9 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	@Override
 	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException
 	{
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		InventoryAssignmentsCompoundKey ch = null;
 		try
 		{
@@ -129,8 +131,9 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	
 	private InventoryAssignments getInventory(String entryTime,Hierarchy hierarchy)throws GSmartDatabaseException
 	{
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try
 		{
 			
@@ -145,6 +148,8 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	
 			throw new GSmartDatabaseException(e.getMessage());
 			
+		}finally {
+			session.close();
 		}
 	
 	}
@@ -173,8 +178,9 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	@Override
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException  
 	{
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		
 		try
 		{

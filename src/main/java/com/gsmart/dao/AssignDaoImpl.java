@@ -34,11 +34,17 @@ public class AssignDaoImpl implements AssignDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		List<Assign> assignList = null;
 		try {
+
 			getConnection();
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+
+			
+			if(role.equalsIgnoreCase("admin")|| role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+
 				query = session.createQuery("from Assign where isActive=:isActive");
 			else {
 				query = session.createQuery("from Assign where isActive=:isActive and hierarchy:hierarchy");
@@ -48,6 +54,8 @@ public class AssignDaoImpl implements AssignDao {
 			assignList = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 
 		Loggers.loggerEnd();
@@ -56,9 +64,10 @@ public class AssignDaoImpl implements AssignDao {
 
 	@Override
 	public CompoundAssign addAssigningReportee(Assign assign) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 
-		getConnection();
+		
 		CompoundAssign compoundAssign = null;
 		try {
 			query = session.createQuery(
@@ -82,6 +91,9 @@ public class AssignDaoImpl implements AssignDao {
 
 			e.printStackTrace();
 		}
+		finally {
+			session.close();
+		}
 
 		return compoundAssign;
 
@@ -90,9 +102,10 @@ public class AssignDaoImpl implements AssignDao {
 	@Override
 	public void editAssigningReportee(Assign assign) throws GSmartDatabaseException {
 
+		getConnection();
 		Loggers.loggerStart();
 		try {
-			getConnection();
+			
 			Assign oldAssign = getAssigns(assign.getEntryTime());
 			oldAssign.setIsActive("N");
 			oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -130,9 +143,10 @@ public class AssignDaoImpl implements AssignDao {
 
 	@Override
 	public void deleteAssigningReportee(Assign assign) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		try {
-			getConnection();
+			
 			assign.setIsActive("D");
 			assign.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(assign);
@@ -166,6 +180,8 @@ public class AssignDaoImpl implements AssignDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}finally {
+			session.close();
 		}
 	}
 

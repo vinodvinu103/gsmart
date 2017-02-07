@@ -38,7 +38,7 @@ public class Hierarchy {
 	 */
 	
 	@Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long hid;
 	
 	@Column(name="SCHOOL")
