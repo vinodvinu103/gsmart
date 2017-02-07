@@ -4,11 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 
-public class CalendarCalculator {
-	
-	public static Long currentEpoch = new Date().getTime()/1000;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+public class CalendarCalculator implements Job {
+
 
 	public static String getTimeStamp() {
 		try {
@@ -23,5 +25,12 @@ public class CalendarCalculator {
 			return null;
 		}
 	}
+	
+	public void execute(JobExecutionContext context)
+			throws JobExecutionException {
+				
+				System.out.println("Hello Quartz!");	
+				
+			}
 
 }

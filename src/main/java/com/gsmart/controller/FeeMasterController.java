@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.FeeMasterServices;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -69,12 +71,13 @@ public class FeeMasterController {
 		List<FeeMaster> feeList = null;
 		
 		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permissions=new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
 		
 		if(modulePermission!=null)
 		{
-			feeList = feeMasterServices.getFeeList();
+			feeList = feeMasterServices.getFeeList(tokenObj.getRole(),tokenObj.getHierarchy());
 			Loggers.loggerValue("feeList", feeList);
 			permissions.put("feeList", feeList);
 			Loggers.loggerValue("feeList", permissions);
@@ -105,6 +108,11 @@ public class FeeMasterController {
 		str.length();
 		
 		if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			
+			feeMaster.setInstitution(tokenObj.getHierarchy().getInstitution());
+			feeMaster.setSchool(tokenObj.getHierarchy().getSchool());
+			feeMaster.setHierarchy(tokenObj.getHierarchy());
 		CompoundFeeMaster cf = feeMasterServices.addFee(feeMaster);
 		
 		if (cf!= null) 

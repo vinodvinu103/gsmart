@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.TokenService;
@@ -25,11 +26,13 @@ public class GetAuthorization {
 	Session session;
 	Transaction tx;
 	Query query;
+	RolePermission permissions = null;
+	Token tokenObj=null;
 
 	public RolePermission authorizationForGet(String tokenNumber, HttpSession httpSession) throws GSmartServiceException {
 
 		Loggers.loggerStart(tokenNumber);
-		RolePermission permissions = null;
+		
 
 		try {
 			Token token = tokenService.getToken(tokenNumber);
@@ -38,6 +41,8 @@ public class GetAuthorization {
 			Loggers.loggerValue("Module: ", module);
 			permissions = getPermission(token, module);
 			httpSession.setAttribute("permissions", permissions);
+			httpSession.setAttribute("hierarchy", token);
+			System.out.println("hierarchy in token"+httpSession.getAttribute("hierarchy"));
 			System.out.println("permission"+permissions);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,38 +60,59 @@ public class GetAuthorization {
 		
 		try{
 			rolePermission = (RolePermission) httpSession.getAttribute("permissions");
-			Loggers.loggerEnd(rolePermission.getAdd());
-			return rolePermission.getAdd();
+			tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			
+			if(rolePermission==null || tokenObj==null)
+			{
+				Token token = tokenService.getToken(tokenNumber);
+				String module = getModuleName();
+				Loggers.loggerValue("Token: ", token);
+				Loggers.loggerValue("Module: ", module);
+				rolePermission = getPermission(token, module);
+				httpSession.setAttribute("permissions", rolePermission);
+				httpSession.setAttribute("hierarchy", token);
+			Loggers.loggerEnd(permissions.getAdd());
+			return permissions.getAdd();
+			}
 		} catch(Exception e){
 			e.printStackTrace();
 			Loggers.loggerEnd(false);
 			return false;
 		}
+		return rolePermission.getAdd();
 	
 	}
 
 	public boolean authorizationForPut(String tokenNumber, String task, HttpSession httpSession) {
 		
-		Loggers.loggerStart(tokenNumber);
-		Loggers.loggerStart(task);
 		RolePermission rolePermission = null;
 		
 		try{
 			rolePermission = (RolePermission) httpSession.getAttribute("permissions");
+			tokenObj= (Token) httpSession.getAttribute("hierarchy");
+			
+			if(rolePermission==null || tokenObj==null)
+			{
+				Token token = tokenService.getToken(tokenNumber);
+				String module = getModuleName();
+				Loggers.loggerValue("Token: ", token);
+				Loggers.loggerValue("Module: ", module);
+				rolePermission = getPermission(token, module);
+				httpSession.setAttribute("permissions", rolePermission);
+				httpSession.setAttribute("hierarchy", token);
+			}
+
 			
 			if(task.equalsIgnoreCase("edit"))
 			{
-				Loggers.loggerEnd(rolePermission.getEdit());
 				return rolePermission.getEdit();
 			}
 			else
 			{
-				Loggers.loggerEnd(rolePermission.getDel());
 				return rolePermission.getDel();
 			}
 		} catch(Exception e){
 			e.printStackTrace();
-			Loggers.loggerEnd(false);
 			return false;
 		}
 	}
@@ -107,16 +133,23 @@ public class GetAuthorization {
 		Loggers.loggerStart(token);
 		Loggers.loggerStart(module);
 		
-		RolePermission permissions;
+		RolePermission permissions=null;
+		try{
 		session = sessionFactory.openSession();
+		session.beginTransaction();
 		query = session.createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName) and isActive=:isActive");
 		query.setParameter("role", token.getRole());
 		
 		query.setParameter("moduleName", module);
 		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
+        session.close();
 		
 		Loggers.loggerEnd(permissions);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		return permissions;
 	}
 	

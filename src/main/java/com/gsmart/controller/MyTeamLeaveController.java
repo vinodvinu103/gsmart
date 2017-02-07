@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Leave;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.MyTeamLeaveServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
@@ -55,11 +56,12 @@ public class MyTeamLeaveController {
 		List<Leave> myTeamList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> myteam = new HashMap<>();
 		myteam.put("modulePermission", modulePermission);
 
 		if (modulePermission != null) {
-			myTeamList = myteamleaveServices.getLeavelist();
+			myTeamList = myteamleaveServices.getLeavelist(tokenObj.getRole(),tokenObj.getHierarchy());
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);

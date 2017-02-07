@@ -1,10 +1,15 @@
 package com.gsmart.model;
 
+import java.util.Arrays;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -12,9 +17,21 @@ import javax.persistence.Transient;
 @Table(name = "PROFILE_MASTER")
 public class Profile {
 
+	@Override
+	public String toString() {
+		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", role=" + role + ", reportingManagerName="
+				+ reportingManagerName + ", reportingManagerId=" + reportingManagerId + ", totalAmount=" + totalAmount
+				+ ", paidAmount=" + paidAmount + ", balanceAmount=" + balanceAmount + "]";
+	}
+
 	@Id
-	@Column(name = "SMART_ID")
+    @Column(name = "SMART_ID")
 	private String smartId;
+	
+	
+
+	@Column(name="RFID")
+	private String rfId;
 
 	@Column(name = "FIRST_NAME")
 	private String firstName;
@@ -294,9 +311,22 @@ public class Profile {
 
 	@Transient
 	private double balanceAmount;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
 
 	// -----------------------------------------------------------/
+	
 
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+	
 	public String getUpdSmartId() {
 		return updSmartId;
 	}
@@ -359,6 +389,14 @@ public class Profile {
 
 	public void setSmartId(String smartId) {
 		this.smartId = smartId;
+	}
+
+	public String getRfId() {
+		return rfId;
+	}
+
+	public void setRfId(String rfId) {
+		this.rfId = rfId;
 	}
 
 	public String getFirstName() {

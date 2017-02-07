@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.LoginDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
@@ -45,7 +46,9 @@ public class LoginServicesImpl implements LoginServices {
 
 			if (tokenNumber!=null) {
 				Token tokenDetails = getTokenDetails(tokenNumber);
+				System.out.println("role is"+tokenDetails.getRole());
 				Loggers.loggerValue("User is already logged in", "");
+				
 				List<RolePermission> rolePermissions = permissionServices.getPermission(tokenDetails.getRole());
 				Profile profile = profileServices.getProfileDetails(tokenDetails.getSmartId());
 				jsonMap.put("permissions", rolePermissions);
@@ -55,24 +58,25 @@ public class LoginServicesImpl implements LoginServices {
 				jsonMap.put("message", "welcome back");
 			} else {
 				Loggers.loggerValue("Authenticationg the user", "");
-				int authentication = loginDao.authenticate(login);
+				Map<String, Object> authentication = loginDao.authenticate(login);
 
-				if (authentication == 0) {
+				if (authentication != null && (int)authentication.get("status") == 0) {
 					String smartId = login.getSmartId();
+					Login loginObj = ((Login)authentication.get("login"));
 					Profile profile = profileServices.getProfileDetails(smartId);
 					String role = profile.getRole();
 					List<RolePermission> rolePermissions = permissionServices.getPermission(role);
-					String token = issueToken(smartId, role);
+					String token = issueToken(smartId, role, loginObj);
 					jsonMap.put("permissions", rolePermissions);
 					jsonMap.put("profile", profile);
 					jsonMap.put("token", token);
 					jsonMap.put("result", 0);
 					jsonMap.put("message", "welcome");
-				} else if (authentication == 1) {
+				} else if (authentication != null && (int)authentication.get("status") == 1) {
 					jsonMap.put("result", 1);
 					jsonMap.put("data", null);
 					jsonMap.put("message", "User Doesnt Exist");
-				} else if (authentication == 2) {
+				} else if (authentication != null && (int)authentication.get("status") == 2) {
 					jsonMap.put("result", 2);
 					jsonMap.put("data", null);
 					jsonMap.put("message", "account is locked, contact admin");
@@ -94,7 +98,7 @@ public class LoginServicesImpl implements LoginServices {
 		return jsonMap;
 	}
 
-	private String issueToken(String smartId, String role) throws GSmartServiceException {
+	private String issueToken(String smartId, String role, Login loginObj) throws GSmartServiceException {
 
 		Token token = null;
 		String tokenNumber = null;
@@ -107,11 +111,10 @@ public class LoginServicesImpl implements LoginServices {
 			token.setTokenNumber(tokenNumber);
 			token.setSmartId(smartId);
 			token.setRole(role);
-
-			tokenService.saveToken(token);
+			tokenService.saveToken(token, loginObj);
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
-			issueToken(smartId, role);
+			issueToken(smartId, role, loginObj);
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}

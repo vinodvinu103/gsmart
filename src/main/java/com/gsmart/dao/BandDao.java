@@ -46,5 +46,7 @@ public interface BandDao {
 	 */
 
 	public void deleteBand(Band band)throws GSmartDatabaseException;
+	
+	public Band getMaxband() throws GSmartDatabaseException;
 
 }

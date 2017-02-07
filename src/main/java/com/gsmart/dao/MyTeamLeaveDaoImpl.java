@@ -11,6 +11,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
 import com.gsmart.model.LeaveDetails;
 import com.gsmart.model.LeaveMaster;
@@ -33,14 +35,19 @@ public class MyTeamLeaveDaoImpl  implements MyTeamLeaveDao{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Leave> getLeavelist() throws GSmartDatabaseException{
+	public List<Leave> getLeavelist(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
 		Loggers.loggerStart();
 		List<Leave> leavelist=null;
-		
+		getConnection();
 		try {
-			getConnection();
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			{
 
 			query = session.createQuery("FROM Leave WHERE isActive='Y'");
+			}else{
+				query = session.createQuery("FROM Leave WHERE isActive='Y' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			leavelist = (List<Leave>)query.list();
 
 		} catch (Exception e) {
@@ -54,9 +61,10 @@ public class MyTeamLeaveDaoImpl  implements MyTeamLeaveDao{
 	}
 	@Override
 	public void rejectleave(Leave leave)throws GSmartDatabaseException{
-	try {
-	    Loggers.loggerStart();
+		Loggers.loggerStart();
 		getConnection();
+	try {
+	    Hierarchy hierarchy=leave.getHierarchy();
 		query = session.createQuery("from Leave where entryTime=:entryTime");
 		leave.setLeaveStatus("rejected");
 		session.update(leave);
@@ -129,7 +137,6 @@ public class MyTeamLeaveDaoImpl  implements MyTeamLeaveDao{
 			transaction = session.beginTransaction();
 			query = session.createQuery(
 					"from Leave where leaveType='" + leaveType + "' and isActive='Y' and smartId='" + smartId + "'");
-			@SuppressWarnings("unchecked")
 			Leave bandList = (Leave) query.uniqueResult();
 			transaction.commit();
 			session.close();
