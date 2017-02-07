@@ -390,6 +390,27 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 
 	}
+	
+	@Override
+	public Profile profileDetails(String smartId)throws GSmartDatabaseException {
+
+		Loggers.loggerStart(smartId);
+		Profile profilelist = null;
+		
+		try {
+			getConnection();
+			query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
+			query.setParameter("smartId", smartId);
+			profilelist = (Profile) query.list().get(0);
+			profilelist.setChildFlag(true);
+			
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		Loggers.loggerEnd(profilelist);
+		return profilelist;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -12,7 +12,7 @@ public interface LeaveServices {
 	
 	public void editLeave(Leave leave) throws GSmartServiceException;
 	
-	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String smartId,String role,Hierarchy hierarchy) throws GSmartServiceException;
 	
 	public void deleteLeave(Leave leave) throws GSmartServiceException;
 

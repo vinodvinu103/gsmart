@@ -18,22 +18,15 @@ import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
-
-
 @Repository
-public class LeaveMasterDaoImpl implements LeaveMasterDao{
-	
-	
+public class LeaveMasterDaoImpl implements LeaveMasterDao {
+
 	@Autowired
 	SessionFactory sessionFactory;
-	
 
 	Session session = null;
 	Transaction transaction = null;
 	Query query;
-
-	 
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -58,9 +51,9 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 			session.close();
 		}
 		Loggers.loggerEnd();
-		return leavemasterlist;	
-		}
-		
+		return leavemasterlist;
+	}
+
 	@Override
 	public CompoundLeaveMaster addLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
 
@@ -73,14 +66,14 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("leaveType", leaveMaster.getLeaveType());
 			query.setParameter("daysAllow", leaveMaster.getDaysAllow());
-			query.setParameter("isActive","Y");
-			LeaveMaster	 leaveMaster2=(LeaveMaster) query.uniqueResult();
-			if (leaveMaster2 ==null) {
+			query.setParameter("isActive", "Y");
+			LeaveMaster leaveMaster2 = (LeaveMaster) query.uniqueResult();
+			if (leaveMaster2 == null) {
 				leaveMaster.setEntryTime((CalendarCalculator.getTimeStamp()));
 				leaveMaster.setIsActive("Y");
-				cb=(CompoundLeaveMaster)session.save(leaveMaster);
+				cb = (CompoundLeaveMaster) session.save(leaveMaster);
 			}
-		
+
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -94,8 +87,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 		Loggers.loggerEnd();
 		return cb;
 	}
-	
-	
+
 	public void deleteLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		try {
@@ -113,13 +105,9 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 		}
 		Loggers.loggerEnd();
 	}
-	
-	
-	
-
 
 	@Override
-	public void editLeaveMaster(LeaveMaster leaveMaster ) throws GSmartDatabaseException {
+	public void editLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		try {
 			getconnection();
@@ -127,11 +115,11 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 			oldleaveMaster.setIsActive("N");
 			oldleaveMaster.setUpdateTime(CalendarCalculator.getTimeStamp());
 			session.update(oldleaveMaster);
-			 leaveMaster.setIsActive("Y");
-			session.save( leaveMaster);
+			leaveMaster.setIsActive("Y");
+			session.save(leaveMaster);
 			transaction.commit();
 			session.close();
-	
+
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
@@ -146,7 +134,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 	
 	public LeaveMaster getLeaveMaster(String entryTime,Hierarchy hierarchy) {
 		try {
-			
+
 
 			query = session.createQuery("from LeaveMaster where isActive=:isActive and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 		     query.setParameter("entryTime",entryTime);
@@ -157,14 +145,12 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 			
 			return leaveMaster;
 
-	
-		
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	private void getconnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
