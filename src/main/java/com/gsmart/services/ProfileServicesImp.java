@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.ProfileDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -77,9 +78,9 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 	
 	@Override
-	public ArrayList<Profile> getProfiles(String role) throws GSmartServiceException {
+	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy) throws GSmartServiceException {
 		
-		ArrayList<Profile> profileList = profileDao.getProfiles(role);
+		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId,role2,hierarchy);
 		return profileList;
 	}
 
@@ -149,6 +150,47 @@ public class ProfileServicesImp implements ProfileServices {
 		}
 	}
 
+	@Override
+	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartServiceException {
+		return profileDao.getProfileByHierarchy(hierarchy);
+	}
 
+	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException {
+	
+		return profileDao.getProfilesWithoutRfid();
+	}
 
+	@Override
+	public List<Profile> addRfid(Profile profile)throws GSmartServiceException {
+		
+		
+		try {
+			profileDao.addRfid(profile);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		return null;
+		
+	}
+
+	public List<Profile> editRfid(Profile rfid)throws GSmartServiceException{
+	
+	try {
+		profileDao.editRfid(rfid);
+	} catch (GSmartDatabaseException exception) {
+		throw (GSmartServiceException) exception;
+	} catch (Exception e) {
+		throw new GSmartServiceException(e.getMessage());
+	}
+	return null;
+
+}
+
+	@Override
+	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
+		
+		return profileDao.getProfilesWithRfid();
+	}
 }
