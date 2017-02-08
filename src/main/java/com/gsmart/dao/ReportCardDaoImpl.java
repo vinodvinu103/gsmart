@@ -203,26 +203,17 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	public List<ReportCard> search(Token tokenDetail) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
-		Hierarchy hierarchy= tokenDetail.getHierarchy();
+		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		try {
 			getConnection();
-
-			/*query = session.createQuery(
-					"from ReportCard where reportingManagerId=:reportingManagerId or smartId=:smartId and isActive='Y'");
+			String role = tokenDetail.getRole();
+			String smartId = tokenDetail.getSmartId();
+			query = session.createQuery(
+					"from ReportCard where reportingManagerId=:reportingManagerId or smartId=:smartId and isActive='Y' and hid=:hierarchy");
 			query.setParameter("reportingManagerId", smartId);
-			query.setParameter("smartId", smartId);*/
-			String role=tokenDetail.getRole();
-			String smartId=tokenDetail.getSmartId();
-			if(role.equalsIgnoreCase("Principal")|role.equalsIgnoreCase("admin")|role.equalsIgnoreCase("owner")){
-			query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y' and hierarchy:hierarchy ");
+			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			list = query.list();
-			}
-			else if (role.equalsIgnoreCase("HOD")) {
-				query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y' and hierarchy:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-				list = query.list();
-			}
 			System.out.println("Serch based on smartid..." + list);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -249,26 +240,27 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 
 	@Override
-	public void excelToDB(String smartId,MultipartFile fileUpload) throws Exception {
+	public void excelToDB(String smartId, MultipartFile fileUpload) throws Exception {
 		InputStream in = null;
 		XSSFWorkbook workBook = null;
 		XSSFSheet sheet = null;
 		FileInputStream file = null;
 		Loggers.loggerStart(smartId);
 		try {
-			/*file = new FileInputStream(new File("/home/gtpl/Desktop/Report_Card.xlsx"));
-			Loggers.loggerStart(file);
-
-			XSSFWorkbook workbook = new XSSFWorkbook(file);
-			System.out.println("11111111111");
-			XSSFSheet sheet = workbook.getSheetAt(0);
-			System.out.println("222222222222");
-
-			// FormulaEvaluator
-			// fe=workBook.getCreationHelper().createFormulaEvaluator();
-			XSSFRow row = null;
-			getConnection();
-			System.out.println("hi>>>>." + sheet.getLastRowNum());*/
+			/*
+			 * file = new FileInputStream(new
+			 * File("/home/gtpl/Desktop/Report_Card.xlsx"));
+			 * Loggers.loggerStart(file);
+			 * 
+			 * XSSFWorkbook workbook = new XSSFWorkbook(file);
+			 * System.out.println("11111111111"); XSSFSheet sheet =
+			 * workbook.getSheetAt(0); System.out.println("222222222222");
+			 * 
+			 * // FormulaEvaluator //
+			 * fe=workBook.getCreationHelper().createFormulaEvaluator(); XSSFRow
+			 * row = null; getConnection(); System.out.println("hi>>>>." +
+			 * sheet.getLastRowNum());
+			 */
 			in = fileUpload.getInputStream();
 			workBook = new XSSFWorkbook(in);
 			sheet = workBook.getSheetAt(0);
@@ -277,58 +269,58 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				System.out.println("in side for loop");
 				row = sheet.getRow(i);
-			//	System.out.println("row"+row);
+				// System.out.println("row"+row);
 				ReportCard reportCard = new ReportCard();
-				//reportCard.setSmartId(smartId);
-				System.out.println("row"+reportCard);
+				// reportCard.setSmartId(smartId);
+				System.out.println("row" + reportCard);
 				reportCard.setEntryTime(CalendarCalculator.getTimeStamp());
-				System.out.println("EntryTime"+reportCard);
+				System.out.println("EntryTime" + reportCard);
 				reportCard.setIsActive("Y");
-				System.out.println("setIsActive"+reportCard);
+				System.out.println("setIsActive" + reportCard);
 				reportCard.setSmartId(row.getCell(0).getStringCellValue());
-				System.out.println("setSmartId  >>>"+row.getCell(0).getStringCellValue());
-				
+				System.out.println("setSmartId  >>>" + row.getCell(0).getStringCellValue());
+
 				reportCard.setStudentName(row.getCell(1).getStringCellValue());
-				System.out.println("setStudentName  "+row.getCell(1).getStringCellValue());
+				System.out.println("setStudentName  " + row.getCell(1).getStringCellValue());
 				try {
-					
-					String std=Integer.toString((int) row.getCell(2).getNumericCellValue());
-					System.out.println("Stsnsdard.........."+std);
+
+					String std = Integer.toString((int) row.getCell(2).getNumericCellValue());
+					System.out.println("Stsnsdard.........." + std);
 					reportCard.setStandard(std);
 					System.out.println("in try block");
-					
+
 				} catch (Exception e) {
 					System.out.println("in catch block");
 					reportCard.setStandard(row.getCell(2).getStringCellValue());
 				}
-				
+
 				reportCard.setSection(row.getCell(3).getStringCellValue());
-				System.out.println("setSection  "+row.getCell(3).getStringCellValue());
-				
+				System.out.println("setSection  " + row.getCell(3).getStringCellValue());
+
 				reportCard.setSubject(row.getCell(4).getStringCellValue());
-				System.out.println("setSubject  "+row.getCell(4).getStringCellValue());
-				
+				System.out.println("setSubject  " + row.getCell(4).getStringCellValue());
+
 				reportCard.setTeacherName(row.getCell(5).getStringCellValue());
-				System.out.println("setTeacherName  "+reportCard);
-				
+				System.out.println("setTeacherName  " + reportCard);
+
 				reportCard.setReportingManagerId(row.getCell(6).getStringCellValue());
-				System.out.println("setReportingManagerId  "+row.getCell(6).getStringCellValue());
-				
+				System.out.println("setReportingManagerId  " + row.getCell(6).getStringCellValue());
+
 				reportCard.setMaxMarks((int) row.getCell(7).getNumericCellValue());
-				System.out.println("setMaxMarks  "+row.getCell(7).getNumericCellValue());
-				
+				System.out.println("setMaxMarks  " + row.getCell(7).getNumericCellValue());
+
 				reportCard.setMinMarks((int) row.getCell(8).getNumericCellValue());
-				System.out.println("setMinMarks"+row.getCell(8).getNumericCellValue());
-				
+				System.out.println("setMinMarks" + row.getCell(8).getNumericCellValue());
+
 				reportCard.setMarksObtained((int) row.getCell(9).getNumericCellValue());
-				System.out.println("setMarksObtained"+row.getCell(9).getNumericCellValue());
-				
+				System.out.println("setMarksObtained" + row.getCell(9).getNumericCellValue());
+
 				reportCard.setSubjectGrade(row.getCell(10).getStringCellValue());
-				System.out.println("setSubjectGrade"+row.getCell(10).getStringCellValue());
-				
+				System.out.println("setSubjectGrade" + row.getCell(10).getStringCellValue());
+
 				reportCard.setTotalGrade(row.getCell(11).getStringCellValue());
-				System.out.println("setTotalGrade"+row.getCell(11).getStringCellValue());
-				
+				System.out.println("setTotalGrade" + row.getCell(11).getStringCellValue());
+
 				session.merge(reportCard);
 				System.out.println("dane");
 			}

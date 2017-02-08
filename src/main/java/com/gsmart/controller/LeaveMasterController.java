@@ -52,7 +52,7 @@ public class LeaveMasterController {
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-
+		System.out.println("hierarchy"+tokenObj.getHierarchy());
 		Map<String, Object> leavemaster = new HashMap<>();
 
 		leavemaster.put("modulePermission", modulePermission);

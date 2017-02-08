@@ -33,9 +33,10 @@ public class LeaveDaoImpl implements LeaveDao {
 		Loggers.loggerStart(role);
 		
 		System.out.println("vgyhuhuygy");
-		getConnection();
+		
 		List<Leave> leave = null;
 		try {
+			getConnection();
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
 			query = session.createQuery("FROM Leave WHERE isActive='Y'");
@@ -44,7 +45,7 @@ public class LeaveDaoImpl implements LeaveDao {
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			leave = (List<Leave>) query.list();
-
+			session.close();
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		}
