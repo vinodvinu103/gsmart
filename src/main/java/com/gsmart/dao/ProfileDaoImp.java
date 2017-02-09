@@ -429,7 +429,7 @@ public class ProfileDaoImp implements ProfileDao {
 		List<Profile> profileListWithoutRfid;
 		try {
 			getConnection();
-			query = session.createQuery(" from Profile where rfId is null AND isActive='Y' AND role='STUDENT'");
+			query = session.createQuery("from Profile where rfId is null AND isActive='Y'");
 			profileListWithoutRfid = query.list();
 
 		} catch (Exception e) {
@@ -471,7 +471,7 @@ public class ProfileDaoImp implements ProfileDao {
 		List<Profile> profileListWithRfid;
 		try {
 			getConnection();
-			query = session.createQuery("from Profile where rfId is not null AND isActive='Y' AND role='STUDENT'");
+			query = session.createQuery("from Profile where rfId is not null AND isActive='Y'");
 			profileListWithRfid = query.list();
 
 		} catch (Exception e) {
