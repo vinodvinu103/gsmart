@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
+import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -29,20 +30,22 @@ public class LeaveDaoImpl implements LeaveDao {
 	Transaction transaction;
 	
 	@SuppressWarnings("unchecked")
-	public List<Leave> getLeaveList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart(role);
+	public List<Leave> getLeaveList(Token tokenObj,Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart(tokenObj);
 		
 		System.out.println("vgyhuhuygy");
 		
 		List<Leave> leave = null;
 		try {
 			getConnection();
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			String role=tokenObj.getRole();
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("hr") || role.equalsIgnoreCase("director"))
 			{
 			query = session.createQuery("FROM Leave WHERE isActive='Y'");
 			}else{
-				query = session.createQuery("FROM Leave WHERE isActive='Y' and hierarchy.hid=:hierarchy");
+				query = session.createQuery("FROM Leave WHERE smartId=:smartId and isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("smartId", tokenObj.getSmartId());
 			}
 			leave = (List<Leave>) query.list();
 			session.close();
@@ -58,7 +61,7 @@ public class LeaveDaoImpl implements LeaveDao {
 		getConnection();
 		CompoundLeave cl = null;
 		try {
-			Hierarchy hierarchy=leave.getHierarchy();
+			/*Hierarchy hierarchy=leave.getHierarchy();
 			query=session.createQuery("FROM Leave WHERE smartId=:smartId AND isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("smartId", leave.getSmartId());
 			query.setParameter("hierarchy", hierarchy.getHid());
@@ -66,7 +69,7 @@ public class LeaveDaoImpl implements LeaveDao {
 			query.setParameter("isActive", "Y");
 			Leave leave1=(Leave)query.uniqueResult();
 			if(leave1==null)
-			{
+			{*/
 				leave.setEntryTime(CalendarCalculator.getTimeStamp());
 				leave.setIsActive("Y");
 				leave.setNumberOfDays(noOfdays);
@@ -75,7 +78,7 @@ public class LeaveDaoImpl implements LeaveDao {
 				cl=(CompoundLeave)session.save(leave);
 				
 				/*session.save(details);*/
-			}
+		/*	}*/
 				transaction.commit();
 		} 
 		catch (ConstraintViolationException e) 

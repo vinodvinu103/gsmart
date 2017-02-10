@@ -89,6 +89,7 @@ public class HolidayDaoImpl implements HolidayDao {
 		
 		try {
 			Hierarchy hierarchy=holiday.getHierarchy();
+			Loggers.loggerStart(holiday.getHierarchy());
 			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("holidayDate", holiday.getHolidayDate());

@@ -225,27 +225,27 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartBaseException {
-		
+	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
+		Loggers.loggerStart(role);
 		List<RolePermission> rolePermissions = null;
+		System.out.println("hierarchry ...."+hierarchy);
 		getConnection();
 		try{
-			
-				query = session.createQuery("from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
-			
-			
-			query.setParameter("role", role);
+			query = session.createQuery("from RolePermission where role='ADMIN' and moduleName='Maintenance' and isActive='Y'");
+	/*		query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
-			query.setParameter("moduleName", "Maintenance");
-			rolePermissions = query.list();
-			session.close();
+			query.setParameter("moduleName", "Maintenance");*/
+			rolePermissions =(List<RolePermission>) query.list();
+			System.out.println("****************************1");
+			System.out.println("****************************2");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new GSmartDatabaseException(e.getMessage());
 		}
 		finally {
 			session.close();
 		}
+		System.out.println("****************************3");
+		Loggers.loggerEnd(rolePermissions);
 		return rolePermissions;
 	}
 

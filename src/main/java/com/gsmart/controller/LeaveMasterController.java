@@ -57,15 +57,15 @@ public class LeaveMasterController {
 
 		leavemaster.put("modulePermission", modulePermission);
 
-		if (modulePermission != null) {
+		/*if (modulePermission != null) {*/
 			leaveMasterList = leaveMasterService.getLeaveMasterList(tokenObj.getRole(),tokenObj.getHierarchy());
 
 			leavemaster.put("leaveMasterList", leaveMasterList);
 			Loggers.loggerEnd(leaveMasterList);
 			return new ResponseEntity<Map<String, Object>>(leavemaster, HttpStatus.OK);
-		} else {
+		/*} else {
 			return new ResponseEntity<Map<String, Object>>(leavemaster, HttpStatus.OK);
-		}
+		}*/
 
 	}
 
