@@ -51,6 +51,7 @@
 				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.WeekDays</value>
 				<value>com.gsmart.model.Assign</value>
+				<value>com.gsmart.model.Banners</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
