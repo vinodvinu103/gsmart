@@ -28,10 +28,11 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<WeekDays> getWeekList() throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		List<WeekDays> WeekDaysList = null;
 		try {
-			getConnection();
+			
 
 			query = session.createQuery("from WeekDays where isActive='Y' ");
 			WeekDaysList = query.list();
@@ -49,10 +50,11 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 
 	@Override
 	public void addWeekDays(WeekDays weekdays) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 
 		try {
-			getConnection();
+			
 			weekdays.setIsActive("Y");
 			session.save(weekdays);
 			transaction.commit();
@@ -60,6 +62,8 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 
 		} catch (Exception exception) {
 			exception.getMessage();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 
@@ -67,10 +71,10 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 
 	@Override
 	public void editweekdays(WeekDays weekdays) throws GSmartDatabaseException {
-
+		getConnection();
 		Loggers.loggerStart();
 		try {
-			getConnection();
+			
 
 			session.save(weekdays);
 			transaction.commit();
@@ -82,16 +86,19 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 		} catch (Exception exception) {
 
 			exception.getMessage();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 
 	}
 
 	public WeekDays getData(String days) {
+		getConnection();
 		Loggers.loggerStart();
 		WeekDays day = null;
 		try {
-			getConnection();
+			
 			query = session.createQuery("from WeekDays where weekDays=:weekDays and isActive='Y'");
 			query.setParameter("weekDays", days);
 
@@ -100,14 +107,17 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}finally {
+			session.close();
 		}
 	}
 
 	@Override
 	public void deleteweekdays(WeekDays weekdays) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		try {
-			getConnection();
+			
 			weekdays.setIsActive("D");
 			session.save(weekdays);
 			transaction.commit();
@@ -116,6 +126,8 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 		} catch (Exception exception) {
 
 			exception.getMessage();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 	}
@@ -127,9 +139,10 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 
 	@Override
 	public List<WeekDays> getWeekdaysForHoliday(String school, String institution) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		List<WeekDays> days2 = null;
-		getConnection();
+		
 		try {
 			query = session
 					.createQuery("from WeekDays where isActive='Y' and school=:school and institution=:institution");

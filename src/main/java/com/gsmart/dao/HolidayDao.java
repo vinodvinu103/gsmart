@@ -38,7 +38,7 @@ public interface HolidayDao {
 	 * @throws GSmartDatabaseException
 	 */
 
-	public void editHoliday(Holiday holiday) throws GSmartDatabaseException;
+	public Holiday editHoliday(Holiday holiday) throws GSmartDatabaseException;
 	/**
 	 * @param holiday instanceOf {@link Holiday}
 	 * @return Nothing

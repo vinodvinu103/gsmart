@@ -33,12 +33,13 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	public String getMaxSmartId() {
+		getConnection();
 		Loggers.loggerStart();
 		/*
 		 * This getMaxSmartId() method will get maximum smart id from Emp_Login
 		 * table and return to UserProfile Manager.
 		 */
-		getConnection();
+		
 		try {
 
 			query = session
@@ -61,8 +62,9 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	public boolean userProfileInsert(Profile profile) {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		boolean flag = false;
 		try {
 			query = session.createQuery("from Profile where emailId=:emailId");
@@ -117,8 +119,9 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@Override
 	public String updateProfile(Profile profile) {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 
 			profile.setIsActive("Y");
@@ -142,8 +145,9 @@ public class ProfileDaoImp implements ProfileDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> getAllProfiles() {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 
 			query = session.createQuery("from Profile where isActive='Y'");
@@ -197,8 +201,10 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@Override
 	public Profile getParentInfo(String smartId) {
-		Loggers.loggerStart();
+		
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 			/*
 			 * Profile currentProfile1 = (Profile)
@@ -226,8 +232,9 @@ public class ProfileDaoImp implements ProfileDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> getReportingProfiles(String smartId) {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 			ArrayList<Profile> reportingList = null;
 			query = session.createQuery("from Profile where reportingManagerId=:smartId and isActive='Y' ");
@@ -246,9 +253,10 @@ public class ProfileDaoImp implements ProfileDao {
 	/* for login */
 	public Profile getProfileDetails(String smartId) {
 
+		getConnection();
 		Loggers.loggerStart();
 		Profile profilelist = null;
-		getConnection();
+		
 		try {
 
 			query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
@@ -274,8 +282,9 @@ public class ProfileDaoImp implements ProfileDao {
 	@Override
 	public List<Profile> getAllRecord(String academicYear, String role, Hierarchy hierarchy) {
 
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 
 		List<Profile> profile = null;
 
@@ -305,8 +314,9 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	public List<Profile> getsearchRep(Search search, String role, Hierarchy hierarchy) {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
 				query = session
@@ -341,9 +351,9 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	public List<Profile> search(Profile profile) throws GSmartDatabaseException {
-
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		List<Profile> profileList;
 		try {
 
@@ -370,9 +380,9 @@ public class ProfileDaoImp implements ProfileDao {
 	 */
 	@Override
 	public void editRole(Profile profile) throws GSmartDatabaseException {
-
-		Loggers.loggerStart(profile);
 		getConnection();
+		Loggers.loggerStart(profile);
+		
 		try {
 
 			query = session.createQuery("UPDATE Profile set   role=:role WHERE entryTime = :entryTime");
@@ -393,12 +403,12 @@ public class ProfileDaoImp implements ProfileDao {
 	
 	@Override
 	public Profile profileDetails(String smartId)throws GSmartDatabaseException {
-
+		getConnection();
 		Loggers.loggerStart(smartId);
 		Profile profilelist = null;
 		
 		try {
-			getConnection();
+			
 			query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
 			query.setParameter("smartId", smartId);
 			profilelist = (Profile) query.list().get(0);
@@ -406,6 +416,8 @@ public class ProfileDaoImp implements ProfileDao {
 			
 		} catch (Exception e){
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		
 		Loggers.loggerEnd(profilelist);
@@ -415,16 +427,25 @@ public class ProfileDaoImp implements ProfileDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart(hierarchy);
 		getConnection();
+		List<Profile> profileByHierarchy=null;
+		Loggers.loggerStart(hierarchy);
+		try{
 		query = session.createQuery("from Profile where hierarchy=" + hierarchy.getHid() + " and role!='STUDENT'");
+		profileByHierarchy=(List<Profile>) query.list();
+		}catch (Exception e) {
+e.printStackTrace();
+		}finally {
+			session.close();
+		}
 		Loggers.loggerEnd();
-		return (List<Profile>) query.list();
+		return profileByHierarchy;
 
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException {
+		getConnection();
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithoutRfid;
 		try {
@@ -435,6 +456,8 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}finally{
+			session.close();
 		}
 
 		Loggers.loggerEnd(profileListWithoutRfid);
@@ -444,10 +467,11 @@ public class ProfileDaoImp implements ProfileDao {
 
 	public List<Profile> addRfid(Profile rfid) throws GSmartDatabaseException {
 
+		getConnection();
 		// List<Profile> profileListWithoutRfid = null;
 
 		try {
-			getConnection();
+			
 
 			session.update(rfid);
 
@@ -467,6 +491,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
+		getConnection();
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithRfid;
 		try {
@@ -477,6 +502,8 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}finally {
+			session.close();
 		}
 
 		Loggers.loggerEnd(profileListWithRfid);
@@ -488,8 +515,9 @@ public class ProfileDaoImp implements ProfileDao {
 	public List<Profile> editRfid(Profile rfid) throws GSmartDatabaseException {
 		// Loggers.loggerStart(profile);
 
+		getConnection();
 		try {
-			getConnection();
+			
 
 			session.update(rfid);
 
@@ -499,6 +527,8 @@ public class ProfileDaoImp implements ProfileDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
+		}finally {
+			session.close();
 		}
 
 		Loggers.loggerEnd();

@@ -9,7 +9,6 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.TokenService;
@@ -71,7 +70,6 @@ public class GetAuthorization {
 				rolePermission = getPermission(token, module);
 				httpSession.setAttribute("rolePermissions", rolePermission);
 				httpSession.setAttribute("hierarchy", token);
-				System.out.println("permissions"+httpSession.getAttribute("rolePermissions"));
 			Loggers.loggerEnd(rolePermission.getAdd());
 			return rolePermission.getAdd();
 			}
@@ -156,6 +154,7 @@ public class GetAuthorization {
 	public String getAuthentication(String tokenNumber, HttpSession httpSession){
 		
 		Loggers.loggerStart(tokenNumber);
+		System.out.println("session object"+httpSession.getAttribute("tokenNumber"));
 		if(tokenNumber.equals(httpSession.getAttribute("tokenNumber")))
 			return "Success";
 		else
