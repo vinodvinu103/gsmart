@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.ProfileDao;
+import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
+import com.gsmart.util.Loggers;
 
 @Service
 public class ProfileServicesImp implements ProfileServices {
@@ -192,5 +194,43 @@ public class ProfileServicesImp implements ProfileServices {
 	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
 		
 		return profileDao.getProfilesWithRfid();
+	}
+
+	@Override
+	public void addBanner(Banners banner) throws GSmartServiceException {
+		profileDao.addBanner(banner);
+	}
+	@Override
+	public List<Banners> getBannerList() throws GSmartServiceException {
+		// TODO Auto-generated method stub
+		return profileDao.getBannerList();
+	}
+	@Override
+	public Banners editBanner(Banners banner) throws GSmartServiceException {
+		Loggers.loggerStart();
+		Banners banners=null;
+		try {
+			banners=profileDao.editBanner(banner);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		return banners;
+	}
+	@Override
+	public void deleteBanner(Banners banner) throws GSmartServiceException {
+		
+		Loggers.loggerStart();
+		try {
+			profileDao.deleteBanner(banner);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		
 	}
 }

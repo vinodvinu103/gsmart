@@ -89,10 +89,10 @@ public class BandDaoImpl implements BandDao {
 				band.setEntryTime(CalendarCalculator.getTimeStamp());
 				band.setIsActive("Y");
 				cb = (CompoundBand) session.save(band);
-				Loggers.loggerEnd(oldBand);
+				transaction.commit();
+				
 			}
-            session.save(band);
-			transaction.commit();
+			
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -102,6 +102,7 @@ public class BandDaoImpl implements BandDao {
 		} finally {
 			session.close();
 		}
+		Loggers.loggerEnd();
 		return cb;
 	}
 
@@ -109,51 +110,100 @@ public class BandDaoImpl implements BandDao {
 
 	@Override
 	public Band editBand(Band band) throws GSmartDatabaseException {
-		
+		Loggers.loggerStart();
+		getConnection();
+		Band ch = null;
 		try {
-			Loggers.loggerStart();
+			
 		
 		    Band oldBand = getBand(band.getEntryTime());
-			oldBand.setUpdatedTime(CalendarCalculator.getTimeStamp());
-			oldBand.setIsActive("N");
-			updateBand(oldBand);
+			ch=	updateBand(oldBand,band);
 
-			Loggers.loggerValue("Band", band);
-			addBand(band);
-	        //transaction.commit();
 			
-		} catch (org.hibernate.exception.ConstraintViolationException e) {
+//			addBand(band);	
+			if(ch!=null)
+			{
+				band.setEntryTime(CalendarCalculator.getTimeStamp());
+				band.setIsActive("Y");
+				ch=(Band) session.save(band);
+				transaction.commit();
+			}
+			Loggers.loggerEnd();
+			return ch;
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+		
+	}
+private Band updateBand(Band oldBand, Band band) throws GSmartDatabaseException {
+		
+		Band ch = null;
+		try {
+			Band band1 = fetch(band);
+			if (band1 == null) {
+				oldBand.setUpdatedTime(CalendarCalculator.getTimeStamp());
+				oldBand.setIsActive("N");
+				session.update(oldBand);
+
+				
+				transaction.commit();
+				return oldBand;
+
+			}
+		} catch (ConstraintViolationException e) {
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		return band;
+		return ch;
+
 	}
 
-	private void updateBand(Band oldBand) {
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
+//	private void updateBand(Band oldBand) {
+//		session = sessionFactory.openSession();
+//		transaction = session.beginTransaction();
+//
+//		//Loggers.loggerValue(oldBand.getUpdatedTime());
+//		session.update(oldBand);
+//		transaction.commit();
+//		session.close();
+//	}
 
-		//Loggers.loggerValue(oldBand.getUpdatedTime());
-		session.update(oldBand);
-		transaction.commit();
-		session.close();
-	}
-
+	@SuppressWarnings("unchecked")
 	public Band getBand(String entryTime) {
 		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
+			
 			query = session.createQuery("from Band where isActive='Y' and entryTime='" + entryTime + "'");
-			@SuppressWarnings("unchecked")
 			ArrayList<Band> bandList = (ArrayList<Band>) query.list();
-			transaction.commit();
-			session.close();
 			return bandList.get(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+	
+	public Band fetch(Band band) {
+		getConnection();
+		Loggers.loggerStart(band.getBandId());
+		Band bandList=null;
+		try {
+			query = session.createQuery(
+					"FROM Band WHERE bandId=:bandId AND designation=:designation and role=:role AND isActive=:isActive");
+			query.setParameter("bandId", band.getBandId());
+			query.setParameter("isActive", "Y");
+			query.setParameter("designation", band.getDesignation());
+			query.setParameter("role", band.getRole());
+			
+			bandList=(Band) query.uniqueResult();
+		}catch (Exception e) {
+
+			e.printStackTrace();
+		}
+			return bandList; 
+
+		}
 
 	/* DELETE DATA FROM THE DATABASE */
 	@Override
@@ -166,7 +216,6 @@ public class BandDaoImpl implements BandDao {
 			band.setIsActive("D");
 			session.update(band);
 			transaction.commit();
-			session.close();
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -52,20 +52,20 @@ public class LeaveMasterController {
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-
+		System.out.println("hierarchy"+tokenObj.getHierarchy());
 		Map<String, Object> leavemaster = new HashMap<>();
 
 		leavemaster.put("modulePermission", modulePermission);
 
-		if (modulePermission != null) {
+		/*if (modulePermission != null) {*/
 			leaveMasterList = leaveMasterService.getLeaveMasterList(tokenObj.getRole(),tokenObj.getHierarchy());
 
 			leavemaster.put("leaveMasterList", leaveMasterList);
 			Loggers.loggerEnd(leaveMasterList);
 			return new ResponseEntity<Map<String, Object>>(leavemaster, HttpStatus.OK);
-		} else {
+		/*} else {
 			return new ResponseEntity<Map<String, Object>>(leavemaster, HttpStatus.OK);
-		}
+		}*/
 
 	}
 
