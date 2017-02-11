@@ -69,14 +69,17 @@ public class NoticeDaoImpl implements NoticeDao {
 		Loggers.loggerStart();
 		
 		try{
-			query=session.createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) ORDER BY entryTime desc");
+			query=session.createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) and type='Specific' ORDER BY entryTime desc");
 			query.setParameterList("smartIdList", smartIdList);
+			Loggers.loggerValue("smartIdList", smartIdList);
+			Loggers.loggerStart(smartIdList);
+			
 			//FROM UserDetails user ORDER BY user.userName DESC
 			//query.setMaxResults(6);
 			@SuppressWarnings("unchecked")
 			List<Notice> notices=query.list();
 			transaction.commit();
-			Loggers.loggerEnd();
+			Loggers.loggerEnd(notices);
 			return notices;
 		}catch(Exception e){
 			e.printStackTrace();
@@ -87,12 +90,37 @@ public class NoticeDaoImpl implements NoticeDao {
 		}
 		
 	}
-
+	
 	@Override
-	public void deleteNotice(Notice notice) {
+
+	public List<Notice> viewMyNotice(String smartId) {
+		Loggers.loggerStart();
 		getConnection();
 		Loggers.loggerStart();
 		
+		try{
+			Loggers.loggerStart(smartId);
+			query=session.createQuery("from Notice where is_active='Y' and smartId=:smartId ORDER BY entryTime desc");
+			query.setParameter("smartId", smartId);
+			//query.setMaxResults(6);
+			@SuppressWarnings("unchecked")
+			List<Notice> list=query.list();
+			transaction.commit();
+			Loggers.loggerEnd(list);
+			return list;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public void deleteNotice(Notice notice) {
+		Loggers.loggerStart();
+		getConnection();
 		try{
 		
 //			notice= (Notice) session.get("com.gsmart.model.Notice",notice.getEntry_time());
@@ -108,26 +136,6 @@ public class NoticeDaoImpl implements NoticeDao {
 			session.close();
 		}
 	}
-
-	/*@Override
-	public void editNotice(Notice notice){
-		Loggers.loggerStart();
-		try{
-			getConnection();
-			notice.setIs_active("N");
-			notice.setUpdate_time(CalendarCalculator.getTimeStamp());
-			session.update(notice);
-			transaction.commit();
-			Loggers.loggerEnd();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		finally {
-			session.close();
-		}
-
-	}
-*/
 
 	@Override
 	public Notice editNotice(Notice notice)throws GSmartBaseException{
@@ -163,14 +171,6 @@ public class NoticeDaoImpl implements NoticeDao {
 	
 	}
 	
-/*	private void UpdateNotice(Notice oldNotice){
-		session=sessionFactory.openSession();
-		transaction=session.beginTransaction();
-		session.update(oldNotice);
-		transaction.commit();
-		session.close();
-	}*/
-	
 	public Notice getNotice(String entryTime){
       try{
     	  
@@ -186,14 +186,15 @@ public class NoticeDaoImpl implements NoticeDao {
 	}
 	
 	@Override
-	public List<Notice> viewSpecificNotice(String role) {
+	public List<Notice> viewGenericNotice(String type) {
+		Loggers.loggerStart();
 		getConnection();
 		Loggers.loggerStart();
 		
 		try{
 			
-			query=session.createQuery("from Notice where is_active='Y' and role=:roles ORDER BY entryTime desc");
-			query.setParameter("roles", role);
+			query=session.createQuery("from Notice where is_active='Y' and type='Generic' ORDER BY entryTime desc");
+		//	query.setParameter("type", type);
 			//query.setMaxResults(6);
 			@SuppressWarnings("unchecked")
 			List<Notice> list=query.list();
@@ -327,6 +328,8 @@ public Profile getProfileDetails(String smartId) {
 	   Loggers.loggerEnd("profile fetched from DB");
      	return profile;
     }
+
+
 
 }
 	

@@ -11,7 +11,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gsmart.model.Assign;
+import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
@@ -449,8 +449,8 @@ e.printStackTrace();
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithoutRfid;
 		try {
-			
-			query = session.createQuery(" from Profile where rfId is null AND isActive='Y' AND role='STUDENT'");
+			getConnection();
+			query = session.createQuery("from Profile where rfId is null AND isActive='Y'");
 			profileListWithoutRfid = query.list();
 
 		} catch (Exception e) {
@@ -495,8 +495,8 @@ e.printStackTrace();
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithRfid;
 		try {
-			
-			query = session.createQuery("from Profile where rfId is not null AND isActive='Y' AND role='STUDENT'");
+			getConnection();
+			query = session.createQuery("from Profile where rfId is not null AND isActive='Y'");
 			profileListWithRfid = query.list();
 
 		} catch (Exception e) {
@@ -534,6 +534,119 @@ e.printStackTrace();
 		Loggers.loggerEnd();
 		return getProfilesWithRfid();
 
+	}
+
+	
+	@Override
+	public List<Banners> getBannerList() {
+		Loggers.loggerStart();
+		List<Banners> bannerlist = null;
+		try {
+			getConnection();
+			Query query = session.createQuery("FROM Banners WHERE isActive='Y'");
+			bannerlist = query.list();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		Loggers.loggerEnd(bannerlist);
+		return bannerlist;
+	}
+
+	@Override
+	public void addBanner(Banners banner) throws GSmartDatabaseException {
+		getConnection();
+		try {
+			/*
+			 * query = session.createQuery(
+			 * "FROM BannerImage WHERE title=:title AND bannerimage=:bannerimage "
+			 * ); query.setParameter("title", banner.getTitle());
+			 * query.setParameter("bannerimage", banner.getBannerimage());
+			 */
+			banner.setEntryTime(CalendarCalculator.getTimeStamp());
+			banner.setIsActive("Y");
+			session.save(banner);
+			/*
+			 * BannerImage oldBannner = (BannerImage) query.uniqueResult();
+			 * Loggers.loggerStart(oldBannner); if (oldBannner == null) { cb =
+			 * (CompoundBanner) session.save(banner);
+			 * Loggers.loggerEnd(oldBannner); }
+			 */
+			transaction.commit();
+		} catch (org.hibernate.exception.ConstraintViolationException e) {
+			transaction.rollback();
+		} catch (Throwable e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public Banners editBanner(Banners banner) throws GSmartDatabaseException {
+		try {
+			Loggers.loggerStart();
+			getConnection();
+			Banners oldBanner = getBanner(banner.getEntryTime());
+			oldBanner.setUpdatedTime(CalendarCalculator.getTimeStamp());
+			oldBanner.setIsActive("N");
+			session.update(oldBanner);
+			transaction.commit();
+			addBanner(banner);
+			
+			session.close();
+			Loggers.loggerEnd();
+		} catch (org.hibernate.exception.ConstraintViolationException e) {
+		} catch (Throwable e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		return banner;
+	}
+
+	/*
+	 * private void updateBanner(Banners oldBanner) { session =
+	 * sessionFactory.openSession(); transaction = session.beginTransaction();
+	 * 
+	 * //Loggers.loggerValue(oldBand.getUpdatedTime());
+	 * session.update(oldBanner); transaction.commit(); session.close(); }
+	 */
+
+	public Banners getBanner(String entryTime) {
+		Loggers.loggerStart();
+		Banners banners=null;
+		try {
+			
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			query = session.createQuery("from Banners where isActive='Y' and entryTime='" + entryTime + "'");
+			banners=(Banners) query.uniqueResult();
+			Loggers.loggerEnd(banners);
+			return banners;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/* DELETE DATA FROM THE DATABASE */
+	@Override
+	public void deleteBanner(Banners banner) throws GSmartDatabaseException {
+		try {
+			Loggers.loggerStart();
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			banner.setExitTime(CalendarCalculator.getTimeStamp());
+			banner.setIsActive("D");
+			session.update(banner);
+			transaction.commit();
+			session.close();
+			Loggers.loggerEnd();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
