@@ -90,10 +90,7 @@ public class HolidayDaoImpl implements HolidayDao {
 		Loggers.loggerStart();
 		
 		try {
-			
-			
-           Calendar calendar=Calendar.getInstance();
-			
+			Calendar calendar=Calendar.getInstance();
 			calendar.setTime(holiday.getHolidayDate());
 			calendar.set(Calendar.MILLISECOND, 0);
 			calendar.set(Calendar.SECOND, 0);
@@ -199,7 +196,7 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 		
 		Holiday holidayList=null;
 		try {
-Calendar calendar=Calendar.getInstance();
+			Calendar calendar=Calendar.getInstance();
 			
 			calendar.setTime(holiday.getHolidayDate());
 			calendar.set(Calendar.MILLISECOND, 0);

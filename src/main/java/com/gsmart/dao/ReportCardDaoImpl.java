@@ -1,7 +1,10 @@
 package com.gsmart.dao;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -34,7 +37,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	Session session = null;
 	Query query;
 	Transaction tranction = null;
-	InputStream in = null;
 
 	public void getConnection() {
 		session = sessionFactroy.openSession();
@@ -210,26 +212,17 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		getConnection();
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
-		Hierarchy hierarchy= tokenDetail.getHierarchy();
+		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		try {
-			
-
-			/*query = session.createQuery(
-					"from ReportCard where reportingManagerId=:reportingManagerId or smartId=:smartId and isActive='Y'");
+			getConnection();
+			String role = tokenDetail.getRole();
+			String smartId = tokenDetail.getSmartId();
+			query = session.createQuery(
+					"from ReportCard where reportingManagerId=:reportingManagerId or smartId=:smartId and isActive='Y' and hid=:hierarchy");
 			query.setParameter("reportingManagerId", smartId);
-			query.setParameter("smartId", smartId);*/
-			String role=tokenDetail.getRole();
-			String smartId=tokenDetail.getSmartId();
-			if(role.equalsIgnoreCase("Principal")|role.equalsIgnoreCase("admin")|role.equalsIgnoreCase("owner")){
-			query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y' and hierarchy:hierarchy ");
+			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			list = query.list();
-			}
-			else if (role.equalsIgnoreCase("HOD")) {
-				query=session.createQuery("select sum(maxMarks),sum(marksObtained) from ReportCard where isActive='Y' and hierarchy:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-				list = query.list();
-			}
 			System.out.println("Serch based on smartid..." + list);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -241,19 +234,16 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 
 	@Override
-	public List<ReportCard> search(String subject, int standard) throws GSmartDatabaseException {
+	public ArrayList<ReportCard> reportCardBasedOnAcademicYear(String academicYear) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
-		List<ReportCard> list = null;
+		ArrayList<ReportCard> list = null;
 		try {
 			
 
-			query = session.createQuery("from ReportCard where marksObtained = (Select max(marksObtained) "
-					+ "from ReportCard where subject=:subject and isActive='Y' and standard=:standard)");
-			query.setParameter("subject", subject);
-			query.setParameter("standard", standard);
-			list = query.list();
-			System.out.println("list on max marks" + list);
+			query = session.createQuery("from ReportCard where academicYear=:academicYear and isActive='Y')");
+			query.setParameter("academicYear", academicYear);
+			list = (ArrayList<ReportCard>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -265,51 +255,108 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public void excelToDB(String smartId, MultipartFile fileUpload) throws Exception {
-		getConnection();
+		InputStream in = null;
 		XSSFWorkbook workBook = null;
 		XSSFSheet sheet = null;
+		FileInputStream file = null;
+		Loggers.loggerStart(smartId);
 		try {
+			/*
+			 * file = new FileInputStream(new
+			 * File("/home/gtpl/Desktop/Report_Card.xlsx"));
+			 * Loggers.loggerStart(file);
+			 * 
+			 * XSSFWorkbook workbook = new XSSFWorkbook(file);
+			 * System.out.println("11111111111"); XSSFSheet sheet =
+			 * workbook.getSheetAt(0); System.out.println("222222222222");
+			 * 
+			 * // FormulaEvaluator //
+			 * fe=workBook.getCreationHelper().createFormulaEvaluator(); XSSFRow
+			 * row = null; getConnection(); System.out.println("hi>>>>." +
+			 * sheet.getLastRowNum());
+			 */
 			in = fileUpload.getInputStream();
 			workBook = new XSSFWorkbook(in);
 			sheet = workBook.getSheetAt(0);
 			XSSFRow row = null;
+			getConnection();
+			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+				System.out.println("in side for loop");
 			
-			for (int i = 1; i < sheet.getLastRowNum(); i++) {
 				row = sheet.getRow(i);
+				// System.out.println("row"+row);
 				ReportCard reportCard = new ReportCard();
-				reportCard.setSmartId(smartId);
+				// reportCard.setSmartId(smartId);
+				System.out.println("row" + reportCard);
 				reportCard.setEntryTime(CalendarCalculator.getTimeStamp());
+				System.out.println("EntryTime" + reportCard);
 				reportCard.setIsActive("Y");
+				System.out.println("setIsActive" + reportCard);
 				reportCard.setSmartId(row.getCell(0).getStringCellValue());
+				System.out.println("setSmartId  >>>" + row.getCell(0).getStringCellValue());
+
 				reportCard.setStudentName(row.getCell(1).getStringCellValue());
-				reportCard.setStandard(row.getCell(2).getStringCellValue());
+				System.out.println("setStudentName  " + row.getCell(1).getStringCellValue());
+				try {
+
+					String std = Integer.toString((int) row.getCell(2).getNumericCellValue());
+					System.out.println("Stsnsdard.........." + std);
+					reportCard.setStandard(std);
+					System.out.println("in try block");
+
+				} catch (Exception e) {
+					System.out.println("in catch block");
+					reportCard.setStandard(row.getCell(2).getStringCellValue());
+				}
+
 				reportCard.setSection(row.getCell(3).getStringCellValue());
+				System.out.println("setSection  " + row.getCell(3).getStringCellValue());
+
 				reportCard.setSubject(row.getCell(4).getStringCellValue());
+				System.out.println("setSubject  " + row.getCell(4).getStringCellValue());
+
 				reportCard.setTeacherName(row.getCell(5).getStringCellValue());
+				System.out.println("setTeacherName  " + reportCard);
+
 				reportCard.setReportingManagerId(row.getCell(6).getStringCellValue());
+				System.out.println("setReportingManagerId  " + row.getCell(6).getStringCellValue());
+
 				reportCard.setMaxMarks((int) row.getCell(7).getNumericCellValue());
+				System.out.println("setMaxMarks  " + row.getCell(7).getNumericCellValue());
+
 				reportCard.setMinMarks((int) row.getCell(8).getNumericCellValue());
+				System.out.println("setMinMarks" + row.getCell(8).getNumericCellValue());
+
 				reportCard.setMarksObtained((int) row.getCell(9).getNumericCellValue());
+				System.out.println("setMarksObtained" + row.getCell(9).getNumericCellValue());
+
 				reportCard.setSubjectGrade(row.getCell(10).getStringCellValue());
+				System.out.println("setSubjectGrade" + row.getCell(10).getStringCellValue());
+
 				reportCard.setTotalGrade(row.getCell(11).getStringCellValue());
-				
-				
-				
-			
-				
-				
-				
+				System.out.println("setTotalGrade" + row.getCell(11).getStringCellValue());
 
 				session.merge(reportCard);
+				System.out.println("dane");
 			}
-			tranction.commit();
 
+			/*
+			 * for(Row row:sheet){ for(Cell cell:row){
+			 * switch(fe.evaluateInCell(cell).getCellType()){ case
+			 * Cell.CELL_TYPE_NUMERIC:
+			 * System.out.println(cell.getNumericCellValue()+"\t\t"); break;
+			 * case Cell.CELL_TYPE_STRING:
+			 * System.out.println(cell.getStringCellValue()+"\t\t"); break; } }
+			 * }
+			 */
+			tranction.commit();
+			Loggers.loggerEnd();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			workBook.close();
-			in.close();
-			session.close();
+			/*
+			 * workbook.close(); file.close(); session.close();
+			 */
 		}
 	}
 

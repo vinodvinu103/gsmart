@@ -68,7 +68,7 @@ public class GetAuthorization {
 				Loggers.loggerValue("Token: ", token);
 				Loggers.loggerValue("Module: ", module);
 				rolePermission = getPermission(token, module);
-				httpSession.setAttribute("permissions", rolePermission);
+				httpSession.setAttribute("rolePermissions", rolePermission);
 				httpSession.setAttribute("hierarchy", token);
 			Loggers.loggerEnd(rolePermission.getAdd());
 			return rolePermission.getAdd();
@@ -78,6 +78,7 @@ public class GetAuthorization {
 			Loggers.loggerEnd(false);
 			return false;
 		}
+		
 		return rolePermission.getAdd();
 	
 	}
@@ -138,12 +139,11 @@ public class GetAuthorization {
 		session.beginTransaction();
 		query = session.createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName) and isActive=:isActive");
 		query.setParameter("role", token.getRole());
-		
 		query.setParameter("moduleName", module);
 		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
-		
 		Loggers.loggerEnd(permissions);
+		return permissions;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
