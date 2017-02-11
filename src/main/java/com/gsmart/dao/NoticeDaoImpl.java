@@ -43,9 +43,9 @@ public class NoticeDaoImpl implements NoticeDao {
 	
 	@Override
 	public void addNotice(Notice notice,Token token){
+		getConnection();
 		Loggers.loggerStart();
 	
-		getConnection();
 		try{
 			notice.setSmart_id(token.getSmartId());
 			notice.setRole(token.getRole());
@@ -65,8 +65,9 @@ public class NoticeDaoImpl implements NoticeDao {
 
 	@Override
 	public List<Notice> viewNotice(ArrayList<String> smartIdList) {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try{
 			query=session.createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) and type='Specific' ORDER BY entryTime desc");
 			query.setParameterList("smartIdList", smartIdList);
@@ -91,9 +92,12 @@ public class NoticeDaoImpl implements NoticeDao {
 	}
 	
 	@Override
+
 	public List<Notice> viewMyNotice(String smartId) {
 		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try{
 			Loggers.loggerStart(smartId);
 			query=session.createQuery("from Notice where is_active='Y' and smartId=:smartId ORDER BY entryTime desc");
@@ -136,9 +140,10 @@ public class NoticeDaoImpl implements NoticeDao {
 	@Override
 	public Notice editNotice(Notice notice)throws GSmartBaseException{
 	
+		getConnection();
 		try{
 			Loggers.loggerStart();
-			getConnection();
+			
 			Notice oldNotice = getNotice(notice.getEntry_time());
 			oldNotice.setUpdate_time(CalendarCalculator.getTimeStamp());
 			oldNotice.setIs_active("N");
@@ -168,8 +173,7 @@ public class NoticeDaoImpl implements NoticeDao {
 	
 	public Notice getNotice(String entryTime){
       try{
-    	  session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
+    	  
 			query = session.createQuery("from Notice where isActive='Y' and entryTime='" + entryTime + "' ORDER BY entryTime desc");
 			@SuppressWarnings("unchecked")
 			ArrayList<Notice> viewNotice = (ArrayList<Notice>) query.list();
@@ -185,6 +189,8 @@ public class NoticeDaoImpl implements NoticeDao {
 	public List<Notice> viewGenericNotice(String type) {
 		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try{
 			
 			query=session.createQuery("from Notice where is_active='Y' and type='Generic' ORDER BY entryTime desc");
@@ -229,7 +235,7 @@ public class NoticeDaoImpl implements NoticeDao {
 		try {
 	
 			Loggers.loggerStart("current smartId"+smartId);
-			getConnection();
+			
 			if (role.toLowerCase().equals("student")) {
 				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"+smartId.substring(0,2)+"%'");
 			} else {
@@ -272,10 +278,10 @@ public class NoticeDaoImpl implements NoticeDao {
 
 
 public Profile getProfileDetails(String smartId) {
-
+	getConnection();
 	Loggers.loggerStart(smartId);
 	Profile profilelist = null;
-	   getConnection();
+	   
 	try {
 		
 		query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
@@ -301,12 +307,13 @@ public Profile getProfileDetails(String smartId) {
      @SuppressWarnings("unchecked")
      @Override
           public List<Profile> getAllRecord() {
-	         Loggers.loggerStart();
+    		getConnection();   
+    	 Loggers.loggerStart();
 	
 	     List<Profile> profile = null;
 	
 	       try {
-	       	getConnection();
+	       
 	        	query = session.createQuery("from Profile where isActive like('Y')");
 	 	
      		profile = (List<Profile>) query.list();
@@ -314,6 +321,9 @@ public Profile getProfileDetails(String smartId) {
 	    	e.printStackTrace();
 	     	return null;
 	} 
+	       finally {
+			session.close();
+		}
 	
 	   Loggers.loggerEnd("profile fetched from DB");
      	return profile;

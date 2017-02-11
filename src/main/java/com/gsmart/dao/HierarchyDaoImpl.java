@@ -119,10 +119,14 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			transaction.commit();
 			status = true;
 		} catch (ConstraintViolationException e) {
+			
 			status = false;
+			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
+			
 			status = false;
+			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 			session.close();
@@ -141,6 +145,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	@Override
 	public Hierarchy editHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart(hierarchy);
 		Hierarchy ch = null;
 
@@ -153,12 +158,14 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
+		}finally {
+			session.close();
 		}
 
 	}
 
 	private Hierarchy updateHierarchy(Hierarchy oldHierarchy, Hierarchy hierarchy) throws GSmartDatabaseException {
-		getConnection();
+		
 		Hierarchy ch = null;
 		try {
 			Hierarchy hierarchy1 = fetch(hierarchy);
@@ -167,6 +174,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 				oldHierarchy.setIsActive("N");
 				session.update(oldHierarchy);
 
+				
 				transaction.commit();
 				return oldHierarchy;
 
@@ -175,8 +183,6 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
 		}
 		return ch;
 
@@ -185,8 +191,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@SuppressWarnings("unchecked")
 	public Hierarchy getHierarchy(String entryTime) {
 		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
+			
 			query = session.createQuery("from Hierarchy where IS_ACTIVE='Y' and ENTRY_TIME='" + entryTime + "'");
 			ArrayList<Hierarchy> hierarchyList = (ArrayList<Hierarchy>) query.list();
 			transaction.commit();
@@ -229,7 +234,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	}
 
 	public Hierarchy fetch(Hierarchy hierarchy) {
-	getConnection();
+	
 	Hierarchy hierarchyList=null;
 	try {
 		query = session.createQuery(
@@ -241,8 +246,6 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	}catch (Exception e) {
 
 		e.printStackTrace();
-	}finally {
-		session.close();
 	}
 		return hierarchyList; 
 

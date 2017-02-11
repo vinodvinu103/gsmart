@@ -36,9 +36,10 @@ public class MyTeamLeaveDaoImpl  implements MyTeamLeaveDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Leave> getLeavelist(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
+		getConnection();
 		Loggers.loggerStart();
 		List<Leave> leavelist=null;
-		getConnection();
+		
 		try {
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
