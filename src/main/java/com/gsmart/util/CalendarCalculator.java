@@ -7,9 +7,15 @@ import java.util.Date;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gsmart.services.LoginServices;
 
 public class CalendarCalculator implements Job {
-
+	
+	@Autowired
+	LoginServices loginServices;
+	
 	public static String getTimeStamp() {
 		try {
 			Date a = new Date();
@@ -26,8 +32,8 @@ public class CalendarCalculator implements Job {
 	
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-				
-				System.out.println("Hello Quartz!");	
+				loginServices.unlockAccounts();
+				System.out.println("Hello user u can log in now ..........!");	
 				
 			}
 

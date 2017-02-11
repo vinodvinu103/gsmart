@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
+import com.gsmart.util.CronJob;
 import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -50,7 +52,15 @@ public class LoginDaoImpl implements LoginDao {
 				{
 					Loggers.loggerEnd(2);
 					authMap.put("status", 2);
-				} else if ((Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword()))
+					
+				}else if (!(Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword()))
+						&& login.getAttempt() >= 4) {
+					Loggers.loggerEnd(2);
+					authMap.put("status", 2);
+					
+				} 
+				
+				else if ((Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword()))
 						&& login.getAttempt() <= 4) {
 					if (login.getAttempt() > 0)
 						resetAttempt(login);
@@ -68,6 +78,7 @@ public class LoginDaoImpl implements LoginDao {
 				Loggers.loggerEnd(1);
 				authMap.put("status", 1);
 			}
+			
 			return authMap;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -116,5 +127,27 @@ public class LoginDaoImpl implements LoginDao {
 		}
 		return list;
 	}
+	
+	public void unlockAccounts() {
+		getConnection();
+		List<Login> list = null;
+		try {
+			query = session.createQuery("from Login where attempt >= 4");
+			list = query.list();
+			if (list != null && list.size() > 0) {
+				for (Login login : list) {
+					Long lockedTime = new Date(login.getUpdatedTime()).getTime() / 1000;
+					Long currentTime = new Date().getTime() / 1000;
+					if ((currentTime - lockedTime) > 86400) {
+						resetAttempt(login);
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 }

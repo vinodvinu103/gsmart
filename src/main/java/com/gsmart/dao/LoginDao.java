@@ -12,4 +12,6 @@ public interface LoginDao {
 	public Map<String, Object> authenticate(Login login) throws GSmartDatabaseException;
 	
 	public List<Profile> getAllRecord();
+
+	void unlockAccounts();
 }

@@ -128,4 +128,10 @@ public class LoginServicesImpl implements LoginServices {
 		return tokenService.getToken(tokenNumber);
 	}
 
+	@Override
+	public void unlockAccounts() {
+		loginDao.unlockAccounts();
+		
+	}
+
 }
