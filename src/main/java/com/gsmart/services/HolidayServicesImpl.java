@@ -77,16 +77,19 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 	 * @throws GSmartServiceException
 	 */
 	@Override
-	public void editHoliday(Holiday holiday) throws GSmartServiceException {
+	public Holiday editHoliday(Holiday holiday) throws GSmartServiceException {
 		Loggers.loggerStart();
+		Holiday ch=null;
 		try {
-			holidayDao.editHoliday(holiday);
+			ch=holidayDao.editHoliday(holiday);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		}
 		Loggers.loggerEnd();
+		return ch;
+		
 	}
 	/**
 	 * calls {@link HolidayDao}'s <code>deleteHoliday(...)</code> method

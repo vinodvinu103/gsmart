@@ -30,10 +30,11 @@ public class LeaveDaoImpl implements LeaveDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<Leave> getLeaveList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart(role);
 		
 		System.out.println("vgyhuhuygy");
-		getConnection();
+		
 		List<Leave> leave = null;
 		try {
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -47,14 +48,17 @@ public class LeaveDaoImpl implements LeaveDao {
 
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 		return leave;
 	}
 
 	public CompoundLeave addLeave(Leave leave,Integer noOfdays) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		CompoundLeave cl = null;
 		try {
 			Hierarchy hierarchy=leave.getHierarchy();
@@ -105,9 +109,10 @@ public class LeaveDaoImpl implements LeaveDao {
 
 	@Override
 	public void editLeave(Leave leave) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		try {
-			getConnection();
+			
 			Leave oldLeave = getLeave(leave.getEntryTime(),leave.getHierarchy());
 			oldLeave.setIsActive("N");
 			oldLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -116,7 +121,6 @@ public class LeaveDaoImpl implements LeaveDao {
 			leave.setEntryTime(CalendarCalculator.getTimeStamp());
 			session.save(leave);
 			session.getTransaction().commit();
-			session.close();
 		}
 		catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -124,6 +128,8 @@ public class LeaveDaoImpl implements LeaveDao {
 		} catch (Exception e) {
 			//throw new GSmartDatabaseException(e.getMessage());
 			Loggers.loggerException(e.getMessage());
+		}finally {
+			session.close();
 		}
 	}
 
@@ -146,9 +152,10 @@ public class LeaveDaoImpl implements LeaveDao {
 	}
 	@Override
 	public void deleteLeave( Leave leave ) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart(leave);
 		try {
-			getConnection();
+			
 			leave.setIsActive("D");
 			leave.setLeaveStatus("Cancelled");
 			leave.setExitTime(CalendarCalculator.getTimeStamp());

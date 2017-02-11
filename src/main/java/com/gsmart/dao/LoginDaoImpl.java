@@ -30,10 +30,10 @@ public class LoginDaoImpl implements LoginDao {
 
 	@Override
 	public Map<String, Object> authenticate(Login loginDetails) throws GSmartDatabaseException {
-		
+		getConnection();
 		Map<String, Object> authMap = new HashMap<>();
 		Loggers.loggerStart();
-		getConnection();
+		
 		try {
 			
 			int attempt = 0;
@@ -113,6 +113,8 @@ public class LoginDaoImpl implements LoginDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		return list;
 	}

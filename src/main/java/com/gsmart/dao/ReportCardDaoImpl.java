@@ -43,11 +43,12 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public List<ReportCard> reportCardList() throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		List<ReportCard> cards = null;
 		try {
 
-			getConnection();
+			
 			query = session.createQuery("from ReportCard where isActive='Y'");
 			cards = query.list();
 			Loggers.loggerEnd(cards);
@@ -62,10 +63,11 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public CompoundReportCard addReportCard(ReportCard card) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart(card);
 		CompoundReportCard card2 = null;
 		try {
-			getConnection();
+			
 			ReportCard card3 = fetch1(card);
 			if (card3 == null) {
 				card.setEntryTime(CalendarCalculator.getTimeStamp());
@@ -167,9 +169,10 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public void deleteReportCard(ReportCard card) throws GSmartDatabaseException {
+		getConnection();
 		try {
 			Loggers.loggerStart();
-			getConnection();
+			
 			card.setExitTime(CalendarCalculator.getTimeStamp());
 			card.setIsActive("D");
 			session.update(card);
@@ -178,20 +181,25 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 	}
 
 	public ReportCard getCard(String entryTime) {
+		getConnection();
 		Loggers.loggerStart(entryTime);
 		ReportCard reportCard = null;
 		try {
-			getConnection();
+			
 			query = session.createQuery("from ReportCard where entryTime=:entryTime and isActive=:isActive");
 			query.setParameter("entryTime", entryTime);
 			query.setParameter("isActive", "Y");
 			reportCard = (ReportCard) query.uniqueResult();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		return reportCard;
 
@@ -199,11 +207,12 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public List<ReportCard> search(Token tokenDetail) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
 		Hierarchy hierarchy= tokenDetail.getHierarchy();
 		try {
-			getConnection();
+			
 
 			/*query = session.createQuery(
 					"from ReportCard where reportingManagerId=:reportingManagerId or smartId=:smartId and isActive='Y'");
@@ -224,6 +233,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			System.out.println("Serch based on smartid..." + list);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 		return list;
@@ -231,10 +242,11 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public List<ReportCard> search(String subject, int standard) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
 		try {
-			getConnection();
+			
 
 			query = session.createQuery("from ReportCard where marksObtained = (Select max(marksObtained) "
 					+ "from ReportCard where subject=:subject and isActive='Y' and standard=:standard)");
@@ -244,6 +256,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			System.out.println("list on max marks" + list);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 		return list;
@@ -251,6 +265,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public void excelToDB(String smartId, MultipartFile fileUpload) throws Exception {
+		getConnection();
 		XSSFWorkbook workBook = null;
 		XSSFSheet sheet = null;
 		try {
@@ -258,7 +273,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			workBook = new XSSFWorkbook(in);
 			sheet = workBook.getSheetAt(0);
 			XSSFRow row = null;
-			getConnection();
+			
 			for (int i = 1; i < sheet.getLastRowNum(); i++) {
 				row = sheet.getRow(i);
 				ReportCard reportCard = new ReportCard();
