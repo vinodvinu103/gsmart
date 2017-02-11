@@ -69,13 +69,8 @@ public class BandController {
 
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
-<<<<<<< HEAD
-//		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-//		str.length();
-=======
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	    str.length();
->>>>>>> 3a98016cf37ac4b3ed1601050c3f3421cdbc98ea
 
 		List<Band> bandList = null;
        
