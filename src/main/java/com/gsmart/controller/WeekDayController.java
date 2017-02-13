@@ -65,7 +65,7 @@ public class WeekDayController {
 		 weekDays.setInstitution(profileinfo.getInstitution());
 		 weekDays.setSchool(profileinfo.getSchool());
 		 
-		System.out.println("weekdays info>>>>>>"+weekDays);
+		System.out.println("weekdays info display>>>>>>"+weekDays);
 		
 		
 		IAMResponse rsp = null;
