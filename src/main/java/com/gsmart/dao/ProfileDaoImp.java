@@ -513,7 +513,7 @@ public class ProfileDaoImp implements ProfileDao {
 		List<Banners> bannerlist = null;
 		try {
 			getConnection();
-			Query query = session.createQuery("FROM Banners WHERE isActive='Y'");
+			Query query = session.createQuery("FROM Banners WHERE isActive='Y' ORDER BY entryTime desc");
 			bannerlist = query.list();
 
 		} catch (Exception e) {
@@ -591,7 +591,7 @@ public class ProfileDaoImp implements ProfileDao {
 			
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			query = session.createQuery("from Banners where isActive='Y' and entryTime='" + entryTime + "'");
+			query = session.createQuery("from Banners where isActive='Y'  ORDER BY entryTime desc");
 			banners=(Banners) query.uniqueResult();
 			Loggers.loggerEnd(banners);
 			return banners;
