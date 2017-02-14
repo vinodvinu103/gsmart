@@ -234,8 +234,8 @@ public class FeeController {
 		return new ResponseEntity<Map<String,Object>>(responseMap, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/paidfee", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getPaidStudentsList(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value = "/paidfee/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getPaidStudentsList(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -243,13 +243,13 @@ public class FeeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		List<Fee> PaidStudentsList = null;
+		Map<String, Object> PaidStudentsList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);
 		if (modulePermission != null) {
-			PaidStudentsList = feeServices.getPaidStudentsList(tokenObj.getRole(),tokenObj.getHierarchy());
+			PaidStudentsList = feeServices.getPaidStudentsList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 			permission.put("PaidStudentsList", PaidStudentsList);
 
 			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
@@ -314,8 +314,8 @@ public class FeeController {
 		
 	
 		
-	@RequestMapping(value = "/unpaidfee", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getUnPaidStudentsList(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value = "/unpaidfee/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getUnPaidStudentsList(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 	Loggers.loggerStart();
@@ -323,13 +323,13 @@ public class FeeController {
 	String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	str.length();
 
-	List<Fee> unPaidStudentsList = null;
+	Map<String, Object> unPaidStudentsList = null;
 	RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 	Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 	Map<String, Object> permission = new HashMap<>();
 	permission.put("modulePermission", modulePermission);
 	if (modulePermission != null) {
-		unPaidStudentsList = feeServices.getUnpaidStudentsList(tokenObj.getRole(),tokenObj.getHierarchy());
+		unPaidStudentsList = feeServices.getUnpaidStudentsList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 		permission.put("unPaidStudentsList", unPaidStudentsList);
 
 		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);

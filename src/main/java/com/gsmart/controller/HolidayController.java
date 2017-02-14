@@ -60,8 +60,8 @@ public class HolidayController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> getHoliday(@RequestHeader HttpHeaders token,
+	@RequestMapping(value = "/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> getHoliday(@PathVariable("min") Integer min,@PathVariable("max") Integer max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
@@ -71,14 +71,14 @@ public class HolidayController {
 
 		str.length();
 
-		List<Holiday> holidayList = null;
+		Map<String, Object> holidayList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);
 
 		if (modulePermission!= null) {
-			holidayList = holidayServices.getHolidayList(tokenObj.getRole(),tokenObj.getHierarchy());
+			holidayList = holidayServices.getHolidayList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 
 			permission.put("holidayList", holidayList);
 			Loggers.loggerEnd(holidayList);
@@ -99,7 +99,7 @@ public class HolidayController {
 	 * @see IAMResponse
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addHoliday(@RequestBody Holiday holiday, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<IAMResponse> addHoliday(@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestBody Holiday holiday, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		
 		Loggers.loggerStart(holiday);
 		IAMResponse resp = new IAMResponse();
@@ -113,7 +113,7 @@ public class HolidayController {
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			
 			holiday.setHierarchy(tokenObj.getHierarchy());
-		CompoundHoliday ch = holidayServices.addHoliday(holiday);
+		CompoundHoliday ch = holidayServices.addHoliday(holiday, min, max);
 		
 		if(ch!=null)
 			resp.setMessage("success");

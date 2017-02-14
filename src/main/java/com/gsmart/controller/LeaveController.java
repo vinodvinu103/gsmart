@@ -40,8 +40,8 @@ public class LeaveController {
 	@Autowired
 	TokenService tokenService;
 	
-	@RequestMapping( method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> getLeave(@RequestHeader HttpHeaders token,
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> getLeave(@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
@@ -51,14 +51,14 @@ public class LeaveController {
 
 		str.length();
 		
-		List<Leave> leaveList = null;
+		Map<String, Object> leaveList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> leave = new HashMap<>();
 		leave.put("modulePermission", modulePermission);
 					
 		if (modulePermission!= null) {
-			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy());
+			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 
 			leave.put("leaveList", leaveList);
 			Loggers.loggerEnd(leaveList);
@@ -70,8 +70,8 @@ public class LeaveController {
 	}
 		
 		
-	@RequestMapping( method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addLeave(@RequestBody Leave leave, Integer noOfdays, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.POST)
+	public ResponseEntity<IAMResponse> addLeave(@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestBody Leave leave, Integer noOfdays, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
 		IAMResponse resp=new IAMResponse();
@@ -85,7 +85,7 @@ public class LeaveController {
 			
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			leave.setHierarchy(tokenObj.getHierarchy());
-			CompoundLeave cl=leaveServices.addLeave(leave,noOfdays,tokenObj.getRole(),tokenObj.getHierarchy());
+			CompoundLeave cl=leaveServices.addLeave(leave,noOfdays,tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 			if(cl!=null)
 			resp.setMessage("success");
 		else

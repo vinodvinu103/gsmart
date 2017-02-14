@@ -60,14 +60,14 @@ public class FeeMasterController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getFee(@RequestHeader HttpHeaders token, HttpSession httpSession ) throws GSmartBaseException {
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getFee(@PathVariable("min") int min, @PathVariable("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession ) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber=token.get("Authorization").get(0);
 		
 		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		List<FeeMaster> feeList = null;
+		Map<String, Object> feeList = null;
 		
 		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
@@ -76,7 +76,7 @@ public class FeeMasterController {
 		
 		if(modulePermission!=null)
 		{
-			feeList = feeMasterServices.getFeeList(tokenObj.getRole(),tokenObj.getHierarchy());
+			feeList = feeMasterServices.getFeeList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 			Loggers.loggerValue("feeList", feeList);
 			permissions.put("feeList", feeList);
 			Loggers.loggerValue("feeList", permissions);

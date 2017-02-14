@@ -64,15 +64,15 @@ public class HierarchyController {
 
 	/* String name=Loggers.moduleName(); */
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getHierarchy(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		List<Hierarchy> hierarchyList = null;
+		Map<String, Object> hierarchyList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
@@ -80,7 +80,7 @@ public class HierarchyController {
 		permission.put("modulePermission", modulePermission);
 
 //		if (modulePermission != null) {
-			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(),tokenObj.getHierarchy());
+			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 			permission.put("hierarchyList", hierarchyList);
 			Loggers.loggerEnd(hierarchyList);
 			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);

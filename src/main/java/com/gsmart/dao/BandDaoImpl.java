@@ -1,12 +1,17 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -35,6 +40,7 @@ public class BandDaoImpl implements BandDao {
 	Session session = null;
 	Transaction transaction = null;
 	Query query;
+	Criteria criteria = null;
 
 	/**
 	 * to view the list of records available in {@link Band} table
@@ -43,23 +49,28 @@ public class BandDaoImpl implements BandDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Band> getBandList() throws GSmartDatabaseException {
+	public Map<String, Object> getBandList(int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		List<Band> bandList;
+		Map<String, Object> bandMap = new HashMap<String, Object>();
 		try {
 			getConnection();
-
-			query = session.createQuery("from Band where isActive='Y'");
-			bandList = query.list();
-
+			criteria = session.createCriteria(Band.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.setFirstResult(min);
+			criteria.setMaxResults(max);
+			criteria.setProjection(Projections.id());
+			bandMap.put("bandList", criteria.list());
+			criteria = session.createCriteria(Band.class).add(Restrictions.eq("isActive", "Y"))
+					.setProjection(Projections.rowCount());
+			Long count = (Long) criteria.uniqueResult();
+			bandMap.put("totalBands", count);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
-
 			session.close();
 		}
 		Loggers.loggerEnd();
-		return bandList;
+		return bandMap;
 	}
 
 	/**
@@ -89,7 +100,7 @@ public class BandDaoImpl implements BandDao {
 				cb = (CompoundBand) session.save(band);
 				Loggers.loggerEnd(oldBand);
 			}
-            session.save(band);
+			session.save(band);
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -109,16 +120,16 @@ public class BandDaoImpl implements BandDao {
 	public Band editBand(Band band) throws GSmartDatabaseException {
 		try {
 			Loggers.loggerStart();
-		
-		    Band oldBand = getBand(band.getEntryTime());
+
+			Band oldBand = getBand(band.getEntryTime());
 			oldBand.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			oldBand.setIsActive("N");
 			updateBand(oldBand);
 
 			Loggers.loggerValue("Band", band);
 			addBand(band);
-	        //transaction.commit();
-			
+			// transaction.commit();
+
 		} catch (org.hibernate.exception.ConstraintViolationException e) {
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
@@ -130,7 +141,7 @@ public class BandDaoImpl implements BandDao {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 
-		//Loggers.loggerValue(oldBand.getUpdatedTime());
+		// Loggers.loggerValue(oldBand.getUpdatedTime());
 		session.update(oldBand);
 		transaction.commit();
 		session.close();
@@ -177,13 +188,13 @@ public class BandDaoImpl implements BandDao {
 
 	@Override
 	public Band getMaxband() throws GSmartDatabaseException {
-		Band band=null;
+		Band band = null;
 		try {
 			Loggers.loggerStart();
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			query=session.createQuery("FROM Band WHERE bandId IN (SELECT MIN(bandId) FROM Band where isActive='Y')");
-			band=(Band) query.list().get(0);
+			query = session.createQuery("FROM Band WHERE bandId IN (SELECT MIN(bandId) FROM Band where isActive='Y')");
+			band = (Band) query.list().get(0);
 			transaction.commit();
 			session.close();
 			Loggers.loggerEnd();

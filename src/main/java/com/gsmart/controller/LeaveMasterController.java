@@ -38,8 +38,8 @@ public class LeaveMasterController {
 	@Autowired
 	TokenService tokenService;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getleavemaster(@RequestHeader HttpHeaders token,
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getleavemaster(@PathVariable("min") Integer min, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
@@ -48,7 +48,7 @@ public class LeaveMasterController {
 
 		str.length();
 
-		List<LeaveMaster> leaveMasterList = null;
+		Map<String, Object> leaveMasterList = null;
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
@@ -58,7 +58,7 @@ public class LeaveMasterController {
 		leavemaster.put("modulePermission", modulePermission);
 
 		if (modulePermission != null) {
-			leaveMasterList = leaveMasterService.getLeaveMasterList(tokenObj.getRole(),tokenObj.getHierarchy());
+			leaveMasterList = leaveMasterService.getLeaveMasterList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 
 			leavemaster.put("leaveMasterList", leaveMasterList);
 			Loggers.loggerEnd(leaveMasterList);

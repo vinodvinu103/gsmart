@@ -63,16 +63,15 @@ public class BandController {
 	 */
 	// String module=getAuthorization.getModuleName();
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getBand(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
-
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		List<Band> bandList = null;
+		Map<String, Object> bandResponseMap = null;
        
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
@@ -81,11 +80,11 @@ public class BandController {
 		permissions.put("modulePermission",modulePermission);
 		if (modulePermission != null) {
 			System.out.println("success");
-			bandList = bandServices.getBandList();
+			bandResponseMap = bandServices.getBandList(min,max);
 			permissions.put("status", 200);
 			permissions.put("message", "success");
-			permissions.put("bandList",bandList);
-			Loggers.loggerEnd(bandList);
+			permissions.put("data",bandResponseMap);
+			Loggers.loggerEnd(bandResponseMap);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
