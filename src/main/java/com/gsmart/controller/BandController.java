@@ -69,7 +69,7 @@ public class BandController {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
+	    str.length();
 
 		Map<String, Object> bandResponseMap = null;
        
@@ -116,7 +116,7 @@ public class BandController {
 		CompoundBand cb=bandServices.addBand(band);
 		
 	        if(cb!=null)
-	        	  rsp=new IAMResponse("DATA IS SUCCESSFULLY SAVED.");
+	        	  rsp=new IAMResponse("success");
 		    else
 			      rsp=new IAMResponse("DATA IS ALREADY EXIST.");
 		    
@@ -140,6 +140,7 @@ public class BandController {
     public ResponseEntity<IAMResponse> editDeleteBand(@RequestBody Band band ,@PathVariable("task") String task,
     @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException{
 		Loggers.loggerStart(band);
+		Band cb=null;
 		IAMResponse myResponse=null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -148,9 +149,9 @@ public class BandController {
 
 		 if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){
-		    	bandServices.editBand(band);
-		    	if(band!=null)
-		    		myResponse =new IAMResponse("SUCCESS");
+		    	cb=bandServices.editBand(band);
+		    	if(cb!=null)
+		    		myResponse =new IAMResponse("success");
 		    	else
 		    		myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
 		    }

@@ -1,6 +1,8 @@
 package com.gsmart.dao;
 
 import java.util.HashMap;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -105,9 +107,10 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@Override
 	public CompoundHoliday addHoliday(Holiday holiday, int min, int max) throws GSmartDatabaseException {
+		getConnection();
 		CompoundHoliday ch = null;
 		Loggers.loggerStart();
-		getConnection();
+		
 		try {
 			Hierarchy hierarchy = holiday.getHierarchy();
 			query = session.createQuery(
@@ -116,12 +119,13 @@ public class HolidayDaoImpl implements HolidayDao {
 			query.setParameter("holidayDate", holiday.getHolidayDate());
 			query.setParameter("isActive", "Y");
 			Holiday holiday1 = (Holiday) query.uniqueResult();
-			if (holiday1 != null) {
+			if(holiday1 !=null){
 				return null;
 			}
 			holiday.setEntryTime(CalendarCalculator.getTimeStamp());
 			holiday.setIsActive("Y");
 			ch = (CompoundHoliday) session.save(holiday);
+			session.save(holiday);
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -140,14 +144,14 @@ public class HolidayDaoImpl implements HolidayDao {
 	 * 
 	 * @param holiday
 	 *            instance of {@link Holiday}
-	 * @return Nothing
+	 * @return 
 	 */
 	@Override
-	public void editHoliday(Holiday holiday) throws GSmartDatabaseException {
-		Loggers.loggerStart();
+	public Holiday editHoliday(Holiday holiday) throws GSmartDatabaseException {
 		getConnection();
+		Loggers.loggerStart();
+		Holiday ch=null;
 		try {
-
 			Holiday oldholiday = getHolidayLists(holiday.getEntryTime(), holiday.getHierarchy());
 			oldholiday.setIsActive("N");
 			oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -166,7 +170,12 @@ public class HolidayDaoImpl implements HolidayDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
-
+		/*finally {
+			session.close();
+		}*/
+		return ch;
+		
+		
 	}
 
 	public Holiday getHolidayLists(String entryTime, Hierarchy hierarchy) {
@@ -184,7 +193,31 @@ public class HolidayDaoImpl implements HolidayDao {
 			return null;
 		}
 	}
+	public Holiday fetch(Holiday holiday) {
+		
+		Holiday holidayList=null;
+		try {
+			Calendar calendar=Calendar.getInstance();
+			
+			calendar.setTime(holiday.getHolidayDate());
+			calendar.set(Calendar.MILLISECOND, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			Date holidayDate=calendar.getTime();
+			Hierarchy hierarchy=holiday.getHierarchy();
+			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			query.setParameter("holidayDate", holidayDate);
+			query.setParameter("isActive", "Y");
+		holidayList= (Holiday) query.uniqueResult();
+		}catch (Exception e) {
 
+			e.printStackTrace();
+		}
+			return holidayList; 
+
+		}
 	/**
 	 * removes the holiday entity from the database.
 	 * 
@@ -194,8 +227,9 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@Override
 	public void deleteHoliday(Holiday holiday) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 
 			holiday.setIsActive("D");

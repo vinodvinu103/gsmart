@@ -95,8 +95,9 @@ public class InventoryDaoImpl implements InventoryDao {
 	@Override
 	public CompoundInventory addInventory(Inventory inventory) throws GSmartDatabaseException {
 
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		CompoundInventory cb = null;
 	
 		try {
@@ -134,9 +135,10 @@ public class InventoryDaoImpl implements InventoryDao {
 	 */
 	@Override
 	public void editInventory(Inventory inventory) throws GSmartDatabaseException {
+		getconnection();
 		Loggers.loggerStart();
 		try {
-			getconnection();
+			
 			Inventory oldInvertory = getInventory(inventory.getEntryTime(),inventory.getHierarchy());
 			oldInvertory.setIsActive("N");
 			oldInvertory.setUpdateTime(CalendarCalculator.getTimeStamp());
@@ -145,13 +147,14 @@ public class InventoryDaoImpl implements InventoryDao {
 			inventory.setIsActive("Y");
 			session.save(inventory);
 			transaction.commit();
-			session.close();
 	
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
+		}finally {
+			session.close();
 		}
 	}
 
@@ -192,8 +195,9 @@ public class InventoryDaoImpl implements InventoryDao {
 	return holi.get(0);*/
 	@Override
 	public void deleteInventory(Inventory inventory) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		try {
 			
 

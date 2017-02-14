@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartDatabaseException;
@@ -44,5 +45,22 @@ public interface ProfileServices{
 	public List<Profile> addRfid(Profile rfid)throws GSmartServiceException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartServiceException;
+
+	public void addBanner(Banners banner) throws GSmartServiceException;
+
+	public List<Banners> getBannerList() throws GSmartServiceException;
+	/**
+	 * @param banner instanceOf {@link Bannners}
+	 * @return nothing 
+	 * @throws GSmartServiceException
+	 */
+	public Banners editBanner(Banners banner) throws GSmartServiceException;
+	
+	/**
+	 * @param banner instanceOf {@link Banners}
+	 * @return nothing
+	 * @throws GSmartServiceException
+	 */
+	public void deleteBanner(Banners banner)throws GSmartServiceException;
 
 }

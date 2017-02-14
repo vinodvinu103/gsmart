@@ -55,7 +55,6 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		List<FeeMaster> feeList = null;
 		Map<String, Object> feeMap = new HashMap<>();
 		Criteria criteria = null;
-
 		try {
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
 				query = session.createQuery("from FeeMaster where isActive='Y'");
@@ -93,8 +92,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	 */
 	@Override
 	public CompoundFeeMaster addFee(FeeMaster feeMaster) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		CompoundFeeMaster cfm = null;
 		try {
 			Hierarchy hierarchy=feeMaster.getHierarchy();
@@ -137,8 +137,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public void editFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 			Hierarchy hierarchy=feeMaster.getHierarchy();
 			FeeMaster oldFee = getFeeMas(feeMaster.getEntryTime(),hierarchy);

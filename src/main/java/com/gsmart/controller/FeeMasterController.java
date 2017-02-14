@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.FeeMasterServices;
@@ -108,6 +109,9 @@ public class FeeMasterController {
 		
 		if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			
+			feeMaster.setInstitution(tokenObj.getHierarchy().getInstitution());
+			feeMaster.setSchool(tokenObj.getHierarchy().getSchool());
 			feeMaster.setHierarchy(tokenObj.getHierarchy());
 		CompoundFeeMaster cf = feeMasterServices.addFee(feeMaster);
 		

@@ -9,7 +9,6 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.TokenService;
@@ -69,16 +68,17 @@ public class GetAuthorization {
 				Loggers.loggerValue("Token: ", token);
 				Loggers.loggerValue("Module: ", module);
 				rolePermission = getPermission(token, module);
-				httpSession.setAttribute("permissions", rolePermission);
+				httpSession.setAttribute("rolePermissions", rolePermission);
 				httpSession.setAttribute("hierarchy", token);
-			Loggers.loggerEnd(permissions.getAdd());
-			return permissions.getAdd();
+			Loggers.loggerEnd(rolePermission.getAdd());
+			return rolePermission.getAdd();
 			}
 		} catch(Exception e){
 			e.printStackTrace();
 			Loggers.loggerEnd(false);
 			return false;
 		}
+		
 		return rolePermission.getAdd();
 	
 	}
@@ -136,15 +136,14 @@ public class GetAuthorization {
 		RolePermission permissions=null;
 		try{
 		session = sessionFactory.openSession();
+		session.beginTransaction();
 		query = session.createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName) and isActive=:isActive");
 		query.setParameter("role", token.getRole());
-		
 		query.setParameter("moduleName", module);
 		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
-
-		
 		Loggers.loggerEnd(permissions);
+		return permissions;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -155,6 +154,7 @@ public class GetAuthorization {
 	public String getAuthentication(String tokenNumber, HttpSession httpSession){
 		
 		Loggers.loggerStart(tokenNumber);
+		System.out.println("session object"+httpSession.getAttribute("tokenNumber"));
 		if(tokenNumber.equals(httpSession.getAttribute("tokenNumber")))
 			return "Success";
 		else

@@ -6,8 +6,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -20,8 +18,15 @@ public class LeaveDetails {
 	@Column(name = "SMART_ID")
 	private String smartId;
 
+	@Id
 	@Column(name = "LEAVE_TYPE")
 	private String leaveType;
+	
+	@Column(name = "APPLIED_LEAVES")
+	private int appliedLeaves;
+
+	@Column(name = "LEFT_LEAVES")
+	private int leftLeaves;
 
 	public String getSmartId() {
 		return smartId;
@@ -54,13 +59,6 @@ public class LeaveDetails {
 	public void setLeftLeaves(int leftLeaves) {
 		this.leftLeaves = leftLeaves;
 	}
-
-	@Id
-	@Column(name = "APPLIED_LEAVES")
-	private int appliedLeaves;
-
-	@Column(name = "LEFT_LEAVES")
-	private int leftLeaves;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")

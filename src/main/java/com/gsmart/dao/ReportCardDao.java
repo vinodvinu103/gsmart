@@ -1,5 +1,6 @@
 package com.gsmart.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,6 @@ public interface ReportCardDao {
 	
 	public List<ReportCard> search(Token tokenDetail)throws GSmartDatabaseException;
 	
-	public List<ReportCard> search(String subject,int standard)throws GSmartDatabaseException;
+	public ArrayList<ReportCard> reportCardBasedOnAcademicYear(String academicYear)throws GSmartDatabaseException;
 	
 }

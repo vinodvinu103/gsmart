@@ -50,6 +50,7 @@ public class BandDaoImpl implements BandDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getBandList(int min, int max) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart();
 		Map<String, Object> bandMap = new HashMap<String, Object>();
 		try {
@@ -82,9 +83,10 @@ public class BandDaoImpl implements BandDao {
 	 */
 	@Override
 	public CompoundBand addBand(Band band) throws GSmartDatabaseException {
+		getConnection();
 		CompoundBand cb = null;
 		try {
-			getConnection();
+			
 
 			query = session.createQuery(
 					"FROM Band WHERE bandId=:bandId AND isActive=:isActive AND designation=:designation AND role=:role ");
@@ -98,7 +100,8 @@ public class BandDaoImpl implements BandDao {
 				band.setEntryTime(CalendarCalculator.getTimeStamp());
 				band.setIsActive("Y");
 				cb = (CompoundBand) session.save(band);
-				Loggers.loggerEnd(oldBand);
+				transaction.commit();
+				
 			}
 			session.save(band);
 			transaction.commit();
@@ -111,6 +114,7 @@ public class BandDaoImpl implements BandDao {
 		} finally {
 			session.close();
 		}
+		Loggers.loggerEnd();
 		return cb;
 	}
 
@@ -118,6 +122,9 @@ public class BandDaoImpl implements BandDao {
 
 	@Override
 	public Band editBand(Band band) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getConnection();
+		Band ch = null;
 		try {
 			Loggers.loggerStart();
 
@@ -134,50 +141,92 @@ public class BandDaoImpl implements BandDao {
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		return band;
+		return ch;
+		
+	}
+private Band updateBand(Band oldBand) throws GSmartDatabaseException {
+		
+		Band ch = null;
+		try {
+			Band band1 = fetch(oldBand);
+			if (band1 == null) {
+				oldBand.setUpdatedTime(CalendarCalculator.getTimeStamp());
+				oldBand.setIsActive("N");
+				session.update(oldBand);
+
+				
+				transaction.commit();
+				return oldBand;
+
+			}
+		} catch (ConstraintViolationException e) {
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Throwable e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+		return ch;
 	}
 
-	private void updateBand(Band oldBand) {
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
+//	private void updateBand(Band oldBand) {
+//		session = sessionFactory.openSession();
+//		transaction = session.beginTransaction();
+//
+//		//Loggers.loggerValue(oldBand.getUpdatedTime());
+//		session.update(oldBand);
+//		transaction.commit();
+//		session.close();
+//	}
 
-		// Loggers.loggerValue(oldBand.getUpdatedTime());
-		session.update(oldBand);
-		transaction.commit();
-		session.close();
-	}
-
+	@SuppressWarnings("unchecked")
 	public Band getBand(String entryTime) {
 		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
+			
 			query = session.createQuery("from Band where isActive='Y' and entryTime='" + entryTime + "'");
-			@SuppressWarnings("unchecked")
 			ArrayList<Band> bandList = (ArrayList<Band>) query.list();
-			transaction.commit();
-			session.close();
 			return bandList.get(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+	
+	public Band fetch(Band band) {
+		getConnection();
+		Loggers.loggerStart(band.getBandId());
+		Band bandList=null;
+		try {
+			query = session.createQuery(
+					"FROM Band WHERE bandId=:bandId AND designation=:designation and role=:role AND isActive=:isActive");
+			query.setParameter("bandId", band.getBandId());
+			query.setParameter("isActive", "Y");
+			query.setParameter("designation", band.getDesignation());
+			query.setParameter("role", band.getRole());
+			
+			bandList=(Band) query.uniqueResult();
+		}catch (Exception e) {
+
+			e.printStackTrace();
+		}
+			return bandList; 
+
+		}
 
 	/* DELETE DATA FROM THE DATABASE */
 	@Override
 	public void deleteBand(Band band) throws GSmartDatabaseException {
+		getConnection();
 		try {
 			Loggers.loggerStart();
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
+			
 			band.setExitTime(CalendarCalculator.getTimeStamp());
 			band.setIsActive("D");
 			session.update(band);
 			transaction.commit();
-			session.close();
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 	}
 
@@ -200,6 +249,8 @@ public class BandDaoImpl implements BandDao {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		return band;
 	}

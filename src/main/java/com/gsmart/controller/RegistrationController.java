@@ -196,7 +196,7 @@ public class RegistrationController {
 
 				login.setReferenceSmartId(Encrypt.md5(smartId));
 				login.setSmartId(smartId);
-				passwordServices.setPassword(login, tokenObj.getHierarchy());
+				passwordServices.setPassword(login, profile.getHierarchy());
 
 				if (profile.getRole().equalsIgnoreCase("student")) {
 					FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), tokenObj.getRole(),

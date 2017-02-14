@@ -33,7 +33,7 @@ public interface HolidayServices {
 	 * @return nothing
 	 * @throws GSmartServiceException
 	 */
-	public void editHoliday(Holiday holiday) throws GSmartServiceException;
+	public Holiday editHoliday(Holiday holiday) throws GSmartServiceException;
 	/**
 	 * @param holiday instanceOf {@link Holiday}
 	 * @return nothing

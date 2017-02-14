@@ -41,6 +41,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	@Override
 	public Map<String, Object> getInventoryAssignList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException 
 	{
+		getConnection();
 		Loggers.loggerStart();
 		List<InventoryAssignments> inventoryList=null;
 		Map<String, Object> inventoryassignMap = new HashMap<String, Object>();
@@ -81,8 +82,9 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	@Override
 	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException
 	{
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		InventoryAssignmentsCompoundKey ch = null;
 		try
 		{
@@ -144,8 +146,9 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	
 	private InventoryAssignments getInventory(String entryTime,Hierarchy hierarchy)throws GSmartDatabaseException
 	{
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try
 		{
 			
@@ -160,6 +163,8 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	
 			throw new GSmartDatabaseException(e.getMessage());
 			
+		}finally {
+			session.close();
 		}
 	
 	}
@@ -188,8 +193,9 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 	@Override
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException  
 	{
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		
 		try
 		{

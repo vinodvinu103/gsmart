@@ -79,16 +79,18 @@ public class BandServicesImpl implements BandServices {
 	 * @throws GSmartServiceException
 	 */
 	@Override
-	public void editBand(Band band) throws GSmartServiceException {
+	public Band editBand(Band band) throws GSmartServiceException {
 		Loggers.loggerStart();
+		Band cb=null;
 		try {
-			bandDao.editBand(band);
+			cb=	bandDao.editBand(band);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
 		Loggers.loggerEnd();
+		return cb;
 	}
 
 	/**

@@ -34,7 +34,7 @@ public interface BandServices {
 	 * @return nothing 
 	 * @throws GSmartServiceException
 	 */
-	public void editBand(Band band) throws GSmartServiceException;
+	public Band editBand(Band band) throws GSmartServiceException;
 	
 	/**
 	 * @param band instanceOf {@link Band}

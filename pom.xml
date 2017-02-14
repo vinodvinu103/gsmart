@@ -48,12 +48,11 @@
 			<artifactId>mail</artifactId>
 			<version>1.5.0-b01</version>
 		</dependency>
-
 		<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <version>9.4-1200-jdbc41</version>
-</dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.4-1200-jdbc41</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
@@ -106,9 +105,9 @@
 			<version>2.2.2</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.postgresql</groupId>
-		    <artifactId>postgresql</artifactId>
-		    <version>9.4.1212.jre7</version>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.4.1212.jre7</version>
 		</dependency>
 
 		<dependency>
@@ -146,6 +145,11 @@
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-common</artifactId>
 			<version>2.22.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.1.5</version>
 		</dependency>
 
 	</dependencies>

@@ -27,29 +27,42 @@ public class Leave {
 		this.smartId = smartId;
 	}
 	@Column(name="REPORTINGMANAGER_ID")
-	private String reportingManagerId;
+	private String reportingManagerId; 
+	
 	@Id
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
 	
 	@Column(name="START_DATE")
 	private Date startDate;
+	
 	@Column(name="END_DATE")
 	private Date endDate;
+	
 	@Column(name="NUMBER_OF_DAYS")
 	private int numberOfDays;
+	
 	@Column(name="DESCRIPTION")
 	private String description;
+	
 	@Column(name="LEAVE_TYPE")
 	private String leaveType;
+	
 	@Column(name="UPDATED_TIME")
 	private String updatedTime;
+	
 	@Column(name="IS_ACTIVE")
 	private String isActive;
+	
 	@Column(name="EXIT_TIME")
 	private String exitTime;
+	
 	@Column(name="LEAVE_STATUS")
 	private String leaveStatus;
+	
+	@Column(name="NAME")
+	private String fullName;
+	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
@@ -61,8 +74,6 @@ public class Leave {
 	public void setHierarchy(Hierarchy hierarchy) {
 		this.hierarchy = hierarchy;
 	}
-	
-	
 	
 	public String getReportingManagerId() {
 		return reportingManagerId;
@@ -130,13 +141,22 @@ public class Leave {
 	public void setLeaveStatus(String leaveStatus) {
 		this.leaveStatus = leaveStatus;
 	}
+	
+	public String getFullName() {
+		return fullName;
+	}
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
 	@Override
 	public String toString() {
-		return "Leave [empId=" + smartId + ", reportingManagerId=" + reportingManagerId + ", entryTime=" + entryTime
+		return "Leave [smartId=" + smartId + ", reportingManagerId=" + reportingManagerId + ", entryTime=" + entryTime
 				+ ", startDate=" + startDate + ", endDate=" + endDate + ", numberOfDays=" + numberOfDays
 				+ ", description=" + description + ", leaveType=" + leaveType + ", updatedTime=" + updatedTime
-				+ ", isActive=" + isActive + ", exitTime=" + exitTime + ", leaveStatus=" + leaveStatus + "]";
+				+ ", isActive=" + isActive + ", exitTime=" + exitTime + ", leaveStatus=" + leaveStatus + ", fullName="
+				+ fullName + ", hierarchy=" + hierarchy + "]";
 	}
+	
 	
 	
 	

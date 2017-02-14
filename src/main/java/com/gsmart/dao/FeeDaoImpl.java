@@ -42,6 +42,8 @@ public class FeeDaoImpl implements FeeDao{
 	public ArrayList<Fee> getFeeList(Fee fee, String role, Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		ArrayList<Fee> feeList;
 		try{
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -67,11 +69,19 @@ public class FeeDaoImpl implements FeeDao{
 	
 	@Override
 	public void addFee(Fee fee) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		try{
-			
-			fee.setEntryTime(CalendarCalculator.getTimeStamp());
+	
+			if(fee.getPaidFee()>0)
+			{
+				fee.setBalanceFee(fee.getBalanceFee()-fee.getPaidFee());
+			}else
+			{
+				fee.setBalanceFee(fee.getTotalFee());
+			}
+     		fee.setEntryTime(CalendarCalculator.getTimeStamp());
 			fee.setDate(CalendarCalculator.getTimeStamp());
 			Profile profile=getReportingManagerId(fee.getSmartId());
 			fee.setReportingManagerId(profile.getReportingManagerId());
@@ -108,8 +118,9 @@ public class FeeDaoImpl implements FeeDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Fee> getFeeLists(String academicYear,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		ArrayList<Fee> feeList=null;
 		try
 		{
@@ -138,8 +149,10 @@ public class FeeDaoImpl implements FeeDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Fee> gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException {
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		List<Fee> list=null;
+		try {
 		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 		{
 		query = session.createQuery("From Fee where isActive=:isActive");
@@ -148,8 +161,14 @@ public class FeeDaoImpl implements FeeDao{
 			query.setParameter("hierarchy", hierarchy.getHid());
 		}
 		query.setParameter("isActive", "Y");
-		List<Fee> list = query.list();
-		session.close();
+		list = query.list();
+		}catch (Exception e) {
+
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+	
 		Loggers.loggerEnd();
 		return list;
 	}
@@ -159,6 +178,7 @@ public class FeeDaoImpl implements FeeDao{
 	public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
 		List<Fee> paidStudentsList=null;
 		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
 		Criteria criteria = null;
@@ -189,6 +209,8 @@ public class FeeDaoImpl implements FeeDao{
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		paidfeeMap.put("paidStudentsList", paidStudentsList);
 		return paidfeeMap;
@@ -228,6 +250,8 @@ public class FeeDaoImpl implements FeeDao{
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		unpaidfeeMap.put("unpaidStudentsList", unpaidStudentsList);
 		return unpaidfeeMap;
@@ -238,7 +262,7 @@ public class FeeDaoImpl implements FeeDao{
 	public void editFee(Fee fee) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		try {
-			getconnection();
+			
 			Fee oldFee = getFee(fee.getEntryTime());
 			oldFee.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			oldFee.setIsActive("N");
@@ -269,12 +293,14 @@ public class FeeDaoImpl implements FeeDao{
 
 		public Fee getFee(String entryTime)
 		{
+			getconnection();
 			Loggers.loggerStart();
 			query = session.createQuery("from Fee where isActive=:isActive and entryTime =:entryTime");
 			query.setParameter("isActive", "Y");
 			query.setParameter("entryTime", entryTime);
 			Fee fee=(Fee) query.uniqueResult();
 
+			session.close();
 			Loggers.loggerValue("feeList", fee);
 			return fee;
 			
@@ -285,9 +311,10 @@ public class FeeDaoImpl implements FeeDao{
 
 	@Override
 	public void deleteFee(Fee fee) throws GSmartDatabaseException {
+		getconnection();
 		Loggers.loggerStart();
 		try {
-			getconnection();
+			
 			/*query = session.createQuery("update FeeMaster set IsActive=:IsActive, exittime=:exittime where entrytime = :entrytime");
 			query.setParameter("entrytime", feeMaster.getEntrytime());
 		
