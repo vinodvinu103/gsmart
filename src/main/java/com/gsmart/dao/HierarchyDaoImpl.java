@@ -21,18 +21,23 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Assign;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Inventory;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -65,10 +70,12 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Hierarchy> getHierarchyList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		List<Hierarchy> hierarchyList;
+		Map<String, Object> hierarchyMap = new HashMap<String, Object>();
+		Criteria criteria = null;
 		try {
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
@@ -77,8 +84,14 @@ public class HierarchyDaoImpl implements HierarchyDao {
 				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
 				query.setParameter("hid", hierarchy.getHid());
 			}
-			
-			hierarchyList = query.list();
+			criteria = session.createCriteria(Hierarchy.class);
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			hierarchyList = criteria.list();
+			Criteria criteriaCount = session.createCriteria(Hierarchy.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			hierarchyMap.put("totalhierarchy", query.list().size());
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -88,7 +101,8 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			session.close();
 		}
 		Loggers.loggerEnd(hierarchyList);
-		return hierarchyList;
+		hierarchyMap.put("hierarchyList", hierarchyList);
+		return hierarchyMap;
 	}
 
 	/**

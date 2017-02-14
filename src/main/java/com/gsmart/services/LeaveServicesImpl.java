@@ -2,6 +2,7 @@ package com.gsmart.services;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,86 +28,83 @@ public class LeaveServicesImpl implements LeaveServices {
 	
 	
 	@Override
-	public List<Leave> getLeaveList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public Map<String, Object> getLeaveList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return leaveDao.getLeaveList(role,hierarchy);
+			return leaveDao.getLeaveList(role, hierarchy, min, max);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 			throw new GSmartServiceException(e.getMessage());
-			
+
 		}
 	}
 
 	public void editLeave(Leave leave) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			 leaveDao.editLeave(leave);
+			leaveDao.editLeave(leave);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 			throw new GSmartServiceException(e.getMessage());
-			
+
 		}
 	}
+
 	@Override
-	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public CompoundLeave addLeave(Leave leave, Integer noOfdays, String role, Hierarchy hierarchy, int min, int max)
+			throws GSmartServiceException {
 		Loggers.loggerStart();
-		CompoundLeave cl=null;
-		 List<Holiday>list=getholidaylist.getHolidayList(role,hierarchy);
+		CompoundLeave cl = null;
+		Map<String, Object> list = getholidaylist.getHolidayList(role, hierarchy, 1, 1);
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
-		
-			
-			  Calendar holidayDate = Calendar.getInstance();
-			  
-        	
+
+			Calendar holidayDate = Calendar.getInstance();
+
 			startCal.setTime(leave.getStartDate());
 			endCal.setTime(leave.getEndDate());
-			  int work=getWorkingDaysBetweenTwoDates(startCal,endCal);
-			  
-			  for(Holiday holiday:list)
-	            {
-	   
-	            		holidayDate.setTime(holiday.getHolidayDate());
-	            		if(startCal.getTimeInMillis() <= holidayDate.getTimeInMillis() && holidayDate.getTimeInMillis() <= endCal.getTimeInMillis())
-	            		{
-	            			if(startCal.get(Calendar.DAY_OF_WEEK) ==Calendar.SUNDAY && holidayDate.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY || holidayDate.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)
-	            			{
-	            				continue;
-	            			}
-	            			else if(startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY|| holidayDate.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY)
-	            			{
-	            		
-	            				work--;
-	            			
-	            			}
-	            			else
-	            			{
-	            
-	            				work--;
-	            			}
-	            			
-	            		}
-	            		
-	            }
-			cl=leaveDao.addLeave(leave,work);
-		
+			int work = getWorkingDaysBetweenTwoDates(startCal, endCal);
+			List<Object> holidayList = (List<Object>) list.get("holidayList");
+			for (Object holidayObj : holidayList) {
+				Holiday holiday = (Holiday) holidayObj;
+				holidayDate.setTime(holiday.getHolidayDate());
+				if (startCal.getTimeInMillis() <= holidayDate.getTimeInMillis()
+						&& holidayDate.getTimeInMillis() <= endCal.getTimeInMillis()) {
+					if (startCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+							&& holidayDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+							|| holidayDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+						continue;
+					} else if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY
+							|| holidayDate.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+
+						work--;
+
+					} else {
+
+						work--;
+					}
+
+				}
+
+			}
+			cl = leaveDao.addLeave(leave, work);
+
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
-			//Loggers.loggerException(e.getMessage());
+			// Loggers.loggerException(e.getMessage());
 		}
 		Loggers.loggerEnd();
 		return cl;
-		//return null;
+		// return null;
 	}
 
 public  int getWorkingDaysBetweenTwoDates(Calendar startCal, Calendar endCal) throws ParseException, GSmartDatabaseException {

@@ -1,17 +1,23 @@
 package com.gsmart.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Assign;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.util.CalendarCalculator;
@@ -33,10 +39,12 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException 
+	public Map<String, Object> getInventoryAssignList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException 
 	{
 		Loggers.loggerStart();
 		List<InventoryAssignments> inventoryList=null;
+		Map<String, Object> inventoryassignMap = new HashMap<String, Object>();
+		Criteria criteria = null;
 		getConnection();
 		try
 		{
@@ -47,10 +55,17 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 			query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 		}
-		inventoryList=(List<InventoryAssignments>)query.list();
-		 
+		criteria = session.createCriteria(InventoryAssignments.class);
+		criteria.setMaxResults(max);
+		criteria.setFirstResult(min);
+		inventoryList = criteria.list();
+		Criteria criteriaCount = session.createCriteria(InventoryAssignments.class);
+		criteriaCount.setProjection(Projections.rowCount());
+		Long count = (Long) criteriaCount.uniqueResult();
+		inventoryassignMap.put("totalinventoryassign", query.list().size());
 		 Loggers.loggerEnd();
-		return inventoryList;
+		 inventoryassignMap.put("inventoryList", inventoryList);
+		return inventoryassignMap;
 		}
 		catch(Throwable e)
 		{

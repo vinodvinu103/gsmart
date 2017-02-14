@@ -20,6 +20,7 @@ package com.gsmart.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
@@ -34,7 +35,7 @@ import com.gsmart.util.GSmartDatabaseException;
  * @author Shakti Panigrahi
  */
 public interface ProfileDao {
-	
+
 	/* for registration */
 
 	public String getMaxSmartId();
@@ -46,42 +47,43 @@ public interface ProfileDao {
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
-	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy);
+	public Map<String, Object> getProfiles(String role, String smartId, String role2, Hierarchy hierarchy, int min,
+			int max);
 
 	public Profile getParentInfo(String empSmartId);
 
 	public ArrayList<Profile> getReportingProfiles(String parentSmartId);
 
-	/* for login */	
+	/* for login */
 	public Profile getProfileDetails(String empSmartId);
 
-	public List<Profile> getAllRecord(String academicYear,String role,Hierarchy  hierarchy);
+	public List<Profile> getAllRecord(String academicYear, String role, Hierarchy hierarchy);
 
-	
 	/**
 	 * @return list of Profile entities available in the {@link Profile} Table
 	 * @throws GSmartDatabaseException
 	 */
 	public List<Profile> search(Profile profile) throws GSmartDatabaseException;
 
-	
 	/**
-	 * @param profile instanceOf {@link Profile}
+	 * @param profile
+	 *            instanceOf {@link Profile}
 	 * @return Nothing
 	 * @throws GSmartDatabaseException
 	 */
-	public void editRole(Profile profile)throws GSmartDatabaseException;
+	public void editRole(Profile profile) throws GSmartDatabaseException;
 
-	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
-	
+	public List<Profile> getsearchRep(Search search, String role, Hierarchy hierarchy);
+
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 
-	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
-	
-	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException;
-//	
-	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
-	
-	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
-	
+	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException;
+
+	public List<Profile> addRfid(Profile rfid) throws GSmartDatabaseException;
+
+	//
+	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException;
+
+	public List<Profile> editRfid(Profile rfid) throws GSmartDatabaseException;
+
 }

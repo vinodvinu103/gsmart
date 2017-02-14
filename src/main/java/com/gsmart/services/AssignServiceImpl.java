@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,8 @@ public class AssignServiceImpl implements AssignService{
 	
 
 	@Override
-	public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws GSmartServiceException {
-		return assignDao.getAssignReportee(role, hierarchy);
+	public Map<String, Object> getAssignReportee(String role, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+		return assignDao.getAssignReportee(role, hierarchy, min, max);
 	}
 
 	@Override

@@ -39,7 +39,6 @@ import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
 
-
 @Controller
 @RequestMapping(Constants.ATTENDANCE)
 public class AttendanceController {
@@ -60,9 +59,10 @@ public class AttendanceController {
 	HolidayServices holidayService;
 
 	@RequestMapping(value = "/calender/{month}/{year}/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
-			@PathVariable("month") Integer month, @PathVariable("year") Integer year,
-			@PathVariable("smartId") String smartId, Holiday holiday) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> getAttendance(@PathVariable("min") int min, @PathVariable("max") int max,
+			@RequestHeader HttpHeaders token, HttpSession httpSession, @PathVariable("month") Integer month,
+			@PathVariable("year") Integer year, @PathVariable("smartId") String smartId, Holiday holiday)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		Map<String, Object> permissions = new HashMap<>();
@@ -72,11 +72,11 @@ public class AttendanceController {
 		str.length();
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		permissions.put("modulePermission", modulePermission);
-		
+
 		List<Map<String, Object>> attendanceList = null;
-		List<Holiday> holidayList = null;
+		Map<String, Object> holidayList = null;
 		Calendar cal = new GregorianCalendar(year, month, 0);
 		Date date = cal.getTime();
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -85,10 +85,10 @@ public class AttendanceController {
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
-		holidayList= holidayService.getHolidayList(tokenObj.getRole(),tokenObj.getHierarchy());
-		
+		holidayList = holidayService.getHolidayList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
+
 		permissions.put("attendanceList", attendanceList);
-		System.out.println("attendanceList:"+ attendanceList);
+		System.out.println("attendanceList:" + attendanceList);
 		permissions.put("holidayList", holidayList);
 
 		Loggers.loggerEnd();
@@ -128,7 +128,8 @@ public class AttendanceController {
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<IAMResponse> editDeleteAttendance(@RequestBody Attendance attendance,
-	@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException {
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
 
@@ -164,13 +165,14 @@ public class AttendanceController {
 
 		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
 
 		resultmap.put("modulePermisson", modulePermisson);
 		if (modulePermisson != null) {
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getRole(),tokenObj.getHierarchy());
+			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018", tokenObj.getRole(),
+					tokenObj.getHierarchy());
 			Loggers.loggerValue("profile is ", profile);
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("child is", childList);

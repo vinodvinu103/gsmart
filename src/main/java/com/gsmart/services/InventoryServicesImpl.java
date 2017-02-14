@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,11 +34,11 @@ public class InventoryServicesImpl implements InventoryServices {
 	 */
         
 	@Override
-	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public Map<String, Object> getInventoryList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
 			Loggers.loggerEnd();
-			return inventoryDao.getInventoryList(role,hierarchy);
+			return inventoryDao.getInventoryList(role,hierarchy, min, max);
 		} catch (GSmartDatabaseException Exception ) {
 			throw(GSmartServiceException) Exception;
 			

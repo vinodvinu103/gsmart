@@ -1,10 +1,15 @@
 package com.gsmart.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -43,19 +48,29 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FeeMaster> getFeeList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getFeeList(String role, Hierarchy hierarchy, int min, int max)
+			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
-		List<FeeMaster> feeList=null;
+		List<FeeMaster> feeList = null;
+		Map<String, Object> feeMap = new HashMap<>();
+		Criteria criteria = null;
+
 		try {
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
-			{
-			query = session.createQuery("from FeeMaster where isActive='Y'");
-			}else{
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
+				query = session.createQuery("from FeeMaster where isActive='Y'");
+			} else {
 				query = session.createQuery("from FeeMaster where isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
-			feeList = (List<FeeMaster>)query.list();
+			criteria = session.createCriteria(FeeMaster.class);
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			feeList = criteria.list();
+			Criteria criteriaCount = session.createCriteria(FeeMaster.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			feeMap.put("totalfeelist", query.list().size());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -65,7 +80,8 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
-		return feeList;
+		feeMap.put("feeList", feeList);
+		return feeMap;
 	}
 
 	/**

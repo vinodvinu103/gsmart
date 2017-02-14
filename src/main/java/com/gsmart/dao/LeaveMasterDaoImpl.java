@@ -1,15 +1,20 @@
 package com.gsmart.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Band;
 import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.LeaveMaster;
@@ -37,20 +42,31 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<LeaveMaster> getLeaveMasterList(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
+	public Map<String, Object> getLeaveMasterList(String role, Hierarchy hierarchy, Integer min, Integer max)
+			throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		Criteria criteria = null;
+		List<LeaveMaster> leavemasterlist = null;
+		Map<String, Object> leavemasterMap = new HashMap<>();
 		getconnection();
-		 List<LeaveMaster> leavemasterlist = null;
-		 try { 
-			 if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
-			 {
-			 query=session.createQuery("from LeaveMaster where isActive='Y'");
-			 }else{
-				 query=session.createQuery("from LeaveMaster where isActive='Y' and hierarchy.hid=:hierarchy");
-				 query.setParameter("hierarchy", hierarchy.getHid());
-			 }
-			 leavemasterlist = (List<LeaveMaster>) query.list();
-			
+		try {
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
+				System.out.println("hhtyhugyfty");
+				query = session.createQuery("from LeaveMaster where isActive='Y'");
+			} else {
+				query = session.createQuery("from LeaveMaster where isActive='Y' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+			criteria = session.createCriteria(LeaveMaster.class);
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			criteria.setProjection(Projections.id());
+			leavemasterlist = criteria.list();
+			Criteria criteriaCount = session.createCriteria(LeaveMaster.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			leavemasterMap.put("totallist", query.list().size());
+
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
@@ -58,8 +74,9 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao{
 			session.close();
 		}
 		Loggers.loggerEnd();
-		return leavemasterlist;	
-		}
+		leavemasterMap.put("leavemasterlist", leavemasterlist);
+		return leavemasterMap;
+	}
 		
 	@Override
 	public CompoundLeaveMaster addLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {

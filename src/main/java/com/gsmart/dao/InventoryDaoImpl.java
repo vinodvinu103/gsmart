@@ -1,10 +1,15 @@
 package com.gsmart.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -44,10 +49,12 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getInventoryList(String role,Hierarchy hierarchy, int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getconnection();
+		Map<String, Object> inventoryMap = new HashMap<String, Object>();
 		List<Inventory> inventoryList;
+		Criteria criteria = null;
 		try {
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")){
 				query = session.createQuery("from Inventory where isActive='Y' ");
@@ -55,8 +62,15 @@ public class InventoryDaoImpl implements InventoryDao {
 				query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy ");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
-			
-			inventoryList = query.list();
+			criteria=session.createCriteria(Inventory.class);
+			criteria.setFirstResult(min);
+		     criteria.setMaxResults(max);
+		     criteria.setProjection(Projections.id());
+		     inventoryList = criteria.list();
+		     Criteria criteriaCount = session.createCriteria(Inventory.class);
+		     criteriaCount.setProjection(Projections.rowCount());
+		     Long count = (Long) criteriaCount.uniqueResult();
+		     inventoryMap.put("totalinventory", query.list().size());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,7 +80,8 @@ public class InventoryDaoImpl implements InventoryDao {
 			session.close();
 		}
 		Loggers.loggerEnd(inventoryList);
-		return inventoryList;
+		inventoryMap.put("inventoryList", inventoryList);
+		return inventoryMap;
 	}
 
 	/**

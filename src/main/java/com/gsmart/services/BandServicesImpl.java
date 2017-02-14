@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,10 +33,10 @@ public class BandServicesImpl implements BandServices {
 	 * @return calls {@link BandDao}'s <code>getBandList()</code> method
 	 */
 	@Override
-	public List<Band> getBandList() throws GSmartServiceException {
+	public Map<String, Object> getBandList(int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return bandDao.getBandList();
+			return bandDao.getBandList(min, max);
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
 			throw (GSmartServiceException) exception;

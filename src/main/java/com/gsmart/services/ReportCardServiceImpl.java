@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ public class ReportCardServiceImpl implements ReportCardService {
 	@Override
 	public List<ReportCard> reportCardList() throws GSmartServiceException {
 		Loggers.loggerStart();
-		List<ReportCard> list = null;
+//		List<ReportCard> list = null;
 		try {
-			list = reportCardDao.reportCardList();
+			return reportCardDao.reportCardList();
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
-		return list;
+//		return list;
 	}
 
 	@Override
