@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
@@ -9,13 +10,18 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface PerformanceRecordService {
 	
-	public List<PerformanceRecord> getPerformanceRecord(String year,String smartId,String role,Hierarchy hierarchy)throws GSmartServiceException;
+	public Map<String, Object> getPerformanceRecord(String year,String smartId,String role,Hierarchy hierarchy,String reportingId)throws GSmartServiceException;
 
 	public void addAppraisalRecord(PerformanceRecord appraisal)throws GSmartServiceException;
 
 	public void editAppraisalrecord(PerformanceAppraisal appraisal)throws GSmartServiceException;
 
 	public void deleteAppraisalrecord(PerformanceAppraisal appraisal)throws GSmartServiceException;
+
+	public Map<String, Object> getPerformanceRecordManager(String reportingManagerId, String smartId, String year,
+			String role, Hierarchy hierarchy)throws GSmartServiceException;
+
+	public void addAppraisalRecordManager(PerformanceRecord appraisal)throws GSmartServiceException;
 
 	
 

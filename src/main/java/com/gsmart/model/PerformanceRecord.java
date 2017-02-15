@@ -23,8 +23,8 @@ public class PerformanceRecord {
 	@Column(name = "YEAR")
 	private String year;
 	
-
-	@Id
+    
+	
 	@Column(name = "REPORTINGMANAGER_ID")
 	private String reportingManagerID;
 	
@@ -46,13 +46,7 @@ public class PerformanceRecord {
 	@Column(name = "UPDATE_TIME")
 	private Long updateTime;
 	  
-	public Long getUpdateTime() {
-		return updateTime;
-	}
 
-	public void setUpdateTime(Long updateTime) {
-		this.updateTime = updateTime;
-	}
 
 	@Column(name = "ISACTIVE")
 	private String isActive;
@@ -61,84 +55,140 @@ public class PerformanceRecord {
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
 
-	public Hierarchy getHierarchy() {
-		return hierarchy;
+	
+	
+	@Override
+	public String toString() {
+		return "PerformanceRecord [smartId=" + smartId + ", year=" + year + ", reportingManagerID=" + reportingManagerID
+				+ ", ratings=" + ratings + ", entryTime=" + entryTime + ", comments=" + comments + ", updateTime="
+				+ updateTime + ", isActive=" + isActive + ", hierarchy=" + hierarchy + ", role=" + role + "]";
 	}
 
-	public void setHierarchy(Hierarchy hierarchy) {
-		this.hierarchy = hierarchy;
-	}
-	
-	
+
+
 	@Column(name = "ROLE")
 	private String role;
+
+
 
 	public String getSmartId() {
 		return smartId;
 	}
 
+
+
 	public void setSmartId(String smartId) {
 		this.smartId = smartId;
 	}
+
+
 
 	public String getYear() {
 		return year;
 	}
 
+
+
 	public void setYear(String year) {
 		this.year = year;
 	}
+
+
 
 	public String getReportingManagerID() {
 		return reportingManagerID;
 	}
 
+
+
 	public void setReportingManagerID(String reportingManagerID) {
 		this.reportingManagerID = reportingManagerID;
 	}
 
-	public String getComments() {
-		return comments;
+
+
+	public String getRatings() {
+		return ratings;
 	}
 
-	public void setComments(String comments) {
-		this.comments = comments;
+
+
+	public void setRatings(String ratings) {
+		this.ratings = ratings;
 	}
 
-	public String getRole() {
-		return role;
-	}
 
-	public void setRole(String role) {
-		this.role = role;
-	}
+
 	public Long getEntryTime() {
 		return entryTime;
 	}
+
+
 
 	public void setEntryTime(Long entryTime) {
 		this.entryTime = entryTime;
 	}
 
+
+
+	public String getComments() {
+		return comments;
+	}
+
+
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+
+
+	public Long getUpdateTime() {
+		return updateTime;
+	}
+
+
+
+	public void setUpdateTime(Long updateTime) {
+		this.updateTime = updateTime;
+	}
+
+
+
 	public String getIsActive() {
 		return isActive;
 	}
 
+
+
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
 	}
-	public String getRatings() {
-		return ratings;
+
+
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
 	}
 
-	public void setRatings(String ratings) {
-		this.ratings = ratings;
-	}
-	@Override
-	public String toString() {
-		return " \n PerformanceRecord [{compond ,\n \t smartId=" + smartId + ",\n \t year=" + year + ", \n \tcomments=" + comments + "}, reportingManagerID=" + reportingManagerID
-				+ ", ratings=" + ratings + ", entryTime=" + entryTime + ",  updateTime="
-				+ updateTime + ", isActive=" + isActive + ", role=" + role + "]";
+
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
 	}
 
+
+
+	public String getRole() {
+		return role;
+	}
+
+
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	
+	
 }

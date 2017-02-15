@@ -76,7 +76,7 @@ public class PerformanceController {
 
 		Map<String, Object> jsonMap = new HashMap<>();
 		List<PerformanceAppraisal> appraisalList = null;
-		List<PerformanceRecord> performancerecordList = null;
+		Map<String, Object> performancerecordList = null;
 		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		
@@ -87,7 +87,7 @@ public class PerformanceController {
 		if (modulePermission != null) {
 
 			appraisalList = appraisalservice.getAppraisalList(tokenObj.getReportingManagerId(), year,tokenObj.getRole(),tokenObj.getHierarchy());
-			performancerecordList = performancerecord.getPerformanceRecord(smartId, year,tokenObj.getRole(),tokenObj.getHierarchy());
+			performancerecordList = performancerecord.getPerformanceRecord(smartId, year,tokenObj.getRole(),tokenObj.getHierarchy(),tokenObj.getReportingManagerId());
 			jsonMap.put("appraisalList", appraisalList);
 			jsonMap.put("performancerecord", performancerecordList);
 			Loggers.loggerEnd(jsonMap);
@@ -203,9 +203,9 @@ public class PerformanceController {
 		str.length();
 		Token token1 = tokenService.getToken(tokenNumber);
 		String smartId = token1.getSmartId();
-		String reportingId = token1.getReportingManagerId();
+	//	String reportingId = token1.getReportingManagerId();
 		appraisal.setSmartId(smartId);
-		appraisal.setReportingManagerID(reportingId);
+	//	appraisal.setReportingManagerID(reportingId);
 
 		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
@@ -214,15 +214,18 @@ public class PerformanceController {
 			appraisal.setHierarchy(tokenObj.getHierarchy());
 			performancerecord.addAppraisalRecord(appraisal);
 
+			resp.put("status", 200);
 			resp.put("message", "success");
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
 		} else {
+			resp.put("status", 403);
 			resp.put("message", "permission denied");
 			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
 		}
 
 	}
+	
 /*
 	@RequestMapping(value = "/record/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<IAMResponse> editPerformancerecord(@RequestBody PerformanceAppraisal appraisal,
@@ -253,5 +256,75 @@ public class PerformanceController {
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
 	}*/
+	@RequestMapping(value = "/manager/{year}/{smartId}/{reportingManagerId}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> performanceManager(@PathVariable("year") String year,
+			@PathVariable("smartId") String smartId,@PathVariable("reportingManagerId") String reportingManagerId, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+		Loggers.loggerStart();
+		Loggers.loggerStart(year);
+		Loggers.loggerStart(smartId);
+
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+
+		Map<String, Object> jsonMap = new HashMap<>();
+		
+		Map<String, Object> performancerecordList1 = null;
+		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		
+		Map<String, Object> permissions = new HashMap<>();
+		permissions.put("modulePermission", modulePermission);
+		IAMResponse rsp = new IAMResponse();
+		
+		if (modulePermission != null) {
+
+			
+			performancerecordList1 = performancerecord.getPerformanceRecordManager(reportingManagerId,smartId, year,tokenObj.getRole(),tokenObj.getHierarchy());
+			
+			jsonMap.put("performancerecord", performancerecordList1);
+			Loggers.loggerEnd(jsonMap);
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		}
+	}
+	
+	@RequestMapping(value="/addManagerComment", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addAppraisalRecordManager(@RequestBody PerformanceRecord appraisal,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart(appraisal);
+
+		Map<String, Object> resp=new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+	/*	Token token1 = tokenService.getToken(tokenNumber);
+		String smartId = token1.getSmartId();
+	String reportingId = token1.getReportingManagerId();
+		appraisal.setSmartId(smartId);
+	appraisal.setReportingManagerID(reportingId);*/
+
+		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			Loggers.loggerStart(appraisal);
+			
+			appraisal.setHierarchy(tokenObj.getHierarchy());
+			performancerecord.addAppraisalRecordManager(appraisal);
+
+			resp.put("status", 200);
+			resp.put("message", "success");
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
+		} else {
+			resp.put("status", 403);
+			resp.put("message", "permission denied");
+			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
+		}
+
+	}
+	
+	
 
 }
