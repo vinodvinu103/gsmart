@@ -59,7 +59,7 @@ public class AttendanceController {
 	@Autowired
 	HolidayServices holidayService;
 
-	@RequestMapping(value = "/calender/{month}/{year}/{smartId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/calendar/{month}/{year}/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
 			@PathVariable("month") Integer month, @PathVariable("year") Integer year,
 			@PathVariable("smartId") String smartId, Holiday holiday) throws GSmartBaseException {
@@ -127,7 +127,7 @@ public class AttendanceController {
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteAttendance(@RequestBody Attendance attendance,
+	public ResponseEntity<IAMResponse> editAttendance(@RequestBody Attendance attendance,
 	@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;

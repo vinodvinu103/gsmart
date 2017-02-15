@@ -50,9 +50,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			attendanceList = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
+		}/*finally {
 			session.close();
-		}
+		}*/
 		
 		Loggers.loggerEnd();
 		return constructAttendanceList((List<Attendance>) attendanceList);

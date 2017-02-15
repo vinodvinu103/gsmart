@@ -69,10 +69,10 @@ public class HolidayDaoImpl implements HolidayDao {
 	 catch (Throwable e) {
 		 Loggers.loggerException(e.getMessage());
 	}
-	finally {
+	/*finally {
 
 		session.close();
-	}
+	}*/
 		Loggers.loggerEnd(holidayList);
 	return holidayList;
 	}
