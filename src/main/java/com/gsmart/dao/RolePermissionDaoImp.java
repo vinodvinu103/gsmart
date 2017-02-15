@@ -58,11 +58,12 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		Criteria criteria = null;
 		getConnection();
 		try {
-/*			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 			{
-*/			
+			
 			query = session.createQuery("from RolePermission where isActive='Y'");
-			/*}else{
+			}
+			 /* else{
 				query = session.createQuery("from RolePermission where isActive='Y' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			}
@@ -250,7 +251,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		System.out.println("hierarchry ...."+hierarchy);
 		getConnection();
 		try{
-			query = session.createQuery("from RolePermission where role='ADMIN' and moduleName='Maintenance' and isActive='Y'");
+			query = session.createQuery("from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
 			query.setParameter("moduleName", "Maintenance");
