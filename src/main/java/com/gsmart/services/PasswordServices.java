@@ -12,6 +12,6 @@ public interface PasswordServices {
 	
 	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartServiceException;
 
-	public Profile forgotPassword(String email,Hierarchy hierarchy) throws GSmartServiceException;
+	public Profile emailLink(String email) throws GSmartServiceException;
 	
 }

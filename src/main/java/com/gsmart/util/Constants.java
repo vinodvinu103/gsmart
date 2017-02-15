@@ -26,6 +26,7 @@ public class Constants {
 	public static final String LEAVE = "/leave";
 	public static final String MYTEAMLEAVE = "/myteamleave";
 	public static final String INVENTORYASSIGN = "/inventoryassignment";
+	public static final String WEEKDAYS = "/weekdays";
 	public static final String ASSIGN="/assign";
 	public static final String PASSWORD="/password";
 	public static final String ATTENDANCE="/attendance";

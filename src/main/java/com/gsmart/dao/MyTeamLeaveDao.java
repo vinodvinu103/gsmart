@@ -6,9 +6,10 @@ import java.util.List;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
+import com.gsmart.model.Profile;
 
 public interface MyTeamLeaveDao {
-	public List<Leave> getLeavelist(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<Leave> getLeavelist(Profile profileInfo,Hierarchy hierarchy) throws GSmartDatabaseException;
 	public void rejectleave(Leave leave)throws GSmartDatabaseException;
 	public void sactionleave(Leave leave)throws GSmartDatabaseException;
 	public void cancelSanctionLeave(Leave leave) throws GSmartDatabaseException;

@@ -4,9 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
-public class CalendarCalculator {
+public class CalendarCalculator implements Job {
+
 	
 	public static String getTimeStamp() {
 		try {
@@ -27,5 +30,11 @@ public class CalendarCalculator {
 	}
 
 
+	public void execute(JobExecutionContext context)
+			throws JobExecutionException {
+				
+				System.out.println("Hello Quartz!");	
+				
+			}
 
 }
