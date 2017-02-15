@@ -56,37 +56,30 @@ public class AssignDaoImpl implements AssignDao {
 	public CompoundAssign addAssigningReportee(Assign assign) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
-
 		
-		CompoundAssign compoundAssign = null;
+		CompoundAssign ch = null;
 		try {
 			query = session.createQuery(
-					"from Assign where (standard=:standard and section=:section and teacherSmartId=:teacherSmartId) or (hodSmartId=:hodSmartId and teacherSmartId=:teacherSmartId) or (hodSmartId=:hodSmartId and principalSmartId=:principalSmartId)");
+					"from Assign where standard=:standard and section=:section and isActive=:isActive");
 			query.setParameter("standard", assign.getStandard());
 			query.setParameter("section", assign.getSection());
-			query.setParameter("teacherSmartId", assign.getTeacherSmartId());
-			query.setParameter("hodSmartId", assign.getHodSmartId());
-			query.setParameter("principalSmartId", assign.getPrincipalSmartId());
+			query.setParameter("isActive", "Y");
 
-			compoundAssign = (CompoundAssign) query.uniqueResult();
+			Assign assign1 =  (Assign) query.uniqueResult();
 
-			if (compoundAssign == null) {
+			if (assign1 == null) {
 				assign.setEntryTime(CalendarCalculator.getTimeStamp());
 				assign.setIsActive("Y");
-				session.save(assign);
+				ch = (CompoundAssign) session.save(assign);
 				transaction.commit();
-
 			}
 		} catch (Exception e) {
-
 			e.printStackTrace();
 		}
 		finally {
 			session.close();
 		}
-
-		return compoundAssign;
-
+		return ch;
 	}
 
 	@Override
@@ -94,8 +87,7 @@ public class AssignDaoImpl implements AssignDao {
 
 		getConnection();
 		Loggers.loggerStart();
-		try {
-			
+		try {			
 			Assign oldAssign = getAssigns(assign.getEntryTime());
 			oldAssign.setIsActive("N");
 			oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -105,9 +97,6 @@ public class AssignDaoImpl implements AssignDao {
 			assign.setIsActive("Y");
 			session.save(assign);
 			session.getTransaction().commit();
-			
-			
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			// throw new GSmartDatabaseException(e.getMessage());
@@ -130,20 +119,17 @@ public class AssignDaoImpl implements AssignDao {
 			Loggers.loggerEnd();
 			return null;
 		}
-
 	}
 
 	@Override
 	public void deleteAssigningReportee(Assign assign) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
-		try {
-			
+		try {			
 			assign.setIsActive("D");
 			assign.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(assign);
 			session.getTransaction().commit();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
@@ -151,7 +137,6 @@ public class AssignDaoImpl implements AssignDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
-
 	}
 
 	public void getConnection() {
