@@ -60,9 +60,9 @@ public class FeeDaoImpl implements FeeDao{
 			feeList=(ArrayList<Fee>) query.list();
 		}catch(Exception e){
 			throw new GSmartDatabaseException(e.getMessage());
-		}finally{
+		}/*finally{
 			session.close();
-		}
+		}*/
 		Loggers.loggerEnd();
 		return feeList;
 	}
@@ -214,8 +214,8 @@ public class FeeDaoImpl implements FeeDao{
 		}
 		paidfeeMap.put("paidStudentsList", paidStudentsList);
 		return paidfeeMap;
-	
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override

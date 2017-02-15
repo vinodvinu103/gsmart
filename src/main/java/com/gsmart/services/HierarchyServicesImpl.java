@@ -95,4 +95,10 @@ public class HierarchyServicesImpl implements HierarchyServices {
 		return getHierarchyByHid(hid);
 	}
 
+	@Override
+	public List<Hierarchy> getAllHierarchy() {
+		return hierarchyDao.getAllHierarchy();
+		
+	}
+
 }
