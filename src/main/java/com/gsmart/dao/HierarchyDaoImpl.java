@@ -267,4 +267,12 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		}
 		return hierarchyList;
 	}
+
+	@Override
+	public List<Hierarchy> getAllHierarchy() {
+		getConnection();
+		query = session.createQuery("from Hierarchy where isActive='Y'");
+		return query.list();
+
+	}
 }
