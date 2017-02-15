@@ -10,17 +10,11 @@ public class RolePermissionCompound implements Serializable {
 	private String role;
 	private String moduleName;
 	private String entryTime;
-	private String subModuleName;
 
 	public String getRole() {
 		return role;
 	}
-	public String getSubModuleName() {
-		return subModuleName;
-	}
-	public void setSubModuleName(String subModuleName) {
-		this.subModuleName = subModuleName;
-	}
+	
 	public void setRole(String role) {
 		this.role = role;
 	}
