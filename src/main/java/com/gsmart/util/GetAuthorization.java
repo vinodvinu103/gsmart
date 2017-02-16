@@ -143,7 +143,6 @@ public class GetAuthorization {
 		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
 		Loggers.loggerEnd(permissions);
-		return permissions;
 		}
 		catch (Exception e) {
 			e.printStackTrace();

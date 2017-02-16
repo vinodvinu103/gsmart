@@ -33,10 +33,10 @@ public class LeaveDaoImpl implements LeaveDao {
 		Loggers.loggerStart(tokenObj);
 
 		System.out.println("vgyhuhuygy");
-
+		getConnection();
 		List<Leave> leave = null;
 		try {
-			getConnection();
+
 			String role = tokenObj.getRole();
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("hr") || role.equalsIgnoreCase("director")) {
 				query = session.createQuery("FROM Leave WHERE isActive='Y'");
@@ -47,7 +47,6 @@ public class LeaveDaoImpl implements LeaveDao {
 				query.setParameter("smartId", tokenObj.getSmartId());
 			}
 			leave = (List<Leave>) query.list();
-			session.close();
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
@@ -74,6 +73,8 @@ public class LeaveDaoImpl implements LeaveDao {
 			 * "Y"); Leave leave1=(Leave)query.uniqueResult(); if(leave1==null)
 			 * {
 			 */
+
+			
 			leave.setEntryTime(CalendarCalculator.getTimeStamp());
 			leave.setIsActive("Y");
 			leave.setNumberOfDays(noOfdays);
@@ -105,6 +106,8 @@ public class LeaveDaoImpl implements LeaveDao {
 		return cl;
 
 	}
+
+	
 
 	public void getConnection() {
 		session = sessionFactory.openSession();
@@ -172,6 +175,27 @@ public class LeaveDaoImpl implements LeaveDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Leave> getLeaves(String smartId, String leaveType) {
+		Loggers.loggerStart();
+		getConnection();
+		List<Leave> leaveList=null;
+		try {
+			query=session.createQuery("from Leave where smartId=:smartId and leaveType=:leaveType and lower(leaveStatus)!='rejected*'");
+			query.setParameter("smartId", smartId);
+			query.setParameter("leaveType", leaveType);
+			leaveList=query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		
+
+		return leaveList;
 	}
 
 }

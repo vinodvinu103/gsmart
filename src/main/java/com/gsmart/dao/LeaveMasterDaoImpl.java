@@ -161,5 +161,25 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		transaction = session.beginTransaction();
 
 	}
+	
+	public LeaveMaster getLeaveMasterByType(String leaveType){
+		Loggers.loggerStart();
+		LeaveMaster leaveMaster=null;
+		getconnection();
+		try {
+			query=session.createQuery("from LeaveMaster where leaveType=:leaveType");
+			query.setParameter("leaveType", leaveType);
+			
+			leaveMaster=(LeaveMaster) query.uniqueResult();
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			session.close();
+		}
+		return leaveMaster;
+		
+	}
 
 }
