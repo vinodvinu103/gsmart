@@ -35,26 +35,23 @@ public class AssignServiceImpl implements AssignService{
 		compoundAssign=assignDao.addAssigningReportee(assign);
 		}
 		catch (Exception e) {
-
 		e.printStackTrace();
 		}
 		Loggers.loggerEnd();
-		return compoundAssign;
-
-		
+		return compoundAssign;		
 	}
 
 	@Override
-	public void editAssigningReportee(Assign assign) throws GSmartServiceException {
+	public Assign editAssigningReportee(Assign assign) throws GSmartServiceException {
 		Loggers.loggerStart();
+		Assign asn = null;
 		try{
-		assignDao.editAssigningReportee(assign);
+		asn = assignDao.editAssigningReportee(assign);
 		}
 		catch (Exception e) {
-
 			e.printStackTrace();
 		}
-		
+		return asn;		
 	}
 
 	@Override
@@ -65,7 +62,6 @@ public class AssignServiceImpl implements AssignService{
 		assignDao.deleteAssigningReportee(assign);
 	}
 	catch (Exception e) {
-
 		e.printStackTrace();
 	}
 	}

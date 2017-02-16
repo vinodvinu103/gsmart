@@ -2,6 +2,8 @@ package com.gsmart.dao;
 
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,6 +15,7 @@ import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
+import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
@@ -25,6 +28,11 @@ public class AssignDaoImpl implements AssignDao {
 	Session session = null;;
 	Query query;
 	Transaction transaction = null;
+	
+	public void getConnection() {
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -51,26 +59,19 @@ public class AssignDaoImpl implements AssignDao {
 		Loggers.loggerEnd();
 		return assignList;
 	}
-
+	
 	@Override
 	public CompoundAssign addAssigningReportee(Assign assign) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
 		
-		CompoundAssign ch = null;
+		CompoundAssign compoundAssign = null;
 		try {
-			query = session.createQuery(
-					"from Assign where standard=:standard and section=:section and isActive=:isActive");
-			query.setParameter("standard", assign.getStandard());
-			query.setParameter("section", assign.getSection());
-			query.setParameter("isActive", "Y");
-
-			Assign assign1 =  (Assign) query.uniqueResult();
-
+			Assign assign1 = fetch(assign);
 			if (assign1 == null) {
 				assign.setEntryTime(CalendarCalculator.getTimeStamp());
 				assign.setIsActive("Y");
-				ch = (CompoundAssign) session.save(assign);
+				compoundAssign = (CompoundAssign) session.save(assign);
 				transaction.commit();
 			}
 		} catch (Exception e) {
@@ -79,33 +80,70 @@ public class AssignDaoImpl implements AssignDao {
 		finally {
 			session.close();
 		}
-		return ch;
+		return compoundAssign;
+	}
+	
+	public Assign fetch(Assign assign) {
+		Loggers.loggerStart(assign);
+		getConnection();
+		Assign assignList = null;
+		try {
+			if(assign.getHierarchy().getHid() == null){
+				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
+			}else{
+			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			}
+			query.setParameter("standard", assign.getStandard());
+			query.setParameter("isActive", "Y");
+			query.setParameter("hierarchy", assign.getHierarchy().getHid());
+			query.setParameter("section", assign.getSection());
+			assignList = (Assign) query.uniqueResult();
+			Loggers.loggerEnd(assignList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return assignList;
 	}
 
 	@Override
-	public void editAssigningReportee(Assign assign) throws GSmartDatabaseException {
-
+	public Assign editAssigningReportee(Assign assign) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
+		Assign asgn = null;
 		try {			
 			Assign oldAssign = getAssigns(assign.getEntryTime());
-			oldAssign.setIsActive("N");
-			oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
-			session.update(oldAssign);
+			asgn = updateAssign(oldAssign, assign);
+			addAssigningReportee(assign);
 			
-			assign.setEntryTime(CalendarCalculator.getTimeStamp());
-			assign.setIsActive("Y");
-			session.save(assign);
-			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 			// throw new GSmartDatabaseException(e.getMessage());
 			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
 		}
-
+		return asgn;
 	}
+	
+	private Assign updateAssign(Assign oldAssign, Assign assign) throws GSmartDatabaseException {
+		Assign asg = null;
+		try {
+			Assign assign1 = fetch(assign);
+			if (assign1 == null) {
+				oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
+				oldAssign.setIsActive("N");
+				session.update(oldAssign);
+				transaction.commit();
+				return oldAssign;
+			}
+			
+		} catch (ConstraintViolationException e) {
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Throwable e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+		return asg;
+	}
+	
+	
 
 	public Assign getAssigns(String entryTime) {
 		Loggers.loggerStart();
@@ -137,11 +175,6 @@ public class AssignDaoImpl implements AssignDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
-	}
-
-	public void getConnection() {
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
 	}
 
 	@Override

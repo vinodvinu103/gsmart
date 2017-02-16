@@ -13,7 +13,7 @@ public interface AssignService {
 	
 	public CompoundAssign addAssigningReportee(Assign assign) throws GSmartServiceException;
 	
-	public void editAssigningReportee(Assign assign) throws GSmartServiceException;
+	public Assign editAssigningReportee(Assign assign) throws GSmartServiceException;
 	
 	public void deleteAssigningReportee(Assign assign) throws GSmartServiceException;
 	

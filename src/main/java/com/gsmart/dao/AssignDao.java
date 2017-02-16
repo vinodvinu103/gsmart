@@ -13,7 +13,7 @@ public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws G
 	
 	public CompoundAssign addAssigningReportee(Assign assign) throws GSmartDatabaseException;
 	
-	public void editAssigningReportee(Assign assign) throws GSmartDatabaseException;
+	public Assign editAssigningReportee(Assign assign) throws GSmartDatabaseException;
 	
 	public void deleteAssigningReportee(Assign assign) throws GSmartDatabaseException;
 	
