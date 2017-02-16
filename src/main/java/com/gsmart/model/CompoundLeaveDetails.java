@@ -12,30 +12,23 @@ public class CompoundLeaveDetails implements Serializable{
 	
 	private String smartId;
 	
+	private String leaveType;
 	
 	public String getSmartId() {
 		return smartId;
 	}
 
-
 	public void setSmartId(String smartId) {
 		this.smartId = smartId;
 	}
 
-
-	public int getAppliedLeaves() {
-		return appliedLeaves;
+	public String getLeaveType() {
+		return leaveType;
 	}
 
-
-	public void setAppliedLeaves(int appliedLeaves) {
-		this.appliedLeaves = appliedLeaves;
+	public void setLeaveType(String leaveType) {
+		this.leaveType = leaveType;
 	}
-
-
-	private int appliedLeaves;
 	
 	
-	
-
 }

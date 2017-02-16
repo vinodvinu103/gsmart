@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,6 +19,7 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
+import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -39,10 +41,10 @@ public class LeaveServicesImpl implements LeaveServices {
 	ProfileDao profileDao;
 
 	@Override
-	public List<Leave> getLeaveList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public List<Leave> getLeaveList(Token tokenObj,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return leaveDao.getLeaveList(role,hierarchy);
+			return leaveDao.getLeaveList(tokenObj,hierarchy);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -84,7 +86,7 @@ public class LeaveServicesImpl implements LeaveServices {
 
 			Calendar holidayDate = Calendar.getInstance();
 
-			long diff = endCal.getTimeInMillis() - startCal.getTimeInMillis();
+			long diff = endCal.getTimeInMillis()- startCal.getTimeInMillis();
 			int days = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 
 			ArrayList<WeekDays> weekOffs = (ArrayList<WeekDays>) weekDays.getWeekdaysForHoliday(school, institution);
@@ -171,7 +173,17 @@ public class LeaveServicesImpl implements LeaveServices {
 	}//delete
 	
 	public long getEpoch(Date date) {
-		long epoch = date.getTime();
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+	/*	Date date1 = df.parse(date);*/
+		calendar.setTime(date);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		Date date2 = calendar.getTime();
+		long epoch = date2.getTime() / 1000;
+		//long epoch = date.getTime();
 		System.out.println("saakappa e timeformate " + epoch);
 		return epoch;
 	}//epoch 

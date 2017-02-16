@@ -39,5 +39,6 @@ public interface SearchService {
 
 	
 	public Map<String, Object> getParentInfo(String smartId);
+
 	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees);
 }

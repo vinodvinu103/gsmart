@@ -37,7 +37,7 @@ public class AssignDaoImpl implements AssignDao {
 			if(role.equalsIgnoreCase("admin")|| role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 				query = session.createQuery("from Assign where isActive=:isActive");
 			else {
-				query = session.createQuery("from Assign where isActive=:isActive and hierarchy:hierarchy");
+				query = session.createQuery("from Assign where isActive=:isActive and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			query.setParameter("isActive", "Y");
