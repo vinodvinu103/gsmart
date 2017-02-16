@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 
 import com.gsmart.model.CompoundModules;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Modules;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -32,12 +33,20 @@ public class ModulesDaoImpl implements ModulesDao{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Modules> getModulesList() throws GSmartDatabaseException{
+	public List<Modules> getModulesList(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
+		getconnection();
 		Loggers.loggerStart();
+		 
 		 List<Modules> moduleslist = null;
 		 try { 
-			 getconnection();
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			{
 			 query=session.createQuery("from Modules");
+			}else{
+				query=session.createQuery("from Modules and hierarchy:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+			
 			 moduleslist = (List<Modules>) query.list();
 			
 		} catch (Exception e) {
@@ -54,9 +63,10 @@ public class ModulesDaoImpl implements ModulesDao{
 	
 	@Override
 	public CompoundModules addModule(Modules modules) throws GSmartDatabaseException {
+		 getconnection();
 		CompoundModules cb = null;
 		try {
-			 getconnection();
+			
 
 			query = session.createQuery(
 					"FROM Modules WHERE subModules=:subModules and modules=:modules ");

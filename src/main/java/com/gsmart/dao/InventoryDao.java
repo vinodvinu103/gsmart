@@ -4,6 +4,7 @@ package com.gsmart.dao;
 import java.util.List;
 
 import com.gsmart.model.CompoundInventory;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.util.GSmartDatabaseException;
 
@@ -26,7 +27,7 @@ public interface InventoryDao {
 	 * @throws GSmartDatabaseException
 	 */
 
-	public List<Inventory> getInventoryList() throws GSmartDatabaseException;
+	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 
 	/**
 	 * @param inventory

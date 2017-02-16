@@ -7,11 +7,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.model.RolePermission;
@@ -154,10 +150,11 @@ public class InventoryAssignmentsController {
 		List<InventoryAssignments> inventoryList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permission = new HashMap<>();
 		permission.put("modulePermission", modulePermission);
 		if (modulePermission != null) {
-			inventoryList = inventoryAssignmentsServices.getInventoryList();
+			inventoryList = inventoryAssignmentsServices.getInventoryList(tokenObj.getRole(),tokenObj.getHierarchy());
 			permission.put("inventoryList", inventoryList);
 
 			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
@@ -237,6 +234,9 @@ public class InventoryAssignmentsController {
 		str.length();
 
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			inventoryAssignments.setHierarchy(tokenObj.getHierarchy());
+			
 			InventoryAssignmentsCompoundKey ch = inventoryAssignmentsServices.addInventoryDetails(inventoryAssignments);
 
 			if (ch != null) {

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.ModulesDao;
 import com.gsmart.model.CompoundModules;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Modules;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -17,10 +18,10 @@ public class ModulesServicesImpl implements ModulesServices{
 	private ModulesDao modulesDao;
 
 	@Override
-	public  List<Modules> getModulesList() throws GSmartServiceException {
+	public  List<Modules> getModulesList(String role,Hierarchy hierarchy) throws GSmartServiceException {
 
 		try {
-			return modulesDao.getModulesList();
+			return modulesDao.getModulesList(role,hierarchy);
 
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;

@@ -21,6 +21,7 @@ package com.gsmart.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
@@ -46,7 +47,7 @@ public interface ProfileDao {
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
-	public ArrayList<Profile> getProfiles(String role,String smartId);
+	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy);
 
 	public Profile getParentInfo(String empSmartId);
 
@@ -55,7 +56,7 @@ public interface ProfileDao {
 	/* for login */	
 	public Profile getProfileDetails(String empSmartId);
 
-	public List<Profile> getAllRecord();
+	public List<Profile> getAllRecord(String academicYear,String role,Hierarchy  hierarchy);
 
 	
 	/**
@@ -72,8 +73,31 @@ public interface ProfileDao {
 	 */
 	public void editRole(Profile profile)throws GSmartDatabaseException;
 
-	public List<Profile> getsearchRep(Search search);
+	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
 	
+
+	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
+
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+
+
+
+
+	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
+	
+	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException;
+	
+	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
+	
+	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
+
+	public void addBanner(Banners banner) throws GSmartDatabaseException;
+
+	public List<Banners> getBannerList();
+	
+	public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;
+
+	public void deleteBanner(Banners banner)throws GSmartDatabaseException;
+	
 
 }

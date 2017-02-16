@@ -10,6 +10,7 @@ import org.hibernate.loader.plan.build.spi.QuerySpaceTreePrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.gsmart.model.CompoundInventory;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -44,12 +45,19 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Inventory> getInventoryList() throws GSmartDatabaseException {
+	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+		getconnection();
 		Loggers.loggerStart();
+		
 		List<Inventory> inventoryList;
 		try {
-			getconnection();
-			query = session.createQuery("from Inventory where isActive='Y' ");
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")){
+				query = session.createQuery("from Inventory where isActive='Y' ");
+			}else{
+				query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy ");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+			
 			inventoryList = query.list();
 
 		} catch (Exception e) {
@@ -74,13 +82,18 @@ public class InventoryDaoImpl implements InventoryDao {
 	@Override
 	public CompoundInventory addInventory(Inventory inventory) throws GSmartDatabaseException {
 
+		getconnection();
 		Loggers.loggerStart();
+		
 		CompoundInventory cb = null;
 	
 		try {
 			getconnection();
 			query=session.createQuery("FROM Inventory WHERE category=:category AND quantity=:quantity AND itemType=:itemType AND isActive=:isActive");
+			Hierarchy hierarchy=inventory.getHierarchy();
+			query=session.createQuery("FROM Inventory WHERE category=:category AND itemType=:itemType AND isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("category", inventory.getCategory());
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("itemType", inventory.getItemType());
 			query.setParameter("quantity", inventory.getQuantity());
 			query.setParameter("isActive", "Y");
@@ -112,10 +125,11 @@ public class InventoryDaoImpl implements InventoryDao {
 	 */
 	@Override
 	public void editInventory(Inventory inventory) throws GSmartDatabaseException {
+		getconnection();
 		Loggers.loggerStart();
 		try {
-			getconnection();
-			Inventory oldInvertory = getInventory(inventory.getEntryTime());
+			
+			Inventory oldInvertory = getInventory(inventory.getEntryTime(),inventory.getHierarchy());
 			oldInvertory.setIsActive("N");
 			oldInvertory.setUpdateTime(CalendarCalculator.getTimeStamp());
 			session.update( oldInvertory);
@@ -123,13 +137,14 @@ public class InventoryDaoImpl implements InventoryDao {
 			inventory.setIsActive("Y");
 			session.save(inventory);
 			transaction.commit();
-			session.close();
 	
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
+		}finally {
+			session.close();
 		}
 	}
 
@@ -142,12 +157,13 @@ public class InventoryDaoImpl implements InventoryDao {
 	 * @return Nothing
 	 */
 
-	public Inventory getInventory(String entryTime) {
+	public Inventory getInventory(String entryTime,Hierarchy hierarchy) {
 		try {
 			
 
-			query = session.createQuery("from Inventory where isactive='Y' and entryTime=:entryTime");
+			query = session.createQuery("from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 			query.setParameter("entryTime", entryTime);
+			query.setParameter("hierarchy", hierarchy.getHid());
 			Inventory inventry = (Inventory) query.uniqueResult();
 			
 			
@@ -169,9 +185,11 @@ public class InventoryDaoImpl implements InventoryDao {
 	return holi.get(0);*/
 	@Override
 	public void deleteInventory(Inventory inventory) throws GSmartDatabaseException {
+		getconnection();
 		Loggers.loggerStart();
+		
 		try {
-			getconnection();
+			
 
 			inventory.setExitTime(CalendarCalculator.getTimeStamp());
 			inventory.setIsActive("D");

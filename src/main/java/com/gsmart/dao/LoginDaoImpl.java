@@ -29,11 +29,12 @@ public class LoginDaoImpl implements LoginDao {
 	Query query;
 
 	@Override
+
 	public Map<String, Object> authenticate(Login loginDetails) throws GSmartDatabaseException {
-		
+		getConnection();
 		Map<String, Object> authMap = new HashMap<>();
 		Loggers.loggerStart();
-		getConnection();
+		
 		try {
 			
 			int attempt = 0;
@@ -110,10 +111,11 @@ public class LoginDaoImpl implements LoginDao {
 		List<Profile> list=null;
 		try {
 			query=session.createQuery("from Profile where isActive='Y'");
-			list=query.list();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		return list;
 	}

@@ -10,6 +10,7 @@ import com.gsmart.dao.InventoryAssignmentsDao;
 import com.gsmart.dao.InventoryDaoImpl;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
+//import com.gsmart.model.Hierarchy;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.util.GSmartDatabaseException;
@@ -27,10 +28,8 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 
 	@Override
 	public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException {
-		
-		
 		try {
-			return inventoryAssignmentsDao.getInventoryList( role, hierarchy);
+			return inventoryAssignmentsDao.getInventoryList(role,hierarchy);
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;
 
