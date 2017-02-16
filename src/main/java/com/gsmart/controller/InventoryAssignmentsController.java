@@ -1,5 +1,6 @@
 package com.gsmart.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
+import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.InventoryAssignmentsServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
@@ -41,6 +44,9 @@ public class InventoryAssignmentsController {
 	GetAuthorization getAuthorization;
 	@Autowired
 	TokenService tokenService;
+	@Autowired
+	HierarchyServices hierarchyServices;
+	
 
 	/*
 	 * public static Logger logger =
@@ -85,6 +91,64 @@ public class InventoryAssignmentsController {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		str.length();
+		List<Map<String, Object>> responseList = new ArrayList<>();
+		Map<String, Object> responseMap = new HashMap<>();
+		Map<String, Object> dataMap = new HashMap<>();
+		List<InventoryAssignments> inventoryList = null;
+		//RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		if (tokenObj.getHierarchy() == null && modulePermission != null) {
+		System.out.println("hierarchy is null");
+			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
+			for (Hierarchy hierarchy : hierarchyList) {
+				System.out.println("hierarchy":hierarchy);
+				inventoryList = inventoryAssignmentsServices.getInventoryList(tokenObj.getRole(), hierarchy);
+				
+				dataMap.put("inventoryList", inventoryList);
+				dataMap.put("hierarchy", hierarchy);
+				//dataMap.put("totalFees", totalFees);
+				responseList.add(dataMap);
+			
+		
+		}
+		responseMap.put("data", responseList);
+		responseMap.put("status", 200);
+		responseMap.put("message", "success");
+	} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
+		inventoryList = inventoryAssignmentsServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy());
+		
+		dataMap.put("inventoryList", inventoryList);
+		dataMap.put("hierarchy", tokenObj.getHierarchy());
+		
+		responseList.add(dataMap);
+		responseMap.put("data", responseList);
+		responseMap.put("status", 200);
+		responseMap.put("message", "success");
+	} else {
+		responseMap.put("data", null);
+		responseMap.put("status", 404);
+		responseMap.put("message", "Data not found");
+	}
+
+	Loggers.loggerEnd();
+	return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+		/*Map<String, Object> permission = new HashMap<>();
+		permission.put("modulePermission", modulePermission);
+		if (modulePermission != null) {
+			inventoryList = inventoryAssignmentsServices.getInventoryList();
+			permission.put("inventoryList", inventoryList);
+
+			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+		} else {
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+		}*/
+
+		/*Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
 		List<InventoryAssignments> inventoryList = null;
@@ -101,8 +165,57 @@ public class InventoryAssignmentsController {
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 		}
-
+*/
 	}
+	
+	
+	/*@RequestMapping(value = "/totalpaidfees", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> gettotalpaidfee(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		str.length();
+		int totalPaidFees;
+		int totalFees;
+		List<Map<String, Object>> responseList = new ArrayList<>();
+		Map<String, Object> responseMap = new HashMap<>();
+		Map<String, Object> dataMap = new HashMap<>();
+		if (tokenObj.getHierarchy() == null && modulePermission != null) {
+			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
+			for (Hierarchy hierarchy : hierarchyList) {
+				totalPaidFees = feeServices.gettotalpaidfee(tokenObj.getRole(), hierarchy);
+				totalFees = feeServices.gettotalfee(tokenObj.getRole(), hierarchy);
+				dataMap.put("totalPaidFees", totalPaidFees);
+				dataMap.put("hierarchy", hierarchy);
+				dataMap.put("totalFees", totalFees);
+				responseList.add(dataMap);
+			}
+			responseMap.put("data", responseList);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
+			totalPaidFees = feeServices.gettotalpaidfee(tokenObj.getRole(), tokenObj.getHierarchy());
+			totalFees = feeServices.gettotalfee(tokenObj.getRole(), tokenObj.getHierarchy());
+			dataMap.put("totalPaidFees", totalPaidFees);
+			dataMap.put("hierarchy", tokenObj.getHierarchy());
+			dataMap.put("totalFees", totalFees);
+			responseList.add(dataMap);
+			responseMap.put("data", responseList);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		} else {
+			responseMap.put("data", null);
+			responseMap.put("status", 404);
+			responseMap.put("message", "Data not found");
+		}
+
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+	}
+*/
 
 	/*
 	 * @RequestMapping (value="/add/{updSmartId}", method=RequestMethod.POST

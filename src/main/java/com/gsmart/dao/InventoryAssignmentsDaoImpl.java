@@ -9,6 +9,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
@@ -30,29 +32,60 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<InventoryAssignments> getInventoryList() throws GSmartDatabaseException 
+	public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException 
 	{
 		Loggers.loggerStart();
 		List<InventoryAssignments> inventoryList=null;
+		
 		try
 		{
 		getConnection();
-		query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y'");
+		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+		{
+		query=session.createQuery("FROM InventoryAssignments WHERE isActive=:isActive");
+		}else{
+			query = session.createQuery("From InventoryAssignments where isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+		}
+		query.setParameter("isActive", "Y");
+			
 		inventoryList=(List<InventoryAssignments>)query.list();
 		 
-		 Loggers.loggerEnd();
-		return inventoryList;
+		
 		}
-		catch(Throwable e)
-		{
-			throw new GSmartDatabaseException(e.getMessage());
+		catch(Exception e){
+		
+			e.printStackTrace();
 		} finally {
 
 			session.close();
 		}
+
+		 Loggers.loggerEnd();
+		return inventoryList;
 		
 		
+		/*Loggers.loggerStart();
+		List<InventoryAssignments> inventoryList;
+		try {
+			getConnection();
+			query = session.createQuery("from Inventory where isActive='Y' ");
+			inventoryList = query.list();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+
+		} finally {
+			session.close();
+		}
+		Loggers.loggerEnd(inventoryList);
+		return inventoryList;*/
 	}
+	
+
+		
+		
 
 	@Override
 	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException

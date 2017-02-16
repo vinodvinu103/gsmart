@@ -94,4 +94,10 @@ public class HierarchyServicesImpl implements HierarchyServices {
 		return getHierarchyByHid(hid);
 	}
 
+	@Override
+	public List<Hierarchy> getAllHierarchy() {
+		// TODO Auto-generated method stub
+		return hierarchyDao.getAllHierarchy();
+	}
+
 }

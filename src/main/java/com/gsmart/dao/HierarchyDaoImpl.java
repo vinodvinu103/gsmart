@@ -236,4 +236,13 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		query.setParameter("hid", hid);
 		return (Hierarchy) query.uniqueResult();
 	}
+
+	@Override
+	public List<Hierarchy> getAllHierarchy() {
+		getConnection();
+		query = session.createQuery("from Hierarchy where isActive='Y'");
+		
+		
+		return query.list();
+	}
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.InventoryAssignmentsDao;
 import com.gsmart.dao.InventoryDaoImpl;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
@@ -25,9 +26,11 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	InventoryDaoImpl inventoryDao;
 
 	@Override
-	public List<InventoryAssignments> getInventoryList() throws GSmartServiceException {
+	public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+		
+		
 		try {
-			return inventoryAssignmentsDao.getInventoryList();
+			return inventoryAssignmentsDao.getInventoryList( role, hierarchy);
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;
 
@@ -75,4 +78,5 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 		}
 	}
 
+	
 }
