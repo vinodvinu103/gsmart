@@ -46,6 +46,14 @@ public class Assign {
 	@Column(name = "IS_ACTIVE")
 	private String isActive;
 
+	@Override
+	public String toString() {
+		return "Assign [standard=" + standard + ", section=" + section + ", teacherSmartId=" + teacherSmartId
+				+ ", hodSmartId=" + hodSmartId + ", principalSmartId=" + principalSmartId + ", entryTime=" + entryTime
+				+ ", exitTime=" + exitTime + ", updatedTime=" + updatedTime + ", isActive=" + isActive + ", hierarchy="
+				+ hierarchy + "]";
+	}
+
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;

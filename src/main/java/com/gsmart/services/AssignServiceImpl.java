@@ -9,6 +9,8 @@ import com.gsmart.dao.AssignDao;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
+import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -69,6 +71,20 @@ public class AssignServiceImpl implements AssignService{
 	@Override
 	public Assign getStaffByClassAndSection(String standard, String section, Hierarchy hierarchy) {
 		return assignDao.getStaffByClassAndSection(standard, section, hierarchy);
+	}
+
+	@Override
+	public void editAssigningTeacher(Assign assign ,Hierarchy hierarchy) throws GSmartServiceException {
+		Loggers.loggerStart();
+		try{
+		assignDao.editAssigningTeacher(assign,hierarchy);
+		}
+		catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	

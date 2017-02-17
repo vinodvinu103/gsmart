@@ -12,7 +12,7 @@ public class CompoundAssign implements Serializable {
 	private String standard;
 
 	private String entryTime;
-	
+
 	public String getStandard() {
 		return standard;
 	}

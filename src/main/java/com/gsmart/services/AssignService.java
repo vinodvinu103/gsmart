@@ -5,6 +5,7 @@ import java.util.List;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartServiceException;
 
 public interface AssignService {
@@ -18,5 +19,7 @@ public interface AssignService {
 	public void deleteAssigningReportee(Assign assign) throws GSmartServiceException;
 	
 	public Assign getStaffByClassAndSection(String cls, String section, Hierarchy hierarchy);
+
+	public void editAssigningTeacher(Assign assign ,Hierarchy hierarchy)throws GSmartServiceException;
 
 }
