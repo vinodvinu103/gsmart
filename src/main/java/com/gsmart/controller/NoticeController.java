@@ -60,9 +60,10 @@ public class NoticeController
 	GetAuthorization getAuthorization;
 	
 	final Logger logger = Logger.getLogger(NoticeDao.class);
-	
-	@RequestMapping(value = "/viewNotice/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> viewNotice(@PathVariable ("smartId") String smartId, @RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {
+
+	@RequestMapping(value = "/viewNotice/{smartId}/{year}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> viewNotice(@PathVariable ("smartId") String smartId, @PathVariable ("year") String year, @RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {
+
     Loggers.loggerStart();
 		
 		String tokenNumber = token.get("Authorization").get(0);
@@ -79,7 +80,7 @@ public class NoticeController
 		
 	try 
 		{
-			Map<String, Profile> allprofiles=searchService.getAllProfiles("2017-2018",tokenObj.getRole(),tokenObj.getHierarchy());
+			Map<String, Profile> allprofiles=searchService.getAllProfiles( year,tokenObj.getRole(),tokenObj.getHierarchy());
 			ArrayList<String> parentSmartIdList =searchService.searchParentInfo(smartId, allprofiles);
 			 
 			parentSmartIdList.remove(smartId);
@@ -89,6 +90,7 @@ public class NoticeController
 			responseMap.put("status", 200);
 			responseMap.put("message","sucess");
 			responseMap.put("modulePermission", modulePermission);
+
 			return new ResponseEntity<Map<String,Object>>(responseMap, HttpStatus.OK);
 		} 
 		catch (Exception e) 
@@ -203,8 +205,8 @@ public class NoticeController
     	
     
 	}*/
-	@RequestMapping(value = "/S/{role}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> viewSpecificNotice(@PathVariable("role") String role){
+	@RequestMapping(value = "/generic/{type}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> viewGenericNotice(@PathVariable("type") String type){
 		Loggers.loggerStart();
 		
 		
@@ -214,9 +216,9 @@ public class NoticeController
 		
 		try 
 		{
-			System.out.println("role coming from frontend"+role);
+			System.out.println("role coming from frontend"+type);
 			 
-			list=noticeService.viewSpecificNotice(role);
+			list=noticeService.viewGenericNotice(type);
 			for(Notice notice : list ){
 				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 				Date d = f.parse(notice.getEntryTime());
@@ -325,3 +327,4 @@ public class NoticeController
 	}
 	
 }
+

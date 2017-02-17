@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.CompoundLeave;
-import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
+import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.LeaveServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
-import com.gsmart.util.CronJob;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
@@ -42,6 +42,9 @@ public class LeaveController {
 	
 	@Autowired
 	TokenService tokenService;
+	
+	@Autowired
+	ProfileDao profileDao;
 	
 	
 	@RequestMapping( method = RequestMethod.GET)
@@ -65,7 +68,7 @@ public class LeaveController {
 		//	CronJob.cronJob();	
 			
 		if (modulePermission!= null) {
-			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy());
+			leaveList = leaveServices.getLeaveList(tokenObj,tokenObj.getHierarchy());
 			
 			leave.put("leaveList", leaveList);
 			Loggers.loggerEnd(leaveList);
@@ -88,9 +91,12 @@ public class LeaveController {
 
 		str.length();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-
-			
+	
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			Profile profileInfo=profileDao.getProfileDetails(tokenObj.getSmartId());
+			leave.setSmartId(profileInfo.getSmartId());
+			leave.setReportingManagerId(profileInfo.getReportingManagerId());
+			leave.setFullName(profileInfo.getFirstName()+" "+profileInfo.getLastName());
 			leave.setHierarchy(tokenObj.getHierarchy());
 			System.out.println("leave details>>>>>>>>>>>>>."+leave);
 			CompoundLeave cl1=leaveServices.addLeave(leave,noOfdays,tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
@@ -129,6 +135,15 @@ public class LeaveController {
 			myResponse = new IAMResponse("Permission Denied");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
+	}
+	@RequestMapping(value="/leftleaves/{smartId}/{leaveType}",method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getLeftLeaves(@PathVariable ("smartId") String smartId,@PathVariable("leaveType") String leaveType){
+		Loggers.loggerStart();
+		Map<String, Object>leftLeaves=leaveServices.getLeftLeaves(smartId, leaveType);
+		
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String,Object>>(leftLeaves, HttpStatus.OK);
+		
 	}
 	
 	}

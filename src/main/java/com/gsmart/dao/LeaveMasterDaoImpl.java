@@ -31,8 +31,9 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<LeaveMaster> getLeaveMasterList(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		 List<LeaveMaster> leavemasterlist = null;
 		 try { 
 			 if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -56,10 +57,10 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 
 	@Override
 	public CompoundLeaveMaster addLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
-
+		getconnection();
 		Loggers.loggerStart();
 		CompoundLeaveMaster cb = null;
-		getconnection();
+		
 		try {
 			Hierarchy hierarchy=leaveMaster.getHierarchy();
 			query=session.createQuery("FROM LeaveMaster WHERE leaveType=:leaveType AND  daysAllow=:daysAllow AND isActive=:isActive and hierarchy.hid=:hierarchy");
@@ -89,9 +90,10 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 	}
 
 	public void deleteLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
+		getconnection();
 		Loggers.loggerStart();
 		try {
-			getconnection();
+			
 
 			leaveMaster.setExitTime(CalendarCalculator.getTimeStamp());
 			leaveMaster.setIsActive("D");
@@ -108,9 +110,10 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 
 	@Override
 	public void editLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException {
+		getconnection();
 		Loggers.loggerStart();
 		try {
-			getconnection();
+			
 			LeaveMaster oldleaveMaster= getLeaveMaster(leaveMaster.getEntryTime(),leaveMaster.getHierarchy());
 			oldleaveMaster.setIsActive("N");
 			oldleaveMaster.setUpdateTime(CalendarCalculator.getTimeStamp());
@@ -125,6 +128,8 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
+		}finally {
+			session.close();
 		}
 	}
 	
@@ -155,6 +160,26 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 
+	}
+	
+	public LeaveMaster getLeaveMasterByType(String leaveType){
+		Loggers.loggerStart();
+		LeaveMaster leaveMaster=null;
+		getconnection();
+		try {
+			query=session.createQuery("from LeaveMaster where leaveType=:leaveType");
+			query.setParameter("leaveType", leaveType);
+			
+			leaveMaster=(LeaveMaster) query.uniqueResult();
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			session.close();
+		}
+		return leaveMaster;
+		
 	}
 
 }

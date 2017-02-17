@@ -50,9 +50,9 @@ public class NoticeServiceImpl implements NoticeService
 	
 
 	@Override
-	public List<Notice> viewSpecificNotice(String role){
+	public List<Notice> viewGenericNotice(String type){
 		 
-		return noticeDao.viewSpecificNotice(role);
+		return noticeDao.viewGenericNotice(type);
 	}
 	
 	@Override
@@ -91,5 +91,6 @@ public class NoticeServiceImpl implements NoticeService
 		return null;
 	}
 
-}
+	
 
+}
