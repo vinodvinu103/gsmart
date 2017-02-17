@@ -67,15 +67,15 @@ public class MyTeamLeaveController {
 		String smartId=tokenObj.getSmartId();
 		Profile profileInfo=profileDao.getProfileDetails(smartId);
 		
-		if (modulePermission != null) {
+		/*if (modulePermission != null) {*/
 			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy());
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);
 			return new ResponseEntity<Map<String, Object>>(myteam, HttpStatus.OK);
-		} else {
+		/*} else {
 			return new ResponseEntity<Map<String, Object>>(myteam, HttpStatus.OK);
-		}
+		}*/
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)

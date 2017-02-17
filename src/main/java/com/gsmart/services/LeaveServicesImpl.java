@@ -194,12 +194,12 @@ public class LeaveServicesImpl implements LeaveServices {
 		return epoch;
 	}//epoch 
 	
-	public Map<String,Object> getLeftLeaves(String smartId,String leaveType){
+	public Map<String,Object> getLeftLeaves(String role,Hierarchy hierarchy,String smartId,String leaveType){
 		int totalleaves=0;
 		int leftLeaves=0;
 		Map<String, Object> map=new HashMap<>();
-		LeaveMaster leaveTypeData=leaveMasterDao.getLeaveMasterByType(leaveType);
-		List<Leave> leaveList=leaveDao.getLeaves(smartId, leaveType);
+		LeaveMaster leaveTypeData=leaveMasterDao.getLeaveMasterByType(role,hierarchy,leaveType);
+		List<Leave> leaveList=leaveDao.getLeaves(role,hierarchy,smartId, leaveType);
 		for(int i=0;i<leaveList.size();i++){
 			totalleaves=leaveList.get(i).getNumberOfDays()+totalleaves;
 		}
