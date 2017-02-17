@@ -276,12 +276,12 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	}
 
-	@Override
+	/*@Override
 	public List<Hierarchy> getAllHierarchy() {
 		getConnection();
 		query = session.createQuery("from Hierarchy where isActive='Y'");
 		
 		
 		return query.list();
-	}
+	}*/
 }
