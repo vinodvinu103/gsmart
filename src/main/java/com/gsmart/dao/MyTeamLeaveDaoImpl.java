@@ -69,7 +69,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		try {
 //			Hierarchy hierarchy = leave.getHierarchy();
 			query = session.createQuery("from Leave where entryTime=:entryTime");
-			leave.setLeaveStatus("rejected");
+			leave.setLeaveStatus("Rejected*");
 			session.update(leave);
 			transaction.commit();
 			session.close();

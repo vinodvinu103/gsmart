@@ -67,19 +67,19 @@ public class MyTeamLeaveController {
 		String smartId=tokenObj.getSmartId();
 		Profile profileInfo=profileDao.getProfileDetails(smartId);
 		
-		/*if (modulePermission != null) {*/
+		if (modulePermission != null) {
 			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy());
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);
 			return new ResponseEntity<Map<String, Object>>(myteam, HttpStatus.OK);
-		/*} else {
+		} else {
 			return new ResponseEntity<Map<String, Object>>(myteam, HttpStatus.OK);
-		}*/
+		}
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteBand(@RequestHeader HttpHeaders token, HttpSession httpSession,
+	public ResponseEntity<IAMResponse> editDeleteMyTeamLeave(@RequestHeader HttpHeaders token, HttpSession httpSession,
 			@RequestBody Leave leave, @PathVariable("task") String task) throws GSmartBaseException {
 		Loggers.loggerStart(leave);
 		IAMResponse myResponse;
