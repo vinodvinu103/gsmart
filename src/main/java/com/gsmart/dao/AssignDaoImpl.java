@@ -67,7 +67,16 @@ public class AssignDaoImpl implements AssignDao {
 		
 		CompoundAssign compoundAssign = null;
 		try {
-			Assign assign1 = fetch(assign);
+			if(assign.getHierarchy().getHid() == null){
+				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
+			}else{
+			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy ");
+			}
+			query.setParameter("standard", assign.getStandard());
+			query.setParameter("isActive", "Y");
+			query.setParameter("hierarchy", assign.getHierarchy().getHid());
+			query.setParameter("section", assign.getSection());
+			Assign assign1 = (Assign) query.uniqueResult();
 			if (assign1 == null) {
 				assign.setEntryTime(CalendarCalculator.getTimeStamp());
 				assign.setIsActive("Y");
@@ -91,8 +100,9 @@ public class AssignDaoImpl implements AssignDao {
 			if(assign.getHierarchy().getHid() == null){
 				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
 			}else{
-			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy and teacherSmartId=:teacherSmartId");
 			}
+			query.setParameter("teacherSmartId", assign.getTeacherSmartId());
 			query.setParameter("standard", assign.getStandard());
 			query.setParameter("isActive", "Y");
 			query.setParameter("hierarchy", assign.getHierarchy().getHid());
