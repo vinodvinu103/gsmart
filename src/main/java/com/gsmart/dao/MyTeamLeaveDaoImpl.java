@@ -42,11 +42,11 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		getConnection();
 		try {
 			String role = profileInfo.getRole();
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("hr") || role.equalsIgnoreCase("director")) {
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")) {
 				query = session.createQuery("FROM Leave WHERE isActive='Y'");
 			} else {
 				query = session.createQuery(
-						"FROM Leave WHERE reportingManagerId=:smartId and isActive='Y' and hierarchy.hid=:hierarchy");
+						"FROM Leave WHERE reportingManagerId=:smartId and lower(leaveStatus)!='rejected*' and isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("smartId", profileInfo.getSmartId());
 			}
@@ -87,36 +87,26 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		try {
 			Loggers.loggerStart();
 			Leave applyLeave = getLeave(leave);
-			LeaveDetails oldLeaveDetail = getLeaveDetails(leave.getSmartId(), leave.getLeaveType());
-			updateLeave(applyLeave, oldLeaveDetail);
+//			LeaveDetails oldLeaveDetail = getLeaveDetails(leave.getSmartId(), leave.getLeaveType());
+			updateLeave(applyLeave);
 		} catch (org.hibernate.exception.ConstraintViolationException e) {
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 	}
 
-	private void updateLeave(Leave applyLeave, LeaveDetails leaveDetail) throws GSmartDatabaseException {
+	private void updateLeave(Leave applyLeave) throws GSmartDatabaseException {
 		Loggers.loggerStart(applyLeave);
-		Loggers.loggerStart(leaveDetail);
 		System.out.println("in side update");
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 
-		query = session.createQuery(
-				"UPDATE LeaveDetails SET appliedLeaves=:appliedLeaves WHERE smartId=:smartId and leaveType=:leaveType");
-		query.setParameter("smartId", applyLeave.getSmartId());
-		query.setParameter("appliedLeaves", applyLeave.getNumberOfDays());
-		query.setParameter("leaveType", applyLeave.getLeaveType());
-		// Loggers.loggerValue(query);
+		
 		applyLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
 		applyLeave.setLeaveStatus("Sanction");
 
-		int i = (leaveDetail.getLeftLeaves() - applyLeave.getNumberOfDays());
-		leaveDetail.setLeftLeaves(i);
-
-		session.update(leaveDetail);
+		
 		session.update(applyLeave);
-		query.executeUpdate();
 		transaction.commit();
 		session.close();
 	}
@@ -128,11 +118,11 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 			transaction = session.beginTransaction();
 			query = session.createQuery("from Leave where entryTime=:entryTime and isActive='Y'");
 			query.setParameter("entryTime", leave.getEntryTime());
-			Leave bandList = (Leave) query.uniqueResult();
+			Leave leaveList = (Leave) query.uniqueResult();
 			transaction.commit();
 			session.close();
-			Loggers.loggerEnd(bandList);
-			return bandList;
+			Loggers.loggerEnd(leaveList);
+			return leaveList;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -203,21 +193,12 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 
-			query = session.createQuery(
-					"UPDATE LeaveDetails SET appliedLeaves=:appliedLeaves WHERE smartId=:smartId and leaveType=:leaveType");
-			query.setParameter("smartId", applyLeave.getSmartId());
-			query.setParameter("appliedLeaves", applyLeave.getNumberOfDays());
-			query.setParameter("leaveType", applyLeave.getLeaveType());
 
 			applyLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			applyLeave.setLeaveStatus("Rejected*");
 
-			int i = (leaveDetail.getLeftLeaves() + applyLeave.getNumberOfDays());
-			leaveDetail.setLeftLeaves(i);
-
-			session.update(leaveDetail);
+			
 			session.update(applyLeave);
-			query.executeUpdate();
 			transaction.commit();
 
 		} catch (org.hibernate.exception.ConstraintViolationException e) {

@@ -162,12 +162,17 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 
 	}
 	
-	public LeaveMaster getLeaveMasterByType(String leaveType){
+	public LeaveMaster getLeaveMasterByType(String role,Hierarchy hierarchy,String leaveType){
 		Loggers.loggerStart();
 		LeaveMaster leaveMaster=null;
 		getconnection();
 		try {
-			query=session.createQuery("from LeaveMaster where leaveType=:leaveType");
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")){
+			query=session.createQuery("from LeaveMaster where leaveType=:leaveType and isActive='Y'");
+			}else{
+				query=session.createQuery("from LeaveMaster where leaveType=:leaveType and isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			query.setParameter("leaveType", leaveType);
 			
 			leaveMaster=(LeaveMaster) query.uniqueResult();
