@@ -48,10 +48,10 @@ public class InventoryController {
 	@Autowired
 	InventoryServices inventoryServices;
 	@Autowired
-	GetAuthorization  getauthorization;
+	GetAuthorization getauthorization;
 	@Autowired
 	TokenService tokenService;
-	
+
 	/**
 	 * to view {@link Inventory} details.
 	 * 
@@ -61,33 +61,32 @@ public class InventoryController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	
-	@RequestMapping(method = RequestMethod.GET )
-	public ResponseEntity<Map<String, Object>> getInventory(@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getInventory(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		 List<Inventory> inventoryList = null;
-     RolePermission	modulePermission=getauthorization.authorizationForGet(tokenNumber, httpSession);
-     Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-          Map<String, Object> permissions = new HashMap<>();
-		
-		permissions.put("modulePermission",modulePermission);
-       
-		if (modulePermission!= null) {
+		List<Inventory> inventoryList = null;
+		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Map<String, Object> permissions = new HashMap<>();
+
+		permissions.put("modulePermission", modulePermission);
+
+		if (modulePermission != null) {
 			// inventoryList = inventoryServices.getInventoryList();
-			
-			 inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(),tokenObj.getHierarchy());
-			 permissions.put("inventoryList", inventoryList);
-				Loggers.loggerEnd(inventoryList);
-				return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		    }
-		 else {
-				return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-			}
+
+			inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy());
+			permissions.put("inventoryList", inventoryList);
+			Loggers.loggerEnd(inventoryList);
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		}
+	}
 
 	/**
 	 * provides the access to persist a new inventory entity Sets the
@@ -98,41 +97,39 @@ public class InventoryController {
 	 * @return persistence status (success/error) in JSON format
 	 * @see IAMResponse
 	 */
-	
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addInventory(@RequestBody Inventory inventory,@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<IAMResponse> addInventory(@RequestBody Inventory inventory, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(inventory);
 
 		IAMResponse resp = new IAMResponse();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		
-		
+
 		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-			
+			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+
 			inventory.setHierarchy(tokenObj.getHierarchy());
-		CompoundInventory cb= inventoryServices.addInventory(inventory);
-		
-		
-		if (cb != null)
-			resp.setMessage("success");
-		else
-			resp.setMessage("Already exists");
-		Loggers.loggerEnd();
-		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-	} else {
-		resp.setMessage("Permission Denied");
-		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+			CompoundInventory cb = inventoryServices.addInventory(inventory);
+
+			if (cb != null)
+				resp.setMessage("success");
+			else
+				resp.setMessage("Already exists");
+			Loggers.loggerEnd();
+			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+		} else {
+			resp.setMessage("Permission Denied");
+			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+		}
 	}
-	}
-	
-	
-	
+
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editInventory(@RequestBody Inventory inventory,@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<IAMResponse> editInventory(@RequestBody Inventory inventory,
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse;
 		String tokenNumber = token.get("Authorization").get(0);
@@ -141,15 +138,14 @@ public class InventoryController {
 
 		str.length();
 
-
 		if (getauthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit"))
-	
-			inventoryServices.editInventory(inventory);
-			
+
+				inventoryServices.editInventory(inventory);
+
 			else if (task.equals("delete"))
-				
-		    inventoryServices.deleteInventory(inventory);
+
+				inventoryServices.deleteInventory(inventory);
 
 			myResponse = new IAMResponse("success");
 			Loggers.loggerEnd();
@@ -160,26 +156,19 @@ public class InventoryController {
 		}
 	}
 
-	
-	}
-	
-/*	 
-	@RequestMapping( method = RequestMethod.DELETE)
-	public ResponseEntity<IAMResponse> deleteInventory(@RequestBody Inventory inventory)
-			throws GSmartBaseException {
-		System.out.println(inventory);
-		Loggers.loggerStart();
-		IAMResponse myResponse;
-		inventoryServices.deleteInventory(inventory);
-		myResponse = new IAMResponse("success");
-		Loggers.loggerEnd();
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-	}*/
-/*	public void getPermission(String role) throws GSmartServiceException {
+}
 
-		rolePermissionServices.getPermission(role);
-	}*/
-
-
-
-
+/*
+ * @RequestMapping( method = RequestMethod.DELETE) public
+ * ResponseEntity<IAMResponse> deleteInventory(@RequestBody Inventory inventory)
+ * throws GSmartBaseException { System.out.println(inventory);
+ * Loggers.loggerStart(); IAMResponse myResponse;
+ * inventoryServices.deleteInventory(inventory); myResponse = new
+ * IAMResponse("success"); Loggers.loggerEnd(); return new
+ * ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK); }
+ */
+/*
+ * public void getPermission(String role) throws GSmartServiceException {
+ * 
+ * rolePermissionServices.getPermission(role); }
+ */
