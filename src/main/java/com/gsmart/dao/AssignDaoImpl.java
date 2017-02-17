@@ -2,15 +2,12 @@ package com.gsmart.dao;
 
 import java.util.List;
 
-<<<<<<< HEAD
 import javax.validation.ConstraintViolationException;
 
-=======
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 
 import org.hibernate.Criteria;
->>>>>>> 2ff4787ad5b2943a713eba3c942078809912f2f6
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
