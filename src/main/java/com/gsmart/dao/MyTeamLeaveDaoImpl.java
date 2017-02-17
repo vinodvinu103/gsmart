@@ -39,7 +39,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	public List<Leave> getLeavelist(Profile profileInfo, Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Leave> leavelist = null;
-
+		getConnection();
 		try {
 			String role = profileInfo.getRole();
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("hr") || role.equalsIgnoreCase("director")) {
@@ -67,7 +67,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		Loggers.loggerStart();
 		getConnection();
 		try {
-			Hierarchy hierarchy = leave.getHierarchy();
+//			Hierarchy hierarchy = leave.getHierarchy();
 			query = session.createQuery("from Leave where entryTime=:entryTime");
 			leave.setLeaveStatus("rejected");
 			session.update(leave);

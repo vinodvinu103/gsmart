@@ -18,4 +18,6 @@ public interface LeaveDao {
 
 	public void deleteLeave(Leave leave)throws GSmartDatabaseException;
 	
+	public List<Leave> getLeaves(String smartId,String leaveType);
+	
 }
