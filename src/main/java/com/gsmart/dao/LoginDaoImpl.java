@@ -31,7 +31,6 @@ public class LoginDaoImpl implements LoginDao {
 	Query query;
 
 	@Override
-
 	public Map<String, Object> authenticate(Login loginDetails) throws GSmartDatabaseException {
 		getConnection();
 		Map<String, Object> authMap = new HashMap<>();
@@ -131,6 +130,7 @@ public class LoginDaoImpl implements LoginDao {
 		return list;
 	}
 	
+	@Override
 	public void unlockAccounts() {
 		getConnection();
 		List<Login> list = null;

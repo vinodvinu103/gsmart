@@ -83,6 +83,10 @@
 		<!-- <property name="maxUploadSize" value="10000000" /> -->
 		<property name="maxUploadSize" value="100000" />
 	</bean>
+	
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	    <property name="applicationContextSchedulerContextKey" value="applicationContext" />
+	</bean>
 
 </beans>
 

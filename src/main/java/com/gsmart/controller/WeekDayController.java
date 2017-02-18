@@ -1,6 +1,8 @@
 package com.gsmart.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -39,16 +41,20 @@ public class WeekDayController {
 	ProfileDaoImp profileDaoImp;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<WeekDays>> getWeekDaysList() throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> getWeekDaysList() throws GSmartBaseException {
 		Loggers.loggerStart();
+		Map<String, Object> resultMap = new HashMap<>();
 		List<WeekDays> list = null;
 		try {
 			list = weekDaysService.getWeekDaysList();
+			resultMap.put("data", list);
+			resultMap.put("status", 200);
+			resultMap.put("message", "success");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return new ResponseEntity<>(list, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
 
 	// add

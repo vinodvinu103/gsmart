@@ -8,6 +8,8 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
+import com.gsmart.services.LoginServicesImpl;
+
 public class CronJob {
 	
 	static CronJob cronJob = null;
@@ -18,7 +20,7 @@ public class CronJob {
 		// job.setName("dummyJobName");
 		// job.setJobClass(HelloJob.class);
 		Loggers.loggerStart("started////////");
-		JobDetail job = JobBuilder.newJob(CalendarCalculator.class).withIdentity("dummyJobName", "group1").build();
+		JobDetail job = JobBuilder.newJob(LoginServicesImpl.class).withIdentity("dummyJobName", "group1").build();
 
 		// Quartz 1.6.3
 		// CronTrigger trigger = new CronTrigger();
