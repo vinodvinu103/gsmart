@@ -66,9 +66,9 @@ public interface HierarchyDao {
 	 * @return Nothing
 	 * @throws Exception
 	 */
-	public void deleteHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
-
-	public Hierarchy getHierarchyByHid(Long hid) throws GSmartDatabaseException;
+	public void deleteHierarchy(Hierarchy hierarchy)throws GSmartDatabaseException;
+	
+	public Hierarchy getHierarchyByHid(Long hid)throws GSmartDatabaseException;
 
 	public List<Hierarchy> getAllHierarchy();
 
