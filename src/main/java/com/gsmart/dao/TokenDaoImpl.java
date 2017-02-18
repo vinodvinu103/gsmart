@@ -25,10 +25,10 @@ public class TokenDaoImpl implements TokenDao{
 	Query query;
 
 	public void saveToken(Token token, Login loginObj) throws GSmartDatabaseException {
-		
+		getConnection();
 		Loggers.loggerStart(token);
 		try {
-			getConnection();
+			
 			query = session.createQuery("from Login where smartId=:smartId");
 			query.setParameter("smartId", loginObj.getSmartId());
 			Login login = (Login)query.uniqueResult();
@@ -41,6 +41,8 @@ public class TokenDaoImpl implements TokenDao{
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 	}
@@ -65,15 +67,16 @@ public class TokenDaoImpl implements TokenDao{
 		}
 		/*finally {
 			session.close();
-		}*/
-
+		}
+*/
 		return token;
 	}
 
 	public void deleteToken(String tokenNumber) throws GSmartDatabaseException {
 
-		Loggers.loggerStart(tokenNumber);
 		getConnection();
+		Loggers.loggerStart(tokenNumber);
+		
 		Token token = new Token();
 		token.setTokenNumber(tokenNumber);
 
@@ -84,6 +87,8 @@ public class TokenDaoImpl implements TokenDao{
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
+		}finally {
+			session.close();
 		}
 	}
 

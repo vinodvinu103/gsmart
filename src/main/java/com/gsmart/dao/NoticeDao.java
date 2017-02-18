@@ -19,7 +19,9 @@ public interface NoticeDao{
 
     public  Notice editNotice(Notice notice) throws Exception;
 
-	public List<Notice> viewSpecificNotice(String role);
+	public List<Notice> viewGenericNotice(String type);
+	
+	public List<Notice> viewMyNotice(String role);
 	
 	public ArrayList<Profile> getProfiles(String role,String smartId)throws GSmartServiceException;
 

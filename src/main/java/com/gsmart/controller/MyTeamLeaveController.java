@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Leave;
+import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.MyTeamLeaveServices;
@@ -40,6 +42,9 @@ public class MyTeamLeaveController {
 
 	@Autowired
 	TokenService tokenService;
+	
+	@Autowired
+	ProfileDao profileDao;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getLeave(@RequestHeader HttpHeaders token, HttpSession httpSession)
@@ -59,9 +64,11 @@ public class MyTeamLeaveController {
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> myteam = new HashMap<>();
 		myteam.put("modulePermission", modulePermission);
-
+		String smartId=tokenObj.getSmartId();
+		Profile profileInfo=profileDao.getProfileDetails(smartId);
+		
 		if (modulePermission != null) {
-			myTeamList = myteamleaveServices.getLeavelist(tokenObj.getRole(),tokenObj.getHierarchy());
+			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy());
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);
@@ -72,7 +79,7 @@ public class MyTeamLeaveController {
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteBand(@RequestHeader HttpHeaders token, HttpSession httpSession,
+	public ResponseEntity<IAMResponse> editDeleteMyTeamLeave(@RequestHeader HttpHeaders token, HttpSession httpSession,
 			@RequestBody Leave leave, @PathVariable("task") String task) throws GSmartBaseException {
 		Loggers.loggerStart(leave);
 		IAMResponse myResponse;
