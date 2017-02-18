@@ -43,6 +43,8 @@ public interface ProfileDao {
 	public boolean userProfileInsert(Profile profile);
 
 	public String updateProfile(Profile profile);
+	
+	public String deleteprofile(Profile profile);
 
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
