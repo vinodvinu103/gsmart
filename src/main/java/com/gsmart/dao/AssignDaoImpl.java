@@ -4,10 +4,7 @@ import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaUpdate;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -127,10 +123,33 @@ public class AssignDaoImpl implements AssignDao {
 		getConnection();
 		Loggers.loggerStart();
 		Assign asgn = null;
-		try {			
+		try {
+			getConnection();			
+			
 			Assign oldAssign = getAssigns(assign.getEntryTime());
 			asgn = updateAssign(oldAssign, assign);
-			addAssigningReportee(assign);
+			CompoundAssign ch =	addAssigningReportee(assign);
+			if(ch!=null){
+				getConnection();
+				System.out.println("TechID"+assign.getTeacherSmartId());
+				System.out.println("TechName"+assign.getTeacherName());
+				System.out.println("class"+assign.getStandard());
+				System.out.println("section"+assign.getSection());
+				System.out.println("hid"+assign.getHierarchy().getHid());				
+			
+				query = session.createQuery("UPDATE Profile SET reportingManagerName=:teacherName,reportingManagerId=:reportingManagerId , counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
+				
+				query.setParameter("reportingManagerId", assign.getTeacherSmartId());
+				query.setParameter("counterSigningManagerId", assign.getHodSmartId());
+				query.setParameter("standard", assign.getStandard());
+				query.setParameter("section", assign.getSection());
+				query.setParameter("teacherName", assign.getTeacherName());
+				query.setParameter("hierarchy", assign.getHierarchy().getHid());
+				int a=query.executeUpdate();
+				transaction.commit();
+				System.out.println("updated"+a);
+				session.close();
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 			// throw new GSmartDatabaseException(e.getMessage());
@@ -142,15 +161,16 @@ public class AssignDaoImpl implements AssignDao {
 	private Assign updateAssign(Assign oldAssign, Assign assign) throws GSmartDatabaseException {
 		Assign asg = null;
 		try {
-			Assign assign1 = fetch(assign);
-			if (assign1 == null) {
-				oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
-				oldAssign.setIsActive("N");
-				session.update(oldAssign);
-				transaction.commit();
-				return oldAssign;
-			}
-			
+			if(assign.getSection().equals(oldAssign.getSection()) && assign.getStandard().equals(oldAssign.getStandard())){
+				Assign assign1 = fetch(assign);
+				if (assign1 == null) {
+					oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
+					oldAssign.setIsActive("N");
+					session.update(oldAssign);
+					transaction.commit();
+					return oldAssign;
+				}
+			}			
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
@@ -179,7 +199,14 @@ public class AssignDaoImpl implements AssignDao {
 	public void deleteAssigningReportee(Assign assign) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
-		try {			
+		try {
+			getConnection();
+			
+			query = session.createQuery("UPDATE Profile SET reportingManagerId='null', standard='null', section='null' WHERE standard=:standard and section=:section");
+			query.setParameter("standard", assign.getStandard());
+			query.setParameter("section", assign.getSection());
+			query.executeUpdate();			
+			
 			assign.setIsActive("D");
 			assign.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(assign);
@@ -210,63 +237,4 @@ public class AssignDaoImpl implements AssignDao {
 			session.close();
 		}
 	}
-
-	@Override
-	public void editAssigningTeacher(Assign assign, Hierarchy hierarchy)
-			throws GSmartDatabaseException {
-		Loggers.loggerStart("assign"+assign);
-		//Loggers.loggerStart("profile"+profile);
-	//	Profile profile2=null;
-		System.out.println("teacher Smartid >>>>>>>>>"+assign.getTeacherSmartId());
-		Loggers.loggerStart();
-		try {
-			
-			getConnection();
-			assign.setUpdatedTime(CalendarCalculator.getTimeStamp());
-			session.update(assign);
-			transaction.commit();
-			
-			getConnection();
-			/*
-			 * query = session.createQuery(
-			 * "UPDATE Assign SET teacherSmartId=:teacherSmartId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section"
-			 * );
-			 */
-			
-			query = session.createQuery(
-					"UPDATE Profile SET reportingManagerId=:reportingManagerId , counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
-
-			/*
-			 * query.setParameter("teacherSmartId",assign.getTeacherSmartId());
-			 */
-			query.setParameter("counterSigningManagerId", assign.getHodSmartId());
-			query.setParameter("reportingManagerId", assign.getTeacherSmartId());
-			query.setParameter("standard", assign.getStandard());
-			query.setParameter("section", assign.getSection());
-			query.setParameter("hierarchy", hierarchy.getHid());
-			int result = query.executeUpdate();
-			transaction.commit();
-			//session.close();
-			/*
-			 * query1.setParameter("teacherSmartId",assign.getTeacherSmartId());
-			 * query.setParameter("reportingManagerId",
-			 * assign.getReportingManagerId()); query.setParameter("standard",
-			 * assign.getStandard()); query.setParameter("section",
-			 * assign.getSection()); query.setParameter("hierarchy",
-			 * hierarchy.getHid());
-			 */
-
-			// session.update(oldAssign);
-			
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			// throw new GSmartDatabaseException(e.getMessage());
-			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
-		}
-
-	}
-
 }
