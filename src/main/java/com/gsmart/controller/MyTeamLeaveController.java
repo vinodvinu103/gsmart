@@ -79,7 +79,7 @@ public class MyTeamLeaveController {
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteBand(@RequestHeader HttpHeaders token, HttpSession httpSession,
+	public ResponseEntity<IAMResponse> editDeleteMyTeamLeave(@RequestHeader HttpHeaders token, HttpSession httpSession,
 			@RequestBody Leave leave, @PathVariable("task") String task) throws GSmartBaseException {
 		Loggers.loggerStart(leave);
 		IAMResponse myResponse;
