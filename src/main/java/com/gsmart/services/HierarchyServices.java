@@ -45,10 +45,11 @@ public interface HierarchyServices {
 	 * @return nothing
 	 * @throws GSmartServiceException
 	 */
-	public void deleteHierarchy(Hierarchy hierarchy) throws GSmartServiceException;
-
-	public Hierarchy getHierarchyByHid(Long hid) throws GSmartServiceException;
-
+	public void deleteHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
+	
+	public Hierarchy getHierarchyByHid(Long hid)throws GSmartServiceException;
 	public List<Hierarchy> getAllHierarchy();
-
+	
+	
+	
 }

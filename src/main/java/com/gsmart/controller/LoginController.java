@@ -46,7 +46,7 @@ public class LoginController {
 		
 		Loggers.loggerStart(login);
 		Loggers.loggerStart(tokenNumber);
-		Map<String, Object> jsonMap = loginServices.authenticate(login, null);
+		Map<String, Object> jsonMap = loginServices.authenticate(login, tokenNumber);
 		Loggers.loggerEnd(jsonMap);
 		httpSession.setAttribute("tokenNumber", jsonMap.get("token"));
 		Loggers.loggerValue("Token Number", jsonMap.get("token"));

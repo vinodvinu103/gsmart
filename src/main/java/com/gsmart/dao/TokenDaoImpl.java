@@ -67,8 +67,8 @@ public class TokenDaoImpl implements TokenDao{
 		}
 		/*finally {
 			session.close();
-		}*/
 
+		}*/
 		return token;
 	}
 
