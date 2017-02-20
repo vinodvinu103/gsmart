@@ -69,18 +69,14 @@ public class AssignDaoImpl implements AssignDao {
 		Loggers.loggerStart();
 		
 		CompoundAssign compoundAssign = null;
+		Assign assign2=null;
 		try {
 			if(assign.getHierarchy().getHid() == null){
 				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
 			}else{
-			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy ");
+				assign2=fetch2(assign);
 			}
-			query.setParameter("standard", assign.getStandard());
-			query.setParameter("isActive", "Y");
-			query.setParameter("hierarchy", assign.getHierarchy().getHid());
-			query.setParameter("section", assign.getSection());
-			Assign assign1 = (Assign) query.uniqueResult();
-			if (assign1 == null) {
+			if (assign2 == null) {
 				assign.setEntryTime(CalendarCalculator.getTimeStamp());
 				assign.setIsActive("Y");
 				compoundAssign = (CompoundAssign) session.save(assign);
@@ -131,13 +127,9 @@ public class AssignDaoImpl implements AssignDao {
 			CompoundAssign ch =	addAssigningReportee(assign);
 			if(ch!=null){
 				getConnection();
-				System.out.println("TechID"+assign.getTeacherSmartId());
-				System.out.println("TechName"+assign.getTeacherName());
-				System.out.println("class"+assign.getStandard());
-				System.out.println("section"+assign.getSection());
-				System.out.println("hid"+assign.getHierarchy().getHid());				
+								
 			
-				query = session.createQuery("UPDATE Profile SET reportingManagerName=:teacherName,reportingManagerId=:reportingManagerId , counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
+				query = session.createQuery("UPDATE Profile SET reportingManagerName=:teacherName, reportingManagerId=:reportingManagerId, counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
 				
 				query.setParameter("reportingManagerId", assign.getTeacherSmartId());
 				query.setParameter("counterSigningManagerId", assign.getHodSmartId());
@@ -147,7 +139,6 @@ public class AssignDaoImpl implements AssignDao {
 				query.setParameter("hierarchy", assign.getHierarchy().getHid());
 				int a=query.executeUpdate();
 				transaction.commit();
-				System.out.println("updated"+a);
 				session.close();
 			}			
 		} catch (Exception e) {
@@ -161,7 +152,7 @@ public class AssignDaoImpl implements AssignDao {
 	private Assign updateAssign(Assign oldAssign, Assign assign) throws GSmartDatabaseException {
 		Assign asg = null;
 		try {
-			if(assign.getSection().equals(oldAssign.getSection()) && assign.getStandard().equals(oldAssign.getStandard())){
+			if(assign.getStandard().equals(oldAssign.getStandard()) && assign.getSection().equals(oldAssign.getSection())){
 				Assign assign1 = fetch(assign);
 				if (assign1 == null) {
 					oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -170,7 +161,17 @@ public class AssignDaoImpl implements AssignDao {
 					transaction.commit();
 					return oldAssign;
 				}
-			}			
+			}else{
+				Assign assig2=fetch2(assign);
+				if (assig2 == null) {
+					oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
+					oldAssign.setIsActive("N");
+					session.update(oldAssign);
+					transaction.commit();
+					return oldAssign;
+				}
+			}
+				
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
@@ -180,6 +181,18 @@ public class AssignDaoImpl implements AssignDao {
 	}
 	
 	
+
+	private Assign fetch2(Assign assign) {
+		Assign assignList=null;
+		query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy");
+		query.setParameter("standard", assign.getStandard());
+		query.setParameter("isActive", "Y");
+		query.setParameter("hierarchy", assign.getHierarchy().getHid());
+		query.setParameter("section", assign.getSection());
+		assignList = (Assign) query.uniqueResult();
+		Loggers.loggerEnd(assignList);
+		return assignList;
+	}
 
 	public Assign getAssigns(String entryTime) {
 		Loggers.loggerStart();

@@ -72,21 +72,4 @@ public class AssignServiceImpl implements AssignService{
 	public Assign getStaffByClassAndSection(String standard, String section, Hierarchy hierarchy) {
 		return assignDao.getStaffByClassAndSection(standard, section, hierarchy);
 	}
-
-	@Override
-	public void editAssigningTeacher(Assign assign ,Hierarchy hierarchy) throws GSmartServiceException {
-		Loggers.loggerStart();
-		try{
-		assignDao.editAssigningTeacher(assign,hierarchy);
-		}
-		catch (Exception e) {
-
-			e.printStackTrace();
-		}
-		
-		
-	}
-
-	
-
 }

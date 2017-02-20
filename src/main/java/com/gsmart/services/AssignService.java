@@ -20,6 +20,4 @@ public interface AssignService {
 	
 	public Assign getStaffByClassAndSection(String cls, String section, Hierarchy hierarchy);
 
-	public void editAssigningTeacher(Assign assign ,Hierarchy hierarchy)throws GSmartServiceException;
-
 }
