@@ -6,8 +6,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -22,6 +20,9 @@ public class Assign {
 
 	@Column(name = "SECTION")
 	private String section;
+	
+	@Column(name = "TEACHERNAME")
+	private String teacherName;
 
 	@Column(name = "TEACHER_SMART_ID")
 	private String teacherSmartId;
@@ -41,8 +42,17 @@ public class Assign {
 
 	@Column(name = "UPDATED_TIME")
 	private String updatedTime;
+	
 	@Column(name = "IS_ACTIVE")
 	private String isActive;
+
+	@Override
+	public String toString() {
+		return "Assign [standard=" + standard + ", section=" + section + ", teacherSmartId=" + teacherSmartId
+				+ ", hodSmartId=" + hodSmartId + ", principalSmartId=" + principalSmartId + ", entryTime=" + entryTime
+				+ ", exitTime=" + exitTime + ", updatedTime=" + updatedTime + ", isActive=" + isActive + ", hierarchy="
+				+ hierarchy + "]";
+	}
 
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -110,6 +120,14 @@ public class Assign {
 
 	public void setStandard(String standard) {
 		this.standard = standard;
+	}
+
+	public String getTeacherName() {
+		return teacherName;
+	}
+
+	public void setTeacherName(String teacherName) {
+		this.teacherName = teacherName;
 	}
 
 	public String getTeacherSmartId() {
