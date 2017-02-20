@@ -73,10 +73,11 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	 * @throws GSmartServiceException
 	 */
 	@Override
-	public void editPermission(RolePermission permission) throws GSmartServiceException{
+	public RolePermission editPermission(RolePermission permission) throws GSmartServiceException{
 		Loggers.loggerStart();
+		RolePermission cb = null;
 		try {
-			 rolePermissionDao.editPermission(permission);
+			cb	= rolePermissionDao.editPermission(permission);
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
 			throw (GSmartServiceException) exception;
@@ -85,6 +86,7 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 			throw new GSmartServiceException(e.getMessage());
 		}
 		Loggers.loggerEnd();
+		return cb;
 	}
 
 	/**
