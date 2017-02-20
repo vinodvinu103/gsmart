@@ -52,11 +52,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 
 		List<RolePermission> rolePermissions = null;
 		try {
-			/*
-			 * if(role.equalsIgnoreCase("admin") ||
-			 * role.equalsIgnoreCase("owner") ||
-			 * role.equalsIgnoreCase("director")) {
-			 */
+
 			query = session.createQuery("from RolePermission where isActive='Y'");
 			/*
 			 * }else{ query = session.createQuery(
@@ -64,7 +60,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			 * ); query.setParameter("hierarchy", hierarchy.getHid()); }
 			 */
 			rolePermissions = (List<RolePermission>) query.list();
-
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
@@ -105,7 +100,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		}
-
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
@@ -143,7 +137,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			RolePermission oldRolePermission = getRolePermission(rolePermission.getEntryTime());
 			cb = updateRolePermission(oldRolePermission, rolePermission);
 			addPermission(rolePermission);
-
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -310,12 +303,12 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 
 		try {
 
+
 			permission.setExitTime(CalendarCalculator.getTimeStamp());
 			permission.setIsActive("D");
 			session.update(permission);
 			session.getTransaction().commit();
 		}
-
 		catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -335,6 +328,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 
 		try {
 
+
 			Loggers.loggerValue("given role is : ", role);
 			query = session.createQuery(
 					"SELECT DISTINCT moduleName from RolePermission where role=:role and isActive=:isActive");
@@ -348,6 +342,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 				Loggers.loggerValue("given moduleName is : ", moduleName);
 				rolePermissions.add(permission);
 			}
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -392,7 +387,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			// session.close();
 			Loggers.loggerEnd(permission);
 			return permission;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerEnd();
