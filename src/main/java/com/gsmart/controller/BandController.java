@@ -137,38 +137,37 @@ public class BandController {
 	 * @see IAMResponse
 	 */
 	
-	@RequestMapping (value="/{task}",method=RequestMethod.PUT)
-    public ResponseEntity<IAMResponse> editDeleteBand(@RequestBody Band band ,@PathVariable("task") String task,
-    @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException{
+	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
+	public ResponseEntity<IAMResponse> editDeleteBand(@RequestBody Band band, @PathVariable("task") String task,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(band);
-		Band cb=null;
-		IAMResponse myResponse=null;
+		Band cb = null;
+		IAMResponse myResponse = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-		 if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
-		    if(task.equals("edit")){
-		    	cb=bandServices.editBand(band);
-		    	if(cb!=null)
-		    		myResponse =new IAMResponse("success");
-		    	else
-		    		myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
-		    }
-		    else if (task.equals("delete")){
-		    	bandServices.deleteBand(band);
-		    	myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
-		    }
-		    Loggers.loggerEnd();
-		        
-		     return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
-		 
-		 else {
-		    myResponse = new IAMResponse("Permission Denied");
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		     }
-          
+		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+			if (task.equals("edit")) {
+				cb = bandServices.editBand(band);
+				if (cb != null)
+					myResponse = new IAMResponse("success");
+				else
+					myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
+			} else if (task.equals("delete")) {
+				bandServices.deleteBand(band);
+				myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
+			}
+			Loggers.loggerEnd();
 
-}}
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
+
+		else {
+			myResponse = new IAMResponse("Permission Denied");
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
+
+	}
+}

@@ -24,7 +24,7 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
-public class LoginServicesImpl implements LoginServices, Job {
+public class LoginServicesImpl implements LoginServices{
 
 	@Autowired
 	LoginDao loginDao;
@@ -129,18 +129,6 @@ public class LoginServicesImpl implements LoginServices, Job {
 	private Token getTokenDetails(String tokenNumber) throws GSmartServiceException {
 
 		return tokenService.getToken(tokenNumber);
-	}
-
-	@Override
-	public void unlockAccounts() {
-		loginDao.unlockAccounts();
-	}
-
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-		loginDao.unlockAccounts();
-		System.out.println("Hello user u can log in now ..........!");
 	}
 
 }

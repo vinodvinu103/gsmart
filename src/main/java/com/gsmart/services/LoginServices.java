@@ -9,7 +9,7 @@ public interface LoginServices {
 
 	public Map<String, Object> authenticate(Login login, String tokenNumber) throws GSmartServiceException;
 
-	public void unlockAccounts();
+	//public void unlockAccounts();
 
 	
 }

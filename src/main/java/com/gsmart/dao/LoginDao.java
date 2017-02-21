@@ -13,5 +13,5 @@ public interface LoginDao {
 	
 	public List<Profile> getAllRecord();
 
-	public void unlockAccounts();
+	//public void unlockAccounts();
 }

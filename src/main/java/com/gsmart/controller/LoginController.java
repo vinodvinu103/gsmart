@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Login;
 import com.gsmart.services.LoginServices;
 import com.gsmart.services.TokenService;
-import com.gsmart.util.CronJob;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
@@ -41,10 +40,6 @@ public class LoginController {
 	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody Login login, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		
 		String tokenNumber = null;
-		Loggers.loggerStart("auth method called and trying to create a cron job");
-		CronJob.startCronJob();
-		Loggers.loggerStart("cron job created successfully and is started");
-		
 		if(token.get("Authorization")!=null)
 			tokenNumber = token.get("Authorization").get(0);
 		
