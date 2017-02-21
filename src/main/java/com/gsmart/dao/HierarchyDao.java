@@ -27,34 +27,42 @@ import com.gsmart.util.GSmartDatabaseException;
 
 /**
  * 
- * Defines the behavior of all services provided in {@link HierarchysServicesImpl}
- * The functionalities are implemented in {@link HierarchyDaoImpl}
+ * Defines the behavior of all services provided in
+ * {@link HierarchysServicesImpl} The functionalities are implemented in
+ * {@link HierarchyDaoImpl}
  * 
  * @author :Nirmal Raj J
  * @version 1.0
- * @since 2016-08-01  
+ * @since 2016-08-01
  */
 public interface HierarchyDao {
 
 	/**
-	 * @return list of Hierarchy entities available in the {@link Hierarchy} Table
+	 * @return list of Hierarchy entities available in the {@link Hierarchy}
+	 *         Table
 	 * @throws Exception
 	 */
-	public List<Hierarchy> getHierarchyList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<Hierarchy> getHierarchyList(String role, Hierarchy hierarchy) throws GSmartDatabaseException;
+
 	/**
-	 * @param hierarchy instanceOf {@link Hierarchy}
+	 * @param hierarchy
+	 *            instanceOf {@link Hierarchy}
 	 * @return Nothing
 	 * @throws Exception
 	 */
 	public boolean addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+
 	/**
-	 * @param hierarchy instanceOf {@link Hierarchy}
+	 * @param hierarchy
+	 *            instanceOf {@link Hierarchy}
 	 * @return Nothing
 	 * @throws Exception
 	 */
 	public Object editHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+
 	/**
-	 * @param timeStamp instanceOf {@link Hierarchy}
+	 * @param timeStamp
+	 *            instanceOf {@link Hierarchy}
 	 * @return Nothing
 	 * @throws Exception
 	 */
@@ -62,5 +70,6 @@ public interface HierarchyDao {
 	
 	public Hierarchy getHierarchyByHid(Long hid)throws GSmartDatabaseException;
 
+	public List<Hierarchy> getAllHierarchy();
 
 }

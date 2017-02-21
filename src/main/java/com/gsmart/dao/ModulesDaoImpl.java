@@ -34,8 +34,9 @@ public class ModulesDaoImpl implements ModulesDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Modules> getModulesList(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
+		getconnection();
 		Loggers.loggerStart();
-		 getconnection();
+		 
 		 List<Modules> moduleslist = null;
 		 try { 
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -62,9 +63,10 @@ public class ModulesDaoImpl implements ModulesDao{
 	
 	@Override
 	public CompoundModules addModule(Modules modules) throws GSmartDatabaseException {
+		 getconnection();
 		CompoundModules cb = null;
 		try {
-			 getconnection();
+			
 
 			query = session.createQuery(
 					"FROM Modules WHERE subModules=:subModules and modules=:modules ");
