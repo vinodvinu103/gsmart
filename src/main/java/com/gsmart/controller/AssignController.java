@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.AssignService;
@@ -84,7 +85,6 @@ public class AssignController {
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
-		IAMResponse rsp = null;
 		Map<String, Object> response = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -96,16 +96,13 @@ public class AssignController {
 			
 			CompoundAssign compoundAssign = assignService.addAssigningReportee(assign);
 			if (compoundAssign != null) {
-				rsp = new IAMResponse("success");
-				response.put("message", rsp);
+				response.put("message", "success");
 			} else {
-				rsp = new IAMResponse("Data Already exists");
-				response.put("message", rsp);
+				response.put("message", "Data Already Exists..");
 
 			}
 		} else {
-			rsp = new IAMResponse("Permission Denied");
-			response.put("message", rsp);
+			response.put("message", "Permission Denied");
 
 		}
 
@@ -118,6 +115,7 @@ public class AssignController {
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
+		Assign asn = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
@@ -125,22 +123,24 @@ public class AssignController {
 
 		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
-				assignService.editAssigningReportee(assign);
-
+				asn = assignService.editAssigningReportee(assign);
+				if (asn != null) {
+					myResponse = new IAMResponse("success");
+				} else {
+					myResponse = new IAMResponse("Data Already exist");
+				}
 			} else if (task.equals("delete")) {
 				assignService.deleteAssigningReportee(assign);
-
+				myResponse = new IAMResponse("success");
 			}
 
-			myResponse = new IAMResponse("success");
+			
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
-
 		else {
 			myResponse = new IAMResponse("Permission Denied");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
-
 	}
 
 	@RequestMapping(value = "/staff", method = RequestMethod.POST)
@@ -152,17 +152,14 @@ public class AssignController {
 		Map<String, Object> response = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
-		
+		str.length();		
 
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			response.put("staffList", profileServices.getProfileByHierarchy(hierarchy));
 		} else {
 			rsp = new IAMResponse("Permission Denied");
 			response.put("message", rsp);
-
 		}
-
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}

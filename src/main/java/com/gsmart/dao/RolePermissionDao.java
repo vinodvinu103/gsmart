@@ -41,7 +41,7 @@ public interface RolePermissionDao {
 	 * @return Nothing
 	 * @throws GSmartDatabaseException
 	 */
-	public void editPermission(RolePermission permission)throws GSmartBaseException;
+	public RolePermission editPermission(RolePermission permission)throws GSmartBaseException;
 
 	public List<RolePermission> getPermission(String role)throws GSmartBaseException;
 	
