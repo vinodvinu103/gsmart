@@ -139,6 +139,27 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 		return "update successfully21";
 	}
+	
+	@Override
+	public String deleteprofile(Profile profile){
+      getConnection();
+      Loggers.loggerStart();
+      
+      try{
+    	  profile.setIsActive("D");
+    	  profile.setExitTime(CalendarCalculator.getTimeStamp());
+    	  session.update(profile);
+    	  transaction.commit();
+    	  
+      }
+      catch(Exception e){
+    	  e.printStackTrace();
+      }finally{
+    	  session.close();
+      }
+      Loggers.loggerEnd();
+      return "deleted successfully";
+	}
 
 	/* for profile */
 
