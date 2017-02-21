@@ -165,8 +165,8 @@ public class ProfileDaoImp implements ProfileDao {
 			Loggers.loggerStart(role);
 
 			Loggers.loggerStart("current smartId" + smartId);
-			if (loginUserRole.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner")
-					|| role.equalsIgnoreCase("director")) {
+			if (loginUserRole.equalsIgnoreCase("admin") || loginUserRole.equalsIgnoreCase("owner")
+					|| loginUserRole.equalsIgnoreCase("director")) {
 				if (role.toLowerCase().equals("student")) {
 					query = session.createQuery("from Profile where isActive='Y'and lower(role)='student'");
 				} else {
