@@ -31,7 +31,7 @@ import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
 @Controller
-@RequestMapping(Constants.DASHBOARDINVENTORY)
+@RequestMapping(Constants.DASHBOARD)
 public class DashboardController {
 	@Autowired
 	InventoryServices inventoryServices;
@@ -44,7 +44,7 @@ public class DashboardController {
 	@Autowired
 	AttendanceService attendanceService;
 
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = "/inventory", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventory(@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
