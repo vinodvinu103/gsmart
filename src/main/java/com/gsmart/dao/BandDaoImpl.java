@@ -88,6 +88,7 @@ public class BandDaoImpl implements BandDao {
 			if (oldBand == null) {
 				band.setEntryTime(CalendarCalculator.getTimeStamp());
 				band.setIsActive("Y");
+			
 				cb = (CompoundBand) session.save(band);
 				transaction.commit();
 				
@@ -120,14 +121,14 @@ public class BandDaoImpl implements BandDao {
 			ch=	updateBand(oldBand,band);
 
 			
-//			addBand(band);	
-			if(ch!=null)
-			{
-				band.setEntryTime(CalendarCalculator.getTimeStamp());
-				band.setIsActive("Y");
-				ch=(Band) session.save(band);
-				transaction.commit();
-			}
+		addBand(band);	
+//			if(ch!=null)
+//			{
+//				band.setEntryTime(CalendarCalculator.getTimeStamp());
+//				band.setIsActive("Y");
+//				ch=(Band) session.save(band);
+//				transaction.commit();
+//			}
 			Loggers.loggerEnd();
 			return ch;
 		

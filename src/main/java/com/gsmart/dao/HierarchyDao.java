@@ -42,7 +42,7 @@ public interface HierarchyDao {
 	 *         Table
 	 * @throws Exception
 	 */
-	public List<Hierarchy> getHierarchyList(String role, Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<Hierarchy> getHierarchyList(Hierarchy hierarchy) throws GSmartDatabaseException;
 
 	/**
 	 * @param hierarchy
