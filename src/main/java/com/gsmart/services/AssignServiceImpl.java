@@ -72,4 +72,20 @@ public class AssignServiceImpl implements AssignService{
 	public Assign getStaffByClassAndSection(String standard, String section, Hierarchy hierarchy) {
 		return assignDao.getStaffByClassAndSection(standard, section, hierarchy);
 	}
+	
+	@Override
+	public boolean searchStandardFeeService(String standard){
+		Loggers.loggerStart();
+		boolean status=false;
+		try{
+		status= assignDao.searchStandardFeeDao(standard);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd();
+		return status;
+		}
+	
+	
+	
 }
