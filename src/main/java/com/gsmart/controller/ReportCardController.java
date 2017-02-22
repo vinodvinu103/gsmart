@@ -69,6 +69,7 @@ public class ReportCardController {
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
+		List<ReportCard> academicYearAndExam = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -82,7 +83,9 @@ public class ReportCardController {
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
 				list = reportCardService.search(tokenObj);
+				academicYearAndExam=reportCardDao.acdemicYearAndExamName();
 				permission.put("reportCard", list);
+				permission.put("academicYearAndExam", academicYearAndExam);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}
 		} catch (Exception e) {
@@ -107,6 +110,7 @@ public class ReportCardController {
 			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 				card.setHierarchy(tokenObj.getHierarchy());
+				card.setReportingManagerId(tokenObj.getSmartId());
 				card2 = reportCardService.addReportCard(card);
 				if (card2 != null)
 					iamResponse = new IAMResponse("success");

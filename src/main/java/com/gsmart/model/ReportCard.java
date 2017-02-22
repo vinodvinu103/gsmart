@@ -32,6 +32,10 @@ public class ReportCard {
 	@Column(name="ENTRYTIME")
 	private String entryTime;
 	
+	@Id
+	@Column(name="EXAM_NAME")
+	private String examName;
+	
 	@Column(name="STUDENT_NAME")
 	private String studentName;
 	
@@ -110,6 +114,14 @@ public class ReportCard {
 
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
+	}
+	
+	public String getExamName() {
+		return examName;
+	}
+
+	public void setExamName(String examName) {
+		this.examName = examName;
 	}
 
 	public String getStudentName() {
