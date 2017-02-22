@@ -6,6 +6,7 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
 import com.gsmart.util.GSmartBaseException;
+import com.gsmart.util.GSmartDatabaseException;
 /**
  * 
  * Defines the behavior of all services provided in {@link RolePermissionServicesImpl}
@@ -40,11 +41,11 @@ public interface RolePermissionDao {
 	 * @return Nothing
 	 * @throws GSmartDatabaseException
 	 */
-	public void editPermission(RolePermission permission)throws GSmartBaseException;
+	public RolePermission editPermission(RolePermission permission)throws GSmartBaseException;
 
 	public List<RolePermission> getPermission(String role)throws GSmartBaseException;
 	
-	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartBaseException;
+	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 
 	
 }

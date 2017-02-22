@@ -5,27 +5,26 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class CompoundAssign implements Serializable {
-
+public class CompoundBanner implements Serializable{
+	
 	private static final long serialVersionUID = 1L;
 
-	private String standard;
-
+	private String title;
 	private String entryTime;
-
-	public String getStandard() {
-		return standard;
+	
+	
+	public String getTitle() {
+		return title;
 	}
-
-	public void setStandard(String standard) {
-		this.standard = standard;
+	public void setTitle(String title) {
+		this.title = title;
 	}
-
 	public String getEntryTime() {
 		return entryTime;
 	}
-
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
 	}
+	
+
 }

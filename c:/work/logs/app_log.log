@@ -1,0 +1,521 @@
+2016-12-31 15:04:15 INFO  DispatcherServlet:479 - FrameworkServlet 'mvc-dispatcher': initialization started
+2016-12-31 15:04:15 INFO  XmlWebApplicationContext:513 - Refreshing WebApplicationContext for namespace 'mvc-dispatcher-servlet': startup date [Sat Dec 31 15:04:15 IST 2016]; root of context hierarchy
+2016-12-31 15:04:15 INFO  XmlBeanDefinitionReader:316 - Loading XML bean definitions from ServletContext resource [/WEB-INF/spring-config.xml]
+2016-12-31 15:04:17 INFO  AutowiredAnnotationBeanPostProcessor:141 - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-12-31 15:04:17 INFO  DriverManagerDataSource:133 - Loaded JDBC driver: com.mysql.jdbc.Driver
+2016-12-31 15:04:17 INFO  Version:66 - HCANN000001: Hibernate Commons Annotations {4.0.4.Final}
+2016-12-31 15:04:17 INFO  Version:54 - HHH000412: Hibernate Core {4.3.5.Final}
+2016-12-31 15:04:17 INFO  Environment:239 - HHH000206: hibernate.properties not found
+2016-12-31 15:04:17 INFO  Environment:346 - HHH000021: Bytecode provider name : javassist
+2016-12-31 15:04:18 INFO  Dialect:145 - HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2016-12-31 15:04:18 INFO  LobCreatorBuilder:97 - HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [3] less than 4
+2016-12-31 15:04:19 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundBand
+2016-12-31 15:04:19 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundBand
+2016-12-31 15:04:19 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundLeaveMaster
+2016-12-31 15:04:19 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundLeaveMaster
+2016-12-31 15:04:19 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundInventory
+2016-12-31 15:04:19 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundInventory
+2016-12-31 15:04:19 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundReportCard
+2016-12-31 15:04:19 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundReportCard
+2016-12-31 15:04:19 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundFeeMaster
+2016-12-31 15:04:19 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundFeeMaster
+2016-12-31 15:04:19 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.RolePermissionCompound
+2016-12-31 15:04:19 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.RolePermissionCompound
+2016-12-31 15:04:19 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundHierarchy
+2016-12-31 15:04:19 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundHierarchy
+2016-12-31 15:04:19 INFO  TransactionFactoryInitiator:62 - HHH000399: Using default transaction strategy (direct JDBC transactions)
+2016-12-31 15:04:19 INFO  ASTQueryTranslatorFactory:47 - HHH000397: Using ASTQueryTranslatorFactory
+2016-12-31 15:04:20 INFO  SchemaUpdate:182 - HHH000228: Running hbm2ddl schema update
+2016-12-31 15:04:20 INFO  SchemaUpdate:193 - HHH000102: Fetching database metadata
+2016-12-31 15:04:20 INFO  SchemaUpdate:205 - HHH000396: Updating schema
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.BAND_MASTER
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [band_id, exit_time, entry_time, updated_time, update_time, role, is_active, time_stamp, designation]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.FEE_MASTER
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [standard, exit_time, entry_time, updated_time, time_stamp, total_fee, isactive, sports_fee, transportation_fee, tuition_fee, miscellaneous_fee]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.HIERARCHY_MASTER
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [standard, exit_time, institution, entry_time, update_time, is_active, time_stamp, school, section]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.INVENTORY
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [exit_time, entry_time, update_time, time_stamp, item_type, isactive, category]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.LEAVEMASTER
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [exit_time, entry_time, update_time, is_active, leave_type, days_allow]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.LOGIN
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [smart_id, entry_time, updated_time, password, attempt]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.PERMISSION_MASTER
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [exit_time, p_edit, entry_time, updated_time, role, is_active, p_add, p_view, sub_module_name, p_del, module_name, timestamp]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.PROFILE_MASTER
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [sub_dept_name, country, syllabus, updated_time, billing_details, previous_school, mother_name, martial_status, experiance, section, add_line1, ten_percentage, exit_time, institution, ten_school_name, academic_year, school, passport_expiry_date, band, state, twelve_pass_year, certification_details, ug_percentage, entry_time, image, joining_date, pincode, relation_with_guardian, emergency_contact_person, previous_year, caste, passport_issue_date, functional_manager, language_known, qualification, add_line2, pan_number, add_line3, nationality, counter_signing_manager_name, father_name, dob, domain, blood_group, father_mob_number, designation, pg_pass_year, email_id, visa_details, guardian_name, mother_income, role, gender, city, teacher_id, counter_signing_manager_id, mother_occupation, twelve_percentage, ten_pass_year, mother_mob_number, pg_percentage, first_name, class, smart_id, emergency_contact_number, pg_school_name, ecnr_status, father_occupation, is_active, reporting_manager_id, upd_smartid, ug_school_name, dept_name, last_name, reporting_manager_name, school_name, student_id, ug_pass_year, middle_name, aadhar_number, religion, previous_class, father_income, twelve_school_name, passport_number, mobile_number]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.REPORT_CARD
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [max_marks, standard, subject_grade, teacher_name, is_active, entrytime, subject, section, min_marks, exit_time, result, student_name, update_time, marks_obtained, total_grade, smartid, acadamic_year]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.SUBJECT
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [subject_id, subject_name, grades]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.TOKEN
+2016-12-31 15:04:20 INFO  TableMetadata:67 - HHH000037: Columns: [smart_id, role, token_number]
+2016-12-31 15:04:20 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:04:20 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:04:20 INFO  SchemaUpdate:242 - HHH000232: Schema update complete
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/leavemaster],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.LeaveMasterController.getleavemaster(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/leavemaster],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.LeaveMasterController.addLeaveMaster(com.gsmart.model.LeaveMaster,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/leavemaster/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.LeaveMasterController.editLeaveMaster(com.gsmart.model.LeaveMaster,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/feeMaster],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.FeeMasterController.getFee(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/feeMaster],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.FeeMasterController.addFee(com.gsmart.model.FeeMaster,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/feeMaster/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.FeeMasterController.editFee(com.gsmart.model.FeeMaster,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/password],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.PasswordController.setPassword(com.gsmart.model.Login) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/rolepermission],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.RolePermissionController.getPermissionList(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/rolepermission/subModules],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.List<com.gsmart.model.RolePermission>> com.gsmart.controller.RolePermissionController.getSubModels(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/rolepermission/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.RolePermissionController.editPermission(com.gsmart.model.RolePermission,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/rolepermission],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.RolePermissionController.addPermission(com.gsmart.model.RolePermission,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/inventory],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.InventoryController.getInventory(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/inventory],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.InventoryController.addInventory(com.gsmart.model.Inventory,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/inventory/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.InventoryController.editInventory(com.gsmart.model.Inventory,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.List<com.gsmart.model.ReportCard>> com.gsmart.controller.ReportCardController.getList() throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.ReportCardController.addReportCard(com.gsmart.model.ReportCard) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.ReportCardController.editDeleteReportCard(com.gsmart.model.ReportCard,java.lang.String) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard/excelToDB/{smartId}],methods=[POST],params=[],headers=[],consumes=[multipart/form-data],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.String>> com.gsmart.controller.ReportCardController.excelToDB(java.lang.String,org.springframework.web.multipart.MultipartFile)
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard/search],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.List<com.gsmart.model.ReportCard>> com.gsmart.controller.ReportCardController.search(com.gsmart.model.ReportCard) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/employee],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.util.ArrayList<com.gsmart.model.Profile>>> com.gsmart.controller.RegistrationController.viewEmployeeProfiles() throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/student],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.util.ArrayList<com.gsmart.model.Profile>>> com.gsmart.controller.RegistrationController.viewStudentProfiles() throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/addProfile/{updSmartId}],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.String>> com.gsmart.controller.RegistrationController.addUser(com.gsmart.model.Profile,java.lang.String) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/updateProfile/{updEmpSmartId}],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.String>> com.gsmart.controller.RegistrationController.updateProfile(com.gsmart.model.Profile,java.lang.String) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/searchRep],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.util.ArrayList<com.gsmart.model.Profile>>> com.gsmart.controller.RegistrationController.searchRep(com.gsmart.model.Search)
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/hierarchy],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.HierarchyController.addHierarchy(com.gsmart.model.Hierarchy,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/hierarchy/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.HierarchyController.editDeleteHierarchy(com.gsmart.model.Hierarchy,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/hierarchy],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.HierarchyController.getHierarchy(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/privilege/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.PrivilegeController.editPrivilege(com.gsmart.model.Profile,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/privilege],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.PrivilegeController.search(com.gsmart.model.Profile,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/band],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.BandController.getBand(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/band],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.BandController.addBand(com.gsmart.model.Band,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/band/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.BandController.editDeleteBand(com.gsmart.model.Band,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/login],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.LoginController.authenticate(com.gsmart.model.Login,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:21 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/login],methods=[DELETE],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.String>> com.gsmart.controller.LoginController.logout(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:04:22 INFO  ExceptionHandlerExceptionResolver:313 - Detected @ExceptionHandler methods in GSmartExceptionHandler
+2016-12-31 15:04:23 INFO  DispatcherServlet:498 - FrameworkServlet 'mvc-dispatcher': initialization completed in 7454 ms
+2016-12-31 15:05:12 WARN  PageNotFound:1114 - No mapping found for HTTP request with URI [/gsmart/notice/S/null] in DispatcherServlet with name 'mvc-dispatcher'
+2016-12-31 15:05:20 INFO  Loggers:105 - Start :: LoginController.authenticate() :: 49
+2016-12-31 15:05:20 INFO  Loggers:86 - com.gsmart.model.Login@1f46f4e
+2016-12-31 15:05:20 INFO  Loggers:105 - Start :: LoginController.authenticate() :: 50
+2016-12-31 15:05:20 INFO  Loggers:60 - Start :: Object Received null
+2016-12-31 15:05:20 INFO  Loggers:105 - Start :: LoginServicesImpl.authenticate() :: 40
+2016-12-31 15:05:20 INFO  Loggers:86 - com.gsmart.model.Login@1f46f4e
+2016-12-31 15:05:20 INFO  Loggers:81 - Authenticationg the user
+2016-12-31 15:05:20 INFO  Loggers:105 - Start :: LoginDaoImpl.authenticate() :: 30
+2016-12-31 15:05:21 INFO  Loggers:105 - End :: LoginDaoImpl.authenticate() :: 50
+2016-12-31 15:05:21 INFO  Loggers:66 - End :: Object Received 0
+2016-12-31 15:05:21 INFO  Loggers:105 - Start :: ProfileDaoImp.getProfileDetails() :: 157
+2016-12-31 15:05:21 INFO  Loggers:81 - Start :: Object Received DPS1001
+2016-12-31 15:05:21 INFO  Loggers:105 - End :: ProfileDaoImp.getProfileDetails() :: 171
+2016-12-31 15:05:21 INFO  Loggers:86 - com.gsmart.model.Profile@151fe25
+2016-12-31 15:05:21 INFO  Loggers:105 - Start :: RolePermissionServicesImp.getPermission() :: 113
+2016-12-31 15:05:21 INFO  Loggers:105 - End :: RolePermissionServicesImp.getPermission() :: 115
+2016-12-31 15:05:21 INFO  Loggers:105 - Start :: RolePermissionDaoImp.getPermission() :: 171
+2016-12-31 15:05:21 INFO  Loggers:105 - End :: RolePermissionDaoImp.getPermission() :: 191
+2016-12-31 15:05:21 INFO  Loggers:84 - End :: Object Received [
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Fee, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Maintenance, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Notice, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=OrgStructure, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Registration, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Reportcard, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null]]
+2016-12-31 15:05:21 INFO  Loggers:105 - Start :: TokenDaoImpl.saveToken() :: 28
+2016-12-31 15:05:21 INFO  Loggers:86 - 
+Token [
+	TokenNumber=1139145918085743885528250445760
+	SmartID=DPS1001
+	Role=admin ]
+2016-12-31 15:05:21 INFO  Loggers:105 - End :: TokenDaoImpl.saveToken() :: 40
+2016-12-31 15:05:21 INFO  Loggers:81 - Token generated: 1139145918085743885528250445760
+2016-12-31 15:05:21 INFO  Loggers:105 - End :: LoginServicesImpl.authenticate() :: 91
+2016-12-31 15:05:21 INFO  Loggers:105 - End :: LoginController.authenticate() :: 52
+2016-12-31 15:05:21 INFO  Loggers:86 - {result=0, permissions=[
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Fee, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Maintenance, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Notice, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=OrgStructure, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Registration, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null], 
+ RolePermission [
+{	 entryTime=null, 
+	role=null, 
+	moduleName=Reportcard, 
+	subModuleName=null
+}, 
+add=false,
+view=false,
+edit=false,
+del=false,
+updatedTime=null,
+exitTime=null,
+isActive=null]], profile=com.gsmart.model.Profile@151fe25, message=welcome, token=1139145918085743885528250445760}
+2016-12-31 15:05:21 INFO  Loggers:81 - Token Number1139145918085743885528250445760
+2016-12-31 15:05:21 INFO  Loggers:81 - Session Attribute: 1139145918085743885528250445760
+2016-12-31 15:05:22 WARN  PageNotFound:1114 - No mapping found for HTTP request with URI [/gsmart/notice/S/null] in DispatcherServlet with name 'mvc-dispatcher'
+2016-12-31 15:05:53 INFO  Loggers:105 - Start :: RolePermissionController.getSubModels() :: 100
+2016-12-31 15:05:53 INFO  Loggers:105 - Start :: GetAuthorization.getAuthentication() :: 124
+2016-12-31 15:05:53 INFO  Loggers:81 - Start :: Object Received 1139145918085743885528250445760
+2016-12-31 15:05:53 INFO  Loggers:81 - Token admin
+2016-12-31 15:06:11 INFO  Loggers:105 - Start :: HierarchyController.getHierarchy() :: 67
+2016-12-31 15:06:11 INFO  Loggers:105 - Start :: GetAuthorization.getAuthentication() :: 124
+2016-12-31 15:06:11 INFO  Loggers:81 - Start :: Object Received 1139145918085743885528250445760
+2016-12-31 15:06:11 INFO  Loggers:105 - Start :: GetAuthorization.authorizationForGet() :: 31
+2016-12-31 15:06:11 INFO  Loggers:81 - Start :: Object Received 1139145918085743885528250445760
+2016-12-31 15:06:11 INFO  Loggers:86 - 
+Token [
+	TokenNumber=1139145918085743885528250445760
+	SmartID=DPS1001
+	Role=admin ]
+2016-12-31 15:06:11 INFO  Loggers:81 - Module: Hierarchy
+2016-12-31 15:06:11 INFO  Loggers:105 - Start :: GetAuthorization.getPermission() :: 108
+2016-12-31 15:06:11 INFO  Loggers:86 - 
+Token [
+	TokenNumber=1139145918085743885528250445760
+	SmartID=DPS1001
+	Role=admin ]
+2016-12-31 15:06:11 INFO  Loggers:105 - Start :: GetAuthorization.getPermission() :: 109
+2016-12-31 15:06:11 INFO  Loggers:81 - Start :: Object Received Hierarchy
+2016-12-31 15:06:11 INFO  Loggers:105 - End :: GetAuthorization.getPermission() :: 118
+2016-12-31 15:06:11 INFO  Loggers:86 - 
+ RolePermission [
+{	 entryTime=2016-11-19-15.27.55.574, 
+	role=Admin, 
+	moduleName=Maintenance, 
+	subModuleName=Hierarchy
+}, 
+add=true,
+view=true,
+edit=true,
+del=true,
+updatedTime=null,
+exitTime=null,
+isActive=Y]
+2016-12-31 15:06:11 INFO  Loggers:105 - End :: GetAuthorization.authorizationForGet() :: 48
+2016-12-31 15:06:11 INFO  Loggers:86 - 
+ RolePermission [
+{	 entryTime=2016-11-19-15.27.55.574, 
+	role=Admin, 
+	moduleName=Maintenance, 
+	subModuleName=Hierarchy
+}, 
+add=true,
+view=true,
+edit=true,
+del=true,
+updatedTime=null,
+exitTime=null,
+isActive=Y]
+2016-12-31 15:06:11 INFO  Loggers:105 - Start :: HierarchyDaoImpl.getHierarchyList() :: 70
+2016-12-31 15:06:12 INFO  Loggers:105 - End :: HierarchyDaoImpl.getHierarchyList() :: 83
+2016-12-31 15:06:12 INFO  Loggers:105 - End :: HierarchyController.getHierarchy() :: 80
+2016-12-31 15:06:12 INFO  Loggers:84 - End :: Object Received [
+
+{Hierarchy {Compound  : 
+	school=Delhi Public School,
+	 standard=1,
+	 section=B,
+	 institution=DPS },
+ entryTime=2016-08-29-16.10.49.012,
+ exitTime=null,
+ updateTime=null,
+ isActive=Y }, 
+
+{Hierarchy {Compound  : 
+	school=Delhi Public School,
+	 standard=2,
+	 section=a,
+	 institution=DPS1 },
+ entryTime=2016-11-18-16.44.14.114,
+ exitTime=null,
+ updateTime=null,
+ isActive=Y }, 
+
+{Hierarchy {Compound  : 
+	school=gprs,
+	 standard=1,
+	 section=a,
+	 institution=gst },
+ entryTime=2016-12-30-10.47.15.277,
+ exitTime=null,
+ updateTime=null,
+ isActive=Y }, 
+
+{Hierarchy {Compound  : 
+	school=ibm,
+	 standard=2,
+	 section=a,
+	 institution=ibm },
+ entryTime=2016-12-30-10.44.17.751,
+ exitTime=null,
+ updateTime=null,
+ isActive=Y }, 
+
+{Hierarchy {Compound  : 
+	school=adad,
+	 standard=1,
+	 section=gsghhh,
+	 institution=sgsgg },
+ entryTime=2016-12-30-11.05.15.072,
+ exitTime=null,
+ updateTime=null,
+ isActive=Y }]
+2016-12-31 15:21:28 INFO  XmlWebApplicationContext:873 - Closing WebApplicationContext for namespace 'mvc-dispatcher-servlet': startup date [Sat Dec 31 15:04:15 IST 2016]; root of context hierarchy
+2016-12-31 15:21:34 INFO  DispatcherServlet:479 - FrameworkServlet 'mvc-dispatcher': initialization started
+2016-12-31 15:21:34 INFO  XmlWebApplicationContext:513 - Refreshing WebApplicationContext for namespace 'mvc-dispatcher-servlet': startup date [Sat Dec 31 15:21:34 IST 2016]; root of context hierarchy
+2016-12-31 15:21:34 INFO  XmlBeanDefinitionReader:316 - Loading XML bean definitions from ServletContext resource [/WEB-INF/spring-config.xml]
+2016-12-31 15:21:35 INFO  AutowiredAnnotationBeanPostProcessor:141 - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-12-31 15:21:35 INFO  DriverManagerDataSource:133 - Loaded JDBC driver: com.mysql.jdbc.Driver
+2016-12-31 15:21:35 INFO  Version:66 - HCANN000001: Hibernate Commons Annotations {4.0.4.Final}
+2016-12-31 15:21:35 INFO  Version:54 - HHH000412: Hibernate Core {4.3.5.Final}
+2016-12-31 15:21:35 INFO  Environment:239 - HHH000206: hibernate.properties not found
+2016-12-31 15:21:35 INFO  Environment:346 - HHH000021: Bytecode provider name : javassist
+2016-12-31 15:21:36 INFO  Dialect:145 - HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2016-12-31 15:21:36 INFO  LobCreatorBuilder:97 - HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [3] less than 4
+2016-12-31 15:21:36 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundBand
+2016-12-31 15:21:36 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundBand
+2016-12-31 15:21:36 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundLeaveMaster
+2016-12-31 15:21:36 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundLeaveMaster
+2016-12-31 15:21:36 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundInventory
+2016-12-31 15:21:36 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundInventory
+2016-12-31 15:21:36 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundReportCard
+2016-12-31 15:21:36 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundReportCard
+2016-12-31 15:21:36 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundFeeMaster
+2016-12-31 15:21:36 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundFeeMaster
+2016-12-31 15:21:36 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.RolePermissionCompound
+2016-12-31 15:21:36 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.RolePermissionCompound
+2016-12-31 15:21:36 WARN  RootClass:288 - HHH000038: Composite-id class does not override equals(): com.gsmart.model.CompoundHierarchy
+2016-12-31 15:21:36 WARN  RootClass:289 - HHH000039: Composite-id class does not override hashCode(): com.gsmart.model.CompoundHierarchy
+2016-12-31 15:21:36 INFO  TransactionFactoryInitiator:62 - HHH000399: Using default transaction strategy (direct JDBC transactions)
+2016-12-31 15:21:36 INFO  ASTQueryTranslatorFactory:47 - HHH000397: Using ASTQueryTranslatorFactory
+2016-12-31 15:21:37 INFO  SchemaUpdate:182 - HHH000228: Running hbm2ddl schema update
+2016-12-31 15:21:37 INFO  SchemaUpdate:193 - HHH000102: Fetching database metadata
+2016-12-31 15:21:37 INFO  SchemaUpdate:205 - HHH000396: Updating schema
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.BAND_MASTER
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [band_id, exit_time, entry_time, updated_time, update_time, role, is_active, time_stamp, designation]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.FEE_MASTER
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [standard, exit_time, entry_time, updated_time, time_stamp, total_fee, isactive, sports_fee, transportation_fee, tuition_fee, miscellaneous_fee]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.HIERARCHY_MASTER
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [standard, exit_time, institution, entry_time, update_time, is_active, time_stamp, school, section]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.INVENTORY
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [exit_time, entry_time, update_time, time_stamp, item_type, isactive, category]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.LEAVEMASTER
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [exit_time, entry_time, update_time, is_active, leave_type, days_allow]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.LOGIN
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [smart_id, entry_time, updated_time, password, attempt]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.PERMISSION_MASTER
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [exit_time, p_edit, entry_time, updated_time, role, is_active, p_add, p_view, sub_module_name, p_del, module_name, timestamp]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.PROFILE_MASTER
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [sub_dept_name, country, syllabus, updated_time, billing_details, previous_school, mother_name, martial_status, experiance, section, add_line1, ten_percentage, exit_time, institution, ten_school_name, academic_year, school, passport_expiry_date, band, state, twelve_pass_year, certification_details, ug_percentage, entry_time, image, joining_date, pincode, relation_with_guardian, emergency_contact_person, previous_year, caste, passport_issue_date, functional_manager, language_known, qualification, add_line2, pan_number, add_line3, nationality, counter_signing_manager_name, father_name, dob, domain, blood_group, father_mob_number, designation, pg_pass_year, email_id, visa_details, guardian_name, mother_income, role, gender, city, teacher_id, counter_signing_manager_id, mother_occupation, twelve_percentage, ten_pass_year, mother_mob_number, pg_percentage, first_name, class, smart_id, emergency_contact_number, pg_school_name, ecnr_status, father_occupation, is_active, reporting_manager_id, upd_smartid, ug_school_name, dept_name, last_name, reporting_manager_name, school_name, student_id, ug_pass_year, middle_name, aadhar_number, religion, previous_class, father_income, twelve_school_name, passport_number, mobile_number]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.REPORT_CARD
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [max_marks, standard, subject_grade, teacher_name, is_active, entrytime, subject, section, min_marks, exit_time, result, student_name, update_time, marks_obtained, total_grade, smartid, acadamic_year]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.SUBJECT
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [subject_id, subject_name, grades]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  TableMetadata:66 - HHH000261: Table found: newmagicbag.TOKEN
+2016-12-31 15:21:37 INFO  TableMetadata:67 - HHH000037: Columns: [smart_id, role, token_number]
+2016-12-31 15:21:37 INFO  TableMetadata:69 - HHH000108: Foreign keys: []
+2016-12-31 15:21:37 INFO  TableMetadata:70 - HHH000126: Indexes: [primary]
+2016-12-31 15:21:37 INFO  SchemaUpdate:242 - HHH000232: Schema update complete
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/leavemaster],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.LeaveMasterController.getleavemaster(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/leavemaster],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.LeaveMasterController.addLeaveMaster(com.gsmart.model.LeaveMaster,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/leavemaster/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.LeaveMasterController.editLeaveMaster(com.gsmart.model.LeaveMaster,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/feeMaster],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.FeeMasterController.getFee(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/feeMaster],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.FeeMasterController.addFee(com.gsmart.model.FeeMaster,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/feeMaster/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.FeeMasterController.editFee(com.gsmart.model.FeeMaster,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/password],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.PasswordController.setPassword(com.gsmart.model.Login) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/rolepermission],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.RolePermissionController.getPermissionList(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/rolepermission/subModules],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.List<com.gsmart.model.RolePermission>> com.gsmart.controller.RolePermissionController.getSubModels(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/rolepermission/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.RolePermissionController.editPermission(com.gsmart.model.RolePermission,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/rolepermission],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.RolePermissionController.addPermission(com.gsmart.model.RolePermission,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/inventory],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.InventoryController.getInventory(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/inventory],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.InventoryController.addInventory(com.gsmart.model.Inventory,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/inventory/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.InventoryController.editInventory(com.gsmart.model.Inventory,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.List<com.gsmart.model.ReportCard>> com.gsmart.controller.ReportCardController.getList() throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.ReportCardController.addReportCard(com.gsmart.model.ReportCard) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.ReportCardController.editDeleteReportCard(com.gsmart.model.ReportCard,java.lang.String) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard/excelToDB/{smartId}],methods=[POST],params=[],headers=[],consumes=[multipart/form-data],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.String>> com.gsmart.controller.ReportCardController.excelToDB(java.lang.String,org.springframework.web.multipart.MultipartFile)
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/reportCard/search],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.List<com.gsmart.model.ReportCard>> com.gsmart.controller.ReportCardController.search(com.gsmart.model.ReportCard) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/employee],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.util.ArrayList<com.gsmart.model.Profile>>> com.gsmart.controller.RegistrationController.viewEmployeeProfiles() throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/student],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.util.ArrayList<com.gsmart.model.Profile>>> com.gsmart.controller.RegistrationController.viewStudentProfiles() throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/addProfile/{updSmartId}],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.String>> com.gsmart.controller.RegistrationController.addUser(com.gsmart.model.Profile,java.lang.String) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/updateProfile/{updEmpSmartId}],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.String>> com.gsmart.controller.RegistrationController.updateProfile(com.gsmart.model.Profile,java.lang.String) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/registration/searchRep],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.util.ArrayList<com.gsmart.model.Profile>>> com.gsmart.controller.RegistrationController.searchRep(com.gsmart.model.Search)
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/hierarchy],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.HierarchyController.addHierarchy(com.gsmart.model.Hierarchy,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/hierarchy/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.HierarchyController.editDeleteHierarchy(com.gsmart.model.Hierarchy,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/hierarchy],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.HierarchyController.getHierarchy(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/privilege/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.PrivilegeController.editPrivilege(com.gsmart.model.Profile,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/privilege],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.PrivilegeController.search(com.gsmart.model.Profile,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/band],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.BandController.getBand(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/band],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.BandController.addBand(com.gsmart.model.Band,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/band/{task}],methods=[PUT],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<com.gsmart.util.IAMResponse> com.gsmart.controller.BandController.editDeleteBand(com.gsmart.model.Band,java.lang.String,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/login],methods=[POST],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> com.gsmart.controller.LoginController.authenticate(com.gsmart.model.Login,org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  RequestMappingHandlerMapping:197 - Mapped "{[/login],methods=[DELETE],params=[],headers=[],consumes=[],produces=[],custom=[]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.String>> com.gsmart.controller.LoginController.logout(org.springframework.http.HttpHeaders,javax.servlet.http.HttpSession) throws com.gsmart.util.GSmartBaseException
+2016-12-31 15:21:38 INFO  ExceptionHandlerExceptionResolver:313 - Detected @ExceptionHandler methods in GSmartExceptionHandler
+2016-12-31 15:21:39 INFO  DispatcherServlet:498 - FrameworkServlet 'mvc-dispatcher': initialization completed in 4952 ms
+2016-12-31 15:31:54 INFO  XmlWebApplicationContext:873 - Closing WebApplicationContext for namespace 'mvc-dispatcher-servlet': startup date [Sat Dec 31 15:21:34 IST 2016]; root of context hierarchy

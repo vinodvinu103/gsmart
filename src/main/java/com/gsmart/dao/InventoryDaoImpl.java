@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.loader.plan.build.spi.QuerySpaceTreePrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.gsmart.model.CompoundInventory;
@@ -45,8 +46,9 @@ public class InventoryDaoImpl implements InventoryDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		List<Inventory> inventoryList;
 		try {
 			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")){
@@ -80,16 +82,20 @@ public class InventoryDaoImpl implements InventoryDao {
 	@Override
 	public CompoundInventory addInventory(Inventory inventory) throws GSmartDatabaseException {
 
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		CompoundInventory cb = null;
 	
 		try {
+			getconnection();
+			query=session.createQuery("FROM Inventory WHERE category=:category AND quantity=:quantity AND itemType=:itemType AND isActive=:isActive");
 			Hierarchy hierarchy=inventory.getHierarchy();
 			query=session.createQuery("FROM Inventory WHERE category=:category AND itemType=:itemType AND isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("category", inventory.getCategory());
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("itemType", inventory.getItemType());
+			query.setParameter("quantity", inventory.getQuantity());
 			query.setParameter("isActive", "Y");
 			Inventory inventory2=(Inventory) query.uniqueResult();
 			if (inventory2 ==null) {
@@ -119,9 +125,10 @@ public class InventoryDaoImpl implements InventoryDao {
 	 */
 	@Override
 	public void editInventory(Inventory inventory) throws GSmartDatabaseException {
+		getconnection();
 		Loggers.loggerStart();
 		try {
-			getconnection();
+			
 			Inventory oldInvertory = getInventory(inventory.getEntryTime(),inventory.getHierarchy());
 			oldInvertory.setIsActive("N");
 			oldInvertory.setUpdateTime(CalendarCalculator.getTimeStamp());
@@ -130,13 +137,14 @@ public class InventoryDaoImpl implements InventoryDao {
 			inventory.setIsActive("Y");
 			session.save(inventory);
 			transaction.commit();
-			session.close();
 	
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
+		}finally {
+			session.close();
 		}
 	}
 
@@ -177,8 +185,9 @@ public class InventoryDaoImpl implements InventoryDao {
 	return holi.get(0);*/
 	@Override
 	public void deleteInventory(Inventory inventory) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getconnection();
+		Loggers.loggerStart();
+		
 		try {
 			
 
@@ -203,6 +212,21 @@ public class InventoryDaoImpl implements InventoryDao {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 
+	}
+
+	@SuppressWarnings("unused")
+	private String InventoryCount()
+	{
+		Loggers.loggerStart();
+		try
+		{
+			query=session.createQuery("from Inventory where isactive='Y' and quantity=quantity");
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd();
+		return null;
 	}
 
 }

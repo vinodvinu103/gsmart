@@ -35,8 +35,9 @@ public class PasswordDaoImpl implements PasswordDao {
 	
 	@Override
 	public void setPassword(Login login,Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		try {
 			
 			query=session.createQuery("from Login where (referenceSmartId=:referenceSmartId or referenceSmartId=:SmartId)  ");
@@ -74,10 +75,11 @@ public class PasswordDaoImpl implements PasswordDao {
 
 	@Override
 	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartDatabaseException {
+		getConnection();
 		Loggers.loggerStart(login);
 		Login currentPassword = null;
 		boolean pwd = false;
-		getConnection();		
+				
 		String pass=Encrypt.md5(login.getPassword());
 		try {
 			
@@ -97,14 +99,17 @@ public class PasswordDaoImpl implements PasswordDao {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		return pwd;
 		}
 	
 	@Override
 	public Profile emailLink(String email) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart();
+		
 		Profile emailId = null;
 		try {
 
