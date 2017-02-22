@@ -100,6 +100,8 @@ public interface ProfileDao {
 	public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;
 
 	public void deleteBanner(Banners banner)throws GSmartDatabaseException;
+
+	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year);
 	
 
 }

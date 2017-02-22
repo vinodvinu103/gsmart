@@ -16,6 +16,6 @@ public interface AttendanceDao  {
 	
 	public void editAttendance(Attendance attedance) throws GSmartDatabaseException;
 	
-
+	public List<Attendance> getAttendanceByhierarchy(Long date);
 
 }
