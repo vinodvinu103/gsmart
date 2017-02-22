@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
+import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -131,10 +132,11 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Loggers.loggerStart("smartid");
 		try {
 			query = session
-					.createQuery("from ReportCard where smartId=:smartId and isActive=:isActive and subject=:subject");
+					.createQuery("from ReportCard where smartId=:smartId and isActive=:isActive and subject=:subject and examName=:examName");
 			query.setParameter("smartId", card.getSmartId());
 			query.setParameter("isActive", "Y");
 			query.setParameter("subject", card.getSubject());
+			query.setParameter("examName", card.getExamName());
 			ReportCard list = (ReportCard) query.uniqueResult();
 			return list;
 		} catch (Exception e) {
@@ -150,7 +152,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 					"from ReportCard where smartId=:smartId and isActive=:isActive and subject=:subject and "
 							+ "maxMarks=:maxMarks and minMarks=:minMarks and marksObtained=:marksObtained and "
 							+ "subjectGrade=:subjectGrade and totalGrade=:totalGrade "
-							+ "and academicYear=:academicYear and reportingManagerId=:reportingManagerId");
+							+ "and academicYear=:academicYear and reportingManagerId=:reportingManagerId and examName=:examName");
 			query.setParameter("smartId", card.getSmartId());
 			query.setParameter("isActive", "Y");
 			query.setParameter("subject", card.getSubject());
@@ -161,6 +163,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			query.setParameter("totalGrade", card.getTotalGrade());
 			query.setParameter("academicYear", card.getAcademicYear());
 			query.setParameter("reportingManagerId", card.getReportingManagerId());
+			query.setParameter("examName", card.getExamName());
 			ReportCard list = (ReportCard) query.uniqueResult();
 
 			return list;
@@ -218,7 +221,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			String role = tokenDetail.getRole();
 			String smartId = tokenDetail.getSmartId();
 			query = session.createQuery(
-					"from ReportCard where reportingManagerId=:reportingManagerId or smartId=:smartId and isActive='Y' and hid=:hierarchy");
+					"from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and isActive='Y'");
 			query.setParameter("reportingManagerId", smartId);
 			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
@@ -359,5 +362,30 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			 */
 		}
 	}
+	
+	@Override
+	public List<ReportCard> acdemicYearAndExamName() throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getConnection();
+		List<ReportCard> yearAndExamName=new ArrayList<>();;
+		try {
+			query=session.createQuery("select distinct academicYear from ReportCard where isActive='Y'");
+			List<String> year=query.list();
+		for (String yearAndExamName1 : year) {
+				ReportCard yeaAndex= new ReportCard();
+				yeaAndex.setAcademicYear(yearAndExamName1);
+				System.out.println("academicYear...."+yeaAndex);
+				yearAndExamName.add(yeaAndex);
+			}
+			session.close();
+			Loggers.loggerValue("size", yearAndExamName.size());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return yearAndExamName;
+	}
+	
+	
 
 }
