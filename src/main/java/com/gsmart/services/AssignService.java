@@ -19,5 +19,7 @@ public interface AssignService {
 	public void deleteAssigningReportee(Assign assign) throws GSmartServiceException;
 	
 	public Assign getStaffByClassAndSection(String cls, String section, Hierarchy hierarchy);
+	
+	public boolean searchStandardFeeService(String standard) throws GSmartServiceException;
 
 }
