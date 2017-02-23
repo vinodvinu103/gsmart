@@ -18,5 +18,7 @@ public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws G
 	
 	public void deleteAssigningReportee(Assign assign) throws GSmartDatabaseException;
 	
-	public Assign getStaffByClassAndSection(String cls, String section, Hierarchy hierarchy);	
+	public Assign getStaffByClassAndSection(String cls, String section, Hierarchy hierarchy);
+	
+	public boolean searchStandardFeeDao(String standard) throws GSmartDatabaseException;
 }

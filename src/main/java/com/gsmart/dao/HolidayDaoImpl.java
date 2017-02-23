@@ -53,22 +53,26 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public List<Holiday> getHolidayList(Hierarchy hierarchy) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
 		
 		List<Holiday> holidayList=null;
 		try{
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			if(hierarchy!=null)
 			{
-			query = session.createQuery("from Holiday WHERE isActive='Y' ");
-			}else{
 				query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
+				
+			
+			}else{
+				query = session.createQuery("from Holiday WHERE isActive='Y' ");
+				
 			}
 			holidayList = query.list();
 		}
 	 catch (Throwable e) {
+		 e.printStackTrace();
 		 Loggers.loggerException(e.getMessage());
 	}
 	finally {
@@ -90,13 +94,7 @@ public class HolidayDaoImpl implements HolidayDao {
 		Loggers.loggerStart();
 		
 		try {
-			Calendar calendar=Calendar.getInstance();
-			calendar.setTime(holiday.getHolidayDate());
-			calendar.set(Calendar.MILLISECOND, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-			Date holidayDate=calendar.getTime();
+			
 			Holiday holiday1=fetch(holiday);
 			if(holiday1 !=null){
 				System.out.println("not equal null");
@@ -104,7 +102,7 @@ public class HolidayDaoImpl implements HolidayDao {
 			}else{
 				System.out.println("null");
 			
-			holiday.setHolidayDate(holidayDate);
+			holiday.setHolidayDate(getTimeWithOutMillis(holiday.getHolidayDate()));
 			holiday.setEntryTime(CalendarCalculator.getTimeStamp());
 			holiday.setIsActive("Y");
 			ch=(CompoundHoliday) 
@@ -153,21 +151,48 @@ public class HolidayDaoImpl implements HolidayDao {
 		
 		
 	}
+	private Date getTimeWithOutMillis(Date date)
+	{
+		Calendar calendar=Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		Date holidayDate=calendar.getTime();
+		return holidayDate;
+	}
 private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmartDatabaseException {
-		
+	Holiday holiday1 =null;
 	Holiday ch = null;
 		try {
-			Holiday holiday1 = fetch(holiday);
-			if (holiday1 == null) {
-				oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
-				oldholiday.setIsActive("N");
-				session.update(oldholiday);
+			if(getTimeWithOutMillis(oldholiday.getHolidayDate()).equals(getTimeWithOutMillis(holiday.getHolidayDate()))){
+				holiday1 = fetch2(holiday);
+				if (holiday1 == null) {
+					oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
+					oldholiday.setIsActive("N");
+					session.update(oldholiday);
 
+					
+					transaction.commit();
+					return oldholiday;
+			}
+			}else{
+				holiday1=fetch(holiday);
+				if (holiday1 == null) {
+					oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
+					oldholiday.setIsActive("N");
+					session.update(oldholiday);
+
+					
+					transaction.commit();
+					return oldholiday;
 				
-				transaction.commit();
-				return oldholiday;
+			}
+			
 
 			}
+			
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
@@ -176,12 +201,36 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 		return ch;
 
 	}
+	private Holiday fetch2(Holiday holiday) {
+		Loggers.loggerStart();
+		if(holiday.getHierarchy()!=null){
+			query=session.createQuery("from Holiday where holidayDate=:holidayDate and description=:description and isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", holiday.getHierarchy().getHid());
+		}else{
+			query=session.createQuery("from Holiday where holidayDate=:holidayDate and description=:description and isActive=:isActive");
+		}
+		
+		query.setParameter("isActive", "Y");
+		query.setParameter("holidayDate", getTimeWithOutMillis(holiday.getHolidayDate()));
+		
+		query.setParameter("description", holiday.getDescription());
+		Holiday holiday1 = (Holiday) query.uniqueResult();
+		Loggers.loggerEnd();
+		return holiday1 ;
+}
 	public Holiday getHolidayLists(String entryTime,Hierarchy hierarchy) {
 		try {
-			query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime and hierarchy.hid=:hierarchy");
+			if(hierarchy!=null){
+				query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}else{
+				query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime");
+			}
+			
 			query.setParameter("isActive", "Y");
 			query.setParameter("entryTime", entryTime);
-			query.setParameter("hierarchy", hierarchy.getHid());
+			
+			
 			Holiday holiday = (Holiday) query.uniqueResult();
 			return holiday ;
 		} 
@@ -193,27 +242,28 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 	}
 	
 	public Holiday fetch(Holiday holiday) {
-		
+		Loggers.loggerStart();
 		Holiday holidayList=null;
 		try {
-			Calendar calendar=Calendar.getInstance();
+			if(holiday.getHierarchy()!=null){
+				
+				query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", holiday.getHierarchy().getHid());
+			}else{
+				query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive");
+				
+			}
 			
-			calendar.setTime(holiday.getHolidayDate());
-			calendar.set(Calendar.MILLISECOND, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-			Date holidayDate=calendar.getTime();
-			Hierarchy hierarchy=holiday.getHierarchy();
-			query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
-			query.setParameter("holidayDate", holidayDate);
+			query.setParameter("holidayDate", getTimeWithOutMillis(holiday.getHolidayDate()));
 			query.setParameter("isActive", "Y");
+			
+			
 		holidayList= (Holiday) query.uniqueResult();
 		}catch (Exception e) {
 
 			e.printStackTrace();
 		}
+		Loggers.loggerEnd();
 			return holidayList; 
 
 		}
