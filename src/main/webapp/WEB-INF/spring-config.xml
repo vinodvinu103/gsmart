@@ -53,7 +53,7 @@
 				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.Banners</value>
 				<value>com.gsmart.model.Attendance</value>
-				
+
 			</list>
 		</property>
 		<property name="hibernateProperties">

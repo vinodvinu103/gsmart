@@ -46,6 +46,7 @@ public class LoginDaoImpl implements LoginDao {
 			if (!loginarray.isEmpty()) {
 
 				Login login = loginarray.get(0);
+			
 				authMap.put("login", login);
 				if ((Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword())) && login.getAttempt() >= 4)
 				{
@@ -53,6 +54,7 @@ public class LoginDaoImpl implements LoginDao {
 					authMap.put("status", 2);
 				} else if ((Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword()))
 						&& login.getAttempt() <= 4) {
+					
 					if (login.getAttempt() > 0)
 						resetAttempt(login);
 					Loggers.loggerEnd(0);

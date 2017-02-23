@@ -14,6 +14,8 @@ public interface LeaveMasterDao {
 
 	public void deleteLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException;
 
-	public void editLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException;
+	public LeaveMaster editLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException;
+	
+	public LeaveMaster getLeaveMasterByType(String role,Hierarchy hierarchy,String leaveType);
 
 }

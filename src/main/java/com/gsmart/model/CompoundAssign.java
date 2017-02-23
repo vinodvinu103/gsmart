@@ -13,8 +13,6 @@ public class CompoundAssign implements Serializable {
 
 	private String entryTime;
 
-	private String isActive;
-
 	public String getStandard() {
 		return standard;
 	}
@@ -30,15 +28,4 @@ public class CompoundAssign implements Serializable {
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
 	}
-
-	public String getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(String isActive) {
-		this.isActive = isActive;
-	}
-	
-	
-
 }
