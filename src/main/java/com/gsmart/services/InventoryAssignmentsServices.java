@@ -9,7 +9,8 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface InventoryAssignmentsServices {
 
-	public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public List<InventoryAssignments> getInventoryList(String role, Hierarchy hierarchy) throws GSmartServiceException;
+	//public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException;
 
 	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments);
 

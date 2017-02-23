@@ -42,7 +42,7 @@ public interface HierarchyDao {
 	 *         Table
 	 * @throws Exception
 	 */
-	public List<Hierarchy> getHierarchyList(String role, Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<Hierarchy> getHierarchyList(Hierarchy hierarchy) throws GSmartDatabaseException;
 
 	/**
 	 * @param hierarchy
@@ -66,9 +66,9 @@ public interface HierarchyDao {
 	 * @return Nothing
 	 * @throws Exception
 	 */
-	public void deleteHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
-
-	public Hierarchy getHierarchyByHid(Long hid) throws GSmartDatabaseException;
+	public void deleteHierarchy(Hierarchy hierarchy)throws GSmartDatabaseException;
+	
+	public Hierarchy getHierarchyByHid(Long hid)throws GSmartDatabaseException;
 
 	public List<Hierarchy> getAllHierarchy();
 

@@ -76,14 +76,23 @@ public class HierarchyController {
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
-		Map<String, Object> permission = new HashMap<>();
-		permission.put("modulePermission", modulePermission);
+		Map<String, Object> permissions = new HashMap<>();
+		permissions.put("modulePermission", modulePermission);
 
 //		if (modulePermission != null) {
-			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(),tokenObj.getHierarchy());
-			permission.put("hierarchyList", hierarchyList);
-			Loggers.loggerEnd(hierarchyList);
-			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getHierarchy());
+			if(hierarchyList!=null){
+				permissions.put("status", 200);
+				permissions.put("message", "success");
+				permissions.put("hierarchyList",hierarchyList);
+				
+			}else{
+				permissions.put("status", 404);
+				permissions.put("message", "No Data Is Present");
+				
+			}
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 //		} else {
 //			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 //		}
@@ -101,7 +110,7 @@ public class HierarchyController {
 	 */
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addHierarchy(@RequestBody Hierarchy hierarchy, @RequestHeader HttpHeaders token,
+	public ResponseEntity<Map<String, Object>> addHierarchy(@RequestBody Hierarchy hierarchy, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(hierarchy);
 		String tokenNumber = token.get("Authorization").get(0);
@@ -109,19 +118,22 @@ public class HierarchyController {
 
 		str.length();
 
-		IAMResponse myResponse;
+		Map<String, Object> respMap=new HashMap<>();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			boolean status = hierarchyServices.addHierarchy(hierarchy);
 			if (status) {
-				myResponse = new IAMResponse("success");
+				respMap.put("status", 200);
+	        	respMap.put("message", "Saved Successfully");
 			} else {
-				myResponse = new IAMResponse("DATA IS ALREADY EXIST");
+				respMap.put("status", 400);
+	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
 		} else {
-			myResponse = new IAMResponse("Permission Denied...!");
+			respMap.put("status", 403);
+        	respMap.put("message", "Permission Denied");
 		}
 		Loggers.loggerEnd();
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
 
 	/**
@@ -133,11 +145,11 @@ public class HierarchyController {
 	 * @see IAMResponse
 	 */
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteHierarchy(@RequestBody Hierarchy hierarchy,
+	public ResponseEntity<Map<String, Object>> editDeleteHierarchy(@RequestBody Hierarchy hierarchy,
 			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart(hierarchy);
-		IAMResponse myResponse = null;
+		Map<String, Object> respMap=new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
@@ -146,27 +158,28 @@ public class HierarchyController {
 		Hierarchy ch=null;
 
 		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-			System.out.println("in side edit....");
 			if (task.equals("edit")) {
 				ch = hierarchyServices.editHierarchy(hierarchy);
 				if (ch != null) {
-					myResponse = new IAMResponse("success");
+					respMap.put("status", 200);
+		        	respMap.put("message", "Saved Succesfully");
 
 				} else {
-					myResponse = new IAMResponse("DATA IS ALREADY EXIST");
-					System.out.println("data already exist");
+					respMap.put("status", 400);
+		        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 				}
 			} else if (task.equals("delete")) {
 				hierarchyServices.deleteHierarchy(hierarchy);
-				myResponse = new IAMResponse("success");
+				respMap.put("status", 200);
+	        	respMap.put("message", "Deleted Successfully");
 			} 
 		}
 		else {
-			myResponse = new IAMResponse("Permission denied....!");
-			System.out.println("Permission denied....");
+			respMap.put("status", 403);
+        	respMap.put("message", "Permission Denieds");
 		}
 		Loggers.loggerEnd();
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
 
 }

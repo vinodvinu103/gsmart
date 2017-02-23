@@ -64,13 +64,13 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Hierarchy> getHierarchyList(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+	public List<Hierarchy> getHierarchyList(Hierarchy hierarchy) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
 
 		List<Hierarchy> hierarchyList;
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
+			if (hierarchy==null) {
 				query = session.createQuery("from Hierarchy where isActive='Y'");
 			} else {
 				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
@@ -157,9 +157,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 
 	}
 
@@ -268,6 +266,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		return hierarchyList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Hierarchy> getAllHierarchy() {
 		getConnection();
@@ -275,4 +274,13 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		return query.list();
 
 	}
+
+	/*@Override
+	public List<Hierarchy> getAllHierarchy() {
+		getConnection();
+		query = session.createQuery("from Hierarchy where isActive='Y'");
+		
+		
+		return query.list();
+	}*/
 }
