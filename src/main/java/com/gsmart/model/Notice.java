@@ -22,6 +22,32 @@ public class Notice {
 	private String exitTime;
 	@Column(name = "UPDATE_TIME")
 	private String update_time;
+	
+	
+	
+	@Lob
+	@Column(name = "Image")
+	private byte[] image;
+	
+	
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	@Column(name= "Format")
+	private String format;
 
 	@Column(name = "ROLE")
 	private String role;
@@ -160,7 +186,7 @@ public class Notice {
 	public String toString() {
 		return "Notice [entryTime=" + entryTime + ", smartId=" + smartId + ", message=" + message + ", exitTime="
 				+ exitTime + ", update_time=" + update_time + ", role=" + role + ", isActive=" + isActive + ", type="
-				+ type + ", childFlag=" + childFlag + ", updatedId=" + updatedId + "]";
+				+ type + ", childFlag=" + childFlag + ", updatedId=" + updatedId + ", image=" + image + ", format=" + format + "]";
 	}
 	
 
