@@ -20,7 +20,7 @@ public interface HolidayServices {
 	 * @throws GSmartServiceException
 	 */
 
-	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public List<Holiday> getHolidayList(Hierarchy hierarchy) throws GSmartServiceException;
 	/**
 	 * @param holiday instanceOf {@link Holiday}
 	 * @return nothing

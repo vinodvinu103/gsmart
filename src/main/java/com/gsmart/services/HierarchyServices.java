@@ -21,7 +21,7 @@ public interface HierarchyServices {
 	 * @return list of Hierarchy entities available in the Hierarchy Table
 	 * @throws GSmartServiceException
 	 */
-	public List<Hierarchy> getHierarchyList(String role, Hierarchy hierarchy) throws GSmartServiceException;
+	public List<Hierarchy> getHierarchyList(Hierarchy hierarchy) throws GSmartServiceException;
 
 	/**
 	 * @param hierarchy
@@ -45,10 +45,11 @@ public interface HierarchyServices {
 	 * @return nothing
 	 * @throws GSmartServiceException
 	 */
-	public void deleteHierarchy(Hierarchy hierarchy) throws GSmartServiceException;
-
-	public Hierarchy getHierarchyByHid(Long hid) throws GSmartServiceException;
-
+	public void deleteHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
+	
+	public Hierarchy getHierarchyByHid(Long hid)throws GSmartServiceException;
 	public List<Hierarchy> getAllHierarchy();
-
+	
+	
+	
 }

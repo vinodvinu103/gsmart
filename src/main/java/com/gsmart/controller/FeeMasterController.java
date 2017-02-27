@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.FeeMasterServices;
@@ -45,12 +44,9 @@ import com.gsmart.util.Loggers;
 public class FeeMasterController {
 	@Autowired
 	FeeMasterServices feeMasterServices;
-	
+
 	@Autowired
 	GetAuthorization getAuthorization;
-
-	
-
 
 	/**
 	 * to view {@link FeeMaster} details.
@@ -62,31 +58,42 @@ public class FeeMasterController {
 	 * @throws GSmartBaseException
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getFee(@RequestHeader HttpHeaders token, HttpSession httpSession ) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> getFee(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
-		String tokenNumber=token.get("Authorization").get(0);
-		
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		List<FeeMaster> feeList = null;
-		
-		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-		Map<String, Object> permissions=new HashMap<>();
+
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Map<String, Object> permissions = new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
+
+		/*
+		 * if(modulePermission!=null) {
+		 */
 		
-		if(modulePermission!=null)
-		{
-			feeList = feeMasterServices.getFeeList(tokenObj.getRole(),tokenObj.getHierarchy());
-			Loggers.loggerValue("feeList", feeList);
+		feeList = feeMasterServices.getFeeList(tokenObj.getRole(), tokenObj.getHierarchy());
+		if (feeList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
 			permissions.put("feeList", feeList);
-			Loggers.loggerValue("feeList", permissions);
-			return new ResponseEntity<Map<String,Object>>(permissions, HttpStatus.OK);
-			
-		}else
-		{
-		return new ResponseEntity<Map<String,Object>>(permissions, HttpStatus.OK);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+
 		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+
+		/*
+		 * }else { return new ResponseEntity<Map<String,Object>>(permissions,
+		 * HttpStatus.OK); }
+		 */
 	}
 
 	/**
@@ -99,38 +106,38 @@ public class FeeMasterController {
 	 * @see IAMResponse
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addFee(@RequestBody FeeMaster feeMaster, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> addFee(@RequestBody FeeMaster feeMaster,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(feeMaster);
-		IAMResponse resp =new IAMResponse();
-		
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		Map<String, Object> respMap = new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		
-		if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-			
-			feeMaster.setInstitution(tokenObj.getHierarchy().getInstitution());
-			feeMaster.setSchool(tokenObj.getHierarchy().getSchool());
+
+		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+
 			feeMaster.setHierarchy(tokenObj.getHierarchy());
-		CompoundFeeMaster cf = feeMasterServices.addFee(feeMaster);
-		
-		if (cf!= null) 
-			resp.setMessage("success");
-			else 
-				resp.setMessage("data already exist");
-	return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		}
-		else
-		{
-			resp.setMessage("permission denied");
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		}
-	}	
+			CompoundFeeMaster cb = feeMasterServices.addFee(feeMaster);
+			if (cb != null) {
+				respMap.put("status", 200);
+				respMap.put("message", "Saved Successfully");
+			}
 
-		
+			else {
+				respMap.put("status", 400);
+				respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 
-	
+			}
+
+		} else {
+			respMap.put("status", 403);
+			respMap.put("message", "Permission Denied");
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+	}
 
 	/**
 	 * provide the access to update feeMaster entity
@@ -140,90 +147,100 @@ public class FeeMasterController {
 	 * @return persistence status (success/error) in JSON format
 	 * @see IAMResponse
 	 */
-	@RequestMapping(value="/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editFee(@RequestBody FeeMaster feeMaster, @PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-		
-		IAMResponse myResponse;
-		Loggers.loggerStart(feeMaster);
-		
-		String tokenNumber=token.get("Authorization").get(0);
-		
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		
-		str.length();
-		
-		if(getAuthorization.authorizationForPut(tokenNumber, task, httpSession))
-		{
-		
-		if(task.equals("edit"))
-			feeMasterServices.editFee(feeMaster);
-		else if(task.equals("delete"))
-			feeMasterServices.deleteFee(feeMaster);
-		
-		myResponse = new IAMResponse("success");
-		Loggers.loggerEnd();
-		
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
+	public ResponseEntity<Map<String, Object>> editFee(@RequestBody FeeMaster feeMaster,
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 
+		Loggers.loggerStart(feeMaster);
+
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		FeeMaster cb = null;
+		str.length();
+		Map<String, Object> respMap = new HashMap<>();
+
+		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+
+			if (task.equals("edit")) {
+				cb=feeMasterServices.editFee(feeMaster);
+				if (cb != null) {
+					respMap.put("status", 200);
+					respMap.put("message", "Updated Successfully");
+				}else {
+					respMap.put("status", 400);
+					respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+
+				}
+			} else if (task.equals("delete")) {
+				feeMasterServices.deleteFee(feeMaster);
+				respMap.put("status", 200);
+				respMap.put("message", "Deleted Successfully");
+			}
+
+		} else {
+			respMap.put("status", 403);
+			respMap.put("message", "Permission Denied");
 		}
-		else
-		{
-			myResponse=new IAMResponse("Permissions denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
+		Loggers.loggerEnd();
+
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+
 	}
 
 	/**
-	 * provide the access to delete feeMaster entity                                                                                          
+	 * provide the access to delete feeMaster entity
 	 * 
 	 * @param timeStamp
 	 * @return deletion status (success/error) in JSON format
 	 * @see IAMResponse
 	 */
-	/*@RequestMapping( method = RequestMethod.DELETE)
-	public ResponseEntity<IAMResponse> deleteFee(@RequestBody FeeMaster feeMaster)
-			throws GSmartBaseException {
-		Loggers.loggerStart();
-		IAMResponse myResponse;
-		feeMaster.setIsActive("D");
-		feeMaster.setExittime(CalendarCalculator.getTimeStamp());
-		feeMasterServices.deleteFee(feeMaster);
-		myResponse = new IAMResponse("success");
-		Loggers.loggerEnd();
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-	}*/
+	/*
+	 * @RequestMapping( method = RequestMethod.DELETE) public
+	 * ResponseEntity<IAMResponse> deleteFee(@RequestBody FeeMaster feeMaster)
+	 * throws GSmartBaseException { Loggers.loggerStart(); IAMResponse
+	 * myResponse; feeMaster.setIsActive("D");
+	 * feeMaster.setExittime(CalendarCalculator.getTimeStamp());
+	 * feeMasterServices.deleteFee(feeMaster); myResponse = new
+	 * IAMResponse("success"); Loggers.loggerEnd(); return new
+	 * ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK); }
+	 */
 
-	/*@RequestMapping(value = "/upload/{updSmartId}", method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> upload(@PathVariable("updSmartId") String updSmartId,
-			@RequestParam(value = "file") MultipartFile file) throws GSmartBaseException, IOException {
-		Loggers.loggerStart();
-
-		FileUpload fileUpload = new FileUpload();
-		fileUpload.setFeeDetails("feeDetails");
-
-		byte[] byteArr = file.getBytes();
-		fileUpload.setFile(byteArr);
-		feeMasterServices.fileUpload(fileUpload);
-
-		IAMResponse myResponse;
-		myResponse = new IAMResponse("success");
-		Loggers.loggerEnd();
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/download/{fileName}", method = RequestMethod.GET)
-	public ResponseEntity<Object > download(@PathVariable("fileName") String fileName) throws GSmartBaseException {
-		
-		Loggers.loggerStart();
-		
-		
-		List<FileUpload> src = feeMasterServices.getFile(fileName);
-		Loggers.loggerEnd();
-		Loggers.loggerValue(src.get(0));
-		
-		return new ResponseEntity<Object>(src.get(0), HttpStatus.OK);
-	}*/
+	/*
+	 * @RequestMapping(value = "/upload/{updSmartId}", method =
+	 * RequestMethod.POST) public ResponseEntity<IAMResponse>
+	 * upload(@PathVariable("updSmartId") String updSmartId,
+	 * 
+	 * @RequestParam(value = "file") MultipartFile file) throws
+	 * GSmartBaseException, IOException { Loggers.loggerStart();
+	 * 
+	 * FileUpload fileUpload = new FileUpload();
+	 * fileUpload.setFeeDetails("feeDetails");
+	 * 
+	 * byte[] byteArr = file.getBytes(); fileUpload.setFile(byteArr);
+	 * feeMasterServices.fileUpload(fileUpload);
+	 * 
+	 * IAMResponse myResponse; myResponse = new IAMResponse("success");
+	 * Loggers.loggerEnd(); return new ResponseEntity<IAMResponse>(myResponse,
+	 * HttpStatus.OK);
+	 * 
+	 * }
+	 * 
+	 * @SuppressWarnings("unchecked")
+	 * 
+	 * @RequestMapping(value = "/download/{fileName}", method =
+	 * RequestMethod.GET) public ResponseEntity<Object >
+	 * download(@PathVariable("fileName") String fileName) throws
+	 * GSmartBaseException {
+	 * 
+	 * Loggers.loggerStart();
+	 * 
+	 * 
+	 * List<FileUpload> src = feeMasterServices.getFile(fileName);
+	 * Loggers.loggerEnd(); Loggers.loggerValue(src.get(0));
+	 * 
+	 * return new ResponseEntity<Object>(src.get(0), HttpStatus.OK); }
+	 */
 
 }

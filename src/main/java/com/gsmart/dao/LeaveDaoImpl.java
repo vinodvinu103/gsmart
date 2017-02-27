@@ -1,5 +1,7 @@
 package com.gsmart.dao;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -33,12 +35,12 @@ public class LeaveDaoImpl implements LeaveDao {
 		Loggers.loggerStart(tokenObj);
 
 		System.out.println("vgyhuhuygy");
-
+		getConnection();
 		List<Leave> leave = null;
 		try {
-			getConnection();
+
 			String role = tokenObj.getRole();
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("hr") || role.equalsIgnoreCase("director")) {
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")) {
 				query = session.createQuery("FROM Leave WHERE isActive='Y'");
 			} else {
 				query = session
@@ -47,7 +49,6 @@ public class LeaveDaoImpl implements LeaveDao {
 				query.setParameter("smartId", tokenObj.getSmartId());
 			}
 			leave = (List<Leave>) query.list();
-			session.close();
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
@@ -63,17 +64,27 @@ public class LeaveDaoImpl implements LeaveDao {
 
 		CompoundLeave cl = null;
 		try {
-			/*
-			 * Hierarchy hierarchy=leave.getHierarchy();
-			 * query=session.createQuery(
-			 * "FROM Leave WHERE smartId=:smartId AND isActive=:isActive and hierarchy.hid=:hierarchy"
-			 * ); query.setParameter("smartId", leave.getSmartId());
-			 * query.setParameter("hierarchy", hierarchy.getHid());
-			 * //query.setParameter("reportingManagerId",
-			 * leave.getReportingManagerId()); query.setParameter("isActive",
-			 * "Y"); Leave leave1=(Leave)query.uniqueResult(); if(leave1==null)
-			 * {
-			 */
+			
+			Date startDate=getTimeWithOutMills(leave.getStartDate());
+			Date endDate = getTimeWithOutMills(leave.getEndDate());
+			
+			
+			 Hierarchy hierarchy=leave.getHierarchy();
+			 query=session.createQuery(
+			 "FROM Leave WHERE smartId=:smartId AND (startDate=:startDate or endDate=:endDate) and isActive=:isActive and hierarchy.hid=:hierarchy");
+			 query.setParameter("smartId", leave.getSmartId());
+			 query.setParameter("startDate", startDate);
+			 query.setParameter("endDate", endDate);
+			 query.setParameter("hierarchy", hierarchy.getHid());
+			 //query.setParameter("reportingManagerId",
+			 leave.getReportingManagerId();
+			 query.setParameter("isActive", "Y"); 
+			 
+			 Leave leave1=(Leave)query.uniqueResult(); 
+			 if(leave1==null)
+			 {
+				 leave.setStartDate(startDate);
+				 leave.setEndDate(endDate);
 			leave.setEntryTime(CalendarCalculator.getTimeStamp());
 			leave.setIsActive("Y");
 			leave.setNumberOfDays(noOfdays);
@@ -84,6 +95,7 @@ public class LeaveDaoImpl implements LeaveDao {
 			/* session.save(details); */
 			/* } */
 			transaction.commit();
+			 }
 		} catch (ConstraintViolationException e) {
 			Loggers.loggerEnd();
 
@@ -104,6 +116,18 @@ public class LeaveDaoImpl implements LeaveDao {
 		// Loggers.loggerEnd();
 		return cl;
 
+	}
+	public Date getTimeWithOutMills(Date date){
+		Loggers.loggerStart();
+		Calendar calendar=Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		Date date2=calendar.getTime();
+		return date2;
+		
 	}
 
 	public void getConnection() {
@@ -172,6 +196,34 @@ public class LeaveDaoImpl implements LeaveDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Leave> getLeaves(String role, Hierarchy hierarchy, String smartId, String leaveType) {
+		Loggers.loggerStart();
+		getConnection();
+		List<Leave> leaveList = null;
+		try {
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")) {
+				query = session.createQuery(
+						"from Leave where smartId=:smartId and leaveType=:leaveType and lower(leaveStatus)!='rejected*' and isActive='Y'");
+			} else {
+				query = session.createQuery(
+						"from Leave where smartId=:smartId and leaveType=:leaveType and lower(leaveStatus)!='rejected*' and isActive='Y' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+
+			query.setParameter("smartId", smartId);
+			query.setParameter("leaveType", leaveType);
+			leaveList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+
+		return leaveList;
 	}
 
 }

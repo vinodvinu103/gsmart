@@ -34,11 +34,11 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 	 * @return calls {@link HolidayDao}'s <code>getHolidayList()</code> method
 	 */
 	@Override
-	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public List<Holiday> getHolidayList(Hierarchy hierarchy) throws GSmartServiceException {
 	
 		Loggers.loggerStart();
 	try {
-		return holidayDao.getHolidayList(role,hierarchy);
+		return holidayDao.getHolidayList(hierarchy);
 	} catch (GSmartDatabaseException exception) {
 		throw (GSmartServiceException) exception;
 	} catch (Exception e) {
