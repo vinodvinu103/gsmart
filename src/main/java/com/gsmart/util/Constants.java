@@ -29,6 +29,8 @@ public class Constants {
 	public static final String ASSIGN="/assign";
 	public static final String PASSWORD="/password";
 	public static final String ATTENDANCE="/attendance";
+	public static final	String CONTACT="/contact";
+	
 
 }
 
