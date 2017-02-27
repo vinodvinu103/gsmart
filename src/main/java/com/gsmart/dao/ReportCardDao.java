@@ -26,5 +26,7 @@ public interface ReportCardDao {
 	
 	public ArrayList<ReportCard> reportCardBasedOnAcademicYear(String academicYear)throws GSmartDatabaseException;
 	
-	public List<ReportCard> acdemicYearAndExamName()throws GSmartDatabaseException;
+	public List<ReportCard> acdemicYearAndExamName(Token tokenDetail)throws GSmartDatabaseException;
+	
+	public ArrayList<ReportCard> examName(Token tokenDetail,String acdemicYear)throws GSmartDatabaseException;
 }

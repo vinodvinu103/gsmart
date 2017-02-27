@@ -265,13 +265,15 @@ public class ReportCard {
 
 	@Override
 	public String toString() {
-		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", studentName=" + studentName
-				+ ", standard=" + standard + ", section=" + section + ", reportingManagerId=" + reportingManagerId
-				+ ", teacherName=" + teacherName + ", subject=" + subject + ", maxMarks=" + maxMarks + ", minMarks="
-				+ minMarks + ", marksObtained=" + marksObtained + ", subjectGrade=" + subjectGrade + ", totalGrade="
-				+ totalGrade + ", result=" + result + ", academicYear=" + academicYear + ", isActive=" + isActive
-				+ ", updateTime=" + updateTime + ", exitTime=" + exitTime + "]";
+		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", examName=" + examName
+				+ ", studentName=" + studentName + ", standard=" + standard + ", section=" + section
+				+ ", reportingManagerId=" + reportingManagerId + ", teacherName=" + teacherName + ", subject=" + subject
+				+ ", maxMarks=" + maxMarks + ", minMarks=" + minMarks + ", marksObtained=" + marksObtained
+				+ ", subjectGrade=" + subjectGrade + ", totalGrade=" + totalGrade + ", result=" + result
+				+ ", academicYear=" + academicYear + ", isActive=" + isActive + ", updateTime=" + updateTime
+				+ ", exitTime=" + exitTime + ", childReportFlag=" + childReportFlag + ", hierarchy=" + hierarchy + "]";
 	}
+
 	
 
 	
