@@ -3,6 +3,7 @@ package com.gsmart.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
@@ -163,4 +164,27 @@ public class AssignController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}
+	@RequestMapping(value="/searchstandardfee", method=RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> searchStandardFee(String standard,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException{
+		Loggers.loggerStart(standard);
+		
+		String tokenNumber=token.get("Authorization").get(0);
+		String str =getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String,Object> jsonResult = new HashMap();
+		boolean result=assignService.searchStandardFeeService(standard);
+		if(result){
+		jsonResult.put("status",500);
+		jsonResult.put("message","Please.. fill FeeMaster before registering the student ");
+		}
+		else{
+			jsonResult.put("status",200);
+			jsonResult.put("message","success");
+		}
+		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
+		
+	}
 }
+
+
+

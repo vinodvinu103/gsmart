@@ -60,7 +60,6 @@ public class GetAuthorization {
 		try{
 			rolePermission = (RolePermission) httpSession.getAttribute("permissions");
 			tokenObj=(Token) httpSession.getAttribute("hierarchy");
-			
 			if(rolePermission==null || tokenObj==null)
 			{
 				Token token = tokenService.getToken(tokenNumber);
@@ -79,6 +78,7 @@ public class GetAuthorization {
 			return false;
 		}
 		
+		Loggers.loggerEnd();
 		return rolePermission.getAdd();
 	
 	}

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.Attendance;
-import com.gsmart.model.Holiday;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartServiceException;
 
 public interface AttendanceService {
@@ -15,5 +15,5 @@ public interface AttendanceService {
 	
 	public void editAttedance(Attendance attendance) throws GSmartServiceException;
 	
-    
+    public List<Map<String, Object>> getAttendanceByhierarchy(Long date, List<Hierarchy> hidList);
 }

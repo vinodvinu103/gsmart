@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
+import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -249,5 +250,31 @@ public class AssignDaoImpl implements AssignDao {
 		}finally {
 			session.close();
 		}
+	}
+	
+	@Override
+	public boolean searchStandardFeeDao(String standard){
+		getConnection();
+		Loggers.loggerStart();
+		boolean status = false;
+		try{
+			query = session.createQuery("from FeeMaster where standard =:standard");
+			query.setParameter("standard", standard);
+			FeeMaster fem =(FeeMaster) query.uniqueResult();
+			if(fem == null){
+				status=true;
+			}
+			else{
+				status= false;
+			}	
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			session.close();
+		}
+		Loggers.loggerEnd();
+		return status;
 	}
 }
