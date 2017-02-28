@@ -22,7 +22,7 @@ public interface ReportCardDao {
 	
 	public void excelToDB(String smartId,MultipartFile fileUpload) throws Exception;
 	
-	public List<ReportCard> search(Token tokenDetail)throws GSmartDatabaseException;
+	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartDatabaseException;
 	
 	public ArrayList<ReportCard> reportCardBasedOnAcademicYear(String academicYear)throws GSmartDatabaseException;
 	

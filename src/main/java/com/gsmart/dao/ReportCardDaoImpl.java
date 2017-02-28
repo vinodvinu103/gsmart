@@ -211,20 +211,23 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 
 	@Override
-	public List<ReportCard> search(Token tokenDetail) throws GSmartDatabaseException {
+	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		List<ReportCard> list = null;
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
-
 		try {
 			String role = tokenDetail.getRole();
 			String smartId = tokenDetail.getSmartId();
 			query = session.createQuery(
-					"from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and isActive='Y'");
+					"from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) "
+					+ "and hid=:hierarchy and isActive='Y' and academicYear=:academicYear and "
+					+ "examName=:examName");
 			query.setParameter("reportingManagerId", smartId);
 			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
+			query.setParameter("academicYear", academicYear);
+			query.setParameter("examName", examName);
 			list = query.list();
 			System.out.println("Serch based on smartid..." + list);
 		} catch (Exception e) {
@@ -394,6 +397,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	@Override
 	public ArrayList<ReportCard> examName(Token tokenDetail, String acdemicYear) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		System.out.println("academic Year ??>>?>>>"+acdemicYear);
 		getConnection();
 		ArrayList<ReportCard> examName = new ArrayList<>();
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
@@ -428,6 +432,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Loggers.loggerEnd(examName);
 		return examName;
 	}
 

@@ -103,11 +103,11 @@ public class ReportCardServiceImpl implements ReportCardService {
 	}
 
 	@Override
-	public List<ReportCard> search(Token tokenDetail) throws GSmartServiceException {
+	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName) throws GSmartServiceException {
 		Loggers.loggerStart();
 		List<ReportCard> card = null;
 		try {
-			card = reportCardDao.search(tokenDetail);
+			card = reportCardDao.search(tokenDetail,academicYear,examName);
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());

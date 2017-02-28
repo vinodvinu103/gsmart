@@ -25,7 +25,7 @@ public interface ReportCardService {
 	
 	public void excelToDB(String smartId,MultipartFile fileUpload) throws Exception;
 	
-	public List<ReportCard> search(Token tokenDetail)throws GSmartServiceException;
+	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
 	
 	//public List<ReportCard> search(String subject, int standard)throws GSmartServiceException;
 

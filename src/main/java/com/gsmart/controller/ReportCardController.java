@@ -64,8 +64,8 @@ public class ReportCardController {
 	@Autowired
 	ReportCardDao reportCardDao;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getList(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{academicYear}/{examName}",method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getList(@RequestHeader HttpHeaders token, HttpSession httpSession,@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
@@ -81,7 +81,7 @@ public class ReportCardController {
 			// String teacherSmartId=smartId.getSmartId();
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
-				list = reportCardService.search(tokenObj);
+				list = reportCardService.search(tokenObj,academicYear,examName);
 				permission.put("reportCard", list);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}
