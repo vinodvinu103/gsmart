@@ -1,6 +1,8 @@
 package com.gsmart.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,8 @@ public class ContactServicesImp implements ContactServices {
 	}
 	
 	@Override
-	public List<MessageDetails> teacherView(MessageDetails details) throws Exception {
-		return dao.teacherView(details);
+	public Map<String, ArrayList<MessageDetails>> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
+		return dao.teacherView(details, min, max);
 	}
 
 	@Override
@@ -39,9 +41,9 @@ public class ContactServicesImp implements ContactServices {
 	}
 
 	@Override
-	public List<MessageDetails> studentView(MessageDetails details) throws Exception {
+	public Map<String, ArrayList<MessageDetails>> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
 		
-		return dao.studentView(details);
+		return dao.studentView(details, min, max);
 	}
 
 	@Override

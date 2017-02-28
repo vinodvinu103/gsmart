@@ -1,5 +1,6 @@
 package com.gsmart.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +18,17 @@ public interface ContactDao {
 //	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception;
 	public List<MessageDetails> viewAllMessages();
 
-	public List<MessageDetails> teacherView(MessageDetails details) throws Exception;
+//	public List<MessageDetails> teacherView(MessageDetails details) throws Exception;
 
 	public boolean studentToTeacher(MessageDetails details) throws Exception;
 
 	public boolean teacherToStudent(MessageDetails details) throws Exception;
 
-	public List<MessageDetails> studentView(MessageDetails details) throws Exception;
+//	public List<MessageDetails> studentView(MessageDetails details) throws Exception;
+
+	public Map<String, ArrayList<MessageDetails>> teacherView(MessageDetails details, Integer min, Integer max) throws Exception;
+
+	public Map<String, ArrayList<MessageDetails>> studentView(MessageDetails details, Integer min, Integer max) throws Exception;
 
 	/*List<MessageDetails> teacherView(MessageDetails details) throws Exception;*/
 	

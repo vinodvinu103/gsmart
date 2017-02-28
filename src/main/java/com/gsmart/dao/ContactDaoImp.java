@@ -35,12 +35,13 @@ public class ContactDaoImp implements ContactDao {
 	Query query = null;
 
 	@Override
-	public boolean studentToTeacher(MessageDetails details) throws Exception {
+	public boolean studentToTeacher(MessageDetails details, String role) throws Exception {
 		Loggers.loggerStart();
 		try {
 			getConnection();
 			details.setEntryTime(CalendarCalculator.getTimeStamp());
-
+			
+			details.setPostedBy(role);
 			details.setReadByTeacher("Y");
 			session.save(details);
 			transaction.commit();
@@ -75,47 +76,10 @@ public class ContactDaoImp implements ContactDao {
 	}
 
 	@Override
-	public List<MessageDetails> teacherView(MessageDetails details) throws Exception {
+	public Map<String, ArrayList<MessageDetails>> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
 		Loggers.loggerStart();
-		List<MessageDetails> messages = new ArrayList<>();
-		Map<String, Object> messageMap = new HashMap<>();
-		getConnection();
-		try {
-			
-			String reportingManagerId = details.getReportingManagerId();
-			System.out.println("before reporting manager id :"+reportingManagerId);
-			String smartId = details.getSmartId();
-			
-			query = session.createQuery(
-					"from MessageDetails where reportingManagerId=:smartId ORDER BY entryTime DESC");
-			query.setParameter("smartId", smartId);
-		/*	query=session.createQuery(
-					"from MessageDetails");
-			*/
-			messages = (List<MessageDetails>) query.list();
-			System.out.println("reporting manager id :"+reportingManagerId);
-			
-		/*	transaction.commit();*/
-			Loggers.loggerEnd(messages);
-			return messages;
-		    } 
-		    catch (Exception e) 
-		    {
-			e.printStackTrace();
-			return null;
-		    }
-		    finally
-		    {
-			session.close();
-		    }
-	
-	}
-
-	@Override
-	public List<MessageDetails> studentView(MessageDetails details) throws Exception {
-		Loggers.loggerStart();
-		List<MessageDetails> messages = new ArrayList<>();
-		Map<String, Object> msgMap = new HashMap<>();
+		ArrayList<MessageDetails> messages = null;
+		Map<String, ArrayList<MessageDetails>> messageMap = new HashMap<>();
 		getConnection();
 		try {
 			
@@ -125,13 +89,25 @@ public class ContactDaoImp implements ContactDao {
 			query = session.createQuery(
 					"from MessageDetails where smartId=:rId ORDER BY entryTime DESC");
 			query.setParameter("rId", reportingManagerId);
-			messages = (List<MessageDetails>) query.list();
+//			messages = (List<MessageDetails>) query.list();
 			
-		System.out.println("reporting manager id :"+reportingManagerId);
+			Criteria criteria = session.createCriteria(MessageDetails.class);
+			criteria.add(Restrictions.eq("smartId", "reportingManagerId"));
+			criteria.addOrder(Order.desc("entryTime"));
+			
+			System.out.println("reporting manager id :"+reportingManagerId);
+			
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			messages = (ArrayList<MessageDetails>) criteria.list();
+			criteria.setProjection(Projections.rowCount());
+			
+			ArrayList<MessageDetails> count = (ArrayList<MessageDetails>) criteria.uniqueResult();
+			messageMap.put("messages", count);
 
 			/*transaction.commit();*/
-			Loggers.loggerEnd(messages);
-			return messages;
+			Loggers.loggerEnd(messageMap);
+			
 		}
 		catch (Exception e) 
 		{
@@ -142,6 +118,55 @@ public class ContactDaoImp implements ContactDao {
 		{
 			session.close();
 		}
+		messageMap.put("message", messages);
+		return messageMap;
+	}
+
+	@Override
+	public Map<String, ArrayList<MessageDetails>> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
+		Loggers.loggerStart();
+		ArrayList<MessageDetails> messages = null;
+		Map<String, ArrayList<MessageDetails>> msgMap = new HashMap<>();
+		getConnection();
+		try {
+			
+			String reportingManagerId = details.getReportingManagerId();
+			System.out.println("before reporting manager id :"+reportingManagerId);
+
+			query = session.createQuery(
+					"from MessageDetails where smartId=:rId ORDER BY entryTime DESC");
+			query.setParameter("rId", reportingManagerId);
+//			messages = (List<MessageDetails>) query.list();
+			
+			Criteria criteria = session.createCriteria(MessageDetails.class);
+			criteria.add(Restrictions.eq("smartId", "reportingManagerId"));
+			criteria.addOrder(Order.desc("entryTime"));
+			
+			System.out.println("reporting manager id :"+reportingManagerId);
+			
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			messages = (ArrayList<MessageDetails>) criteria.list();
+			criteria.setProjection(Projections.rowCount());
+			
+			ArrayList<MessageDetails> count = (ArrayList<MessageDetails>) criteria.uniqueResult();
+			msgMap.put("messages", count);
+
+			/*transaction.commit();*/
+			Loggers.loggerEnd(msgMap);
+			
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			return null;
+		}
+		finally
+		{
+			session.close();
+		}
+		msgMap.put("message", messages);
+		return msgMap;
 	}
 
 	@Override
@@ -182,13 +207,14 @@ public class ContactDaoImp implements ContactDao {
 	}
 
 	@Override
-	public boolean studentToTeacher(MessageDetails details, String role) throws Exception {
+	public boolean studentToTeacher(MessageDetails details) throws Exception {
 		Loggers.loggerStart();
 		try {
 			
 			getConnection();
 			details.setEntryTime(CalendarCalculator.getTimeStamp());
 			
+			String role = null;
 			details.setPostedBy(role);
 			details.setReadByTeacher("Y");
 			session.save(details);
