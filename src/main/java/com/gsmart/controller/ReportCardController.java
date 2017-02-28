@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gsmart.dao.GradesDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Grades;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.RolePermission;
@@ -64,11 +66,15 @@ public class ReportCardController {
 	@Autowired
 	ReportCardDao reportCardDao;
 
+	@Autowired
+	GradesDao grd;
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getList(@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
+		List<Grades> listgrd=null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -82,7 +88,9 @@ public class ReportCardController {
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
 				list = reportCardService.search(tokenObj);
+				listgrd=grd.getGradesList();
 				permission.put("reportCard", list);
+				permission.put("grades", listgrd);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}
 		} catch (Exception e) {
