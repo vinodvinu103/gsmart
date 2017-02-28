@@ -22,7 +22,7 @@ public interface HolidayDao {
 	 * @throws GSmartDatabaseException
 	 */
 
-	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<Holiday> getHolidayList(Hierarchy hierarchy) throws GSmartDatabaseException;
 
 
 	/**

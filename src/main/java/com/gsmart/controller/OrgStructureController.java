@@ -183,10 +183,9 @@ public class OrgStructureController {
 		for (Profile p : childList) {
 			if ((p.getFirstName().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
-			} else if ((p.getFirstName().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+			} else if ((p.getSmartId().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
-			}
-			if ((p.getRole().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
+			}else if ((p.getRole().trim().toLowerCase()).startsWith(search.getName().toLowerCase())) {
 				list.add(p);
 			}
 		}

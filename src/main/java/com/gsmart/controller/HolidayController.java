@@ -76,20 +76,26 @@ public class HolidayController {
 		List<Holiday> holidayList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		Map<String, Object> permission = new HashMap<>();
-		permission.put("modulePermission", modulePermission);
+		Map<String, Object> permissions = new HashMap<>();
+		permissions.put("modulePermission", modulePermission);
 
-		if (modulePermission != null) {
-			holidayList = holidayServices.getHolidayList(tokenObj.getRole(), tokenObj.getHierarchy());
-
-			permission.put("holidayList", holidayList);
-			Loggers.loggerEnd(holidayList);
-
-			Loggers.loggerEnd(holidayList);
+		/*if (modulePermission != null) {*/
+			holidayList = holidayServices.getHolidayList(tokenObj.getHierarchy());
+			if(holidayList!=null){
+				permissions.put("status", 200);
+				permissions.put("message", "success");
+				permissions.put("holidayList",holidayList);
+				
+			}else{
+				permissions.put("status", 404);
+				permissions.put("message", "No Data Is Present");
+				
+			}
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		/*} else {
 			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		}
+		}*/
 
 	}
 
@@ -103,12 +109,12 @@ public class HolidayController {
 	 * @see IAMResponse
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addHoliday(@RequestBody Holiday holiday, @RequestHeader HttpHeaders token,
+	public ResponseEntity<Map<String, Object>> addHoliday(@RequestBody Holiday holiday, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart(holiday);
-		IAMResponse resp = new IAMResponse();
 
+		Map<String, Object> respMap=new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
@@ -120,17 +126,21 @@ public class HolidayController {
 			holiday.setHierarchy(tokenObj.getHierarchy());
 			CompoundHoliday ch = holidayServices.addHoliday(holiday);
 
-			if (ch != null)
-				resp.setMessage("success");
-			else
-				resp.setMessage("Already exists");
-			Loggers.loggerEnd();
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+			if (ch != null){
+				respMap.put("status", 200);
+        	respMap.put("message", "Saved Successfully");
+			}else{
+				respMap.put("status", 400);
+	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+			}
+			
 		} else {
-			resp.setMessage("Permission Denied");
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
+			respMap.put("status", 403);
+        	respMap.put("message", "Permission Denied");
 		}
 
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
 
 	/**
@@ -142,11 +152,12 @@ public class HolidayController {
 	 * @see IAMResponse
 	 */
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editHoliday(@RequestBody Holiday holiday, @PathVariable("task") String task,
+	public ResponseEntity<Map<String, Object>> editHoliday(@RequestBody Holiday holiday, @PathVariable("task") String task,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Holiday ch = null;
 		Loggers.loggerStart(holiday);
-		IAMResponse myResponse = null;
+
+		Map<String, Object> respMap=new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -156,23 +167,25 @@ public class HolidayController {
 			if (task.equals("edit")) {
 				ch = holidayServices.editHoliday(holiday);
 				if (ch != null) {
-					myResponse = new IAMResponse("success");
+					respMap.put("status", 200);
+		        	respMap.put("message", "Upadted Successfully");
 
 				} else {
-					myResponse = new IAMResponse("DATA IS ALREADY EXIST");
-					System.out.println("data already exist");
+					respMap.put("status", 400);
+		        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 				}
 			} else if (task.equals("delete")) {
 				holidayServices.deleteHoliday(holiday);
-				myResponse = new IAMResponse("success");
+				respMap.put("status", 200);
+	        	respMap.put("message", "Deleted Successfully");
 			}
 
 		} else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+			respMap.put("status", 403);
+        	respMap.put("message", "Permission Denied");
 		}
 		Loggers.loggerEnd();
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
 
 	/**
