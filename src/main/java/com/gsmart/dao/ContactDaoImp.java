@@ -76,10 +76,10 @@ public class ContactDaoImp implements ContactDao {
 	}
 
 	@Override
-	public Map<String, ArrayList<MessageDetails>> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
+	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
 		Loggers.loggerStart();
-		ArrayList<MessageDetails> messages = null;
-		Map<String, ArrayList<MessageDetails>> messageMap = new HashMap<>();
+		List<MessageDetails> messages = null;
+		Map<String, Object> messageMap = new HashMap<>();
 		getConnection();
 		try {
 			
@@ -91,18 +91,18 @@ public class ContactDaoImp implements ContactDao {
 			query.setParameter("rId", reportingManagerId);
 //			messages = (List<MessageDetails>) query.list();
 			
-			Criteria criteria = session.createCriteria(MessageDetails.class);
-			criteria.add(Restrictions.eq("smartId", "reportingManagerId"));
-			criteria.addOrder(Order.desc("entryTime"));
+			Criteria criteria1 = session.createCriteria(MessageDetails.class);
+			criteria1.add(Restrictions.eq("smartId", "reportingManagerId"));
+			criteria1.addOrder(Order.desc("entryTime"));
 			
 			System.out.println("reporting manager id :"+reportingManagerId);
 			
-			criteria.setMaxResults(max);
-			criteria.setFirstResult(min);
-			messages = (ArrayList<MessageDetails>) criteria.list();
-			criteria.setProjection(Projections.rowCount());
+			criteria1.setMaxResults(max);
+			criteria1.setFirstResult(min);
+			messages = criteria1.list();
+			criteria1.setProjection(Projections.rowCount());
 			
-			ArrayList<MessageDetails> count = (ArrayList<MessageDetails>) criteria.uniqueResult();
+			Long count = (Long) criteria1.uniqueResult();
 			messageMap.put("messages", count);
 
 			/*transaction.commit();*/
@@ -123,10 +123,10 @@ public class ContactDaoImp implements ContactDao {
 	}
 
 	@Override
-	public Map<String, ArrayList<MessageDetails>> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
+	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
 		Loggers.loggerStart();
-		ArrayList<MessageDetails> messages = null;
-		Map<String, ArrayList<MessageDetails>> msgMap = new HashMap<>();
+		List<MessageDetails> messages = null;
+		Map<String, Object> msgMap = new HashMap<>();
 		getConnection();
 		try {
 			
@@ -146,10 +146,10 @@ public class ContactDaoImp implements ContactDao {
 			
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
-			messages = (ArrayList<MessageDetails>) criteria.list();
+			messages = criteria.list();
 			criteria.setProjection(Projections.rowCount());
 			
-			ArrayList<MessageDetails> count = (ArrayList<MessageDetails>) criteria.uniqueResult();
+			Long count = (Long) criteria.uniqueResult();
 			msgMap.put("messages", count);
 
 			/*transaction.commit();*/

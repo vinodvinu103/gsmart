@@ -14,8 +14,8 @@ public interface ContactDao {
 	public List<MessageDetails> getList()throws GSmartDatabaseException;
 	
 	public List<MessageDetails> msgList(MessageDetails details) throws Exception;
-//	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception;
-//	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception;
+	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception;
+	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception;
 	public List<MessageDetails> viewAllMessages();
 
 //	public List<MessageDetails> teacherView(MessageDetails details) throws Exception;
@@ -26,9 +26,9 @@ public interface ContactDao {
 
 //	public List<MessageDetails> studentView(MessageDetails details) throws Exception;
 
-	public Map<String, ArrayList<MessageDetails>> teacherView(MessageDetails details, Integer min, Integer max) throws Exception;
+//	public Map<String, ArrayList<MessageDetails>> teacherView(MessageDetails details, Integer min, Integer max) throws Exception;
 
-	public Map<String, ArrayList<MessageDetails>> studentView(MessageDetails details, Integer min, Integer max) throws Exception;
+//	public Map<String, ArrayList<MessageDetails>> studentView(MessageDetails details, Integer min, Integer max) throws Exception;
 
 	/*List<MessageDetails> teacherView(MessageDetails details) throws Exception;*/
 	

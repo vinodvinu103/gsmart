@@ -30,7 +30,7 @@ public class ContactServicesImp implements ContactServices {
 	}
 	
 	@Override
-	public Map<String, ArrayList<MessageDetails>> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
+	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
 		return dao.teacherView(details, min, max);
 	}
 
@@ -41,7 +41,7 @@ public class ContactServicesImp implements ContactServices {
 	}
 
 	@Override
-	public Map<String, ArrayList<MessageDetails>> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
+	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
 		
 		return dao.studentView(details, min, max);
 	}
