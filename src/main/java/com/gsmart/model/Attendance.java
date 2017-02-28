@@ -1,15 +1,15 @@
 package com.gsmart.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="Attendance")
-public class Attendance implements Serializable{
+@IdClass(com.gsmart.model.CompoundAttendance.class)
+public class Attendance {
 	
 	@Id
 	@Column(name="RFID")
@@ -24,6 +24,7 @@ public class Attendance implements Serializable{
 	@Column(name="outTime")
 	private long outTime;
 	
+	@Id
 	@Column(name="inDate")
 	private long inDate;
 	
