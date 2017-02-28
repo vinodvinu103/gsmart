@@ -126,36 +126,13 @@ public class Notice {
 		this.type = type;
 	}
 
-	public String getSmart_id() {
-		return smartId;
-	}
-
-	public void setSmart_id(String smart_id) {
-		this.smartId = smart_id;
-	}
-
+	
 	public String getMessage() {
 		return message;
 	}
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public String getEntry_time() {
-		return entryTime;
-	}
-
-	public void setEntry_time(String entry_time) {
-		this.entryTime = entry_time;
-	}
-
-	public String getExit_time() {
-		return exitTime;
-	}
-
-	public void setExit_time(String exit_time) {
-		this.exitTime = exit_time;
 	}
 
 	public String getUpdate_time() {
@@ -166,22 +143,6 @@ public class Notice {
 		this.update_time = update_time;
 	}
 
-	public String getIs_active() {
-		return isActive;
-	}
-
-	public void setIs_active(String is_active) {
-		this.isActive = is_active;
-	}
-
-	public String getUpdated_id() {
-		return updatedId;
-	}
-
-	public void setUpdated_id(String updated_id) {
-		this.updatedId = updated_id;
-
-	    }
 	@Override
 	public String toString() {
 		return "Notice [entryTime=" + entryTime + ", smartId=" + smartId + ", message=" + message + ", exitTime="

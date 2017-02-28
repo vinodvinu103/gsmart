@@ -47,10 +47,10 @@ public class NoticeDaoImpl implements NoticeDao {
 		Loggers.loggerStart();
 	
 		try{
-			notice.setSmart_id(token.getSmartId());
+			notice.setSmartId(token.getSmartId());
 			notice.setRole(token.getRole());
-			notice.setIs_active("Y");
-			notice.setEntry_time(CalendarCalculator.getTimeStamp()); 
+			notice.setIsActive("Y");
+			notice.setEntryTime(CalendarCalculator.getTimeStamp()); 
 			session.save(notice);
 			transaction.commit();
 			Loggers.loggerEnd();
@@ -124,8 +124,8 @@ public List<Notice> viewMyNotice(String smartId) {
 		try{
 		
 //			notice= (Notice) session.get("com.gsmart.model.Notice",notice.getEntry_time());
-			notice.setIs_active("D");
-			notice.setExit_time(CalendarCalculator.getTimeStamp());
+			notice.setIsActive("D");
+			notice.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(notice);
 			transaction.commit();
 			Loggers.loggerEnd();
@@ -144,13 +144,13 @@ public List<Notice> viewMyNotice(String smartId) {
 		try{
 			Loggers.loggerStart();
 			
-			Notice oldNotice = getNotice(notice.getEntry_time());
+			Notice oldNotice = getNotice(notice.getEntryTime());
 			oldNotice.setUpdate_time(CalendarCalculator.getTimeStamp());
-			oldNotice.setIs_active("N");
+			oldNotice.setIsActive("N");
 			session.update(oldNotice);
 			
-			notice.setIs_active("Y");
-			notice.setEntry_time(CalendarCalculator.getTimeStamp());
+			notice.setIsActive("Y");
+			notice.setEntryTime(CalendarCalculator.getTimeStamp());
 			session.save(notice);
 			
 			transaction.commit();
