@@ -1,5 +1,7 @@
 package com.gsmart.controller;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -24,10 +28,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.SyncRequestObject;
 import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.HolidayServices;
@@ -94,35 +101,27 @@ public class AttendanceController {
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addAttendance(@RequestBody Map<String, List<Attendance>> attendanceMap,
-			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-		Loggers.loggerStart(attendanceMap.get("attendanceList"));
+	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON)
+	public ResponseEntity<Map<String, Object>> addAttendance(@RequestBody String stringObj) throws GSmartBaseException {
 
-		IAMResponse rsp = null;
-		Map<String, Object> response = new HashMap<>();
-		String tokenNumber = token.get("Authorization").get(0);
-		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
-
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-
-			Attendance attend = attendanceService.addAttedance(attendanceMap.get("attendanceList"));
-			if (attend != null) {
-				rsp = new IAMResponse("success");
-				response.put("message", rsp);
+		Loggers.loggerStart(stringObj);
+		ObjectMapper objectMapper = new ObjectMapper();
+		Map<String, Object> responseMap = new HashMap<>();
+		try {
+			SyncRequestObject syncRequestObject = objectMapper.readValue(stringObj, SyncRequestObject.class);
+			List<String> rfidList = attendanceService.addAttedance(syncRequestObject.getRequestMap().get("attendanceList"));
+			if (rfidList == null) {
+				responseMap.put("status", 500);
 			} else {
-				rsp = new IAMResponse("Data Already exists");
-				response.put("message", rsp);
-
+				responseMap.put("data", rfidList);
+				responseMap.put("status", 200);
 			}
-		} else {
-			rsp = new IAMResponse("Permission Denied");
-			response.put("message", rsp);
-
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+
+		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)

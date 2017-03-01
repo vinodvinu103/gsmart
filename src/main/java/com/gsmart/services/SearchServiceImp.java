@@ -106,17 +106,19 @@ public class SearchServiceImp implements SearchService {
 
 			for (String temp : key) {
 				Profile p = map.get(temp);
+				if(p.getReportingManagerId()!=null){
 				if (p.getReportingManagerId().equals(smartId)) {
 					if (!(p.getSmartId().equals(smartId))) {
 						childList.add(p);
 					}
+				}
 				}
 
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Loggers.loggerEnd("searchEmployeeInfo ended");
+		Loggers.loggerEnd(childList);
 		return childList;
 	}
 
