@@ -40,7 +40,7 @@ public interface FeeMasterDao {
 	 * @throws GSmartDatabaseException
 	 */
 
-	public void editFee(FeeMaster feeMaster) throws GSmartDatabaseException;
+	public FeeMaster editFee(FeeMaster feeMaster) throws GSmartDatabaseException;
 
 	/**
 	 * @param timeStamp

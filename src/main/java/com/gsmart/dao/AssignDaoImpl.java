@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
+import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -71,7 +72,7 @@ public class AssignDaoImpl implements AssignDao {
 		CompoundAssign compoundAssign = null;
 		Assign assign2=null;
 		try {
-			if(assign.getHierarchy().getHid() == null){
+			if(assign.getHierarchy()== null){
 				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
 			}else{
 				assign2=fetch2(assign);
@@ -96,7 +97,7 @@ public class AssignDaoImpl implements AssignDao {
 		getConnection();
 		Assign assignList = null;
 		try {
-			if(assign.getHierarchy().getHid() == null){
+			if(assign.getHierarchy() == null){
 				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
 			}else{
 			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy and teacherSmartId=:teacherSmartId");
@@ -249,5 +250,31 @@ public class AssignDaoImpl implements AssignDao {
 		}finally {
 			session.close();
 		}
+	}
+	
+	@Override
+	public boolean searchStandardFeeDao(String standard){
+		getConnection();
+		Loggers.loggerStart();
+		boolean status = false;
+		try{
+			query = session.createQuery("from FeeMaster where standard =:standard");
+			query.setParameter("standard", standard);
+			FeeMaster fem =(FeeMaster) query.uniqueResult();
+			if(fem == null){
+				status=true;
+			}
+			else{
+				status= false;
+			}	
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			session.close();
+		}
+		Loggers.loggerEnd();
+		return status;
 	}
 }

@@ -121,7 +121,7 @@ public class LeaveServicesImpl implements LeaveServices {
 
 			System.out.println("days: " + days);
 
-			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList(role,hierarchy);
+			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList(hierarchy);
 
 			long eStartDate = getEpoch(leave.getStartDate());
 			System.out.println("start date >>>>>>>......"+leave.getStartDate());
