@@ -8,9 +8,18 @@ import java.util.Date;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gsmart.services.LoginServices;
 
 public class CalendarCalculator implements Job {
 
+
+	
+
+	public static Long currentEpoch;
+	@Autowired
+	LoginServices loginservices;
 
 	public static String getTimeStamp() {
 		try {
