@@ -36,7 +36,7 @@ public interface FeeMasterServices
 	 * @throws GSmartServiceException
 	 */
 
-	public void editFee(FeeMaster feeMaster) throws GSmartServiceException;
+	public FeeMaster editFee(FeeMaster feeMaster) throws GSmartServiceException;
 	/**
 	 * @param feeMaster instanceOf {@link FeeMaster}
 	 * @return nothing

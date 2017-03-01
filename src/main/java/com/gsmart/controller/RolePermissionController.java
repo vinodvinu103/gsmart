@@ -48,7 +48,7 @@ public class RolePermissionController {
 
 	@Autowired
 	GetAuthorization getAuthorization;
-	
+
 	@Autowired
 	TokenService tokenService;
 
@@ -69,52 +69,51 @@ public class RolePermissionController {
 
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
-		
+
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
 		Map<String, Object> rolePermissionList = null;
-		
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		
-		Map<String, Object> permissions = new HashMap<>();
-		
-		permissions.put("modulePermission", modulePermission);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
-		if (modulePermission!= null) {
-			rolePermissionList = rolePermissionServices.getPermissionList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
+		Map<String, Object> permissions = new HashMap<>();
+
+		permissions.put("modulePermission", modulePermission);
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+
+		if (modulePermission != null) {
+			rolePermissionList = rolePermissionServices.getPermissionList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 
 			permissions.put("rolePermissionList", rolePermissionList);
-			Loggers.loggerEnd(rolePermissionList);
+			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		}
 	}
-	
-	@RequestMapping(value="/subModules", method = RequestMethod.GET)
-	public ResponseEntity<List<RolePermission>> getSubModels(@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
-		
+
+	@RequestMapping(value = "/subModules", method = RequestMethod.GET)
+	public ResponseEntity<List<RolePermission>> getSubModels(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
 		Loggers.loggerStart(httpSession);
 		String tokenNumber = token.get("Authorization").get(0);
-		
+
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		
-	getAuthorization.authorizationForGet(tokenNumber, httpSession);
-	System.out.println("<<<<<<role permission>>>>>>>>");
+
+		getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		System.out.println("<<<<<<role permission>>>>>>>>");
 
 		str.length();
 
 		List<RolePermission> subModules = null;
-		
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-		System.out.println("Token object"+tokenObj);
-		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(),tokenObj.getHierarchy());
-		System.out.println("submodule ::"+subModules);
-		
+
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		System.out.println("Token object" + tokenObj);
+		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(), tokenObj.getHierarchy());
+		System.out.println("submodule ::" + subModules);
+
 		return new ResponseEntity<List<RolePermission>>(subModules, HttpStatus.OK);
 	}
 
@@ -140,7 +139,8 @@ public class RolePermissionController {
 		str.length();
 
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			permission.setHierarchy(tokenObj.getHierarchy());
 			RolePermissionCompound cb = rolePermissionServices.addPermission(permission);
 
 			if (cb != null)
@@ -169,7 +169,7 @@ public class RolePermissionController {
 			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
-		IAMResponse myResponse;
+		IAMResponse resp = new IAMResponse();
 		String tokenNumber = token.get("Authorization").get(0);
 
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -177,18 +177,31 @@ public class RolePermissionController {
 		str.length();
 
 		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-			if (task.equals("edit"))
-				rolePermissionServices.editPermission(permission);
-			else if (task.equals("delete"))
-				rolePermissionServices.deletePermission(permission);
+			if (task.equals("edit")) {
+				RolePermission cb = rolePermissionServices.editPermission(permission);
 
-			myResponse = new IAMResponse("success");
-			Loggers.loggerEnd();
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+				if (cb != null)
+					resp.setMessage("success");
+				else
+					resp.setMessage("Already exists");
+				Loggers.loggerEnd();
+
+			}
+
+			else if (task.equals("delete")) {
+				rolePermissionServices.deletePermission(permission);
+				resp.setMessage("success");
+
+			}
+
 		}
+
+		else {
+			resp.setMessage("Permission Denied");
+
+		}
+
+		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 	}
 
 	public void getPermission(String role) throws GSmartServiceException {

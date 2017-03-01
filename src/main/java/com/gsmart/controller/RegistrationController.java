@@ -133,14 +133,14 @@ public class RegistrationController {
 		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		jsonMap.put("modulePermisson", modulePermisson);
 
-		Map<String, Object> profileMap = null;
+		Map<String, Object> profileMap1 = null;
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		if (modulePermisson != null) {
-			profileMap = profileServices.getProfiles("student", tokenObj.getSmartId(), tokenObj.getRole(),
+			profileMap1 = profileServices.getProfiles("student", tokenObj.getSmartId(), tokenObj.getRole(),
 					tokenObj.getHierarchy(), min, max);
-			if (profileMap != null) {
+			if (profileMap1 != null) {
 				jsonMap.put("status", 200);
-				jsonMap.put("result", profileMap);
+				jsonMap.put("result", profileMap1);
 				jsonMap.put("message", "success");
 				jsonMap.put("modulePermisson", modulePermisson);
 			} else {
@@ -244,7 +244,7 @@ public class RegistrationController {
 	}
 
 	@RequestMapping(value = "/updateProfile/{updEmpSmartId}", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> updateProfile(@RequestBody Profile profile,
+	public ResponseEntity<Map<String, Object>> updateProfile(@RequestBody Profile profile,
 			@PathVariable("updEmpSmartId") String updEmpSmartId, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
@@ -253,17 +253,42 @@ public class RegistrationController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Loggers.loggerValue("Updated by: ", updEmpSmartId);
-		Map<String, String> jsonResult = new HashMap<>();
+		Map<String, Object> jsonResult = new HashMap<>();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 			profile.setHierarchy(tokenObj.getHierarchy());
 			String result = profileServices.updateProfile(profile);
+			jsonResult.put("status", 200);
 			jsonResult.put("result", result);
-			Loggers.loggerEnd(jsonResult);
+		}else{
+		    jsonResult.put("status", 500);
+		    jsonResult.put("result","Not Updated..!, Please try again.");
 		}
-		return new ResponseEntity<Map<String, String>>(jsonResult, HttpStatus.OK);
+		Loggers.loggerEnd(jsonResult);
+		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 
 	}
+	
+	 @RequestMapping(value="/delete/{task}",method = RequestMethod.PUT)
+	  public ResponseEntity<Map<String,Object>> deleteProfile(@RequestBody Profile profile,@PathVariable("task") String task,@RequestHeader HttpHeaders token,HttpSession httpSession ) throws GSmartBaseException{
+		  
+		  Loggers.loggerStart();
+		  String tokenNumber=token.get("Authorization").get(0);
+		  String str = getAuthorization.getAuthentication(tokenNumber,httpSession);
+		  str.length();
+		  Map<String,Object> jsonResult = new HashMap();
+		  if(getAuthorization.authorizationForPut(tokenNumber, task, httpSession)){
+			  if(task.equals("delete")){
+				 String result = profileServices.deleteprofile(profile);
+				 jsonResult.put("result", result);
+				 Loggers.loggerEnd(jsonResult);
+				 
+			  }
+			  
+		  }
+		  return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);  
+	  }
+	
 
 	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> searchRep(@RequestBody Search search, @RequestHeader HttpHeaders token,
@@ -317,4 +342,8 @@ public class RegistrationController {
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 
 	}
+
+	 
 }
+
+

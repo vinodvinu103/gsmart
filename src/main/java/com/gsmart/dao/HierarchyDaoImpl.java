@@ -78,7 +78,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		Map<String, Object> hierarchyMap = new HashMap<String, Object>();
 		Criteria criteria = null;
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
+			if (hierarchy==null) {
 				query = session.createQuery("from Hierarchy where isActive='Y'");
 			} else {
 				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
@@ -103,6 +103,37 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		Loggers.loggerEnd(hierarchyList);
 		hierarchyMap.put("hierarchyList", hierarchyList);
 		return hierarchyMap;
+	}
+	
+	
+	@Override
+	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getConnection();
+		Loggers.loggerStart();
+
+		List<Hierarchy> hierarchyList1;
+		Map<String, Object> hierarchyMap1 = new HashMap<String, Object>();
+		Criteria criteria = null;
+		try {
+			if (hierarchy==null) {
+				query = session.createQuery("from Hierarchy where isActive='Y'");
+			} else {
+				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
+				query.setParameter("hid", hierarchy.getHid());
+			}
+			criteria = session.createCriteria(Hierarchy.class);
+			hierarchyList1 = criteria.list();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+
+			session.close();
+		}
+		Loggers.loggerEnd(hierarchyList1);
+		hierarchyMap1.put("hierarchyList1", hierarchyList1);
+		return hierarchyMap1;
 	}
 
 	/**
@@ -172,9 +203,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 
 	}
 
@@ -283,6 +312,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		return hierarchyList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Hierarchy> getAllHierarchy() {
 		getConnection();
@@ -290,4 +320,13 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		return query.list();
 
 	}
+
+	/*@Override
+	public List<Hierarchy> getAllHierarchy() {
+		getConnection();
+		query = session.createQuery("from Hierarchy where isActive='Y'");
+		
+		
+		return query.list();
+	}*/
 }

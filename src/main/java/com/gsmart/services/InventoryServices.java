@@ -45,4 +45,10 @@ public interface InventoryServices {
 	 * @throws user define Exception
 	 */
 	public void deleteInventory(Inventory inventory) throws GSmartServiceException;
+	
+	
+	
+	
+	
+	
 }

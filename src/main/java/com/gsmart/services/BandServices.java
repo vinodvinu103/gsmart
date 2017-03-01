@@ -43,4 +43,6 @@ public interface BandServices {
 	 */
 	public void deleteBand(Band band)throws GSmartServiceException;
 
+	public Map<String, Object> getBandList1()  throws GSmartServiceException;
+
 }

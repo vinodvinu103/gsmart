@@ -33,6 +33,11 @@ public class HierarchyServicesImpl implements HierarchyServices {
 	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
 		return hierarchyDao.getHierarchyList(role,hierarchy, min, max);
 	}
+	
+	@Override
+	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartServiceException {
+		return hierarchyDao.getHierarchyList1(role,hierarchy);
+	}
 
 	/**
 	 * calls {@link HierarchyDao}'s <code>addHierarchy(...)</code> method

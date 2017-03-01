@@ -73,6 +73,26 @@ public class BandDaoImpl implements BandDao {
 		Loggers.loggerEnd();
 		return bandMap;
 	}
+	
+	@Override
+	public Map<String, Object> getBandList1() throws GSmartDatabaseException {
+		getConnection();
+		Loggers.loggerStart();
+		Map<String, Object> bandMap1 = new HashMap<String, Object>();
+		try {
+			getConnection();
+			criteria = session.createCriteria(Band.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.setProjection(Projections.id());
+			bandMap1.put("bandList1", criteria.list());
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+			session.close();
+		}
+		Loggers.loggerEnd();
+		return bandMap1;
+	}
 
 	/**
 	 * Adds new band entity to {@link Band} save it in database
@@ -99,6 +119,7 @@ public class BandDaoImpl implements BandDao {
 			if (oldBand == null) {
 				band.setEntryTime(CalendarCalculator.getTimeStamp());
 				band.setIsActive("Y");
+			
 				cb = (CompoundBand) session.save(band);
 				transaction.commit();
 				
@@ -135,10 +156,18 @@ public class BandDaoImpl implements BandDao {
 
 			Loggers.loggerValue("Band", band);
 			addBand(band);
-			// transaction.commit();
-
-		} catch (org.hibernate.exception.ConstraintViolationException e) {
-		} catch (Throwable e) {
+			
+		addBand(band);	
+//			if(ch!=null)
+//			{
+//				band.setEntryTime(CalendarCalculator.getTimeStamp());
+//				band.setIsActive("Y");
+//				ch=(Band) session.save(band);
+//				transaction.commit();
+//			}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 		return ch;

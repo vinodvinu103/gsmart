@@ -78,10 +78,11 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 	 * @throws GSmartServiceException
 	 */
 	@Override
-	public void editFee(FeeMaster feeMaster) throws GSmartServiceException {
+	public FeeMaster editFee(FeeMaster feeMaster) throws GSmartServiceException {
 		Loggers.loggerStart();
+		FeeMaster cb=null;
 		try {
-			feeMasterDao.editFee(feeMaster);
+			cb=feeMasterDao.editFee(feeMaster);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -89,6 +90,7 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 			Loggers.loggerException(e.getMessage());
 		}
 		Loggers.loggerEnd();
+		return cb;
 	}
 
 	/**

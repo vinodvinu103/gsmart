@@ -16,6 +16,6 @@ public interface LeaveMasterService {
 
 	public void deleteLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException;
 
-	public void editLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException;
+	public LeaveMaster editLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException;
 
 }

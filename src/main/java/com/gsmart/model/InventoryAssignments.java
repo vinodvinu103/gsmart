@@ -44,9 +44,17 @@ public class InventoryAssignments implements Serializable
 	@Column(name="QUANTITY")
 	private int quantity;
 	
+	@Id
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
 	
+	public String getEntryTime() {
+		return entryTime;
+	}
+
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
 	@Column (name="UPDATED_TIME")
 	private String updatedTime;
 	
@@ -130,12 +138,7 @@ public class InventoryAssignments implements Serializable
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	public String getEntryTime() {
-		return entryTime;
-	}
-	public void setEntryTime(String entryTime) {
-		this.entryTime = entryTime;
-	}
+	
 	public String getUpdatedTime() {
 		return updatedTime;
 	}

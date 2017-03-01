@@ -97,14 +97,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		
 		CompoundFeeMaster cfm = null;
 		try {
-			Hierarchy hierarchy=feeMaster.getHierarchy();
-			FeeMaster feeMaster2=null;
-			query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive and hierarchy.hid=:hierarchy");
-			query.setParameter("standard", feeMaster.getStandard());
-			
-			query.setParameter("hierarchy", hierarchy.getHid());
-			query.setParameter("isActive", "Y");
-			feeMaster2= (FeeMaster) query.uniqueResult();
+			FeeMaster feeMaster2=fetch2(feeMaster);
 			if(feeMaster2==null)
 			{
 				feeMaster.setIsActive("Y");
@@ -112,7 +105,6 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			
 				cfm = (CompoundFeeMaster) session.save(feeMaster);
 				transaction.commit();
-				return cfm;
 			}
 		} catch (ConstraintViolationException e) {
 			transaction.rollback();
@@ -135,23 +127,15 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	 * @return Nothing
 	 */
 	@Override
-	public void editFee(FeeMaster feeMaster) throws GSmartDatabaseException {
+	public FeeMaster editFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 
 		getConnection();
 		Loggers.loggerStart();
-		
+		FeeMaster ch=null;
 		try {
 			Hierarchy hierarchy=feeMaster.getHierarchy();
 			FeeMaster oldFee = getFeeMas(feeMaster.getEntryTime(),hierarchy);
-			oldFee.setUpdatedTime(CalendarCalculator.getTimeStamp());
-			oldFee.setIsActive("N");
-			session.update(oldFee);
-			
-			/*feeMaster.setEntryTime(CalendarCalculator.getTimeStamp());
-			feeMaster.setIsActive("Y");
-			session.save(feeMaster);*/
-
-			transaction.commit();
+			ch = updateFeeMaster(oldFee, feeMaster);
 			addFee(feeMaster);
 			
 		} catch (ConstraintViolationException e) {
@@ -160,12 +144,61 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
+		return ch;
 	
 	}
+	private FeeMaster updateFeeMaster(FeeMaster oldFeeMaster, FeeMaster feeMaster) throws GSmartDatabaseException {
+
+		FeeMaster ch = null;
+		try {
+			if(oldFeeMaster.getStandard().equals(feeMaster.getStandard())){
+				
+					oldFeeMaster.setUpdatedTime(CalendarCalculator.getTimeStamp());
+					oldFeeMaster.setIsActive("N");
+					session.update(oldFeeMaster);
+
+					transaction.commit();
+					return oldFeeMaster;
+				
+			}else{
+				FeeMaster FeeMaster1 = fetch2(feeMaster);
+				if (FeeMaster1 == null) {
+					oldFeeMaster.setUpdatedTime(CalendarCalculator.getTimeStamp());
+					oldFeeMaster.setIsActive("N");
+					session.update(oldFeeMaster);
+
+					transaction.commit();
+					return oldFeeMaster;
+				
+			}
+			
+
+			}
+		} catch (ConstraintViolationException e) {
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Throwable e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+		return ch;
+
+	}
+	private FeeMaster fetch2(FeeMaster feeMaster) {
+		Hierarchy hierarchy=feeMaster.getHierarchy();
+		FeeMaster feeMaster2=null;
+		if(feeMaster.getHierarchy()==null){
+			query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive ");
+		}else{
+		query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive and hierarchy.hid=:hierarchy");
+		query.setParameter("hierarchy", hierarchy.getHid());
+		}
+		query.setParameter("standard", feeMaster.getStandard());
+		query.setParameter("isActive", "Y");
+		feeMaster2= (FeeMaster) query.uniqueResult();
+		return feeMaster2;
+	}
+
 	
 
 
@@ -200,9 +233,13 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	public FeeMaster getFeeMas(String entryTime,Hierarchy hierarchy)
 	{
 		Loggers.loggerStart();
-		query = session.createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime and hierarchy.hid=:hierarchy");
+		if(hierarchy!=null){
+			query = session.createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+		}else{
+			query = session.createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime ");
+		}
 		query.setParameter("isActive", "Y");
-		query.setParameter("hierarchy", hierarchy.getHid());
 		query.setParameter("entryTime", entryTime);
 		FeeMaster fee=(FeeMaster) query.uniqueResult();
 

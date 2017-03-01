@@ -112,6 +112,12 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 		Loggers.loggerEnd();
 
 	}
+	@Override
+	public Map<String, Object> getHolidayList(Hierarchy hierarchy, Integer min, Integer max)
+			throws GSmartServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	
 }

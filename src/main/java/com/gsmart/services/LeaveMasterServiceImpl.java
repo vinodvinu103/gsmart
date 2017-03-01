@@ -66,10 +66,11 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 	}
 
 	@Override
-	public void editLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException {
+	public LeaveMaster editLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException {
 		Loggers.loggerStart();
+		LeaveMaster ch=null;
 		try {
-			leavemasterdao.editLeaveMaster(leaveMaster);
+			ch=leavemasterdao.editLeaveMaster(leaveMaster);
 
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
@@ -80,5 +81,6 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 		}
 
 		Loggers.loggerEnd();
+		return ch;
 	}
 }

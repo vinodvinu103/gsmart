@@ -19,6 +19,8 @@ public interface ProfileServices{
 	public boolean insertUserProfileDetails(Profile profile)throws GSmartServiceException;
 
 	public String updateProfile(Profile profile)throws GSmartServiceException;
+	
+	public String deleteprofile(Profile profile)throws GSmartServiceException;
 
 
 	/*for profile*/

@@ -27,7 +27,7 @@ public interface RolePermissionServices {
 	 * @return nothing
 	 * @throws GSmartServiceException
 	 */
-	public void editPermission(RolePermission permission) throws GSmartServiceException;
+	public RolePermission editPermission(RolePermission permission) throws GSmartServiceException;
 	/**
 	 * @param permission instanceOf {@link RolePermission}
 	 * @return nothing

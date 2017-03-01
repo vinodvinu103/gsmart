@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
@@ -28,8 +27,8 @@ import com.gsmart.model.Token;
 import com.gsmart.services.LeaveServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
-import com.gsmart.util.CronJob;
 import com.gsmart.util.GSmartBaseException;
+import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
@@ -92,8 +91,7 @@ public class LeaveController {
 
 		str.length();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-
-			
+	
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			Profile profileInfo=profileDao.getProfileDetails(tokenObj.getSmartId());
 			leave.setSmartId(profileInfo.getSmartId());
@@ -137,6 +135,28 @@ public class LeaveController {
 			myResponse = new IAMResponse("Permission Denied");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
+	}
+	@RequestMapping(value="/leftleaves/{smartId}/{leaveType}",method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getLeftLeaves(@RequestHeader HttpHeaders token,HttpSession httpSession,@PathVariable ("smartId") String smartId,@PathVariable("leaveType") String leaveType){
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		Map<String, Object>leftLeaves=null;
+		str.length();
+		try {
+			getAuthorization.authorizationForGet(tokenNumber, httpSession);
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			leftLeaves=leaveServices.getLeftLeaves(tokenObj.getRole(),tokenObj.getHierarchy(),smartId, leaveType);
+			
+		} catch (GSmartServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String,Object>>(leftLeaves, HttpStatus.OK);
+		
 	}
 	
 	}

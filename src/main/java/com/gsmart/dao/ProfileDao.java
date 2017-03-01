@@ -44,6 +44,8 @@ public interface ProfileDao {
 	public boolean userProfileInsert(Profile profile);
 
 	public String updateProfile(Profile profile);
+	
+	public String deleteprofile(Profile profile);
 
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
@@ -97,5 +99,7 @@ public interface ProfileDao {
 	public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;
 
 	public void deleteBanner(Banners banner)throws GSmartDatabaseException;
+
+	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year);
 
 }

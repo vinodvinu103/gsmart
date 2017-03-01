@@ -148,8 +148,8 @@ public class SearchServiceImp implements SearchService {
 		do {
 			Loggers.loggerValue("entered int do while in searchParentInfo", "");
 			p = map.get(smartId);
-			System.out.println("reporting managere id" + p.getReportingManagerId());
-			if (p.getReportingManagerId() != null) {
+			System.out.println("reporting managere id" + p);
+			if (p != null && p.getReportingManagerId() != null) {
 				if (!(p.getReportingManagerId().equals(smartId))) {
 					System.out.println("hhhhyhg");
 					parentList.add(p.getReportingManagerId());

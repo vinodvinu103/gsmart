@@ -10,6 +10,8 @@ import com.gsmart.dao.AssignDao;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
+import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -36,26 +38,23 @@ public class AssignServiceImpl implements AssignService{
 		compoundAssign=assignDao.addAssigningReportee(assign);
 		}
 		catch (Exception e) {
-
 		e.printStackTrace();
 		}
 		Loggers.loggerEnd();
-		return compoundAssign;
-
-		
+		return compoundAssign;		
 	}
 
 	@Override
-	public void editAssigningReportee(Assign assign) throws GSmartServiceException {
+	public Assign editAssigningReportee(Assign assign) throws GSmartServiceException {
 		Loggers.loggerStart();
+		Assign asn = null;
 		try{
-		assignDao.editAssigningReportee(assign);
+		asn = assignDao.editAssigningReportee(assign);
 		}
 		catch (Exception e) {
-
 			e.printStackTrace();
 		}
-		
+		return asn;		
 	}
 
 	@Override
@@ -66,7 +65,6 @@ public class AssignServiceImpl implements AssignService{
 		assignDao.deleteAssigningReportee(assign);
 	}
 	catch (Exception e) {
-
 		e.printStackTrace();
 	}
 	}
@@ -75,7 +73,20 @@ public class AssignServiceImpl implements AssignService{
 	public Assign getStaffByClassAndSection(String standard, String section, Hierarchy hierarchy) {
 		return assignDao.getStaffByClassAndSection(standard, section, hierarchy);
 	}
-
 	
-
+	@Override
+	public boolean searchStandardFeeService(String standard){
+		Loggers.loggerStart();
+		boolean status=false;
+		try{
+		status= assignDao.searchStandardFeeDao(standard);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd();
+		return status;
+		}
+	
+	
+	
 }

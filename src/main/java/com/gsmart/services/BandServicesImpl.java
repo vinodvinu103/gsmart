@@ -46,6 +46,21 @@ public class BandServicesImpl implements BandServices {
 		}
 
 	}
+	
+	@Override
+	public Map<String, Object> getBandList1() throws GSmartServiceException {
+		Loggers.loggerStart();
+		try {
+			return bandDao.getBandList1();
+		} catch (GSmartDatabaseException exception) {
+			exception.printStackTrace();
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartServiceException(e.getMessage());
+		}
+
+	}
 
 	/**
 	 * calls {@link BandDao}'s <code>addBand(...)</code> method

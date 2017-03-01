@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -13,12 +14,14 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.HolidayDaoImpl;
 import com.gsmart.dao.LeaveDao;
+import com.gsmart.dao.LeaveMasterDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.WeekDaysDao;
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
+import com.gsmart.model.LeaveMaster;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
@@ -40,6 +43,9 @@ public class LeaveServicesImpl implements LeaveServices {
 	
 	@Autowired
 	ProfileDao profileDao;
+	
+	@Autowired
+	LeaveMasterDao leaveMasterDao;
 
 	@Override
 	public Map<String, Object> getLeaveList(Token tokenObj, Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
@@ -265,7 +271,7 @@ public  int getWorkingDaysBetweenTwoDates(Calendar startCal, Calendar endCal) th
 	
 	public long getEpoch(Date date) {
 		Calendar calendar = Calendar.getInstance();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 	/*	Date date1 = df.parse(date);*/
 		calendar.setTime(date);
 		calendar.set(Calendar.MILLISECOND, 0);
@@ -278,6 +284,23 @@ public  int getWorkingDaysBetweenTwoDates(Calendar startCal, Calendar endCal) th
 		System.out.println("saakappa e timeformate " + epoch);
 		return epoch;
 	}//epoch 
+	
+	public Map<String,Object> getLeftLeaves(String role,Hierarchy hierarchy,String smartId,String leaveType){
+		int totalleaves=0;
+		int leftLeaves=0;
+		Map<String, Object> map=new HashMap<>();
+		LeaveMaster leaveTypeData=leaveMasterDao.getLeaveMasterByType(role,hierarchy,leaveType);
+		List<Leave> leaveList=leaveDao.getLeaves(role,hierarchy,smartId, leaveType);
+		for(int i=0;i<leaveList.size();i++){
+			totalleaves=leaveList.get(i).getNumberOfDays()+totalleaves;
+		}
+		leftLeaves=leaveTypeData.getDaysAllow()-totalleaves;
+		map.put("totalLeaves", totalleaves);
+		map.put("leftLeaves", leftLeaves);
+		
+		return map;
+		
+	}
 
 	@Override
 	public Map<String, Object> getLeaveList(String role, Hierarchy hierarchy, int min, int max)

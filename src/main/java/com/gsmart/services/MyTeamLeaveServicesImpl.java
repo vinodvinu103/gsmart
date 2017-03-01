@@ -66,11 +66,7 @@ public class MyTeamLeaveServicesImpl implements MyTeamLeaveServices {
 		
 		try {
 			myteamleaveDao.sactionleave(leave);
-			//LeaveDetails ld=(LeaveDetails)Session.get(LeaveDetails.class);
-			LeaveDetails s=new LeaveDetails();
-			s.setAppliedLeaves(leave.getNumberOfDays());
-			s.setLeaveType(leave.getLeaveType());
-			s.setLeftLeaves(20);
+			
 			
 			
 			

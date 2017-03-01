@@ -17,6 +17,8 @@ public interface LeaveServices {
 	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
 	
 	public void deleteLeave(Leave leave) throws GSmartServiceException;
+	
+	public Map<String,Object> getLeftLeaves(String role,Hierarchy hierarchy,String smartId,String leaveType);
 
 	Map<String, Object> getLeaveList(Token tokenObj, Hierarchy hierarchy, int min, int max)
 			throws GSmartServiceException;

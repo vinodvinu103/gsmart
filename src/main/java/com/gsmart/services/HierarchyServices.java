@@ -23,6 +23,8 @@ public interface HierarchyServices {
 	 * @throws GSmartServiceException
 	 */	
 	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
+	
+	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	/**
 	 * @param hierarchy
 	 *            instanceOf {@link Hierarchy}
@@ -45,10 +47,11 @@ public interface HierarchyServices {
 	 * @return nothing
 	 * @throws GSmartServiceException
 	 */
-	public void deleteHierarchy(Hierarchy hierarchy) throws GSmartServiceException;
-
-	public Hierarchy getHierarchyByHid(Long hid) throws GSmartServiceException;
-
+	public void deleteHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
+	
+	public Hierarchy getHierarchyByHid(Long hid)throws GSmartServiceException;
 	public List<Hierarchy> getAllHierarchy();
-
+	
+	
+	
 }
