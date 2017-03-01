@@ -72,7 +72,7 @@ public class AssignDaoImpl implements AssignDao {
 		CompoundAssign compoundAssign = null;
 		Assign assign2=null;
 		try {
-			if(assign.getHierarchy().getHid() == null){
+			if(assign.getHierarchy()== null){
 				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
 			}else{
 				assign2=fetch2(assign);
@@ -97,7 +97,7 @@ public class AssignDaoImpl implements AssignDao {
 		getConnection();
 		Assign assignList = null;
 		try {
-			if(assign.getHierarchy().getHid() == null){
+			if(assign.getHierarchy() == null){
 				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
 			}else{
 			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy and teacherSmartId=:teacherSmartId");
