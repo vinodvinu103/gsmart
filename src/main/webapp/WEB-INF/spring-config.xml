@@ -49,10 +49,10 @@
 				<value>com.gsmart.model.Leave</value>
 				<value>com.gsmart.model.Notice</value>
 				<value>com.gsmart.model.Assign</value>
-				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.WeekDays</value>
 				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.Banners</value>
+				<value>com.gsmart.model.MessageDetails</value>
 				<value>com.gsmart.model.Attendance</value>
 			</list>
 		</property>
