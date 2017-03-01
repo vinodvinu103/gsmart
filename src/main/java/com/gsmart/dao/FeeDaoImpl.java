@@ -36,7 +36,7 @@ public class FeeDaoImpl implements FeeDao{
 	@Override
 	public ArrayList<Fee> getFeeList(Fee fee,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		getconnection();
-		Loggers.loggerStart();
+		Loggers.loggerStart(fee.getAcademicYear());
 		
 		ArrayList<Fee> feeList;
 		try{
@@ -70,7 +70,14 @@ public class FeeDaoImpl implements FeeDao{
 	
 			if(fee.getPaidFee()>0)
 			{
-				fee.setBalanceFee(fee.getBalanceFee()-fee.getPaidFee());
+			fee.setBalanceFee(fee.getBalanceFee()-fee.getPaidFee());
+				if(fee.getBalanceFee()<=0){
+					Loggers.loggerStart("inside the paid");
+					fee.setFeeStatus("paid");
+				}else{
+					fee.setFeeStatus("unpaid");
+				}
+				
 			}else
 			{
 				fee.setBalanceFee(fee.getTotalFee());
@@ -100,6 +107,7 @@ public class FeeDaoImpl implements FeeDao{
 		query=session.createQuery("from Profile where smartId=:smartId");
 		query.setParameter("smartId", smartId);
 		Profile profileList=(Profile) query.uniqueResult();
+		Loggers.loggerStart(profileList);
 		
 		return profileList;
 		
@@ -159,11 +167,9 @@ public class FeeDaoImpl implements FeeDao{
 		}catch (Exception e) {
 
 			e.printStackTrace();
-		}finally {
-			session.close();
 		}
 	
-		Loggers.loggerEnd();
+		
 		return list;
 	}
 	
@@ -272,7 +278,7 @@ public class FeeDaoImpl implements FeeDao{
 			query.setParameter("entryTime", entryTime);
 			Fee fee=(Fee) query.uniqueResult();
 
-			session.close();
+			//session.close();
 			Loggers.loggerValue("feeList", fee);
 			return fee;
 			
