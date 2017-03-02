@@ -57,26 +57,27 @@ public class FeeMasterController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getFee(@RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getFee(@PathVariable("min") int min, @PathVariable("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession ) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		List<FeeMaster> feeList = null;
-
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		Map<String, Object> permissions = new HashMap<>();
+		Map<String, Object> feeList = null;
+		
+		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Map<String, Object> permissions=new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
 
 		/*
 		 * if(modulePermission!=null) {
 		 */
 		
-		feeList = feeMasterServices.getFeeList(tokenObj.getRole(), tokenObj.getHierarchy());
+		if(modulePermission!=null)
+		{
+			feeList = feeMasterServices.getFeeList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 		if (feeList != null) {
 			permissions.put("status", 200);
 			permissions.put("message", "success");
@@ -88,12 +89,14 @@ public class FeeMasterController {
 
 		}
 		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		
 
 		/*
 		 * }else { return new ResponseEntity<Map<String,Object>>(permissions,
 		 * HttpStatus.OK); }
 		 */
+	}
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
 
 	/**

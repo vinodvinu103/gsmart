@@ -45,7 +45,7 @@ public class DashboardController {
 	AttendanceService attendanceService;
 
 	@RequestMapping(value = "/inventory", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getInventory(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	public ResponseEntity<Map<String, Object>> getInventory(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -58,14 +58,14 @@ public class DashboardController {
 		Map<String, Object> finalResponse = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
 		Map<String, Object> dataMap = new HashMap<>();
-		List<Inventory> inventoryList = null;
+		Map<String, Object> inventoryList = null;
 		// RolePermission modulePermission =
 		// getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		if (tokenObj.getHierarchy() == null) {
 			System.out.println("hierarchy is null");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
-				inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), hierarchy);
+				inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), hierarchy, min, max);
 
 				dataMap.put("inventoryList", inventoryList);
 				dataMap.put("hierarchy", hierarchy);
@@ -79,7 +79,7 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
-			inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy());
+			inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
