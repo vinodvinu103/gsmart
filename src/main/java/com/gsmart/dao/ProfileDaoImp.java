@@ -553,6 +553,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Banners> getBannerList() {
 		Loggers.loggerStart();
@@ -665,6 +666,7 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year) {
 		// TODO Auto-generated method stub

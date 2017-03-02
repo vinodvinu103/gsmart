@@ -3,7 +3,6 @@ package com.gsmart.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.AssignService;
@@ -69,16 +67,24 @@ public class AssignController {
 
 		permissions.put("modulePermission", modulePermission);
 
-		if (modulePermission != null) {
+		/*if (modulePermission != null) {*/
 
 			assignList = assignService.getAssignReportee(tokenObj.getRole(), tokenObj.getHierarchy());
-
-			permissions.put("assignList", assignList);
+			if(assignList!=null){
+				permissions.put("status", 200);
+				permissions.put("message", "success");
+				permissions.put("assignList",assignList);
+				
+			}else{
+				permissions.put("status", 404);
+				permissions.put("message", "No Data Is Present");
+				
+			}
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
+		/*}
 
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-
+*/
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -86,7 +92,7 @@ public class AssignController {
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
-		Map<String, Object> response = new HashMap<>();
+		Map<String, Object> respMap = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -95,53 +101,62 @@ public class AssignController {
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			assign.setHierarchy(tokenObj.getHierarchy());
 			
-			CompoundAssign compoundAssign = assignService.addAssigningReportee(assign);
-			if (compoundAssign != null) {
-				response.put("message", "success");
-			} else {
-				response.put("message", "Data Already Exists..");
-
-			}
-		} else {
-			response.put("message", "Permission Denied");
-
-		}
-
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-
+			CompoundAssign cb = assignService.addAssigningReportee(assign);
+			if(cb!=null)
+	        {
+	        	respMap.put("status", 200);
+	        	respMap.put("message", "Saved Successfully");
+	        }
+	        	  
+		    else{
+		    	respMap.put("status", 400);
+	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+		    	
+		    }
+		    
+	    	
+        }else{
+        	respMap.put("status", 403);
+        	respMap.put("message", "Permission Denied");
+               }
+        Loggers.loggerEnd();
+    	return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteBand(@RequestBody Assign assign, @PathVariable("task") String task,
+	public ResponseEntity<Map<String, Object>> editDeleteBand(@RequestBody Assign assign, @PathVariable("task") String task,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
-		IAMResponse myResponse = null;
-		Assign asn = null;
+		Assign ch = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
+		Map<String, Object> respMap=new HashMap<>();
 		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
-				asn = assignService.editAssigningReportee(assign);
-				if (asn != null) {
-					myResponse = new IAMResponse("success");
+				ch = assignService.editAssigningReportee(assign);
+				if (ch != null) {
+					respMap.put("status", 200);
+		        	respMap.put("message", "Upadted Successfully");
+
 				} else {
-					myResponse = new IAMResponse("Data Already exist");
+					respMap.put("status", 400);
+		        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 				}
 			} else if (task.equals("delete")) {
 				assignService.deleteAssigningReportee(assign);
-				myResponse = new IAMResponse("success");
+				respMap.put("status", 200);
+	        	respMap.put("message", "Deleted Successfully");
 			}
 
-			
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		} else {
+			respMap.put("status", 403);
+        	respMap.put("message", "Permission Denied");
 		}
-		else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/staff", method = RequestMethod.POST)
@@ -171,7 +186,7 @@ public class AssignController {
 		String tokenNumber=token.get("Authorization").get(0);
 		String str =getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		Map<String,Object> jsonResult = new HashMap();
+		Map<String,Object> jsonResult = new HashMap<>();
 		boolean result=assignService.searchStandardFeeService(standard);
 		if(result){
 		jsonResult.put("status",500);
@@ -184,6 +199,7 @@ public class AssignController {
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 		
 	}
+
 }
 
 
