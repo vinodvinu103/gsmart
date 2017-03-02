@@ -107,7 +107,6 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 				transaction.commit();
 			}
 		} catch (ConstraintViolationException e) {
-			transaction.rollback();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
