@@ -1,14 +1,15 @@
 package com.gsmart.dao;
 
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import org.hibernate.Criteria;
 import javax.validation.ConstraintViolationException;
-
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,7 @@ import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Holiday;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -38,10 +40,12 @@ public class AssignDaoImpl implements AssignDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getAssignReportee(String role, Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
 		List<Assign> assignList = null;
+		Map<String, Object> assignMap = new HashMap<>();
+		Criteria criteria = null;
 		try {
 
 			getConnection();
@@ -53,15 +57,22 @@ public class AssignDaoImpl implements AssignDao {
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			query.setParameter("isActive", "Y");
-			assignList = query.list();
+			criteria = session.createCriteria(Assign.class);
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			assignList = criteria.list();
+			Criteria criteriaCount = session.createCriteria(Assign.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			assignMap.put("totalassign", query.list().size());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
 			session.close();
 		}
-
+		assignMap.put("assignList", assignList);
 		Loggers.loggerEnd();
-		return assignList;
+		return assignMap;
 	}
 	
 	@Override

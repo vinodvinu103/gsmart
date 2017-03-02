@@ -1,15 +1,21 @@
 package com.gsmart.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.Assign;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
@@ -33,44 +39,43 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<InventoryAssignments> getInventoryList(String role, Hierarchy hierarchy)
-			throws GSmartDatabaseException {
+	public Map<String, Object> getInventoryAssignList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException 
+	{
 		getConnection();
 		Loggers.loggerStart();
-		List<InventoryAssignments> inventoryList = null;
-
-		try {
-			getConnection();
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("FROM InventoryAssignments WHERE isActive=:isActive");
-			} else {
-				query = session
-						.createQuery("From InventoryAssignments where isActive=:isActive and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
-			query.setParameter("isActive", "Y");
-
-			/*
-			 * if(role.equalsIgnoreCase("admin") ||
-			 * role.equalsIgnoreCase("owner") ||
-			 * role.equalsIgnoreCase("director")) { query=session.
-			 * createQuery("FROM InventoryAssignments WHERE isActive='Y'");
-			 * }else{ query=session.
-			 * createQuery("FROM InventoryAssignments WHERE isActive='Y' and hierarchy.hid=:hierarchy"
-			 * ); query.setParameter("hierarchy", hierarchy.getHid()); }
-			 */
-			inventoryList = (List<InventoryAssignments>) query.list();
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
+		List<InventoryAssignments> inventoryList=null;
+		Map<String, Object> inventoryassignMap = new HashMap<String, Object>();
+		Criteria criteria = null;
+		getConnection();
+		try
+		{
+		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+		{
+		query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y'");
+		}else{
+			query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+		}
+		criteria = session.createCriteria(InventoryAssignments.class);
+		criteria.setMaxResults(max);
+		criteria.setFirstResult(min);
+		inventoryList = criteria.list();
+		Criteria criteriaCount = session.createCriteria(InventoryAssignments.class);
+		criteriaCount.setProjection(Projections.rowCount());
+		Long count = (Long) criteriaCount.uniqueResult();
+		inventoryassignMap.put("totalinventoryassign", query.list().size());
+		 Loggers.loggerEnd();
+		 inventoryassignMap.put("inventoryList", inventoryList);
+		
+		}
+		catch(Throwable e)
+		{
+			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 
 			session.close();
 		}
-
-		Loggers.loggerEnd();
-		return inventoryList;
+		return inventoryassignMap;
 
 		/*
 		 * Loggers.loggerStart(); List<InventoryAssignments> inventoryList; try
