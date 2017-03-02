@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gsmart.model.CompoundInventory;
