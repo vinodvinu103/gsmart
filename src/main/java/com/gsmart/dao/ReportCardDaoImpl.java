@@ -4,17 +4,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Inventory;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
@@ -61,6 +66,27 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			query.setParameter("hierarchy", hierarchy.getHid());
 			list = query.list();
 			System.out.println("Serch based on smartid..." + list);
+/*=======
+		List<ReportCard> cards = null;
+//		Map<String, Object> reportcardMap = new HashMap<String, Object>();
+		Criteria criteria = null;
+		try {
+
+			
+			query = session.createQuery("from ReportCard where isActive='Y'");
+			cards = query.list();
+			criteria=session.createCriteria(ReportCard.class);
+			criteria.setFirstResult(0);
+		     criteria.setMaxResults(5);
+		     criteria.setProjection(Projections.id());
+//		     cards = criteria.list();
+		     Criteria criteriaCount = session.createCriteria(ReportCard.class);
+		     criteriaCount.setProjection(Projections.rowCount());
+		     Long count = (Long) criteriaCount.uniqueResult();
+//		     reportcardMap.put("totalcards", query.list().size());
+			Loggers.loggerEnd(cards);
+			
+>>>>>>> ee75b73a04d26625f204017f21e568fcf9c11f3a*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

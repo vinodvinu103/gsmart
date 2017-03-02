@@ -2,12 +2,16 @@ package com.gsmart.dao;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
+import com.gsmart.model.LeaveMaster;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -31,16 +36,19 @@ public class LeaveDaoImpl implements LeaveDao {
 	Transaction transaction;
 
 	@SuppressWarnings("unchecked")
-	public List<Leave> getLeaveList(Token tokenObj, Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart(tokenObj);
-
-		System.out.println("vgyhuhuygy");
+	@Override
+	public Map<String, Object> getLeaveList(Token tokenObj, Hierarchy hierarchy, int min, int max)
+			throws GSmartDatabaseException {
+		Loggers.loggerStart();
 		getConnection();
+		Loggers.loggerStart(tokenObj);
+		System.out.println("vgyhuhuygy");
 		List<Leave> leave = null;
+		Criteria criteria = null;
+		Map<String, Object> leaveMap = new HashMap<>();
 		try {
-
-			String role = tokenObj.getRole();
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")) {
+			String role1 = tokenObj.getRole();
+			if (role1.equalsIgnoreCase("admin") || role1.equalsIgnoreCase("hr") || role1.equalsIgnoreCase("director")) {
 				query = session.createQuery("FROM Leave WHERE isActive='Y'");
 			} else {
 				query = session
@@ -48,14 +56,23 @@ public class LeaveDaoImpl implements LeaveDao {
 				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("smartId", tokenObj.getSmartId());
 			}
-			leave = (List<Leave>) query.list();
+			criteria = session.createCriteria(Leave.class);
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			criteria.setProjection(Projections.id());
+			leave = criteria.list();
+			Criteria criteriaCount = session.createCriteria(Leave.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			leaveMap.put("totalleavelist", query.list().size());
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
 			session.close();
 		}
 		Loggers.loggerEnd();
-		return leave;
+		leaveMap.put("leave", leave);
+		return leaveMap;
 	}
 
 	public CompoundLeave addLeave(Leave leave, Integer noOfdays) throws GSmartDatabaseException {

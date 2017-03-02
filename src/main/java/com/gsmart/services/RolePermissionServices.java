@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
@@ -20,7 +21,7 @@ public interface RolePermissionServices {
 	 * @throws GSmartServiceException
 	 */
 
-	public List<RolePermission> getPermissionList(String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public Map<String, Object> getPermissionList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
 	/**
 	 * @param permission instanceOf {@link RolePermission}
 	 * @return nothing

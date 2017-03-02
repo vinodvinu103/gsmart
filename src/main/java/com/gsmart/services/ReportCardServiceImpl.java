@@ -9,9 +9,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.event.ChangeListener;
-
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,9 +62,10 @@ public class ReportCardServiceImpl implements ReportCardService {
 	@Override
 	public List<ReportCard> reportCardList() throws GSmartServiceException {
 		Loggers.loggerStart();
-		List<ReportCard> list = null;
+	List<ReportCard> list = null;
 		try {
 			// list = reportCardDao.reportCardList();
+
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
