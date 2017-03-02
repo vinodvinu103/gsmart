@@ -1,6 +1,8 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.gsmart.dao.RolePermissionDao;
@@ -28,12 +30,12 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	 * @return calls {@link PermissionDao}'s <code>getPermissionList()</code> method
 	 */
 	@Override
-	public List<RolePermission> getPermissionList(String role,Hierarchy hierarchy)  throws GSmartServiceException{ 
+	public Map<String, Object> getPermissionList(String role,Hierarchy hierarchy, Integer min, Integer max)  throws GSmartServiceException{ 
 		
 		Loggers.loggerStart();
 		try {
 			Loggers.loggerEnd();
-			return rolePermissionDao.getPermissionList(role,hierarchy);
+			return rolePermissionDao.getPermissionList(role,hierarchy, min, max);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {

@@ -1,18 +1,23 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -34,7 +39,8 @@ public class FeeDaoImpl implements FeeDao{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Fee> getFeeList(Fee fee,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public ArrayList<Fee> getFeeList(Fee fee, String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
 		getconnection();
 		Loggers.loggerStart();
 		
@@ -169,10 +175,13 @@ public class FeeDaoImpl implements FeeDao{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fee> getPaidStudentsList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
+		Loggers.loggerStart();
 		getconnection();
 		Loggers.loggerStart();
 		List<Fee> paidStudentsList=null;
+		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
+		Criteria criteria = null;
 		try
 		{
 //		System.out.println(academicYear);
@@ -186,26 +195,36 @@ public class FeeDaoImpl implements FeeDao{
 			query.setParameter("hierarchy", hierarchy.getHid());
 		}
 		//query.setParameter("academicYear", academicYear);
-		paidStudentsList=(List<Fee>) query.list();
+//		paidStudentsList=(List<Fee>) query.list();
+		criteria = session.createCriteria(Fee.class);
+		criteria.setMaxResults(max);
+		criteria.setFirstResult(min);
+		criteria.setProjection(Projections.id());
+		paidStudentsList = criteria.list();
+		criteria.setProjection(Projections.rowCount());
+		Long count = (Long) criteria.uniqueResult();
+		paidfeeMap.put("totalpaidlist", query.list().size());
 		Loggers.loggerEnd();
 		
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		}/*finally {
+		}finally {
 			session.close();
-		}*/
-		return paidStudentsList;
-	
+		}
+		paidfeeMap.put("paidStudentsList", paidStudentsList);
+		return paidfeeMap;
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fee> getUnpaidStudentsList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
-		getconnection();
+	public Map<String, Object> getUnpaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Fee> unpaidStudentsList=null;
-		
+		Map<String, Object> unpaidfeeMap = new HashMap<String, Object>();
+		Criteria criteria = null;
+		getconnection();
 		try
 		{
 		//System.out.println(academicYear);
@@ -217,8 +236,16 @@ public class FeeDaoImpl implements FeeDao{
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 		//query.setParameter("academicYear", academicYear);
-		unpaidStudentsList=query.list();
-		Loggers.loggerEnd(unpaidStudentsList);
+		unpaidStudentsList=(List<Fee>) query.list();
+		criteria = session.createCriteria(Fee.class);
+		criteria.setMaxResults(max);
+		criteria.setFirstResult(min);
+		criteria.setProjection(Projections.id());
+		unpaidStudentsList = criteria.list();
+		criteria.setProjection(Projections.rowCount());
+		Long count = (Long) criteria.uniqueResult();
+		unpaidfeeMap.put("totalunpaidlist", query.list().size());
+		Loggers.loggerEnd();
 		
 		}
 		catch (Exception e) {
@@ -226,7 +253,8 @@ public class FeeDaoImpl implements FeeDao{
 		}finally {
 			session.close();
 		}
-		return unpaidStudentsList;
+		unpaidfeeMap.put("unpaidStudentsList", unpaidStudentsList);
+		return unpaidfeeMap;
 	
 	}
 
