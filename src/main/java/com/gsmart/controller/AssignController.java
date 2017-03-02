@@ -49,14 +49,14 @@ public class AssignController {
 	@Autowired
 	ProfileServices profileServices;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAssigningReportee(@RequestHeader HttpHeaders token,
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAssigningReportee(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		Map<String, Object> permissions = new HashMap<>();
 
-		List<Assign> assignList = null;
+		Map<String, Object> assignList = null;
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -71,7 +71,7 @@ public class AssignController {
 
 		if (modulePermission != null) {
 
-			assignList = assignService.getAssignReportee(tokenObj.getRole(), tokenObj.getHierarchy());
+			assignList = assignService.getAssignReportee(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 
 			permissions.put("assignList", assignList);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
