@@ -12,7 +12,7 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface ReportCardDao {
 
-	public List<ReportCard> reportCardList() throws GSmartDatabaseException;
+	public List<ReportCard> reportCardList(Token tokenDetail) throws GSmartDatabaseException;
 	
 	public CompoundReportCard addReportCard(ReportCard card)throws GSmartDatabaseException;
 	

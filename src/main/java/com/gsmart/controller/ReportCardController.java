@@ -204,7 +204,8 @@ public class ReportCardController {
 				profile.setChildFlag(true);
 				Loggers.loggerStart(profile);
 			}
-			List<ReportCard> allReportCards = reportCardDao.reportCardList();
+			// befor it is without argument List<ReportCard> allReportCards = reportCardDao.reportCardList();
+			List<ReportCard> allReportCards = reportCardDao.reportCardList(tokenObj);
 			ArrayList<ReportCard> childReportCards = new ArrayList<>();
 			for (int i = 0; i < childList.size(); i++) {
 
@@ -323,5 +324,42 @@ public class ReportCardController {
 		}
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getReportList(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+		Loggers.loggerStart();
+		List<ReportCard> list = null;
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Map<String, Object> permission = new HashMap<>();
+		permission.put("modulePremission", modulePermission);
+		try {
+			// String teacherSmartId=smartId.getSmartId();
+			Loggers.loggerStart();
+			if (modulePermission.getView()) {
+				list = reportCardDao.reportCardList(tokenObj);
+				permission.put("reportCard", list);
+				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			throw new GSmartBaseException(e.getMessage());
+		}
+		Loggers.loggerEnd(list);
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+
+	}
+	
+	@RequestMapping(value="/download", method=RequestMethod.GET)
+	public ResponseEntity<Map<String, String>> generatePDF(@RequestHeader HttpHeaders token,HttpSession httpSession){
+		Loggers.loggerStart();
+		
+		Loggers.loggerEnd();
+		return null;
 	}
 }

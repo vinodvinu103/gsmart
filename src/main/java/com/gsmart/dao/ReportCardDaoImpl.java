@@ -46,21 +46,26 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 
 	@Override
-	public List<ReportCard> reportCardList() throws GSmartDatabaseException {
-		getConnection();
+	public List<ReportCard> reportCardList(Token tokenDetail) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		List<ReportCard> cards = null;
+		getConnection();
+		List<ReportCard> list = null;
+		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		try {
-			query = session.createQuery("from ReportCard where isActive='Y'");
-			cards = query.list();
-			Loggers.loggerEnd(cards);
-			return cards;
+			String smartId = tokenDetail.getSmartId();
+			query = session.createQuery(
+					"from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) "
+					+ "and hid=:hierarchy and isActive='Y'");
+			query.setParameter("reportingManagerId", smartId);
+			query.setParameter("smartId", smartId);
+			query.setParameter("hierarchy", hierarchy.getHid());
+			list = query.list();
+			System.out.println("Serch based on smartid..." + list);
 		} catch (Exception e) {
-			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
+			e.printStackTrace();
 		}
-
+		Loggers.loggerEnd();
+		return list;
 	}
 
 	@Override
@@ -436,4 +441,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		return examName;
 	}
 
+	
+	
 }
