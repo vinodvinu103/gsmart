@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.ProfileDaoImp;
 import com.gsmart.dao.TokenDaoImpl;
+import com.gsmart.model.Band;
 import com.gsmart.model.Grades;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
-
+import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 
 import com.gsmart.services.GradesService;
@@ -57,20 +59,29 @@ import com.gsmart.util.Loggers;
 	
 	//get method
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getGradesList() throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> getGradesList(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		
 		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+	    str.length(); 
+	    
+	    List<Grades> list = null;
+	   
+	    RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+	    
 		Map<String, Object> resultMap = new HashMap<>();
-		List<Grades> list = null;
-		try {
+		
+		resultMap.put("modulePermission",modulePermission);
+		
+		
 			list = gradesService.getGradesList();
 					
 			resultMap.put("data", list);
 			resultMap.put("status", 200);
 			resultMap.put("message", "success");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		
 		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
 	
@@ -82,7 +93,8 @@ import com.gsmart.util.Loggers;
 		
 		Token tokenObj= tokenDaoImpl.getToken(tokenNumber);
 		String smartid=tokenObj.getSmartId();
-		 
+		 grades.setHierarchy(tokenObj.getHierarchy());
+		
 		 Profile profileinfo = profileDaoImp.getProfileDetails(smartid);
 		 
 		grades.setInstitution(profileinfo.getInstitution());
@@ -100,34 +112,47 @@ import com.gsmart.util.Loggers;
 	
 /*Delete method*/
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> deleteGrades(@RequestBody Grades grades, @PathVariable("task") String task,
+	public ResponseEntity<Map<String, Object>> deleteGrades(@RequestBody Grades grades, @PathVariable("task") String task,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(grades);
+		Grades cb=null;
+		Map<String, Object> respMap=new HashMap<>();
 		
-		IAMResponse myResponse = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-			if (task.equals("delete")) {
-				gradesService.deleteGrades(grades);
-			
-					myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
-			}
+		if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
+		    if(task.equals("edit")){
+		    	cb=gradesService.updateGrades(grades);
+		    	if(cb!=null){
+		    		respMap.put("status", 200);
+	        	respMap.put("message", "Updated Successfully");
+		    	}else{
+		    		respMap.put("status", 400);
+	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+		    	}
+		    }
+		    else if (task.equals("delete")){
+		    	gradesService.deleteGrades(grades);
+		    	respMap.put("status", 200);
+	        	respMap.put("message", "Deleted Successfully");
+		    }
+		    
+		}
+		else {
+			 respMap.put("status", 403);
+	        	respMap.put("message", "Permission Denied");;
+		     }
 			Loggers.loggerEnd();
 
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+			return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 		}
 
-		else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
-
-	}	
-
+		
+	 
+		 
 
 /*update */
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.GradesDao;
+import com.gsmart.model.Band;
 import com.gsmart.model.Grades;
 
 import com.gsmart.util.GSmartDatabaseException;
@@ -44,8 +45,9 @@ public class GradesServiceImpl implements GradesService {
 			
 		}//end of add
 	   @Override
-	   public void updateGrades(Grades grades) throws GSmartServiceException {
+	   public Grades updateGrades(Grades grades) throws GSmartServiceException {
 			Loggers.loggerStart();
+			Grades cb=null;
 			try{
 				gradesDao.updateGrades(grades);
 			}catch (GSmartDatabaseException exception) {
@@ -54,6 +56,7 @@ public class GradesServiceImpl implements GradesService {
 				throw new GSmartServiceException(e.getMessage());
 			}
 			Loggers.loggerEnd();
+			return cb;
 			
 		}//end of update
 	   @Override

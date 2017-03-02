@@ -15,7 +15,7 @@ public interface GradesService {
 	public  void deleteGrades(Grades grades)throws GSmartServiceException;
  
 
-	public  void updateGrades(Grades grades)throws GSmartServiceException;
+	public  Grades updateGrades(Grades grades)throws GSmartServiceException;
 
 
 }
