@@ -62,9 +62,9 @@ public class HolidayController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getHoliday(@RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
+	@RequestMapping(value = "/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> getHoliday(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		String tokenNumber = token.get("Authorization").get(0);
@@ -73,14 +73,14 @@ public class HolidayController {
 
 		str.length();
 
-		List<Holiday> holidayList = null;
+		Map<String, Object> holidayList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permissions = new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
 
 		/*if (modulePermission != null) {*/
-			holidayList = holidayServices.getHolidayList(tokenObj.getHierarchy());
+			holidayList = holidayServices.getHolidayList(tokenObj.getHierarchy(), min, max);
 			if(holidayList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");
@@ -109,9 +109,8 @@ public class HolidayController {
 	 * @see IAMResponse
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addHoliday(@RequestBody Holiday holiday, @RequestHeader HttpHeaders token,
+	public ResponseEntity<Map<String, Object>> addHoliday(Integer min, Integer max, @RequestBody Holiday holiday, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
-
 		Loggers.loggerStart(holiday);
 
 		Map<String, Object> respMap=new HashMap<>();
@@ -124,7 +123,7 @@ public class HolidayController {
 			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 
 			holiday.setHierarchy(tokenObj.getHierarchy());
-			CompoundHoliday ch = holidayServices.addHoliday(holiday);
+			CompoundHoliday ch = holidayServices.addHoliday(holiday, min, max);
 
 			if (ch != null){
 				respMap.put("status", 200);
@@ -133,7 +132,6 @@ public class HolidayController {
 				respMap.put("status", 400);
 	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
-			
 		} else {
 			respMap.put("status", 403);
         	respMap.put("message", "Permission Denied");
