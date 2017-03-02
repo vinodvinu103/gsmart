@@ -20,17 +20,13 @@ public interface ContactServices
 	
 	public List<MessageDetails> viewAllMessages() throws Exception;
 
+	/*public boolean studentToTeacher(MessageDetails details) throws Exception;
+*/
+	/*public boolean teacherToStudent(MessageDetails details) throws Exception;*/
+
 	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception;
 
-	public boolean studentToTeacher(MessageDetails details) throws Exception;
+	public Map<String, Object> studentChat(MessageDetails details);
 
-//	public List<MessageDetails> teacherView(MessageDetails details) throws Exception;
-
-	public boolean teacherToStudent(MessageDetails details) throws Exception;
-
-//	public List<MessageDetails> studentView(MessageDetails details) throws Exception;
-
-//	public Map<String, ArrayList<MessageDetails>> studentView(MessageDetails details, Integer min, Integer max) throws Exception;
-
-//	public Map<String, ArrayList<MessageDetails>> teacherView(MessageDetails details, Integer min, Integer max) throws Exception;
+	public Map<String, Object> teacherChat(MessageDetails details);
 }

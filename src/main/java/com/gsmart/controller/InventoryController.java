@@ -78,7 +78,6 @@ public class InventoryController {
 		permissions.put("modulePermission", modulePermission);
 
 		if (modulePermission != null) {
-			// inventoryList = inventoryServices.getInventoryList();
 
 			inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy());
 			permissions.put("inventoryList", inventoryList);

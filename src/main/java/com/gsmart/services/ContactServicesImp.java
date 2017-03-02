@@ -19,10 +19,6 @@ public class ContactServicesImp implements ContactServices {
 	@Autowired
 	ContactDao dao;
 
-	public boolean studentToTeacher(MessageDetails details) throws Exception {
-		return dao.studentToTeacher(details);	
-	}
-	
 	@Override
 	public List<MessageDetails> msgList(MessageDetails details) throws Exception {
 		
@@ -34,12 +30,7 @@ public class ContactServicesImp implements ContactServices {
 		return dao.teacherView(details, min, max);
 	}
 
-	@Override
-	public boolean teacherToStudent(MessageDetails details) throws Exception {
-		
-		return dao.teacherToStudent(details);
-	}
-
+	
 	@Override
 	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
 		
@@ -67,6 +58,30 @@ public class ContactServicesImp implements ContactServices {
 	public boolean studentToTeacher(MessageDetails details, String role) throws Exception {
 		
 		return dao.studentToTeacher(details,role);
+	}
+	
+	@Override
+	public Map<String, Object> studentChat(MessageDetails details){
+		
+		Map<String, Object> chat= null;
+		try {
+			return dao.studentChat(details);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return chat;
+	}
+	
+	@Override
+	public Map<String, Object> teacherChat(MessageDetails details){
+		
+		Map<String, Object> chat1= null;
+		try {
+			return dao.studentChat(details);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return chat1;
 	}
 	
 }

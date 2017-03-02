@@ -20,7 +20,7 @@
 		<property name="driverClassName" value="org.postgresql.Driver" />
 		<property name="url" value="jdbc:postgresql://localhost:5432/magicbag_test" />
 		<property name="username" value="postgres" />
-		<property name="password" value="root" />
+		<property name="password" value="postgres" />
 	</bean>
 	
 	<bean id="sessionFactory"
@@ -47,8 +47,6 @@
 				<value>com.gsmart.model.LeaveDetails</value>
 				<value>com.gsmart.model.Leave</value>
 				<value>com.gsmart.model.Notice</value>
-				<value>com.gsmart.model.Assign</value>
-				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.WeekDays</value>
 				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.Banners</value>

@@ -21,7 +21,7 @@ public class MessageDetails
 	
 	@Column(name = "ENTRY_TIME")
 	String entryTime;
-	
+
 	@Column(name="REPORTING_MANAGER_ID")
 	String reportingManagerId;
 	
@@ -34,6 +34,7 @@ public class MessageDetails
 	@Column(name = "POSTED_BY")
 	String postedBy;
 	
+	@Id
 	@Lob
 	@Column(name = "MESSAGE",length=512)
 	String message;
@@ -75,18 +76,17 @@ public class MessageDetails
 		this.smartId = smartId;
 	}
 
-	public String getEntryTime() {
-		return entryTime;
-	}
 
 	public int getChildFlag() {
 		return childFlag;
 	}
 
-	
-
 	public void setChildFlag(int childFlag) {
 		this.childFlag = childFlag;
+	}
+
+	public String getEntryTime() {
+		return entryTime;
 	}
 
 	public void setEntryTime(String entryTime) {
