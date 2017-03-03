@@ -24,6 +24,7 @@ import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
+import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.InventoryAssignmentsServices;
 import com.gsmart.services.InventoryServices;
@@ -52,6 +53,8 @@ public class DashboardController {
 	AttendanceService attendanceService;
 	@Autowired
 	SearchService searchService;
+	@Autowired
+	FeeServices feeServices;
 
 	@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventory(@PathVariable("academicYear") String academicYear,
@@ -107,7 +110,7 @@ public class DashboardController {
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "attendance/{date}", method = RequestMethod.GET)
+	@RequestMapping(value = "/attendance/{date}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@PathVariable("date") Long date,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
@@ -128,7 +131,62 @@ public class DashboardController {
 		}
 		responseMap.put("message", "success");
 		responseMap.put("status", 200);
-		responseMap.put("data", attendanceService.getAttendanceByhierarchy(date, hierarchyList));
+		responseMap.put("data", attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList));
+		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/fee/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> gettotalpaidfee(@PathVariable("academicYear") String academincYear, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		str.length();
+		int totalPaidFees;
+		int totalFees;
+		List<Map<String, Object>> responseList = new ArrayList<>();
+		Map<String, Object> responseMap = new HashMap<>();
+		Map<String, Object> dataMap = new HashMap<>();
+		if (tokenObj.getHierarchy() == null && modulePermission != null) {
+			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
+			for (Hierarchy hierarchy : hierarchyList) {
+				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
+						hierarchy);
+				List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
+				childList.add(tokenObj.getSmartId());
+				totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
+				totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
+				dataMap.put("totalPaidFees", totalPaidFees);
+				dataMap.put("hierarchy", hierarchy);
+				dataMap.put("totalFees", totalFees);
+				responseList.add(dataMap);
+			}
+			responseMap.put("data", responseList);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
+			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
+					tokenObj.getHierarchy());
+			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
+			childList.add(tokenObj.getSmartId());
+			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
+			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
+			dataMap.put("totalPaidFees", totalPaidFees);
+			dataMap.put("hierarchy", tokenObj.getHierarchy());
+			dataMap.put("totalFees", totalFees);
+			responseList.add(dataMap);
+			responseMap.put("data", responseList);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		} else {
+			responseMap.put("data", null);
+			responseMap.put("status", 404);
+			responseMap.put("message", "Data not found");
+		}
+
+		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 
