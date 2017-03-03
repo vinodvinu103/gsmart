@@ -21,6 +21,7 @@
 package com.gsmart.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
@@ -42,8 +43,9 @@ public interface HierarchyDao {
 	 *         Table
 	 * @throws Exception
 	 */
-	public List<Hierarchy> getHierarchyList(String role, Hierarchy hierarchy) throws GSmartDatabaseException;
-
+	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
+	
+	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 	/**
 	 * @param hierarchy
 	 *            instanceOf {@link Hierarchy}
@@ -66,9 +68,9 @@ public interface HierarchyDao {
 	 * @return Nothing
 	 * @throws Exception
 	 */
-	public void deleteHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
-
-	public Hierarchy getHierarchyByHid(Long hid) throws GSmartDatabaseException;
+	public void deleteHierarchy(Hierarchy hierarchy)throws GSmartDatabaseException;
+	
+	public Hierarchy getHierarchyByHid(Long hid)throws GSmartDatabaseException;
 
 	public List<Hierarchy> getAllHierarchy();
 

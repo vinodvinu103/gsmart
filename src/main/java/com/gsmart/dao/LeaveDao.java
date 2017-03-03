@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Hierarchy;
@@ -10,12 +11,14 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface LeaveDao {
 	
-	public List<Leave> getLeaveList(Token tokenObj,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public Map<String, Object> getLeaveList(Token tokenObj,Hierarchy hierarchy, int min, int max) throws GSmartDatabaseException;
 	
 	public CompoundLeave addLeave(Leave leave,Integer noOfdays) throws GSmartDatabaseException;
 
 	public void editLeave(Leave leave) throws GSmartDatabaseException;
 
 	public void deleteLeave(Leave leave)throws GSmartDatabaseException;
+	
+	public List<Leave> getLeaves(String role,Hierarchy hierarchy,String smartId,String leaveType);
 	
 }
