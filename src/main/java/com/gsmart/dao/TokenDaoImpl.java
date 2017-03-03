@@ -27,8 +27,7 @@ public class TokenDaoImpl implements TokenDao{
 	public void saveToken(Token token, Login loginObj) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart(token);
-		try {
-			
+		try {			
 			query = session.createQuery("from Login where smartId=:smartId");
 			query.setParameter("smartId", loginObj.getSmartId());
 			Login login = (Login)query.uniqueResult();
@@ -67,8 +66,8 @@ public class TokenDaoImpl implements TokenDao{
 		}
 		/*finally {
 			session.close();
-		}
-*/
+		}*/
+
 		return token;
 	}
 
