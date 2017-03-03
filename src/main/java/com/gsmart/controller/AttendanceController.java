@@ -66,9 +66,10 @@ public class AttendanceController {
 	HolidayServices holidayService;
 
 	@RequestMapping(value = "/calender/{month}/{year}/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
-			@PathVariable("month") Integer month, @PathVariable("year") Integer year,
-			@PathVariable("smartId") String smartId, Holiday holiday) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> getAttendance(@PathVariable("min") int min, @PathVariable("max") int max,
+			@RequestHeader HttpHeaders token, HttpSession httpSession, @PathVariable("month") Integer month,
+			@PathVariable("year") Integer year, @PathVariable("smartId") String smartId, Holiday holiday)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		Map<String, Object> permissions = new HashMap<>();
@@ -82,7 +83,7 @@ public class AttendanceController {
 		permissions.put("modulePermission", modulePermission);
 
 		List<Map<String, Object>> attendanceList = null;
-		List<Holiday> holidayList = null;
+		Map<String, Object> holidayList = null;
 		Calendar cal = new GregorianCalendar(year, month, 0);
 		Date date = cal.getTime();
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -91,8 +92,7 @@ public class AttendanceController {
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
-		holidayList = holidayService.getHolidayList(tokenObj.getHierarchy());
-
+		holidayList = holidayService.getHolidayList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 		permissions.put("attendanceList", attendanceList);
 		System.out.println("attendanceList:" + attendanceList);
 		permissions.put("holidayList", holidayList);

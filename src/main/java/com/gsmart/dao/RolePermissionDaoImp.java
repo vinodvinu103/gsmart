@@ -3,11 +3,14 @@ package com.gsmart.dao;
 import java.security.acl.Permission;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -46,27 +49,46 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RolePermission> getPermissionList(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+
+	public Map<String, Object> getPermissionList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
+		Loggers.loggerStart();
 		getConnection();
 		Loggers.loggerStart();
-
 		List<RolePermission> rolePermissions = null;
+		Map<String, Object> rolePermissionMap = null;
+		Criteria criteria = null;
+		getConnection();
 		try {
-
+			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+			{
+			
 			query = session.createQuery("from RolePermission where isActive='Y'");
-			/*
-			 * }else{ query = session.createQuery(
-			 * "from RolePermission where isActive='Y' and hierarchy.hid=:hierarchy"
-			 * ); query.setParameter("hierarchy", hierarchy.getHid()); }
-			 */
+			}
+			 /* else{
+				query = session.createQuery("from RolePermission where isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			}
+//			rolePermissions = (List<RolePermission>) query.list();
+			criteria=session.createCriteria(RolePermission.class);
+			criteria.setFirstResult(min);
+		     criteria.setMaxResults(max);
+		     criteria.setProjection(Projections.id());
+		     rolePermissions = criteria.list();
+		     Criteria criteriaCount = session.createCriteria(RolePermission.class);
+		     criteriaCount.setProjection(Projections.rowCount());
+		     Long count = (Long) criteriaCount.uniqueResult();
+		     rolePermissionMap.put("totalpermission", query.list().size());
+			}*/
+
 			rolePermissions = (List<RolePermission>) query.list();
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
 			session.close();
 		}
-		Loggers.loggerEnd();
-		return rolePermissions;
+		Loggers.loggerEnd(rolePermissions);
+		rolePermissionMap.put("rolePermissions", rolePermissions);
+		return rolePermissionMap;
 	}
 
 	/**
