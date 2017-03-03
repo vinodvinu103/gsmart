@@ -20,11 +20,13 @@ public interface ProfileServices{
 	public boolean insertUserProfileDetails(Profile profile)throws GSmartServiceException;
 
 	public String updateProfile(Profile profile)throws GSmartServiceException;
+	
+	public String deleteprofile(Profile profile)throws GSmartServiceException;
 
 
 	/*for profile*/
 
-	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy)throws GSmartServiceException;
+	public Map<String, Object> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy, int min, int max)throws GSmartServiceException;
 
 	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
 	

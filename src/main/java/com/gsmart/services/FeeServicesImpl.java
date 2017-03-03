@@ -2,6 +2,7 @@ package com.gsmart.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,11 +58,11 @@ public class FeeServicesImpl implements FeeServices{
 	}
 */
 	@Override
-	public List<Fee> getPaidStudentsList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
 		 Loggers.loggerStart();
-	        List<Fee> paidStudentsList = null;
+	        Map<String, Object> paidStudentsList = null;
 			try{
-				paidStudentsList=(List<Fee>) feeDao.getPaidStudentsList(role,hierarchy);
+				paidStudentsList=(Map<String, Object>) feeDao.getPaidStudentsList(role,hierarchy, min, max);
 				Loggers.loggerStart(paidStudentsList);
 			}catch (GSmartDatabaseException exception) {
 				throw (GSmartServiceException) exception;
@@ -73,11 +74,11 @@ public class FeeServicesImpl implements FeeServices{
 	}
 
 	@Override
-	public List<Fee> getUnpaidStudentsList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public Map<String, Object> getUnpaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
 		 Loggers.loggerStart();
-	        List<Fee> unpaidStudentsList = null;
+		 Map<String, Object> unpaidStudentsList = null;
 			try{
-				unpaidStudentsList=(List<Fee>) feeDao.getUnpaidStudentsList(role,hierarchy);
+				unpaidStudentsList=(Map<String, Object>) feeDao.getUnpaidStudentsList(role,hierarchy, min, max);
 				Loggers.loggerStart(unpaidStudentsList);
 			}catch (GSmartDatabaseException exception) {
 				throw (GSmartServiceException) exception;

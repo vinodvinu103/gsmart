@@ -80,8 +80,8 @@ public class InventoryAssignmentsController {
 	 * 
 	 * }
 	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getInventory(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/assign/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getInventoryAssign(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -90,16 +90,20 @@ public class InventoryAssignmentsController {
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		str.length();
+
 		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
 		Map<String, Object> finalResponse = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
 		Map<String, Object> dataMap = new HashMap<>();
-		List<InventoryAssignments> inventoryList = null;
+/*		List<InventoryAssignments> inventoryList = null;
+*/		Map<String, Object> inventoryList = null;
+		// RolePermission modulePermission =
+		// getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		if (tokenObj.getHierarchy() == null && modulePermission != null) {
 			System.out.println("hierarchy is null");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
-				inventoryList = inventoryAssignmentsServices.getInventoryList(tokenObj.getRole(), hierarchy);
+				inventoryList = inventoryAssignmentsServices.getInventoryList(tokenObj.getRole(), hierarchy, min, max);
 
 				dataMap.put("inventoryList", inventoryList);
 				dataMap.put("hierarchy", hierarchy);
@@ -112,7 +116,7 @@ public class InventoryAssignmentsController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
-			inventoryList = inventoryAssignmentsServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy());
+			inventoryList = inventoryAssignmentsServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());

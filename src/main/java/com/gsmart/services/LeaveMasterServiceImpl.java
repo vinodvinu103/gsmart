@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,10 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 	private LeaveMasterDao leavemasterdao;
 
 	@Override
-	public List<LeaveMaster> getLeaveMasterList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public Map<String, Object> getLeaveMasterList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
 
 		try {
-			return leavemasterdao.getLeaveMasterList(role,hierarchy);
+			return leavemasterdao.getLeaveMasterList(role,hierarchy, min, max);
 
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;
@@ -65,10 +66,11 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 	}
 
 	@Override
-	public void editLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException {
+	public LeaveMaster editLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException {
 		Loggers.loggerStart();
+		LeaveMaster ch=null;
 		try {
-			leavemasterdao.editLeaveMaster(leaveMaster);
+			ch=leavemasterdao.editLeaveMaster(leaveMaster);
 
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
@@ -79,5 +81,6 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 		}
 
 		Loggers.loggerEnd();
+		return ch;
 	}
 }

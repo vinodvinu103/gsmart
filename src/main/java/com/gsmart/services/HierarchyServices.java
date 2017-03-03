@@ -2,6 +2,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.controller.HierarchyController;
 import com.gsmart.model.Hierarchy;
@@ -20,9 +21,10 @@ public interface HierarchyServices {
 	/**
 	 * @return list of Hierarchy entities available in the Hierarchy Table
 	 * @throws GSmartServiceException
-	 */
-	public List<Hierarchy> getHierarchyList(String role, Hierarchy hierarchy) throws GSmartServiceException;
-
+	 */	
+	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
+	
+	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	/**
 	 * @param hierarchy
 	 *            instanceOf {@link Hierarchy}
