@@ -21,7 +21,7 @@ public class Banners {
 	/**
 	 * Title of Image
 	 */
-	@Id
+	
 	@Column(name = "TITLE")
 	private String title;
 
