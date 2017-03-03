@@ -39,14 +39,13 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	}
 
 	@Override
-	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments) {
+	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory) {
 		InventoryAssignmentsCompoundKey compoundKey=null;
 		try {
 			Loggers.loggerStart(inventoryAssignments);
-			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments);
+			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments,oldInventory);
 			Loggers.loggerEnd(compoundKey);
 		} catch (GSmartDatabaseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return compoundKey;

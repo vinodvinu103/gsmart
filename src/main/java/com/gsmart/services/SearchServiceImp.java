@@ -85,6 +85,7 @@ public class SearchServiceImp implements SearchService {
 
 				if ((p.getSmartId().trim().toLowerCase().startsWith(emp.toLowerCase()))) {
 					list.add(p);
+		//		}else if(p.getFirstName().trim().toLowerCase().startsWith(emp.toLowerCase()))
 				}
 			}
 		} catch (Exception e) {
@@ -135,6 +136,8 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerEnd();
 		return allProfiles;
 	}
+	
+	
 
 	@Override
 	public ArrayList<String> searchParentInfo(String smartId, Map<String, Profile> map) {

@@ -444,13 +444,14 @@ e.printStackTrace();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException {
+	public List<Profile> getProfilesWithoutRfid(Hierarchy hierarchy) throws GSmartDatabaseException {
 		getConnection();
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithoutRfid;
 		try {
 			getConnection();
-			query = session.createQuery("from Profile where rfId is null AND isActive='Y'");
+			query = session.createQuery("from Profile where rfId is null AND isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			profileListWithoutRfid = query.list();
 
 		} catch (Exception e) {
@@ -462,19 +463,13 @@ e.printStackTrace();
 
 		Loggers.loggerEnd(profileListWithoutRfid);
 		return profileListWithoutRfid;
-		// return null;
 	}
 
 	public List<Profile> addRfid(Profile rfid) throws GSmartDatabaseException {
 
 		getConnection();
-		// List<Profile> profileListWithoutRfid = null;
-
 		try {
-			
-
 			session.update(rfid);
-
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -485,18 +480,20 @@ e.printStackTrace();
 		} finally {
 			session.close();
 		}
-		return getProfilesWithoutRfid();
+		//return getProfilesWithoutRfid();
+		
+		return null;
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
+	public List<Profile> getProfilesWithRfid(Hierarchy hierarchy) throws GSmartDatabaseException {
 		getConnection();
-		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithRfid;
 		try {
 			getConnection();
-			query = session.createQuery("from Profile where rfId is not null AND isActive='Y'");
+			query = session.createQuery("from Profile where rfId is not null AND isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			profileListWithRfid = query.list();
 
 		} catch (Exception e) {
@@ -505,7 +502,6 @@ e.printStackTrace();
 		}finally {
 			session.close();
 		}
-
 		Loggers.loggerEnd(profileListWithRfid);
 		return profileListWithRfid;
 
@@ -513,16 +509,10 @@ e.printStackTrace();
 
 	@Override
 	public List<Profile> editRfid(Profile rfid) throws GSmartDatabaseException {
-		// Loggers.loggerStart(profile);
-
 		getConnection();
 		try {
-			
-
 			session.update(rfid);
-
 			transaction.commit();
-
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
@@ -532,8 +522,56 @@ e.printStackTrace();
 		}
 
 		Loggers.loggerEnd();
-		return getProfilesWithRfid();
+		//return getProfilesWithRfid();
+		return null;
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Profile> searchProfilesWithoutRfid(String searchData,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+		
+		Loggers.loggerStart(searchData);
+		getConnection();
+		List<Profile> profileListWithoutRfid;
+		try {
+			String key = searchData.toLowerCase();
+			query = session.createQuery("from Profile where smartId in (select smartId from Profile where lower(firstName) like '%" + key + "%' or lower(teacherId) like '%" + key + "%' or lower(studentId) like '%" + key + "%') and rfId is null and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			profileListWithoutRfid = query.list();
+
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+			session.close();
+		}
+
+		Loggers.loggerEnd();
+
+		return profileListWithoutRfid;
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	public List<Profile> searchProfilesWithRfid(String searchData,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+
+	//	Loggers.loggerStart("searching by name : " + profile.getFirstName());
+		getConnection();
+		List<Profile> profileListWithRfid;
+		try {
+			String key = searchData.toLowerCase();
+			query = session.createQuery("from Profile where smartId in (select smartId from Profile where lower(firstName) like '%" + key + "%' or lower(teacherId) like '%" + key + "%' or lower(studentId) like '%" + key + "%') and rfId is not null and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			profileListWithRfid = query.list();
+         
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+			session.close();
+		}
+
+		Loggers.loggerEnd(profileListWithRfid);
+
+		return profileListWithRfid;
 	}
 
 	

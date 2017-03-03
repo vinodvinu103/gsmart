@@ -1,6 +1,5 @@
 package com.gsmart.model;
 
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +11,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-@SuppressWarnings("serial")
 @Entity
 @Table (name="INVENTORY_ASSIGNMENTS")
 @IdClass(com.gsmart.model.InventoryAssignmentsCompoundKey.class)
 
-public class InventoryAssignments implements Serializable
+public class InventoryAssignments
 {
 		
 	@Id
@@ -27,10 +25,6 @@ public class InventoryAssignments implements Serializable
 	@Id
 	@Column (name="ITEM_TYPE")
 	private String itemType;
-
-	@Column(name="UPD_SMART_ID")
-	private String updSmartId;
-	
 	
 	@Column(name="TEACHER_NAME")
 	private String teacherName;
@@ -64,7 +58,6 @@ public class InventoryAssignments implements Serializable
 	@Column(name="IS_ACTIVE")
 	private String isActive;
 	
-	@Id
 	@Column(name="SMART_ID")
 	private String smartId;
 	
@@ -102,12 +95,7 @@ public class InventoryAssignments implements Serializable
 	public void setItemType(String itemType) {
 		this.itemType = itemType;
 	}
-	public String getUpdSmartId() {
-		return updSmartId;
-	}
-	public void setUpdSmartId(String updSmartId) {
-		this.updSmartId = updSmartId;
-	}
+	
 	public String getSmartId() {
 		return smartId;
 	}
