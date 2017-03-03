@@ -27,7 +27,7 @@ public interface SearchService {
 	
 	
 	
-	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear,String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
 	
 	ArrayList<Profile> gotoloop(ArrayList<Profile> profile ,Map<String, Profile> profiles) throws GSmartServiceException;
 	
@@ -44,4 +44,7 @@ public interface SearchService {
 	public Map<String, Object> getParentInfo(String smartId);
 
 	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees);
+
+	ArrayList<Profile> studentFees(ArrayList<Profile> childList, String academicYear, String role, Hierarchy hierarchy,
+			Integer min, Integer max) throws GSmartServiceException;
 }

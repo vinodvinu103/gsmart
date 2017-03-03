@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
@@ -23,7 +24,7 @@ public interface FeeMasterDao {
 	 * @return list of entities available in the {@link FeeMaster} Table
 	 * @throws GSmartDatabaseException
 	 */
-	public List<FeeMaster> getFeeList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public Map<String, Object> getFeeList(String role,Hierarchy hierarchy, int min, int max) throws GSmartDatabaseException;
 
 	/**
 	 * @param feeMaster
