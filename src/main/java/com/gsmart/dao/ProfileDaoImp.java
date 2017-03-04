@@ -613,7 +613,7 @@ public class ProfileDaoImp implements ProfileDao {
 		List<Banners> bannerlist = null;
 		try {
 			getConnection();
-			Query query = session.createQuery("FROM Banners WHERE isActive='Y'");
+			Query query = session.createQuery("FROM Banners WHERE isActive='Y' order by image desc");
 			bannerlist = query.list();
 
 		} catch (Exception e) {
@@ -654,7 +654,7 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 	}
 
-	@Override
+	/*@Override
 	public Banners editBanner(Banners banner) throws GSmartDatabaseException {
 		try {
 			Loggers.loggerStart();
@@ -674,7 +674,7 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 
 		return banner;
-	}
+	}*/
 
 	/*
 	 * private void updateBanner(Banners oldBanner) { session =
@@ -684,7 +684,7 @@ public class ProfileDaoImp implements ProfileDao {
 	 * session.update(oldBanner); transaction.commit(); session.close(); }
 	 */
 
-	public Banners getBanner(String entryTime) {
+	/*public Banners getBanner(String entryTime) {
 		Loggers.loggerStart();
 		Banners banners = null;
 		try {
@@ -699,7 +699,7 @@ public class ProfileDaoImp implements ProfileDao {
 			e.printStackTrace();
 			return null;
 		}
-	}
+	}*/
 
 	/* DELETE DATA FROM THE DATABASE */
 	@Override
