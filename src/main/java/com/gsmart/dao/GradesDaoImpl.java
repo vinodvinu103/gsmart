@@ -49,20 +49,30 @@ public class GradesDaoImpl implements GradesDao{
 	}
 	// add
 	@Override
-	public void addGrades(Grades grades) throws GSmartDatabaseException {
+	public boolean addGrades(Grades grades) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart(grades);
+		Grades grd=null;
+		boolean flag=false;
 		try {
-			grades.setIsActive("Y");
-			grades.setEntryTime(CalendarCalculator.getTimeStamp());
-			session.save(grades);
-			transaction.commit();
-			session.close();
+			
+			query=session.createQuery("from Grades where grade=:grade and isActive='Y'");
+			query.setParameter("grade", grades.getGrade());
+			grd=(Grades) query.uniqueResult();
+			if (grd==null) {
+				grades.setIsActive("Y");
+				grades.setEntryTime(CalendarCalculator.getTimeStamp());
+				session.save(grades);
+				transaction.commit();
+				session.close();
+				flag=true;
+			}
+			
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 		Loggers.loggerEnd();
-
+		return flag;
 	}
 	   
 
@@ -127,8 +137,6 @@ public class GradesDaoImpl implements GradesDao{
 		} catch (Exception exception) {
 
 			exception.getMessage();
-		} finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
 	}

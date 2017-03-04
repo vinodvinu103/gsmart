@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.ProfileDaoImp;
 import com.gsmart.dao.TokenDaoImpl;
-import com.gsmart.model.Band;
 import com.gsmart.model.Grades;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
@@ -85,10 +83,10 @@ import com.gsmart.util.Loggers;
 		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
 	
-// add method
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addGrades(@RequestBody Grades grades,@RequestHeader HttpHeaders token) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> addGrades(@RequestBody Grades grades,@RequestHeader HttpHeaders token) throws GSmartBaseException {
 		Loggers.loggerStart(grades);
+		boolean flag=false;
 		String tokenNumber = token.get("Authorization").get(0);
 		
 		Token tokenObj= tokenDaoImpl.getToken(tokenNumber);
@@ -100,14 +98,18 @@ import com.gsmart.util.Loggers;
 		grades.setInstitution(profileinfo.getInstitution());
 		grades.setSchool(profileinfo.getSchool());
 		
-		
-		IAMResponse rsp = null;
-		gradesService.addGrades(grades);
-		rsp = new IAMResponse("success");
-
+		Map<String, Object> respMap=new HashMap<>();
+		flag=gradesService.addGrades(grades);
+		if (flag) {
+			respMap.put("status", 200);
+        	respMap.put("message", "Saved Successfully");
+		} else {
+			respMap.put("status", 400);
+        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+		}
 		Loggers.loggerEnd();
 
-		return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
 	
 /*Delete method*/

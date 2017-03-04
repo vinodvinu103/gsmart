@@ -32,16 +32,17 @@ public class GradesServiceImpl implements GradesService {
 		}
 	}//end of get method public List<Grades> getGradesList()throws GSmartServiceException;
 	   @Override
-	   public void addGrades(Grades grades) throws GSmartServiceException {
+	   public boolean addGrades(Grades grades) throws GSmartServiceException {
 		   Loggers.loggerStart();
+		   
 			try{
-				gradesDao.addGrades(grades);
+				return gradesDao.addGrades(grades);
 			}catch (GSmartDatabaseException exception) {
 				throw (GSmartServiceException) exception;
 			} catch (Exception e) {
 				throw new GSmartServiceException(e.getMessage());
 			}
-			Loggers.loggerEnd();
+			
 			
 		}//end of add
 	   @Override

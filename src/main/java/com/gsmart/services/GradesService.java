@@ -9,7 +9,7 @@ public interface GradesService {
 
 	public List<Grades> getGradesList()throws GSmartServiceException;
 
-	public void addGrades(Grades grades)throws GSmartServiceException;
+	public boolean addGrades(Grades grades)throws GSmartServiceException;
 	
 	
 	public  void deleteGrades(Grades grades)throws GSmartServiceException;
