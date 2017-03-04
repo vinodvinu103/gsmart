@@ -184,7 +184,7 @@ public class SearchServiceImp implements SearchService {
 	 */
 
 	@Override
-	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles,String academicYear,String role,Hierarchy hierarchy)
+	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles,String academicYear,Long hid)
 			throws GSmartServiceException {
 
 		Loggers.loggerStart();
@@ -211,7 +211,7 @@ public class SearchServiceImp implements SearchService {
 
 
 			if (childList.get(0).getRole().toLowerCase().equals("student")) {
-				fees = studentFees(childList,academicYear,role,hierarchy, 1, 1);
+				fees = studentFees(childList,academicYear,hid,1,20);
 
 				return fees;
 
@@ -231,7 +231,7 @@ public class SearchServiceImp implements SearchService {
 
 					
 					if (boo) {
-						fees = studentFees(temp1,academicYear,role,hierarchy, 1, 1);
+						fees = studentFees(temp1,academicYear,hid, 1, 20);
 					}
 					/*}else
 					{
@@ -294,14 +294,15 @@ public class SearchServiceImp implements SearchService {
 	}
 
 	@Override
-	public ArrayList<Profile> studentFees(ArrayList<Profile> childList,String academicYear,String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+	public ArrayList<Profile> studentFees(ArrayList<Profile> childList,String academicYear,Long hid, int min, int max) throws GSmartServiceException {
 
 		Loggers.loggerStart(childList);
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
-		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear,role,hierarchy);
+		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear,hid);
 
-		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList(role,hierarchy, min, max);
+		@SuppressWarnings("unchecked")
+		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList(hid, min, max);
 
 		Map<String, Fee> feeMap = new HashMap<String, Fee>();
 
@@ -427,13 +428,7 @@ public class SearchServiceImp implements SearchService {
 		return parentInfo;
 	}
 
-	@Override
-	public ArrayList<Profile> studentFees(ArrayList<Profile> profile, String academicYear, String role,
-			Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 
 
 }

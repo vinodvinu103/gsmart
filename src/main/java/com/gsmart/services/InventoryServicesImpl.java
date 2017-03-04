@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.InventoryDao;
 import com.gsmart.model.CompoundInventory;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -34,11 +33,11 @@ public class InventoryServicesImpl implements InventoryServices {
 	 */
         
 	@Override
-	public Map<String, Object> getInventoryList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
+	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
 			Loggers.loggerEnd();
-			return inventoryDao.getInventoryList(role,hierarchy, min, max);
+			return inventoryDao.getInventoryList(hid, min, max);
 		} catch (GSmartDatabaseException Exception ) {
 			throw(GSmartServiceException) Exception;
 			
@@ -79,10 +78,11 @@ public class InventoryServicesImpl implements InventoryServices {
 	 */
 	
 	@Override
-	public void editInventory(Inventory inventory) throws GSmartServiceException {
+	public Inventory editInventory(Inventory inventory) throws GSmartServiceException {
 		Loggers.loggerStart();
+		Inventory ch=null;
 		try {
-			inventoryDao.editInventory(inventory);
+		ch=	inventoryDao.editInventory(inventory);
 			
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
@@ -94,6 +94,7 @@ public class InventoryServicesImpl implements InventoryServices {
 		}
 		
 		Loggers.loggerEnd();
+		return ch;
 	}
 
 	/**

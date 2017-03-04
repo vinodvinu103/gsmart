@@ -10,8 +10,6 @@ import com.gsmart.dao.AssignDao;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
-import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -26,8 +24,8 @@ public class AssignServiceImpl implements AssignService{
 	
 
 	@Override
-	public Map<String, Object> getAssignReportee(String role, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
-		return assignDao.getAssignReportee(role, hierarchy, min, max);
+	public Map<String, Object> getAssignReportee(Long hid, Integer min, Integer max) throws GSmartServiceException {
+		return assignDao.getAssignReportee(hid, min, max);
 	}
 
 	@Override
@@ -86,6 +84,19 @@ public class AssignServiceImpl implements AssignService{
 		Loggers.loggerEnd();
 		return status;
 		}
+
+	@Override
+	public List<Assign> getAssignList(Long hid) throws GSmartServiceException {
+		Loggers.loggerStart();
+		List<Assign> assignList=null;
+		try {
+			assignList=assignDao.getAssignList(hid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd();
+		return assignList;
+	}
 	
 	
 	

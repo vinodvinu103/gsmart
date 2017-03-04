@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.CompoundInventory;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.util.GSmartServiceException;
 /**
@@ -23,7 +22,7 @@ public interface InventoryServices {
 	 * @see List
 	 */
 	
-	public Map<String, Object> getInventoryList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
+	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartServiceException;
 	
 	/**
 	 * @param inventory instanceOf {@link Inventory}
@@ -37,7 +36,7 @@ public interface InventoryServices {
 	 * @return nothing
 	 * @throws user define Exception
 	 */
-	public void editInventory(Inventory inventory)throws GSmartServiceException;
+	public Inventory editInventory(Inventory inventory)throws GSmartServiceException;
 	
 	/**
 	 * @param timeStamp instanceOf {@link Inventory}

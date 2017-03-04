@@ -1,6 +1,5 @@
 package com.gsmart.services;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +35,10 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 	 * @return calls {@link FeeMasterDao}'s <code>getFeeList()</code> method
 	 */
 	@Override
-	public Map<String, Object> getFeeList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
+	public Map<String, Object> getFeeList(Long hid, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return feeMasterDao.getFeeList(role,hierarchy, min, max);
+			return feeMasterDao.getFeeList(hid, min, max);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {

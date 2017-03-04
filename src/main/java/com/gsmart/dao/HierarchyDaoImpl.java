@@ -34,9 +34,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gsmart.model.Assign;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Inventory;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -91,7 +89,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			Criteria criteriaCount = session.createCriteria(Hierarchy.class);
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
-			hierarchyMap.put("totalhierarchy", query.list().size());
+			hierarchyMap.put("totalhierarchy", count);
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -106,14 +104,14 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public List<Hierarchy> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		Loggers.loggerStart();
 
 		List<Hierarchy> hierarchyList1;
-		Map<String, Object> hierarchyMap1 = new HashMap<String, Object>();
 		Criteria criteria = null;
 		try {
 			if (hierarchy==null) {
@@ -132,8 +130,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			session.close();
 		}
 		Loggers.loggerEnd(hierarchyList1);
-		hierarchyMap1.put("hierarchyList1", hierarchyList1);
-		return hierarchyMap1;
+		return hierarchyList1;
 	}
 
 	/**

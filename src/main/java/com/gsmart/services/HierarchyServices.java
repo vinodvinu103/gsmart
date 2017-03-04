@@ -24,7 +24,7 @@ public interface HierarchyServices {
 	 */	
 	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
 	
-	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public List<Hierarchy> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	/**
 	 * @param hierarchy
 	 *            instanceOf {@link Hierarchy}

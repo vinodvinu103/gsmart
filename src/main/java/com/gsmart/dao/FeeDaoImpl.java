@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -117,21 +116,16 @@ public class FeeDaoImpl implements FeeDao{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Fee> getFeeLists(String academicYear,String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public ArrayList<Fee> getFeeLists(String academicYear,Long hid) throws GSmartDatabaseException {
 		getconnection();
 		Loggers.loggerStart();
 		
 		ArrayList<Fee> feeList=null;
 		try
 		{
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
-			{
-		query=session.createQuery("From Fee where academicYear=:academicYear and isActive='Y'");
-			}else
-			{
 				query=session.createQuery("From Fee where academicYear=:academicYear and isActive='Y' and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
-			}
+			query.setParameter("hierarchy", hid);
+			
 		query.setParameter("academicYear", academicYear);
 		feeList=(ArrayList<Fee>) query.list();
 		Loggers.loggerEnd();
@@ -202,7 +196,6 @@ public class FeeDaoImpl implements FeeDao{
 		criteria.setProjection(Projections.id());
 		paidStudentsList = criteria.list();
 		criteria.setProjection(Projections.rowCount());
-		Long count = (Long) criteria.uniqueResult();
 		paidfeeMap.put("totalpaidlist", query.list().size());
 		Loggers.loggerEnd();
 		
@@ -243,7 +236,6 @@ public class FeeDaoImpl implements FeeDao{
 		criteria.setProjection(Projections.id());
 		unpaidStudentsList = criteria.list();
 		criteria.setProjection(Projections.rowCount());
-		Long count = (Long) criteria.uniqueResult();
 		unpaidfeeMap.put("totalunpaidlist", query.list().size());
 		Loggers.loggerEnd();
 		

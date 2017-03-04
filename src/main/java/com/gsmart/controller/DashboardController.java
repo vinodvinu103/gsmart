@@ -65,7 +65,7 @@ public class DashboardController {
 			System.out.println("hierarchy is null");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
-				inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), hierarchy, min, max);
+				inventoryList = inventoryServices.getInventoryList( hierarchy.getHid(), min, max);
 
 				dataMap.put("inventoryList", inventoryList);
 				dataMap.put("hierarchy", hierarchy);
@@ -79,7 +79,7 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
-			inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
+			inventoryList = inventoryServices.getInventoryList(tokenObj.getHierarchy().getHid(), min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
