@@ -16,7 +16,7 @@ public interface GradesDao {
 	public void deleteGrades(Grades grades)throws GSmartDatabaseException;
 	
 	
-	public void updateGrades(Grades grades)throws GSmartDatabaseException;
+	public Grades updateGrades(Grades grades)throws GSmartDatabaseException;
 
 	
 
