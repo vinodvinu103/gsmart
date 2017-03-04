@@ -64,7 +64,7 @@ public class GradesDaoImpl implements GradesDao{
 				grades.setEntryTime(CalendarCalculator.getTimeStamp());
 				session.save(grades);
 				transaction.commit();
-			
+				session.close();
 				flag=true;
 			}
 			
@@ -80,10 +80,13 @@ public class GradesDaoImpl implements GradesDao{
 	/* EDIT GRADES FROM THE DATABASE */
 	
 	   @Override
-		public Grades updateGrades(Grades grades) throws GSmartDatabaseException {
-		getConnection();
+		public boolean updateGrades(Grades grades) throws GSmartDatabaseException {
+		
 		Grades ch = null;
+		boolean flag=false;
+		
 		Loggers.loggerStart();
+		Grades grd=null;
 		try {
 			
 			System.out.println("data is updating............");
@@ -92,11 +95,15 @@ public class GradesDaoImpl implements GradesDao{
 			
 			olddata.setIsActive("N");
 			olddata.setUpdateTime(CalendarCalculator.getTimeStamp());
-			session.update(olddata);
-			transaction.commit();
 			
-			addGrades(grades);
 			
+			flag=addGrades(grades);
+			if(flag){
+				getConnection();
+				System.out.println("inside the flag....................");
+				session.update(olddata);
+				transaction.commit();
+			}
 			
 		} catch (Exception exception) {
 
@@ -104,7 +111,7 @@ public class GradesDaoImpl implements GradesDao{
 			exception.printStackTrace();
 		} 
 		Loggers.loggerEnd();
-      return  ch;
+      return  flag;
 	}
 
 	public Grades getData(Grades grades) {

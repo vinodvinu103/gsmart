@@ -117,7 +117,7 @@ import com.gsmart.util.Loggers;
 	public ResponseEntity<Map<String, Object>> deleteGrades(@RequestBody Grades grades, @PathVariable("task") String task,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(grades);
-		Grades cb=null;
+		boolean cb=false;
 		Map<String, Object> respMap=new HashMap<>();
 		
 		String tokenNumber = token.get("Authorization").get(0);
@@ -127,8 +127,9 @@ import com.gsmart.util.Loggers;
 
 		if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){
+		    	System.out.println("in side edit method>>>>>>>>>>>>>>>>>");
 		    	cb=gradesService.updateGrades(grades);
-		    	if(cb!=null){
+		    	if(cb){
 		    		respMap.put("status", 200);
 	        	respMap.put("message", "Updated Successfully");
 		    	}else{
@@ -137,6 +138,7 @@ import com.gsmart.util.Loggers;
 		    	}
 		    }
 		    else if (task.equals("delete")){
+		    	System.out.println("in side delete method##########################");
 		    	gradesService.deleteGrades(grades);
 		    	respMap.put("status", 200);
 	        	respMap.put("message", "Deleted Successfully");

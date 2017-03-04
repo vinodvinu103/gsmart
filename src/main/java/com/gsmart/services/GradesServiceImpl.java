@@ -46,18 +46,17 @@ public class GradesServiceImpl implements GradesService {
 			
 		}//end of add
 	   @Override
-	   public Grades updateGrades(Grades grades) throws GSmartServiceException {
+	   public boolean updateGrades(Grades grades) throws GSmartServiceException {
 			Loggers.loggerStart();
-			Grades cb=null;
+		
 			try{
-				gradesDao.updateGrades(grades);
+				return gradesDao.updateGrades(grades);
 			}catch (GSmartDatabaseException exception) {
 				throw (GSmartServiceException) exception;
 			} catch (Exception e) {
 				throw new GSmartServiceException(e.getMessage());
 			}
-			Loggers.loggerEnd();
-			return cb;
+			
 			
 		}//end of update
 	   @Override
