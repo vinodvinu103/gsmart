@@ -67,7 +67,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			feeList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(FeeMaster.class);
 			criteriaCount.setProjection(Projections.rowCount());
-			Long count = (Long) criteria.uniqueResult();
+			Long count = (Long) criteriaCount.uniqueResult();
 			
 			feeMap.put("totalfeelist", count);
 

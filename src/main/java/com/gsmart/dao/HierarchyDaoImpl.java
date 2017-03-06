@@ -20,7 +20,6 @@
 
 package com.gsmart.dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -227,15 +226,14 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public Hierarchy getHierarchy(String entryTime) {
 		try {
 
 			query = session.createQuery("from Hierarchy where IS_ACTIVE='Y' and ENTRY_TIME='" + entryTime + "'");
-			ArrayList<Hierarchy> hierarchyList = (ArrayList<Hierarchy>) query.list();
+			 Hierarchy hierarchyList =  (Hierarchy) query.uniqueResult();
 			transaction.commit();
 
-			return hierarchyList.get(0);
+			return hierarchyList;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -251,8 +249,9 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			Loggers.loggerStart();
 
 			hierarchy.setExitTime(CalendarCalculator.getTimeStamp());
-			hierarchy.setIsActive("D");
-			session.update(hierarchy);
+			/*hierarchy.setIsActive("D");
+			session.update(hierarchy);*/
+			session.delete(hierarchy);
 			transaction.commit();
 
 			Loggers.loggerEnd();

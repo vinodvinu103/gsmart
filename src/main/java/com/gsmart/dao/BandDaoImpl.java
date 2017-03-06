@@ -58,7 +58,7 @@ public class BandDaoImpl implements BandDao {
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
-			criteria.setProjection(Projections.id());
+//			criteria.setProjection(Projections.id());
 			bandMap.put("bandList", criteria.list());
 			criteria = session.createCriteria(Band.class).add(Restrictions.eq("isActive", "Y"))
 					.setProjection(Projections.rowCount());

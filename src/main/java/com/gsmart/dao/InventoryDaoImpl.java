@@ -63,11 +63,11 @@ public class InventoryDaoImpl implements InventoryDao {
 		     criteria.setMaxResults(max);
 		     criteria.add(Restrictions.eq("isActive", "Y"));
 		     criteria.add(Restrictions.eq("hierarchy.hid", hid));
-		     criteria.setProjection(Projections.id());
+//		     criteria.setProjection(Projections.id());
 		     inventoryList = criteria.list();
 		     Criteria criteriaCount = session.createCriteria(Inventory.class);
 		     criteriaCount.setProjection(Projections.rowCount());
-		     Long count = (Long) criteria.uniqueResult();
+		     Long count = (Long) criteriaCount.uniqueResult();
 		     inventoryMap.put("totalinventory", count);
 
 		} catch (Exception e) {

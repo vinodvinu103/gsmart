@@ -48,20 +48,21 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 			criteria.setFirstResult(min);
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
-			criteria.setProjection(Projections.id());
+//			criteria.setProjection(Projections.id());
 			leavemasterlist = criteria.list();
 			Criteria criteriaCount = session.createCriteria(LeaveMaster.class);
 			
 			criteriaCount.setProjection(Projections.rowCount());
-			Long count = (Long) criteria.uniqueResult();
+			Long count = (Long) criteriaCount.uniqueResult();
 			leavemasterMap.put("totallist", count);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 
 		} finally {
 			session.close();
 		}
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(leavemasterlist);
 		leavemasterMap.put("leavemasterlist", leavemasterlist);
 		return leavemasterMap;
 	}
