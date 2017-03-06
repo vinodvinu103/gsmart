@@ -71,6 +71,10 @@ public class ProfileServicesImp implements ProfileServices {
 		return profileDao.updateProfile(profile);
 	}
 
+	@Override
+	public String deleteprofile(Profile profile){
+		return profileDao.deleteprofile(profile);
+	}
 	/* for profile */
 
 	@Override
@@ -80,10 +84,9 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 	
 	@Override
-	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy) throws GSmartServiceException {
-		
-		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId,role2,hierarchy);
-		return profileList;
+	public Map<String, Object> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
+		Loggers.loggerStart();
+		return profileDao.getProfiles(role,smartId,role2,hierarchy, min, max);
 	}
 
 

@@ -38,10 +38,10 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			throws GSmartDatabaseException {
 		getconnection();
 		Loggers.loggerStart();
-		
+
 		List<Attendance> attendanceList = null;
 		try {
-            query = session.createQuery(
+			query = session.createQuery(
 					"from Attendance where isActive=:isActive and smartId=:smartId and inDate between :startDate and :endDate");
 			query.setParameter("isActive", "Y");
 			query.setParameter("smartId", smartId);
@@ -50,34 +50,29 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			attendanceList = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}/*finally {
+
+		} finally {
 			session.close();
-		}*/
-		
+		}
+
 		Loggers.loggerEnd();
 		return constructAttendanceList((List<Attendance>) attendanceList);
 	}
 
 	@Override
-	public Attendance addAttendance(List<Attendance> attendanceList) throws GSmartDatabaseException {
-		getconnection();
+	public List<String> addAttendance(List<Attendance> attendanceList) throws GSmartDatabaseException {
+		
+		List<String> rfidList = new ArrayList<>();
+		Loggers.loggerStart("attendanceList : " + attendanceList + " " + attendanceList.size());
 		try {
 			for (Attendance attendance : attendanceList) {
-				attendance.setInTime(Calendar.getInstance().getTimeInMillis()/1000);
-				String date = CalendarCalculator.getTimeStamp();
-			
-				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-				Date date1 = df.parse(date);
-				calendar.setTime(date1);
-				calendar.set(Calendar.MILLISECOND, 0);
-				calendar.set(Calendar.SECOND, 0);
-				calendar.set(Calendar.MINUTE, 0);
-				calendar.set(Calendar.HOUR_OF_DAY, 0);
-				Date date2 = calendar.getTime();
-				long epoch = date2.getTime() / 1000;
-				attendance.setInDate(epoch);
-				attendance.setIsActive("Y");
-				session.save(attendance);
+				String smartId = getSmartId(attendance.getRfId());
+				getconnection();
+				if(smartId != null) {
+					attendance.setSmartId(smartId);
+					session.saveOrUpdate(attendance);
+					rfidList.add(attendance.getRfId());
+				}
 			}
 			tx.commit();
 		} catch (Exception e) {
@@ -86,17 +81,16 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		} finally {
 			session.close();
 		}
-
-		return null;
+		return rfidList;
 	}
 
 	@Override
 	public void editAttendance(Attendance attendance) throws GSmartDatabaseException {
 		getconnection();
 		Loggers.loggerStart();
-		
+
 		try {
-            Attendance oldattendance = getAttendance(attendance.getInDate(), attendance.getSmartId());
+			Attendance oldattendance = getAttendance(attendance.getInDate(), attendance.getSmartId());
 			if (oldattendance != null) {
 				if (oldattendance.getIsActive().equalsIgnoreCase("n")) {
 					oldattendance.setIsActive("Y");
@@ -107,22 +101,22 @@ public class AttendanceDaoImpl implements AttendanceDao {
 				}
 			} else {
 				attendance.setIsActive("Y");
-				attendance.setInTime(Calendar.getInstance().getTimeInMillis()/1000);
-				attendance.setOutTime(Calendar.getInstance().getTimeInMillis()/1000);
-				 String date = CalendarCalculator.getTimeStamp();
-				 SimpleDateFormat df = new
-				 SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS"); 
-				 Date date1 = df.parse(date); /*long epoch = date1.getTime() / 1000;*/
-				 calendar.setTime(date1);
-			     calendar.set(Calendar.MILLISECOND, 0);
-			   	 calendar.set(Calendar.SECOND, 0);
-			   	 calendar.set(Calendar.MINUTE, 0);
-				 calendar.set(Calendar.HOUR_OF_DAY, 0);
-				 Date date2 = calendar.getTime();
-				 long epoch1 = date2.getTime() / 1000;
-				  attendance.setInDate(epoch1); 
-				 session.save(attendance);
-              }
+				attendance.setInTime(Calendar.getInstance().getTimeInMillis() / 1000);
+				attendance.setOutTime(Calendar.getInstance().getTimeInMillis() / 1000);
+				String date = CalendarCalculator.getTimeStamp();
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+				Date date1 = df
+						.parse(date); /* long epoch = date1.getTime() / 1000; */
+				calendar.setTime(date1);
+				calendar.set(Calendar.MILLISECOND, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				Date date2 = calendar.getTime();
+				long epoch1 = date2.getTime() / 1000;
+				attendance.setInDate(epoch1);
+				session.save(attendance);
+			}
 			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -136,6 +130,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	public Attendance getAttendance(long inDate, String smartId) {
 		Loggers.loggerStart();
 		Loggers.loggerStart(inDate);
+		getconnection();
 		try {
 			query = session.createQuery("from Attendance where  inDate=:inDate and smartId=:smartId");
 			query.setParameter("smartId", smartId);
@@ -175,4 +170,38 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		return responseList;
 
 	}
+
+	@Override
+	public List<Attendance> getAttendanceByhierarchy(Long date) {
+		Loggers.loggerStart();
+		getconnection();
+		try {
+			query = session.createQuery("from Attendance where inDate=:inDate");
+			query.setParameter("inDate", date);
+			return query.list();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Loggers.loggerEnd();
+			return null;
+		} finally {
+			session.close();
+		}
 	}
+	
+	private String getSmartId(String rfid) {
+		Loggers.loggerStart();
+		getconnection();
+		try {
+			query = session.createQuery("select smartId from Profile where rfid=:rfid");
+			query.setParameter("rfid", rfid);
+			return (String) query.uniqueResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Loggers.loggerEnd();
+			return null;
+		} finally {
+			session.close();
+		}
+	}
+}

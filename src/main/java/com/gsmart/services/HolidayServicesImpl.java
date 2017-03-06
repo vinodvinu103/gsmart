@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 	 * @return calls {@link HolidayDao}'s <code>getHolidayList()</code> method
 	 */
 	@Override
-	public List<Holiday> getHolidayList(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy ) throws GSmartServiceException {
 	
 		Loggers.loggerStart();
 	try {
@@ -54,13 +55,13 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 	 * @throws GSmartServiceException
 	 */
 	@Override
-	public CompoundHoliday addHoliday(Holiday holiday) throws GSmartServiceException {
+	public CompoundHoliday addHoliday(Holiday holiday, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		
 		CompoundHoliday ch = null;
 		
 		try {
-			ch = holidayDao.addHoliday(holiday);
+			ch = holidayDao.addHoliday(holiday, min, max);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -111,6 +112,12 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 		Loggers.loggerEnd();
 
 	}
+	@Override
+	public Map<String, Object> getHolidayList(Hierarchy hierarchy) throws GSmartServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
 	
 }
