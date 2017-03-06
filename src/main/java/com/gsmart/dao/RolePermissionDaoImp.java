@@ -60,23 +60,10 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		Map<String, Object> rolePermissionMap = new HashMap<>();
 		Criteria criteria = null;
 		getConnection();
-		criteria = session.createCriteria(RolePermission.class);
+		
 		try {
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
-			{
-			
-//			query = session.createQuery("from RolePermission where isActive='Y'");
-			
+			criteria = session.createCriteria(RolePermission.class);
 			criteria.add(Restrictions.eq("isActive", "Y"));
-			
-			}
-			 else{
-				/*query = session.createQuery("from RolePermission where isActive='Y' and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());*/
-			criteria.add(Restrictions.eq("isActive", "Y"));
-			criteria.add(Restrictions.eq("hid", hierarchy.getHid()));
-			}
-//			rolePermissions = (List<RolePermission>) query.list();
 			criteria.setFirstResult(min);
 		     criteria.setMaxResults(max);
 		     rolePermissions = criteria.list();
