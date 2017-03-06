@@ -40,6 +40,9 @@ public interface HolidayDao {
 	 */
 
 	public Holiday editHoliday(Holiday holiday) throws GSmartDatabaseException;
+	
+	
+	public List<Holiday> holidayList(String role,Long hid) throws GSmartDatabaseException;
 	/**
 	 * @param holiday instanceOf {@link Holiday}
 	 * @return Nothing

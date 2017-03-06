@@ -10,13 +10,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gsmart.model.Band;
 import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Leave;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -51,14 +52,17 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 				 query.setParameter("hierarchy", hierarchy.getHid());
 			 }
 			criteria = session.createCriteria(LeaveMaster.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid",  hierarchy.getHid()));
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
-			criteria.setProjection(Projections.id());
 			leavemasterlist = criteria.list();
-			Criteria criteriaCount = session.createCriteria(LeaveMaster.class);
+
+			Criteria criteriaCount = session.createCriteria(Leave.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y")).setProjection(Projections.rowCount());
+			criteriaCount.add(Restrictions.eq("hierarchy.hid",hierarchy.getHid()));
 			criteriaCount.setProjection(Projections.rowCount());
-			Long count = (Long) criteriaCount.uniqueResult();
-			leavemasterMap.put("totallist", query.list().size());
+			leavemasterMap.put("totallist", criteriaCount.uniqueResult());
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
@@ -259,7 +263,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 			
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}finally {
 			session.close();
 		}
@@ -267,4 +271,23 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		
 	}
 
+	@Override
+	public List<LeaveMaster> getLeaveMasterListForApplyLeave(String role, Hierarchy hierarchy)
+			throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		Criteria criteria=null;
+		List<LeaveMaster> masterList=null;
+		getconnection();
+		try {
+			criteria = session.createCriteria(LeaveMaster.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid",  hierarchy.getHid()));
+			masterList=criteria.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(masterList);
+		return masterList;
+	}
+	
 }

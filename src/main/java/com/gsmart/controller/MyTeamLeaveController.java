@@ -46,8 +46,8 @@ public class MyTeamLeaveController {
 	@Autowired
 	ProfileDao profileDao;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getLeave(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}",method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getLeave(@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();

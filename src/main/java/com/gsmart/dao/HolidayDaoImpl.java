@@ -321,4 +321,14 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 		}
 		Loggers.loggerEnd();
 	}
+
+	@Override
+	public List<Holiday> holidayList(String role,Long hid) throws GSmartDatabaseException {
+		getConnection();
+		query=session.createQuery("from Holiday where isActive=:isActive and hierarchy.hid=:hierarchy");
+		query.setParameter("isActive", "Y");
+		query.setParameter("hierarchy", hid);
+		
+		return query.list();
+	}
 }
