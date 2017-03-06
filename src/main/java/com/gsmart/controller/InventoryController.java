@@ -62,15 +62,15 @@ public class InventoryController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getInventory(@RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
+	
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET )
+	public ResponseEntity<Map<String, Object>> getInventory(@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		List<Inventory> inventoryList = null;
+		Map<String, Object> inventoryList = null;
 		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permissions = new HashMap<>();
@@ -79,7 +79,7 @@ public class InventoryController {
 
 		if (modulePermission != null) {
 
-			inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy());
+			inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 			permissions.put("inventoryList", inventoryList);
 			Loggers.loggerEnd(inventoryList);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);

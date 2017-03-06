@@ -2,6 +2,7 @@
 package com.gsmart.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Hierarchy;
@@ -27,7 +28,7 @@ public interface InventoryDao {
 	 * @throws GSmartDatabaseException
 	 */
 
-	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public Map<String, Object> getInventoryList(String role,Hierarchy hierarchy, int min, int max) throws GSmartDatabaseException;
 
 	/**
 	 * @param inventory

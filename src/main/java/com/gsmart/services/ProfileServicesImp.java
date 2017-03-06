@@ -12,6 +12,7 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -84,10 +85,9 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 	
 	@Override
-	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy) throws GSmartServiceException {
-		
-		ArrayList<Profile> profileList = profileDao.getProfiles(role,smartId,role2,hierarchy);
-		return profileList;
+	public Map<String, Object> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
+		Loggers.loggerStart();
+		return profileDao.getProfiles(role,smartId,role2,hierarchy, min, max);
 	}
 
 
@@ -161,9 +161,9 @@ public class ProfileServicesImp implements ProfileServices {
 		return profileDao.getProfileByHierarchy(hierarchy);
 	}
 
-	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException {
+	public List<Profile> getProfilesWithoutRfid(Hierarchy hierarchy) throws GSmartDatabaseException {
 	
-		return profileDao.getProfilesWithoutRfid();
+		return profileDao.getProfilesWithoutRfid(hierarchy);
 	}
 
 	@Override
@@ -183,22 +183,46 @@ public class ProfileServicesImp implements ProfileServices {
 
 	public List<Profile> editRfid(Profile rfid)throws GSmartServiceException{
 	
-	try {
-		profileDao.editRfid(rfid);
-	} catch (GSmartDatabaseException exception) {
+		try {
+			profileDao.editRfid(rfid);
+			} catch (GSmartDatabaseException exception) {
 		throw (GSmartServiceException) exception;
-	} catch (Exception e) {
+		} catch (Exception e) {
 		throw new GSmartServiceException(e.getMessage());
+		}
+		return null;
 	}
-	return null;
-
-}
 
 	@Override
-	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
+	public List<Profile> getProfilesWithRfid(Hierarchy hierarchy) throws GSmartDatabaseException {
 		
-		return profileDao.getProfilesWithRfid();
+		return profileDao.getProfilesWithRfid(hierarchy);
 	}
+	
+	@Override
+	public List<Profile> searchProfilesWithoutRfid(String profileListWithoutRfid,String role,Hierarchy hierarchy) throws GSmartServiceException {
+		try {
+			return profileDao.searchProfilesWithoutRfid(profileListWithoutRfid,role,hierarchy);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+
+	}
+
+	
+	@Override
+	public List<Profile> searchProfilesWithRfid(String profileListWithRfid,String role,Hierarchy hierarchy) throws GSmartServiceException {
+		try {
+			return profileDao.searchProfilesWithRfid(profileListWithRfid,role,hierarchy);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+	}
+	
 
 	@Override
 	public void addBanner(Banners banner) throws GSmartServiceException {
@@ -209,6 +233,9 @@ public class ProfileServicesImp implements ProfileServices {
 		// TODO Auto-generated method stub
 		return profileDao.getBannerList();
 	}
+	
+	
+	
 	@Override
 	public Banners editBanner(Banners banner) throws GSmartServiceException {
 		Loggers.loggerStart();

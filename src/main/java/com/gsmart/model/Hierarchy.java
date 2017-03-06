@@ -72,6 +72,10 @@ public class Hierarchy {
 	@Column(name="IS_ACTIVE")
 	private String isActive;
 	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+	
 
 	public String getEntryTime() {
 		return entryTime;

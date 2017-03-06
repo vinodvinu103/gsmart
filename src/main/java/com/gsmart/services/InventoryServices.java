@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Hierarchy;
@@ -22,7 +23,7 @@ public interface InventoryServices {
 	 * @see List
 	 */
 	
-	public List<Inventory>getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public Map<String, Object> getInventoryList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
 	
 	/**
 	 * @param inventory instanceOf {@link Inventory}

@@ -62,9 +62,9 @@ public class RolePermissionController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
 
-	public ResponseEntity<Map<String, Object>> getPermissionList(@RequestHeader HttpHeaders token,
+	public ResponseEntity<Map<String, Object>> getPermissionList(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -74,8 +74,7 @@ public class RolePermissionController {
 
 		str.length();
 
-		List<RolePermission> rolePermissionList = null;
-
+		Map<String, Object> rolePermissionList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> permissions = new HashMap<>();
@@ -84,7 +83,7 @@ public class RolePermissionController {
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 
 		if (modulePermission != null) {
-			rolePermissionList = rolePermissionServices.getPermissionList(tokenObj.getRole(), tokenObj.getHierarchy());
+			rolePermissionList = rolePermissionServices.getPermissionList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 
 			permissions.put("rolePermissionList", rolePermissionList);
 			Loggers.loggerEnd();

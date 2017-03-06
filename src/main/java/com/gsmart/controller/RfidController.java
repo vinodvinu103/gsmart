@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Search;
+import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
@@ -40,13 +43,14 @@ public class RfidController {
 	@Autowired
 	TokenService tokenService;
 	
-	@RequestMapping( method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Map<String,Object>> getProfilesWithoutRfid(@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
 		String tokenNumber = token.get("Authorization").get(0);
 		
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 		str.length();
 		
@@ -59,14 +63,12 @@ public class RfidController {
 		profile.put("modulePermission", modulePermission);
 					
   if (modulePermission!= null) {
-			profileListWithoutRfid = profileServices.getProfilesWithoutRfid();
+			profileListWithoutRfid = profileServices.getProfilesWithoutRfid(tokenObj.getHierarchy());
 			profile.put("profileListWithoutRfid", profileListWithoutRfid);
 			
-			profileListWithRfid = profileServices.getProfilesWithRfid();
+			profileListWithRfid = profileServices.getProfilesWithRfid(tokenObj.getHierarchy());
 			profile.put("profileListWithRfid", profileListWithRfid);
 
-
-		//	profile.put("profileList", profileListWithoutRfid);
 			Loggers.loggerEnd(profileListWithoutRfid);
 			Loggers.loggerEnd(profileListWithRfid);
 		
@@ -92,12 +94,12 @@ public class RfidController {
 		str.length();
 		
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			List<Profile> pl=profileServices.addRfid(rfid);
-			List<Profile> pl1=profileServices.editRfid(rfid);
-			if(pl!=null || pl1!=null)
-			resp.setMessage("success");
-		else
-			resp.setMessage("Already exists");
+			profileServices.addRfid(rfid);
+//			List<Profile> pl1=profileServices.editRfid(rfid);
+//			if(pl!=null || pl1!=null)
+//			resp.setMessage("success");
+//		else
+//			resp.setMessage("Already exists");
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse> (resp, HttpStatus.OK);
@@ -105,6 +107,58 @@ public class RfidController {
 			resp.setMessage("Permission Denied");
 			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 		}
+	}
+	
+	@RequestMapping(value = "/profilesListWithoutRfid/{profile}",  method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchProfilesWithoutRfid(@PathVariable String profile,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		List<Profile> profilesListWithoutRfid = null;
+        RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+        Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		
+		Map<String, Object> studentMap = new HashMap<>();
+		studentMap.put("modulePermission", modulePermission);
+		if (modulePermission!= null) {			
+			profilesListWithoutRfid = profileServices.searchProfilesWithoutRfid(profile,tokenObj.getRole(),tokenObj.getHierarchy());
+			studentMap.put("profilesListWithoutRfid", profilesListWithoutRfid);
+			Loggers.loggerEnd(profilesListWithoutRfid);
+		 return new ResponseEntity<Map<String, Object>>(studentMap, HttpStatus.OK);
+	} else {
+		return new ResponseEntity<Map<String, Object>>(studentMap, HttpStatus.OK);
+	}
+	}
+	
+
+	
+	
+	@RequestMapping(value="/profilesListWithRfid/{profile}", method=RequestMethod.POST)
+	public ResponseEntity<Map<String,Object>> searchProfilesWithRfid(@PathVariable String profile,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str =getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		List<Profile> profilesListWithRfid = null;
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber,httpSession);
+		 Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Map<String,Object>employeeMap = new HashMap<>();
+		employeeMap.put("modulePermission", modulePermission);
+		if(modulePermission!=null){
+			profilesListWithRfid=profileServices.searchProfilesWithRfid(profile,tokenObj.getRole(),tokenObj.getHierarchy());
+			employeeMap.put("profilesListWithRfid", profilesListWithRfid);
+			Loggers.loggerEnd(profilesListWithRfid);
+			return new ResponseEntity<Map<String,Object>>(employeeMap,HttpStatus.OK);
+		}else{
+			return new ResponseEntity<Map<String,Object>>(employeeMap,HttpStatus.OK);
+		}
+		
 	}
 	
 /*	@RequestMapping( method = RequestMethod.POST)
@@ -132,29 +186,6 @@ public class RfidController {
 			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 		}
 	}*/
-//	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-//	public  ResponseEntity<IAMResponse> editLeave(@RequestBody Leave leave, @PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-//		Loggers.loggerStart();
-//		IAMResponse myResponse;
-//		String tokenNumber = token.get("Authorization").get(0);
-//
-//		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-//
-//		str.length();
-//		
-//		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-//			if (task.equals("edit"))
-//				leaveServices.editLeave(leave);
-//			else if (task.equals("delete"))
-//				leaveServices.deleteLeave(leave);
-//
-//			myResponse = new IAMResponse("success");
-//			Loggers.loggerEnd();
-//			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-//		} else {
-//			myResponse = new IAMResponse("Permission Denied");
-//			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-//		}
-//	}
+
 
 }
