@@ -6,7 +6,6 @@ import java.util.Map;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartServiceException;
 
 public interface AssignService {
