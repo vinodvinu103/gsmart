@@ -2,8 +2,11 @@ package com.gsmart.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -34,7 +37,9 @@ public class Attendance {
 	@Column(name="STATUS")
 	private String status;
 	
-	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
 
 	
 	public String getStatus() {
@@ -111,6 +116,16 @@ public class Attendance {
 	public String toString() {
 		return "Attendance \n\t [\n\t rfId=" + rfId + ", \n\t smartId=" + smartId + ", \n\t inTime=" + inTime + ", \n\t outTime=" + outTime
 				+ ", \n\t inDate=" + inDate + ", \n\t isActive=" + isActive + "]";
+	}
+
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
 	}
 
 

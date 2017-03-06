@@ -26,6 +26,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	@Autowired
 	ProfileDao profileDao;
+	@Autowired
+	SearchService searchService;
 
 	@Override
 	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId)
@@ -66,23 +68,28 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getAttendanceByhierarchy(Long date, List<Hierarchy> hidList) {
+	public List<Map<String, Object>> getAttendanceByhierarchy(String smartId, Long date, List<Hierarchy> hidList) {
 		// TODO Auto-generated method stub
-		List<Attendance> attendanceList = attendancedao.getAttendanceByhierarchy(date);
 		List<Map<String, Object>> responseList = new ArrayList<>();
 		for (Hierarchy hierarchy : hidList) {
 			Map<String, Object> schoolData = new HashMap<>();
+			List<Attendance> attendanceList = attendancedao.getAttendanceByhierarchy(date, hierarchy);
 			int totalCount = 0;
 			int totalPresent = 0;
 			Date dateObj = new Date(date * 1000);
 			int year = dateObj.getYear();
+			Map<String, Profile> profileMap = new HashMap<>();
 			List<Profile> profileList = profileDao.getProfileByHierarchyAndYear(hierarchy, year + "-" + (year + 1));
-			totalCount = profileList.size();
+			for(Profile profile : profileList) {
+				profileMap.put(profile.getSmartId(), profile);
+			}
+			ArrayList<String> childsList = searchService.getAllChildSmartId(smartId, profileMap);
+			totalCount = childsList.size();
 			for (Attendance attendance : attendanceList) {
-				for (Profile profile : profileList) {
-					if (profile.getRfId().equalsIgnoreCase(attendance.getRfId())) {
+				for (String childSmartId : childsList) {
+					if (childSmartId.equalsIgnoreCase(attendance.getSmartId())) {
 						++totalPresent;
-						profileList.remove(profile);
+						childsList.remove(childSmartId);
 						attendanceList.remove(attendance);
 					}
 				}
