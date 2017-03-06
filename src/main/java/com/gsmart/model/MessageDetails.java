@@ -7,6 +7,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.print.DocFlavor.INPUT_STREAM;
 
 
 
@@ -51,6 +52,7 @@ public class MessageDetails
 	@Column(name = "IMAGE", length = 400000)
     @Lob
 	private byte[] image;
+//    private INPUT_STREAM image;
 	
 	public String getFormat() {
 		return format;
@@ -68,6 +70,14 @@ public class MessageDetails
 		this.image = image;
 	}
 
+	/*public INPUT_STREAM getImage() {
+		return image;
+	}
+
+	public void setImage(INPUT_STREAM image) {
+		this.image = image;
+	}*/
+	
 	public String getSmartId() {
 		return smartId;
 	}

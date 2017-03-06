@@ -83,5 +83,10 @@ public class ContactServicesImp implements ContactServices {
 		}
 		return chat1;
 	}
+
+	/*@Override
+	public boolean teacherToStudent(MessageDetails details) throws Exception {
+		return dao.teacherToStudent(details);
+	}*/
 	
 }

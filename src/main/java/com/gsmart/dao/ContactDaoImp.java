@@ -54,6 +54,27 @@ public class ContactDaoImp implements ContactDao {
 			session.close();
 		}
 	}
+	
+	/*@Override
+	public boolean teacherToStudent(MessageDetails details) {
+
+		Loggers.loggerStart();
+		try {
+			getConnection();
+			details.setEntryTime(CalendarCalculator.getTimeStamp());
+			
+//			details.setPostedBy(role);
+			details.setReadByTeacher("Y");
+			session.save(details);
+			transaction.commit();
+			Loggers.loggerEnd();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			session.close();
+		}}*/
 
 	@Override
 	public List<MessageDetails> msgList(MessageDetails details) throws Exception {
@@ -70,9 +91,9 @@ public class ContactDaoImp implements ContactDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		} /*finally {
+		} finally {
 			session.close();
-		}*/
+		}
 	}
 
 	@Override
@@ -242,10 +263,10 @@ public class ContactDaoImp implements ContactDao {
 			e.printStackTrace();
 			return null;
 		}
-		/*finally
+		finally
 		{
 			session.close();
-		}*/
+		}
 		msgMap.put("messages", messages);
 		return msgMap;
 	}
@@ -277,10 +298,10 @@ public class ContactDaoImp implements ContactDao {
 			e.printStackTrace();
 			return null;
 		}
-		/*finally
+		finally
 		{
 			session.close();
-		}*/
+		}
 		msgMap.put("messages", messages);
 		return msgMap;
 	}
