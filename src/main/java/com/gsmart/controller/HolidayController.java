@@ -90,9 +90,9 @@ public class HolidayController {
 		}else{
 			hid=tokenObj.getHierarchy().getHid();
 		}
-
+		String role=tokenObj.getRole();
 		/*if (modulePermission != null) {*/
-			holidayList = holidayServices.getHolidayList(hid, min, max);
+			holidayList = holidayServices.getHolidayList(role,tokenObj.getHierarchy(), min, max);
 			if(holidayList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");

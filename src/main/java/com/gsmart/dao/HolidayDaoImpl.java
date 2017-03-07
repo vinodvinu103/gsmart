@@ -62,21 +62,23 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getHolidayList(Long hid, Integer min, Integer max)
-			throws GSmartDatabaseException {
+	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy,int min,int max )throws GSmartDatabaseException {
+
 		Loggers.loggerStart();
 		getConnection();
 		List<Holiday> holidayList = null;
 		Map<String, Object> holidayMap = new HashMap<>();
 		Criteria criteria = null;
 		try {
-			
-			
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
+				query = session.createQuery("from Holiday WHERE isActive='Y' ");
+				 } else {
+				 query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy.hid=:hierarchy");
+				 query.setParameter("hierarchy", hierarchy.getHid());
+			}
+
 			criteria = session.createCriteria(Holiday.class);
-			criteria.setMaxResults(max);
-			criteria.setFirstResult(min);
-			criteria.add(Restrictions.eq("isActive", "Y"));
-			criteria.add(Restrictions.eq("hierarchy.hid", hid));
+
 			holidayList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Holiday.class);
 			criteriaCount.setProjection(Projections.rowCount());
