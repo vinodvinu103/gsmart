@@ -82,7 +82,9 @@ public class ReportCardController {
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
 				list = reportCardService.search(tokenObj,academicYear,examName);
+				reportCardService.downloadPdf(tokenObj, academicYear, examName);
 				permission.put("reportCard", list);
+				//permission.put("downLaodPDF", pdf);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}
 		} catch (Exception e) {
@@ -355,10 +357,11 @@ public class ReportCardController {
 
 	}
 	
-	@RequestMapping(value="/download", method=RequestMethod.GET)
-	public ResponseEntity<Map<String, String>> generatePDF(@RequestHeader HttpHeaders token,HttpSession httpSession){
+	@RequestMapping(value="/download/{academicYear}/{examName}", method=RequestMethod.GET)
+	public ResponseEntity<Map<String, String>> generatePDF(@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName,@RequestHeader HttpHeaders token,HttpSession httpSession)throws GSmartBaseException{
 		Loggers.loggerStart();
-		
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		reportCardService.downloadPdf(tokenObj, academicYear, examName);
 		Loggers.loggerEnd();
 		return null;
 	}

@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -47,30 +48,25 @@ public class LeaveDaoImpl implements LeaveDao {
 		Criteria criteria = null;
 		Map<String, Object> leaveMap = new HashMap<>();
 		try {
-			String role1 = tokenObj.getRole();
-			if (role1.equalsIgnoreCase("admin") || role1.equalsIgnoreCase("hr") || role1.equalsIgnoreCase("director")) {
-				query = session.createQuery("FROM Leave WHERE isActive='Y'");
-			} else {
-				query = session
-						.createQuery("FROM Leave WHERE smartId=:smartId and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-				query.setParameter("smartId", tokenObj.getSmartId());
-			}
 			criteria = session.createCriteria(Leave.class);
+			criteria.add(Restrictions.eq("smartId",tokenObj.getSmartId()));
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid",  hierarchy.getHid()));
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
-			criteria.setProjection(Projections.id());
 			leave = criteria.list();
+
 			Criteria criteriaCount = session.createCriteria(Leave.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y")).setProjection(Projections.rowCount());
+			criteriaCount.add(Restrictions.eq("hierarchy.hid",hierarchy.getHid()));
 			criteriaCount.setProjection(Projections.rowCount());
-			Long count = (Long) criteriaCount.uniqueResult();
-			leaveMap.put("totalleavelist", query.list().size());
+			leaveMap.put("totalleavelist",criteriaCount.uniqueResult());
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
 			session.close();
 		}
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(leave);
 		leaveMap.put("leave", leave);
 		return leaveMap;
 	}
@@ -88,7 +84,7 @@ public class LeaveDaoImpl implements LeaveDao {
 			
 			 Hierarchy hierarchy=leave.getHierarchy();
 			 query=session.createQuery(
-			 "FROM Leave WHERE smartId=:smartId AND not(startDate>:startDate or endDate<:endDate) and isActive=:isActive and leaveStatus!='Rejected*' and hierarchy.hid=:hierarchy");
+			 "FROM Leave WHERE smartId=:smartId and not(startDate>:startDate and endDate<:endDate) and isActive=:isActive and leaveStatus!='Rejected*' and hierarchy.hid=:hierarchy");
 			 query.setParameter("smartId", leave.getSmartId());
 			 query.setParameter("startDate", startDate);
 			 query.setParameter("endDate", endDate);
@@ -97,7 +93,7 @@ public class LeaveDaoImpl implements LeaveDao {
 			 leave.getReportingManagerId();
 			 query.setParameter("isActive", "Y"); 
 			 
-			 Leave leave1=(Leave)query.uniqueResult(); 
+			 Leave leave1=(Leave)query.uniqueResult();
 			 if(leave1==null)
 			 {
 				 leave.setStartDate(startDate);

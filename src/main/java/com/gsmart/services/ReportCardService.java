@@ -27,8 +27,8 @@ public interface ReportCardService {
 	
 	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
 	
-	public void calculatPercentage(String smartId, ArrayList<ReportCard> childReportCards)throws GSmartServiceException;
+	public void calculatPercentage(String smartId, List<ReportCard> childReportCards)throws GSmartServiceException;
 
-	public List<ReportCard> downloadPdf(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
+	public void downloadPdf(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
 
 }
