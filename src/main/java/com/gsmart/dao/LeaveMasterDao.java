@@ -1,6 +1,5 @@
 package com.gsmart.dao;
 
-import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.CompoundLeaveMaster;
@@ -9,7 +8,7 @@ import com.gsmart.model.LeaveMaster;
 import com.gsmart.util.GSmartDatabaseException;
 
 public interface LeaveMasterDao {
-	public Map<String, Object> getLeaveMasterList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
+	public Map<String, Object> getLeaveMasterList(Long hid, Integer min, Integer max) throws GSmartDatabaseException;
 
 	public CompoundLeaveMaster addLeaveMaster(LeaveMaster leaveMaster) throws GSmartDatabaseException;
 

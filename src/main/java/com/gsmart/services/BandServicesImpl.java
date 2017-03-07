@@ -48,7 +48,7 @@ public class BandServicesImpl implements BandServices {
 	}
 	
 	@Override
-	public Map<String, Object> getBandList1() throws GSmartServiceException {
+	public List<Band> getBandList1() throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
 			return bandDao.getBandList1();

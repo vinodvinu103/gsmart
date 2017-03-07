@@ -93,6 +93,7 @@ public class AttendanceController {
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
 		holidayList = holidayService.getHolidayList(tokenObj.getRole(), tokenObj.getHierarchy());
+
 		permissions.put("attendanceList", attendanceList);
 		System.out.println("attendanceList:" + attendanceList);
 		permissions.put("holidayList", holidayList);

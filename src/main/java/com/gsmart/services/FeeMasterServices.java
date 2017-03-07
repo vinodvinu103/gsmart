@@ -1,6 +1,5 @@
 package com.gsmart.services;
 
-import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.CompoundFeeMaster;
@@ -22,7 +21,7 @@ public interface FeeMasterServices
 	 * @throws GSmartServiceException
 	 */
 	
-	public Map<String, Object> getFeeList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
+	public Map<String, Object> getFeeList(Long hid, int min, int max) throws GSmartServiceException;
 	/**
 	 * @param feeMaster instanceOf {@link FeeMaster}
 	 * @return nothing

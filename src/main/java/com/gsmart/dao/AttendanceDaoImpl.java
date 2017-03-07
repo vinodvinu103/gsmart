@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Attendance;
+import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -66,10 +68,11 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		Loggers.loggerStart("attendanceList : " + attendanceList + " " + attendanceList.size());
 		try {
 			for (Attendance attendance : attendanceList) {
-				String smartId = getSmartId(attendance.getRfId());
+				Profile profile = getSmartId(attendance.getRfId());
 				getconnection();
-				if(smartId != null) {
-					attendance.setSmartId(smartId);
+				if(profile.getSmartId() != null) {
+					attendance.setSmartId(profile.getSmartId());
+					attendance.setHierarchy(profile.getHierarchy());
 					session.saveOrUpdate(attendance);
 					rfidList.add(attendance.getRfId());
 				}
@@ -172,12 +175,13 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	}
 
 	@Override
-	public List<Attendance> getAttendanceByhierarchy(Long date) {
+	public List<Attendance> getAttendanceByhierarchy(Long date, Hierarchy hierarchy) {
 		Loggers.loggerStart();
 		getconnection();
 		try {
-			query = session.createQuery("from Attendance where inDate=:inDate");
+			query = session.createQuery("from Attendance where inDate=:inDate and hierarchy.hid=:hId");
 			query.setParameter("inDate", date);
+			query.setParameter("hId", hierarchy.getHid());
 			return query.list();
 
 		} catch (Exception e) {
@@ -189,13 +193,13 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		}
 	}
 	
-	private String getSmartId(String rfid) {
+	private Profile getSmartId(String rfid) {
 		Loggers.loggerStart();
 		getconnection();
 		try {
-			query = session.createQuery("select smartId from Profile where rfid=:rfid");
+			query = session.createQuery("from Profile where rfid=:rfid");
 			query.setParameter("rfid", rfid);
-			return (String) query.uniqueResult();
+			return (Profile) query.uniqueResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerEnd();
