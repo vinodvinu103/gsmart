@@ -242,15 +242,15 @@ public class AssignController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}
-	@RequestMapping(value="/searchstandardfee", method=RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> searchStandardFee(String standard,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException{
+	@RequestMapping(value="/searchstandardfee/{hierarchy}/{standard}", method=RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> searchStandardFee(@PathVariable("standard") String standard,@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException{
 		Loggers.loggerStart(standard);
 		
 		String tokenNumber=token.get("Authorization").get(0);
 		String str =getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String,Object> jsonResult = new HashMap<>();
-		boolean result=assignService.searchStandardFeeService(standard);
+		boolean result=assignService.searchStandardFeeService(standard,hierarchy);
 		if(result){
 		jsonResult.put("status",500);
 		jsonResult.put("message","Please.. fill FeeMaster before registering the student ");

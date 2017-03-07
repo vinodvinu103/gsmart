@@ -140,7 +140,6 @@ public class InventoryDaoImpl implements InventoryDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-
 		}
 		
 		Loggers.loggerEnd();

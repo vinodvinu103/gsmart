@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartServiceException;
 /**
  * Provides services for {@link FeeMasterController}.
@@ -44,7 +43,7 @@ public interface FeeMasterServices
 	public void deleteFee(FeeMaster feeMaster)throws GSmartServiceException;
 	
 	
-	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartServiceException;
 	
 	/*public void fileUpload(FileUpload fileUpload)throws GSmartServiceException;*/
 	

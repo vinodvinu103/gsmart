@@ -73,11 +73,11 @@ public class AssignServiceImpl implements AssignService{
 	}
 	
 	@Override
-	public boolean searchStandardFeeService(String standard){
+	public boolean searchStandardFeeService(String standard,Long hid){
 		Loggers.loggerStart();
 		boolean status=false;
 		try{
-		status= assignDao.searchStandardFeeDao(standard);
+		status= assignDao.searchStandardFeeDao(standard,hid);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

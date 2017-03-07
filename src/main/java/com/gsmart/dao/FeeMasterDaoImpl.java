@@ -251,12 +251,12 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	}
 
 	@Override
-	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) {
+	public FeeMaster getFeeStructure(String standard,Long hid) {
 		getConnection();
 		try {
 			
 				query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("hierarchy", hid);
 				
 			
 			FeeMaster fee = (FeeMaster) query.list().get(0);
