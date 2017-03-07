@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.HierarchyDao;
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
@@ -43,12 +44,15 @@ public class AssignController {
 
 	@Autowired
 	TokenService tokenServices;
+	
+	@Autowired
+	HierarchyDao hierarchyDao;
 
 	@Autowired
 	ProfileServices profileServices;
 
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAssigningReportee(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAssigningReportee(@PathVariable ("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
@@ -66,10 +70,18 @@ public class AssignController {
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 		permissions.put("modulePermission", modulePermission);
+		Long hid=null;
+		
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+			
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 
 		/*if (modulePermission != null) {*/
 
-          assignList = assignService.getAssignReportee(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
+          assignList = assignService.getAssignReportee(hid, min, max);
 			if(assignList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");
@@ -86,10 +98,55 @@ public class AssignController {
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 */
 	}
+	@RequestMapping(value="/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAssigningList( @PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart(hierarchy);
 
-	@RequestMapping(method = RequestMethod.POST)
+		Map<String, Object> permissions = new HashMap<>();
+
+		List<Assign>assignList = null;
+
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+	
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+
+		permissions.put("modulePermission", modulePermission);
+		Long hid=null;
+		
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+			
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+
+
+          assignList = assignService.getAssignList(hid);
+			if(assignList!=null){
+				permissions.put("status", 200);
+				permissions.put("message", "success");
+				permissions.put("assignList",assignList);
+				
+			}else{
+				permissions.put("status", 404);
+				permissions.put("message", "No Data Is Present");
+				
+			}
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+
+	}
+	
+
+	@RequestMapping(value="/hierarchy/{hierarchy}",method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> addAssigningReportee(@RequestBody Assign assign,
-			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+			@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		Map<String, Object> respMap = new HashMap<>();
@@ -99,7 +156,13 @@ public class AssignController {
 
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-			assign.setHierarchy(tokenObj.getHierarchy());
+			if(tokenObj.getHierarchy()==null){
+				assign.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
+			}else{
+				assign.setHierarchy(tokenObj.getHierarchy());
+				
+			}
+			
 			
 			CompoundAssign cb = assignService.addAssigningReportee(assign);
 			if(cb!=null)

@@ -50,6 +50,6 @@ public interface BandDao {
 	
 	public Band getMaxband() throws GSmartDatabaseException;
 
-	public Map<String, Object> getBandList1() throws GSmartDatabaseException;
+	public List<Band> getBandList1() throws GSmartDatabaseException;
 
 }

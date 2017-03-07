@@ -62,15 +62,14 @@ public class BandController {
 	 */
 	// String module=getAuthorization.getModuleName();
 
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("hierarchy") Integer hierarchy, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
-		Loggers.loggerStart();
+		Loggers.loggerStart(hierarchy);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	    str.length();
 	    Map<String, Object> bandList = null;
-		Map<String, Object> bandResponseMap = null;
        
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
@@ -105,20 +104,20 @@ public class BandController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	    str.length();
-	    Map<String, Object> bandList1 = null;
-		Map<String, Object> bandResponseMap1 = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+	    List<Band>bandList=null;
+	    RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> permissions = new HashMap<>();
         
 		permissions.put("modulePermission",modulePermission);
 		/*if (modulePermission != null) {
 			System.out.println("success");*/
-			bandList1 = bandServices.getBandList1();
-			if(bandList1!=null){
+		bandList = bandServices.getBandList1();
+			if(bandList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");
-				permissions.put("bandList1",bandList1);
+				permissions.put("bandList",bandList);
 				
 			}else{
 				permissions.put("status", 404);
