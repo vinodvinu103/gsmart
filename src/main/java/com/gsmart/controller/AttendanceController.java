@@ -92,7 +92,7 @@ public class AttendanceController {
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
-		holidayList = holidayService.getHolidayList(tokenObj.getRole(), tokenObj.getHierarchy());
+		holidayList = holidayService.getHolidayList(tokenObj.getRole(), tokenObj.getHierarchy(),1,1);
 
 		permissions.put("attendanceList", attendanceList);
 		System.out.println("attendanceList:" + attendanceList);
@@ -118,7 +118,6 @@ public class AttendanceController {
 				responseMap.put("status", 200);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

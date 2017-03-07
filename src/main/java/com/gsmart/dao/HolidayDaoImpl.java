@@ -62,7 +62,7 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getHolidayList(String role, Hierarchy hierarchy )throws GSmartDatabaseException {
+	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy,int min,int max )throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
 		getConnection();
