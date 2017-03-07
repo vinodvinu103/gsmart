@@ -2,36 +2,45 @@ package com.gsmart.services;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.swing.event.ChangeListener;
-import org.hibernate.exception.ConstraintViolationException;
+import java.util.Properties;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.Authenticator;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.gsmart.dao.ProfileDao;
-import com.gsmart.dao.ReportCardDao;
-import com.gsmart.model.CompoundReportCard;
-import com.gsmart.model.Fee;
-import com.gsmart.model.FeeMaster;
+import com.gsmart.dao.PaySlipDAO;
 import com.gsmart.model.GenerateSalaryStatement;
+import com.gsmart.model.PaySlip;
 import com.gsmart.model.Profile;
-import com.gsmart.model.ReportCard;
-import com.gsmart.model.Token;
-import com.gsmart.util.Constants;
-import com.gsmart.util.GSmartServiceException;
-import com.gsmart.util.Loggers;
+import com.gsmart.model.SalaryStructure;
+import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
@@ -40,156 +49,52 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 @Service
-public class ReportCardServiceImpl implements ReportCardService {
+public class PaySlipServiceImpl implements PaySlipService {
 
 	@Autowired
-	ReportCardDao reportCardDao;
+	private PaySlipDAO paySlipDAO;
 
-	@Autowired
-	ProfileDao profiledao;
-
-	@Autowired
-	FeeServices feeServices;
-
-	@Autowired
-	FeeMasterServices feeMasterServices;
-
-	@Autowired
-	SearchService searchService;
-	
+	Logger logger = Logger.getLogger(PaySlipServiceImpl.class);
 	Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-	
-	@Override
-	public List<ReportCard> reportCardList() throws GSmartServiceException {
-		Loggers.loggerStart();
-	List<ReportCard> list = null;
-		try {
-			// list = reportCardDao.reportCardList();
-
-		} catch (Exception e) {
-			throw new GSmartServiceException(e.getMessage());
-		}
-		return list;
-	}
 
 	@Override
-	public CompoundReportCard addReportCard(ReportCard card) throws GSmartServiceException {
-		Loggers.loggerStart(card);
-		CompoundReportCard card2 = null;
-		try {
-			card2 = reportCardDao.addReportCard(card);
+	public void download(PaySlip paySlip) {
 
-		} catch (ConstraintViolationException e) {
-			throw new GSmartServiceException(Constants.CONSTRAINT_VIOLATION);
-		} catch (Exception e) {
-			throw new GSmartServiceException(e.getMessage());
-
-		}
-		Loggers.loggerEnd(card2);
-		return card2;
-	}
-
-	@Override
-	public ReportCard editReportCard(ReportCard card) throws GSmartServiceException {
-		Loggers.loggerStart(card);
-		ReportCard card2 = null;
-		try {
-			card2 = reportCardDao.editReportCard(card);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		Loggers.loggerEnd(card2);
-		return card2;
-	}
-
-	@Override
-	public void deleteReportCard(ReportCard card) throws GSmartServiceException {
-		Loggers.loggerStart(card);
-		try {
-			reportCardDao.deleteReportCard(card);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		Loggers.loggerEnd();
-	}
-
-	@Override
-	public void excelToDB(String smartId, MultipartFile fileUpload) throws Exception {
-		reportCardDao.excelToDB(smartId, fileUpload);
-	}
-
-	@Override
-	public List<ReportCard> search(Token tokenDetail, String academicYear, String examName)
-			throws GSmartServiceException {
-		Loggers.loggerStart();
-		List<ReportCard> card = null;
-		try {
-			card = reportCardDao.search(tokenDetail, academicYear, examName);
-			Loggers.loggerEnd();
-		} catch (Exception e) {
-			throw new GSmartServiceException(e.getMessage());
-
-		}
-		return card;
-
-	}
-
-	@Override
-	public void calculatPercentage(String smartId, ArrayList<ReportCard> childReportCards)
-			throws GSmartServiceException {
-		Double totalMarks = 0.0;
-		Double obtainedMarks = 0.0;
-		Double percentage = 0.0;
-		for (ReportCard reportCard : childReportCards) {
-			/*
-			 * System.out.println("Child reportcard in service met"+reportCard);
-			 */
-			totalMarks += reportCard.getMaxMarks();
-			obtainedMarks += reportCard.getMarksObtained();
-		}
-		/*
-		 * System.out.println("Total marks"+totalMarks);
-		 * System.out.println("Total obtained marks"+obtainedMarks);
-		 */
-		try {
-			percentage = ((obtainedMarks / totalMarks) * 100);
-			System.out.println("percentage..........." + percentage);
-		} catch (Exception e) {
-			percentage = 0.0;
-			System.out.println(" in side catch blk percentage..........." + percentage);
-		}
-
-	}
-
-	/*@Override
-	public List<ReportCard> downloadPdf(Token tokenDetail, String examName, String academicYear)
-			throws GSmartServiceException {
 		Calendar startMonth = Calendar.getInstance();
 		Calendar endMonth = Calendar.getInstance();
-		List<ReportCard> list=null;
-		*//***********************************************************//*
+
+		/***********************************************************/
+		logger.info("Generating PDF File");
 		try {
 			document.open();
+
+			startMonth.setTime(
+					new SimpleDateFormat("MMMM/yyyy").parse(paySlip.getFromMonth() + "/" + paySlip.getFromYear()));
+			endMonth.setTime(new SimpleDateFormat("MMMM/yyyy").parse(paySlip.getToMonth() + "/" + paySlip.getToYear()));
+			logger.info("tada");
 			while (startMonth.compareTo(endMonth) <= 0) {
 				String month = new SimpleDateFormat("MMMM").format(startMonth.getTime());
 				String year = new SimpleDateFormat("yyyy").format(startMonth.getTime());
 
-				list = reportCardDao.search(tokenDetail, academicYear, examName);
-				for (ReportCard reportCard : list) {
-					String subject=reportCard.getSubject();
-					String subjectGrade=reportCard.getSubjectGrade();
-					list.add(reportCard);
-				}
+				paySlip.setFromMonth(month);
+				paySlip.setFromYear(year);
+
+				GenerateSalaryStatement salStmt = paySlipDAO.download(paySlip);
+				logger.info(paySlip);
 				try {
 					PdfWriter.getInstance(document,
-							new FileOutputStream(tokenDetail.getSmartId() + " " + examName + " " + academicYear + ".pdf"));
+							new FileOutputStream(salStmt.getSmartId() + " " + month + " " + year + ".pdf"));
+					logger.info("before catch");
 				} catch (FileNotFoundException | DocumentException e) {
 					e.printStackTrace();
 				}
-				
-				//generatePDF(list, examName, academicYear);
-				Loggers.loggerValue(academicYear, "pdfgenerated");
+				logger.info(salStmt);
+				logger.info(month);
+				logger.info(year);
+				generatePDF(salStmt, month, year);
+				logger.info("pdfgenerated");
 				startMonth.add(Calendar.MONTH, 1);
+				logger.info(startMonth);
 			}
 			document.close();
 		} catch (ParseException e) {
@@ -197,14 +102,8 @@ public class ReportCardServiceImpl implements ReportCardService {
 		}
 
 	}
-*/
-	@Override
-	public List<ReportCard> downloadPdf(Token tokenDetail, String academicYear, String examName)
-			throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public void generatePDF(GenerateSalaryStatement salStmt, String examName, String academicYear) {
+
+	public void generatePDF(GenerateSalaryStatement salStmt, String month, String year) {
 
 		// Image image = null;
 
@@ -221,7 +120,7 @@ public class ReportCardServiceImpl implements ReportCardService {
 
 			rect.setBorder(Rectangle.BOX);
 			rect.setBorderWidth(0.5f);
-			Loggers.loggerStart(rect);
+			logger.info(rect);
 			try {
 				document.add(rect);
 			} catch (DocumentException e2) {
@@ -235,7 +134,7 @@ public class ReportCardServiceImpl implements ReportCardService {
 			// Font.BOLD | Font.UNDERLINE);
 			Font contents = new Font(Font.FontFamily.TIMES_ROMAN, 11);
 
-			Chunk company = new Chunk("Delhi Public School", heading);
+			Chunk company = new Chunk("Gowdanar Technologies", heading);
 			Chunk address1 = new Chunk(" No. 2750 3RD FLOOR E BLOCK", subHeading);
 			Chunk address2 = new Chunk("AIRPORT ROAD SAHAKAR NAGAR", subHeading);
 			Chunk address3 = new Chunk("BANGALORE-560092", subHeading);
@@ -243,7 +142,7 @@ public class ReportCardServiceImpl implements ReportCardService {
 			PdfPTable table = new PdfPTable(2);
 			table.setWidthPercentage(100);
 			table.setWidths(new int[] { 10, 50 });
-			System.out.println("table");
+			logger.info("table");
 			/*
 			 * PdfPCell imgCell = new PdfPCell(image, false);
 			 * imgCell.setPadding(5f); imgCell.setBorder(Rectangle.LEFT |
@@ -258,12 +157,12 @@ public class ReportCardServiceImpl implements ReportCardService {
 			textCell.setBorder(Rectangle.RIGHT | Rectangle.TOP | Rectangle.BOTTOM);
 			table.addCell(textCell);
 			document.add(table);
-			Loggers.loggerStart(table);
-			Paragraph subject = new Paragraph(" " + examName + " " + academicYear, labels);
+			logger.info(table);
+			Paragraph subject = new Paragraph("Payslip for the month of " + month + " " + year, labels);
 			subject.setSpacingBefore(20f);
 			subject.setAlignment(Element.ALIGN_CENTER);
 			document.add(subject);
-			Loggers.loggerStart(subject);
+			logger.info(subject);
 			Paragraph gap = new Paragraph();
 			gap.setSpacingAfter(25f);
 			document.add(gap);
@@ -434,8 +333,90 @@ public class ReportCardServiceImpl implements ReportCardService {
 			e.printStackTrace();
 		}
 		/***********************************************************/
-		System.out.println("Generated PDF File");
+		logger.info("Generated PDF File");
 	}
 
-	
+	@Override
+	public void adminDownload(PaySlip paySlip) {
+
+		List<GenerateSalaryStatement> stmt = paySlipDAO.adminDownload(paySlip);
+
+		try {
+			document.open();
+			PdfWriter.getInstance(document,
+					new FileOutputStream(paySlip.getFromMonth() + " " + paySlip.getFromYear() + ".pdf"));
+		} catch (FileNotFoundException | DocumentException e) {
+			e.printStackTrace();
+		}
+
+		try {
+
+			for (GenerateSalaryStatement generateSalaryStatement : stmt) {
+
+				generatePDF(generateSalaryStatement, paySlip.getFromMonth(), paySlip.getFromYear());
+				document.newPage();
+				document.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/* sendEmail By Soumen */
+	@Override
+	public void sendEmail(PaySlip paySlip) {
+
+		List<Profile> list = paySlipDAO.emailAddress(paySlip);
+		String id = list.get(0).getEmailId();
+		logger.info(id);
+		final String username = "soumendey1991@gmail.com";
+		final String password = "=======================";
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", true);
+		props.put("mail.smtp.starttls.enable", true);
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		});
+
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("soumendey1991@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(id));
+			message.setSubject("Testing Subject");
+			message.setText("PFA");
+
+			MimeBodyPart messageBodyPart = new MimeBodyPart();
+
+			Multipart multipart = new MimeMultipart();
+
+			messageBodyPart = new MimeBodyPart();
+			String file = "/home/gtpl103/" + paySlip.getSmartId() + " " + paySlip.getFromMonth() + " "
+					+ paySlip.getFromYear() + ".pdf";
+			String fileName = paySlip.getSmartId() + " " + paySlip.getFromMonth() + " " + paySlip.getFromYear()
+					+ ".pdf";
+			DataSource source = new FileDataSource(file);
+			messageBodyPart.setDataHandler(new DataHandler(source));
+			messageBodyPart.setFileName(fileName);
+			multipart.addBodyPart(messageBodyPart);
+
+			message.setContent(multipart);
+
+			logger.info("Sending");
+
+			Transport.send(message);
+
+			logger.info("Done");
+
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

@@ -88,7 +88,7 @@ public class LeaveDaoImpl implements LeaveDao {
 			
 			 Hierarchy hierarchy=leave.getHierarchy();
 			 query=session.createQuery(
-			 "FROM Leave WHERE smartId=:smartId AND (startDate=:startDate or endDate=:endDate) and isActive=:isActive and hierarchy.hid=:hierarchy");
+			 "FROM Leave WHERE smartId=:smartId AND not(startDate>:startDate or endDate<:endDate) and isActive=:isActive and leaveStatus!='Rejected*' and hierarchy.hid=:hierarchy");
 			 query.setParameter("smartId", leave.getSmartId());
 			 query.setParameter("startDate", startDate);
 			 query.setParameter("endDate", endDate);
