@@ -18,6 +18,8 @@ public interface FeeDao {
 	public ArrayList<Fee> getFeeLists(String acadamicyear,Long hid) throws GSmartDatabaseException;
 	
 	public List<Fee> gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException;
+	
+	public List<Fee> getFeeDashboard(String role,Hierarchy hierarchy, List<String> childList) throws GSmartServiceException;
 
     public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
 	

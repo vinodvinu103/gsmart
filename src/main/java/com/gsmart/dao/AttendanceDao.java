@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.Attendance;
-import com.gsmart.model.Holiday;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
-import com.gsmart.util.GSmartServiceException;
 
 public interface AttendanceDao  {
 
@@ -16,6 +15,6 @@ public interface AttendanceDao  {
 	
 	public void editAttendance(Attendance attedance) throws GSmartDatabaseException;
 	
-	public List<Attendance> getAttendanceByhierarchy(Long date);
+	public List<Attendance> getAttendanceByhierarchy(Long date, Hierarchy hierarchy);
 
 }

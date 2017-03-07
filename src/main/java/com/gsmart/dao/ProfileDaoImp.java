@@ -190,50 +190,44 @@ public class ProfileDaoImp implements ProfileDao {
 			int min, int max) {
 		Loggers.loggerStart(role);
 		Loggers.loggerStart("current smartId" + smartId);
-		/*session = this.getSessionFactory().openSession();
-		session.beginTransaction();*/
+		/*
+		 * session = this.getSessionFactory().openSession();
+		 * session.beginTransaction();
+		 */
 		getConnection();
-		
-//		List<Profile> profileList = null; 
+
+		// List<Profile> profileList = null;
 		Map<String, Object> profileMap = new HashMap<String, Object>();
 		try {
-			
+
 			criteria = session.createCriteria(Profile.class);
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
-//			criteria.setProjection(Projections.id());
+			// criteria.setProjection(Projections.id());
 			Criteria criteriaCount = session.createCriteria(Profile.class).add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 				if (role.toLowerCase().equals("student")) {
 					criteria.add(Restrictions.eq("role", "student").ignoreCase());
 					
 					criteriaCount.add(Restrictions.eq("role", "student").ignoreCase());
-					
-					 /** query = session.createQuery(
-					 * "from Profile where isActive='Y'and lower(role)='student'"
-					 * );*/
+
+					/**
+					 * query = session.createQuery( "from Profile where
+					 * isActive='Y'and lower(role)='student'" );
+					 */
 					profileMap.put("profileMap1", criteria.list());
 				} else {
 					criteria.add(Restrictions.ne("role", "student").ignoreCase());
 					criteriaCount.add(Restrictions.ne("role", "student").ignoreCase());
-					
-					 /** query = session.createQuery(
-					 * "from Profile where isActive='Y'and lower(role)!='student' "
-					 * );*/
+
+					/**
+					 * query = session.createQuery( "from Profile where
+					 * isActive='Y'and lower(role)!='student' " );
+					 */
 					profileMap.put("profileList", criteria.list());
 				}
 
-			
-			/*criteria.setProjection(Projections.projectionList().
-					add(Projections.property("smartId")).
-					add(Projections.property("firstName"),"firstName").
-					add(Projections.property("lastName"),"lastName").
-					add(Projections.property("role"),"role").
-					add(Projections.property("reportingManagerName"),"reportingManagerName").
-					add(Projections.property("standard"),"standard").
-					add(Projections.property("section"),"section").
-					add(Projections.property("schoolName"),"schoolName"));*/
 			criteriaCount.setProjection(Projections.rowCount());
 			profileMap.put("totalProfiles", criteriaCount.uniqueResult());
 			Loggers.loggerEnd(criteria.list());
@@ -246,7 +240,6 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 
 	}
-
 
 	@Override
 	public Profile getParentInfo(String smartId) {
@@ -702,12 +695,10 @@ public class ProfileDaoImp implements ProfileDao {
 
 		List<Profile> profiles = null;
 		try {
-
 			query = session.createQuery(
 					"from Profile where isActive=:isActive and hierarchy.hid=:hierarchy and academicYear=:academicYear");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("isActive", "Y");
-
 			query.setParameter("academicYear", year);
 
 			profiles = (List<Profile>) query.list();

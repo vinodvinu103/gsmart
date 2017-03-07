@@ -1,5 +1,6 @@
 package com.gsmart.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,6 @@ public class InventoryDaoImpl implements InventoryDao {
 	Session session = null;
 	Transaction transaction = null;
 	Query query;
-
-	
 
 	/**
 	 * to view the list of records available in {@link Inventory} table
@@ -95,18 +94,18 @@ public class InventoryDaoImpl implements InventoryDao {
 
 		getconnection();
 		Loggers.loggerStart();
-		
+
 		CompoundInventory cb = null;
-	
+
 		try {
 			getconnection();
 			Inventory inventory2=fetch(inventory);
 			if (inventory2 ==null) {
 				inventory.setEntryTime((CalendarCalculator.getTimeStamp()));
 				inventory.setIsActive("Y");
-				cb=(CompoundInventory)session.save(inventory);
+				cb = (CompoundInventory) session.save(inventory);
 			}
-		
+
 			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -141,7 +140,6 @@ public class InventoryDaoImpl implements InventoryDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-
 		}
 		Loggers.loggerEnd();
 		return ch;
@@ -203,7 +201,7 @@ public class InventoryDaoImpl implements InventoryDao {
 	 * @return Nothing
 	 */
 
-	public Inventory getInventory(String entryTime,Hierarchy hierarchy) {
+	public Inventory getInventory(String entryTime, Hierarchy hierarchy) {
 		try {
 				query = session.createQuery("from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
@@ -212,12 +210,9 @@ public class InventoryDaoImpl implements InventoryDao {
 
 			query.setParameter("entryTime", entryTime);
 			Inventory inventry = (Inventory) query.uniqueResult();
-			
-			
+
 			return inventry;
 
-			
-		
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -228,9 +223,8 @@ public class InventoryDaoImpl implements InventoryDao {
 	public void deleteInventory(Inventory inventory) throws GSmartDatabaseException {
 		getconnection();
 		Loggers.loggerStart();
-		
+
 		try {
-			
 
 			inventory.setExitTime(CalendarCalculator.getTimeStamp());
 			inventory.setIsActive("D");
@@ -256,17 +250,33 @@ public class InventoryDaoImpl implements InventoryDao {
 	}
 
 	@SuppressWarnings("unused")
-	private String InventoryCount()
-	{
+	private String InventoryCount() {
 		Loggers.loggerStart();
-		try
-		{
-			query=session.createQuery("from Inventory where isactive='Y' and quantity=quantity");
-		}catch(Exception e)
-		{
+		try {
+			query = session.createQuery("from Inventory where isactive='Y' and quantity=quantity");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		Loggers.loggerEnd();
 		return null;
 	}
+
+	@Override
+	public List<Inventory> getInventoryList(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getconnection();
+		List<Inventory> inventoryList;
+		try {
+			query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			inventoryList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return inventoryList;
+	}
+
 }

@@ -1,9 +1,13 @@
 
 package com.gsmart.dao;
 
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.CompoundInventory;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.util.GSmartDatabaseException;
 
@@ -28,6 +32,9 @@ public interface InventoryDao {
 
 	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartDatabaseException;
 
+	
+	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	
 	/**
 	 * @param inventory
 	 *            instanceOf {@link Inventory}
@@ -56,6 +63,5 @@ public interface InventoryDao {
 	 * @throws user
 	 *             define Exception
 	 */
-
 
 }

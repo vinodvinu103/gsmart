@@ -1,5 +1,6 @@
 package com.gsmart.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,5 +18,8 @@ public interface InventoryAssignmentsDao {
 	public InventoryAssignments editInventoryDetails(InventoryAssignments inventoryAssignments) throws GSmartDatabaseException;
 	
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments)throws GSmartDatabaseException;
-
+	
+	public List<InventoryAssignments> getInventoryDashboardData(ArrayList<String> smartIdList, Hierarchy hierarchy)
+			throws GSmartDatabaseException;
+	
 }
