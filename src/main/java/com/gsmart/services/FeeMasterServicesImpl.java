@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.gsmart.dao.FeeMasterDao;
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -112,11 +111,11 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 	}
 
 	@Override
-	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 	try{
 		
-		return feeMasterDao.getFeeStructure(standard,role,hierarchy);
+		return feeMasterDao.getFeeStructure(standard,hid);
 	}
 	catch (Exception e) {
 		e.printStackTrace();

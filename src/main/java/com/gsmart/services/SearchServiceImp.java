@@ -181,13 +181,8 @@ public class SearchServiceImp implements SearchService {
 	 */
 
 	@Override
-<<<<<<< HEAD
 	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles,String academicYear,Long hid)
 			throws GSmartServiceException {
-=======
-	public ArrayList<Profile> sumUpFee(ArrayList<Profile> childList, Map<String, Profile> profiles, String academicYear,
-			String role, Hierarchy hierarchy) throws GSmartServiceException {
->>>>>>> 7a1073dc97abad3bf6bb18f0d6cc9e7b3cc16c59
 
 		Loggers.loggerStart();
 		ArrayList<Profile> fees = new ArrayList<Profile>();
@@ -295,11 +290,7 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerStart(childList);
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
-<<<<<<< HEAD
 		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear,hid);
-=======
-		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear, role, hierarchy);
->>>>>>> 7a1073dc97abad3bf6bb18f0d6cc9e7b3cc16c59
 
 		@SuppressWarnings("unchecked")
 		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList(hid, min, max);
@@ -444,10 +435,6 @@ public class SearchServiceImp implements SearchService {
 		return parentInfo;
 	}
 
-<<<<<<< HEAD
-	
-
-=======
 	@Override
 	public ArrayList<String> getAllChildSmartId(String parentId, Map<String, Profile> allProfiles) {
 		Loggers.loggerStart("getAllChildSmartId in services is called with parentId : " + parentId);
@@ -491,12 +478,5 @@ public class SearchServiceImp implements SearchService {
 		return childSmartIdList;
 	}
 
-	@Override
-	public ArrayList<Profile> studentFees(ArrayList<Profile> profile, String academicYear, String role,
-			Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
->>>>>>> 7a1073dc97abad3bf6bb18f0d6cc9e7b3cc16c59
 
 }

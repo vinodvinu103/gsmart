@@ -20,7 +20,7 @@ public interface AssignService {
 	
 	public Assign getStaffByClassAndSection(String cls, String section, Hierarchy hierarchy);
 	
-	public boolean searchStandardFeeService(String standard) throws GSmartServiceException;
+	public boolean searchStandardFeeService(String standard,Long hid) throws GSmartServiceException;
 	
 	public List<Assign> getAssignList(Long hid) throws GSmartServiceException;
 

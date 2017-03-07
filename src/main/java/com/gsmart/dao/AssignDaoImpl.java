@@ -256,13 +256,15 @@ public class AssignDaoImpl implements AssignDao {
 	}
 	
 	@Override
-	public boolean searchStandardFeeDao(String standard){
+	public boolean searchStandardFeeDao(String standard,Long hid){
 		getConnection();
 		Loggers.loggerStart();
 		boolean status = false;
 		try{
-			query = session.createQuery("from FeeMaster where standard =:standard");
+			query = session.createQuery("from FeeMaster where standard =:standard and isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("standard", standard);
+			query.setParameter("isActive", "Y");
+			query.setParameter("hierarchy", hid);
 			FeeMaster fem =(FeeMaster) query.uniqueResult();
 			if(fem == null){
 				status=true;
@@ -285,6 +287,7 @@ public class AssignDaoImpl implements AssignDao {
 	@Override
 	public List<Assign> getAssignList(Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getConnection();
 		List<Assign> assignList=null;
 		try {
 			query = session.createQuery("FROM Assign WHERE isActive=:isActive and hierarchy.hid=:hierarchy");
@@ -293,7 +296,9 @@ public class AssignDaoImpl implements AssignDao {
 			assignList=query.list();
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd(assignList);
 		return assignList;

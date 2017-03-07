@@ -23,7 +23,7 @@ import com.gsmart.dao.HierarchyDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Fee;
 import com.gsmart.model.FeeMaster;
-
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
@@ -187,28 +187,27 @@ public class RegistrationController {
 			// String updSmartId = tokenObj.getSmartId();
 
 			Loggers.loggerStart(profile.getFirstName());
+			System.out.println("hid"+hierarchy);
 
 			String smartId = String.valueOf((Integer.parseInt(profileServices.getmaxSamrtId()) + 1));
 			if (profile.getRole().equalsIgnoreCase("student")) {
 				if (tokenObj.getHierarchy() == null) {
-					profile.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
+					Hierarchy hierarchy2=hierarchyDao.getHierarchyByHid(hierarchy);
+					profile.setHierarchy(hierarchy2);
+					profile.setSchool(hierarchy2.getSchool());
+					profile.setInstitution(hierarchy2.getInstitution());
 
 				} else {
 					profile.setHierarchy(tokenObj.getHierarchy());
+					profile.setSchool(tokenObj.getHierarchy().getSchool());
+					profile.setInstitution(tokenObj.getHierarchy().getInstitution());
 
 				}
 
-				profile.setSchool(tokenObj.getHierarchy().getSchool());
-				profile.setInstitution(tokenObj.getHierarchy().getInstitution());
-				/*
-				 * Hierarchy hierarchy =
-				 * hierarchyServices.getHierarchyByHid(tokenObj.getHierarchy().
-				 * getHid()); Assign assign =
-				 * assignService.getStaffByClassAndSection(profile.getStandard()
-				 * , profile.getSection(), hierarchy);
-				 * profile.setReportingManagerId(assign.getTeacherSmartId());
-				 * profile.setCounterSigningManagerId(assign.getHodSmartId());
-				 */
+				
+				
+				
+				 
 			}
 
 			profile.setSmartId(smartId);
@@ -222,8 +221,7 @@ public class RegistrationController {
 				passwordServices.setPassword(login, profile.getHierarchy());
 
 				if (profile.getRole().equalsIgnoreCase("student")) {
-					FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), tokenObj.getRole(),
-							tokenObj.getHierarchy());
+					FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
 					Fee fee = new Fee();
 					fee.setSmartId(profile.getSmartId());
 					fee.setName(profile.getFirstName());

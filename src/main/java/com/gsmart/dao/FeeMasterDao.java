@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
 
 /**
@@ -50,7 +49,7 @@ public interface FeeMasterDao {
 
 	public void deleteFee(FeeMaster feeMaster) throws GSmartDatabaseException;
 
-	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy);
+	public FeeMaster getFeeStructure(String standard,Long hid);
 
 	/*public void fileUpload(FileUpload fileUpload) throws GSmartDatabaseException;*/
 

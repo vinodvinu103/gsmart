@@ -294,6 +294,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	@Override
 	public Hierarchy getHierarchyByHid(Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart(hid);
 		getConnection();
 		Hierarchy hierarchyList = null;
 		try {
@@ -305,6 +306,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			e.printStackTrace();
 
 		}
+		Loggers.loggerEnd();
 		return hierarchyList;
 	}
 
