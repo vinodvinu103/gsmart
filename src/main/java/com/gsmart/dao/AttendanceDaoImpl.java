@@ -52,6 +52,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			attendanceList = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
+
 		} finally {
 			session.close();
 		}

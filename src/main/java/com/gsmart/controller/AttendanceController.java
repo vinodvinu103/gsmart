@@ -65,11 +65,11 @@ public class AttendanceController {
 	@Autowired
 	HolidayServices holidayService;
 
-	@RequestMapping(value = "/calender/{month}/{year}/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAttendance(@PathVariable("min") int min, @PathVariable("max") int max,
-			@RequestHeader HttpHeaders token, HttpSession httpSession, @PathVariable("month") Integer month,
-			@PathVariable("year") Integer year, @PathVariable("smartId") String smartId, Holiday holiday)
-			throws GSmartBaseException {
+	@RequestMapping(value = "/calendar/{month}/{year}/{smartId}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
+			@PathVariable("month") Integer month, @PathVariable("year") Integer year, 
+			@PathVariable("smartId") String smartId, Holiday holiday) throws GSmartBaseException {
+
 		Loggers.loggerStart();
 
 		Map<String, Object> permissions = new HashMap<>();
@@ -92,7 +92,8 @@ public class AttendanceController {
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
-		holidayList = holidayService.getHolidayList( tokenObj.getHierarchy().getHid(), min, max);
+		holidayList = holidayService.getHolidayList(tokenObj.getRole(), tokenObj.getHierarchy(),1,1);
+
 		permissions.put("attendanceList", attendanceList);
 		System.out.println("attendanceList:" + attendanceList);
 		permissions.put("holidayList", holidayList);
@@ -117,7 +118,6 @@ public class AttendanceController {
 				responseMap.put("status", 200);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -125,9 +125,9 @@ public class AttendanceController {
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteAttendance(@RequestBody Attendance attendance,
-			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
+	public ResponseEntity<IAMResponse> editAttendance(@RequestBody Attendance attendance,
+	@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException {
+
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
 

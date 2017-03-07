@@ -141,6 +141,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
+		
 		Loggers.loggerEnd();
 		return ch;
 	}

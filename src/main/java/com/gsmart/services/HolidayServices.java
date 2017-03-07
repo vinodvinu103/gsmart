@@ -4,6 +4,7 @@ package com.gsmart.services;
 import java.util.Map;
 
 import com.gsmart.model.CompoundHoliday;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.util.GSmartServiceException;
 /**
@@ -20,7 +21,8 @@ public interface HolidayServices {
 	 * @throws GSmartServiceException
 	 */
 
-	public Map<String, Object> getHolidayList(Long hid, Integer min, Integer max) throws GSmartServiceException;
+	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy,int min,int max) throws GSmartServiceException;
+
 	/**
 	 * @param holiday instanceOf {@link Holiday}
 	 * @return nothing

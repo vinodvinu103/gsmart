@@ -170,7 +170,6 @@ public class FeeDaoImpl implements FeeDao {
 		List<Fee> paidStudentsList = null;
 		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
 		Criteria criteria = null;
-
 		try {
 			// System.out.println(academicYear);
 

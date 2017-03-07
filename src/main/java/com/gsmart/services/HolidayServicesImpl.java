@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.HolidayDao;
 import com.gsmart.model.CompoundHoliday;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -33,11 +34,12 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 	 * @return calls {@link HolidayDao}'s <code>getHolidayList()</code> method
 	 */
 	@Override
-	public Map<String, Object> getHolidayList(Long hid, Integer min, Integer max) throws GSmartServiceException {
+	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy,int min,int max ) throws GSmartServiceException {
 	
 		Loggers.loggerStart();
 	try {
-		return holidayDao.getHolidayList(hid, min, max);
+		return holidayDao.getHolidayList(role,hierarchy,min,max);
+
 	} catch (GSmartDatabaseException exception) {
 		throw (GSmartServiceException) exception;
 	} catch (Exception e) {
@@ -110,5 +112,6 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 		Loggers.loggerEnd();
 
 	}
+
 	
 }

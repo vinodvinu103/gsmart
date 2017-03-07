@@ -142,6 +142,7 @@ public class GetAuthorization {
 		query.setParameter("moduleName", module);
 		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
+
 		Loggers.loggerEnd(permissions);
 		}
 		catch (Exception e) {
