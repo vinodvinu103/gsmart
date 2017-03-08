@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Inventory;
 import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -146,7 +147,7 @@ public class FeeDaoImpl implements FeeDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fee> gettotalfee(String role, Hierarchy hierarchy) throws GSmartServiceException {
+	public List<Fee> gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		getconnection();
 		Loggers.loggerStart();
 		List<Fee> list = null;
@@ -172,7 +173,7 @@ public class FeeDaoImpl implements FeeDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getPaidStudentsList(String role, Hierarchy hierarchy, Integer min, Integer max)
+	public Map<String, Object> getPaidStudentsList(Long hid, Integer min, Integer max)
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getconnection();
@@ -184,23 +185,18 @@ public class FeeDaoImpl implements FeeDao {
 		{
 
 		
-		Loggers.loggerValue("getting connections", "");
-		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
-		{
-		query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y'");
-		}else{
-			query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y' and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
-		}
 
 		paidStudentsList=(List<Fee>) query.list();
 		criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
+		 criteria.add(Restrictions.eq("isActive", "Y"));
+	     criteria.add(Restrictions.eq("hierarchy.hid", hid));
 		paidStudentsList = criteria.list();
-		criteria.setProjection(Projections.rowCount());
-		Long count = (Long) criteria.uniqueResult();
-		paidfeeMap.put("totalpaidlist", query.list().size());
+		 Criteria criteriaCount = session.createCriteria(Inventory.class);
+	     criteriaCount.setProjection(Projections.rowCount());
+		Long count = (Long) criteriaCount.uniqueResult();
+		paidfeeMap.put("totalpaidlist", count);
 		Loggers.loggerEnd(paidStudentsList);
 		
 		}
@@ -215,7 +211,7 @@ public class FeeDaoImpl implements FeeDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getUnpaidStudentsList(String role, Hierarchy hierarchy, Integer min, Integer max)
+	public Map<String, Object> getUnpaidStudentsList(Long hid, Integer min, Integer max)
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Fee> unpaidStudentsList = null;
@@ -223,23 +219,19 @@ public class FeeDaoImpl implements FeeDao {
 		Criteria criteria = null;
 		getconnection();
 		try {
-			// System.out.println(academicYear);
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y'");
-			} else {
-				query = session
-						.createQuery("From Fee where feeStatus='unpaid' and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
-		//query.setParameter("academicYear", academicYear);
 		unpaidStudentsList=(List<Fee>) query.list();
 		criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
+		 criteria.add(Restrictions.eq("isActive", "Y"));
+	     criteria.add(Restrictions.eq("hierarchy.hid", hid));
 		unpaidStudentsList = criteria.list();
 		criteria.setProjection(Projections.rowCount());
-		Long count = (Long) criteria.uniqueResult();
-		unpaidfeeMap.put("totalunpaidlist", query.list().size());
+	    Criteria criteriaCount = session.createCriteria(Inventory.class);
+	     criteriaCount.setProjection(Projections.rowCount());
+	     
+	     Long count = (Long) criteriaCount.uniqueResult();
+		unpaidfeeMap.put("totalunpaidlist", count);
 		Loggers.loggerEnd(unpaidStudentsList);
 		
 		}

@@ -84,14 +84,7 @@ public class ProfileDaoImp implements ProfileDao {
 					profile.setHierarchy((Hierarchy) query.list().get(0));
 					System.out.println(query.list().get(0));
 				}
-				// if (profile.getRole().toUpperCase() == "STUDENT") {
-				// Assign assign = getStandardTeacher(profile.getStandard());
-				// profile.setReportingManagerId(assign.getTeacherSmartId());
-				// session.save(profile);
-				//
-				// }else{
-				// session.save(profile);
-				// }
+			
 				profile.setEntryTime(CalendarCalculator.getTimeStamp());
 				session.save(profile);
 				transaction.commit();
@@ -322,7 +315,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Profile> getAllRecord(String academicYear, String role, Hierarchy hierarchy) {
+	public List<Profile> getAllRecord(String academicYear, Long hid) {
 
 		getConnection();
 		Loggers.loggerStart();
@@ -330,14 +323,11 @@ public class ProfileDaoImp implements ProfileDao {
 		List<Profile> profile = null;
 
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("from Profile where isActive=:isActive and academicYear=:academicYear");
-
-			} else {
+			
 				query = session.createQuery(
 						"from Profile where isActive=:isActive and hierarchy.hid=:hierarchy and academicYear=:academicYear");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
+				query.setParameter("hierarchy",hid);
+			
 			query.setParameter("isActive", "Y");
 
 			query.setParameter("academicYear", academicYear);
@@ -441,28 +431,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 	}
 
-	@Override
-	public Profile profileDetails(String smartId) throws GSmartDatabaseException {
-		getConnection();
-		Loggers.loggerStart(smartId);
-		Profile profilelist = null;
-
-		try {
-
-			query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
-			query.setParameter("smartId", smartId);
-			profilelist = (Profile) query.list().get(0);
-			profilelist.setChildFlag(true);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
-
-		Loggers.loggerEnd(profilelist);
-		return profilelist;
-	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

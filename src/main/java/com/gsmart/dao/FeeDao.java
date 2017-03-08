@@ -23,9 +23,9 @@ public interface FeeDao {
 
    /* public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
 	*/
-	public Map<String, Object> getUnpaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
+	public Map<String, Object> getUnpaidStudentsList(Long hid, Integer min, Integer max) throws GSmartDatabaseException;
 
-	 public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
+	 public Map<String, Object> getPaidStudentsList(Long hid, Integer min, Integer max) throws GSmartDatabaseException;
 		
 
 	

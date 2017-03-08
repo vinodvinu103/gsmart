@@ -168,7 +168,7 @@ public  int getWorkingDaysBetweenTwoDates(Calendar startCal, Calendar endCal) th
 	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String smartId,String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		Profile profile=null;
-		profile=profileDao.profileDetails(smartId);
+		profile=profileDao.getProfileDetails(smartId);
 		String school=profile.getSchool();
 		String institution=profile.getInstitution();
 		CompoundLeave cl=null;

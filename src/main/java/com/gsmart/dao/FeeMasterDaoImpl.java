@@ -53,6 +53,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
+		System.out.println("min"+min+"/t"+"max"+max+"/t"+"hid"+hid);
 		List<FeeMaster> feeList = null;
 		Map<String, Object> feeMap = new HashMap<>();
 		Criteria criteria = null;
