@@ -91,14 +91,10 @@ public class FeeMasterController {
 		Loggers.loggerEnd();
 		
 
-		/*
-		 * }else { return new ResponseEntity<Map<String,Object>>(permissions,
-		 * HttpStatus.OK); }
-		 */
 	}
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
-
+	
 	/**
 	 * provides the access to persist a new feeMaster entity Sets the
 	 * {@code timeStamp} using {@link CalendarCalculator}

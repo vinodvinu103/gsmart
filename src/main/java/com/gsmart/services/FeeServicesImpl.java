@@ -57,6 +57,22 @@ public class FeeServicesImpl implements FeeServices{
 
 	}
 */
+	
+	@Override
+	public Map<String, Object> getUnpaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+		 Loggers.loggerStart();
+		 Map<String, Object> unpaidStudentsList = null;
+			try{
+				unpaidStudentsList=(Map<String, Object>) feeDao.getUnpaidStudentsList(role,hierarchy, min, max);
+				Loggers.loggerStart(unpaidStudentsList);
+			}catch (GSmartDatabaseException exception) {
+				throw (GSmartServiceException) exception;
+			}catch(Exception e){
+				throw new GSmartServiceException(e.getMessage());
+			}
+			 Loggers.loggerEnd();
+			return unpaidStudentsList;
+	}
 	@Override
 	public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
 		 Loggers.loggerStart();
@@ -73,12 +89,12 @@ public class FeeServicesImpl implements FeeServices{
 			return paidStudentsList;
 	}
 
-	@Override
-	public Map<String, Object> getUnpaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+/*	@Override
+	public List<Fee> getUnpaidStudentsList(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		 Loggers.loggerStart();
-		 Map<String, Object> unpaidStudentsList = null;
+	        List<Fee> unpaidStudentsList = null;
 			try{
-				unpaidStudentsList=(Map<String, Object>) feeDao.getUnpaidStudentsList(role,hierarchy, min, max);
+				unpaidStudentsList=(List<Fee>) feeDao.getUnpaidStudentsList(role,hierarchy);
 				Loggers.loggerStart(unpaidStudentsList);
 			}catch (GSmartDatabaseException exception) {
 				throw (GSmartServiceException) exception;
@@ -87,7 +103,7 @@ public class FeeServicesImpl implements FeeServices{
 			}
 			 Loggers.loggerEnd();
 			return unpaidStudentsList;
-	}
+	}*/
 
 	@Override
 	public ArrayList<Fee> getFeeLists(String academicYear,String role,Hierarchy hierarchy) throws GSmartServiceException {
@@ -156,3 +172,10 @@ public class FeeServicesImpl implements FeeServices{
 	}
 
 }
+/*------
+List<Fee> feeListFromMap = (List<Fee>)fee.get("feeList");
+for (int i = 0; i < feeListFromMap.size(); i++) {
+	String smartId = feeListFromMap.get(i).getSmartId();
+	System.out.println(((Fee) fee.get(i)).getStandard());
+
+}*/

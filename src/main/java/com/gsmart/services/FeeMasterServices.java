@@ -21,7 +21,7 @@ public interface FeeMasterServices
 	 * @return list of feeMaster entities available in the FeeMaster Table
 	 * @throws GSmartServiceException
 	 */
-	
+
 	public Map<String, Object> getFeeList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
 	/**
 	 * @param feeMaster instanceOf {@link FeeMaster}
@@ -43,6 +43,8 @@ public interface FeeMasterServices
 	 * @throws GSmartServiceException
 	 */
 	public void deleteFee(FeeMaster feeMaster)throws GSmartServiceException;
+	
+	
 	
 	
 	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) throws GSmartServiceException;

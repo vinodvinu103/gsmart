@@ -293,6 +293,7 @@ public class SearchServiceImp implements SearchService {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> studentFees(ArrayList<Profile> childList,String academicYear,String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
 
@@ -301,7 +302,7 @@ public class SearchServiceImp implements SearchService {
 
 		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear,role,hierarchy);
 
-		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList(role,hierarchy, min, max);
+		 Map<String, Object> fee = ( Map<String, Object>) feeMasterServices.getFeeList(role,hierarchy, 1, 20);
 
 		Map<String, Fee> feeMap = new HashMap<String, Fee>();
 
@@ -309,15 +310,18 @@ public class SearchServiceImp implements SearchService {
 
 
 		for (int i = 0; i < feeList.size(); i++) {
+			Loggers.loggerStart(feeList.size());
 			feeMap.put(feeList.get(i).getSmartId(), feeList.get(i));
 		}
 
-		for (int i = 0; i < fee.size(); i++) {
+	List<FeeMaster> feeMaster=	(List<FeeMaster>) fee.get("feeList");
+		for (int i = 0; i < feeMaster.size(); i++) {
+			Loggers.loggerStart(feeMaster.size());
 
-			feeMasterMap.put(fee.get(i).getStandard(), fee.get(i).getTotalFee());
-
+			feeMasterMap.put((feeMaster.get(i)).getStandard(), (feeMaster.get(i)).getTotalFee());
 
 		}
+		
 
 		for (Profile profile : childList) {
 
@@ -427,12 +431,12 @@ public class SearchServiceImp implements SearchService {
 		return parentInfo;
 	}
 
-	@Override
+/*	@Override
 	public ArrayList<Profile> studentFees(ArrayList<Profile> profile, String academicYear, String role,
 			Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 
 
 

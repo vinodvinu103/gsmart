@@ -39,7 +39,7 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 	public Map<String, Object> getFeeList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return feeMasterDao.getFeeList(role,hierarchy, min, max);
+			return feeMasterDao.getFeeList(role,hierarchy, 1,20);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -48,7 +48,7 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 		}
 
 	}
-
+	
 	/**
 	 * calls {@link FeeMasterDao}'s <code>addFee(...)</code> method
 	 * @param feeMaster an instance of {@link FeeMaster} class

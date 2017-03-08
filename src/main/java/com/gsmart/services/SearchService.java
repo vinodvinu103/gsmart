@@ -25,7 +25,7 @@ public interface SearchService {
 	
 	
 	
-	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear,String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
+//	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear,String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
 	
 	ArrayList<Profile> gotoloop(ArrayList<Profile> profile ,Map<String, Profile> profiles) throws GSmartServiceException;
 	

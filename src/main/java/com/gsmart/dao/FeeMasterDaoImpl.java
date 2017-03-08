@@ -79,9 +79,14 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
+		System.out.println(feeList);
 		feeMap.put("feeList", feeList);
+	
 		return feeMap;
 	}
+	
+	
+	
 
 	/**
 	 * Adds new fee entity to {@link FeeMaster} save it in database

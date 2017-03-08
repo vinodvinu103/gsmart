@@ -25,7 +25,7 @@ public interface FeeMasterDao {
 	 * @throws GSmartDatabaseException
 	 */
 	public Map<String, Object> getFeeList(String role,Hierarchy hierarchy, int min, int max) throws GSmartDatabaseException;
-
+	
 	/**
 	 * @param feeMaster
 	 *            instanceOf {@link FeeMaster}

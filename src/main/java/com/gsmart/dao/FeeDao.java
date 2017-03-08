@@ -19,10 +19,14 @@ public interface FeeDao {
 	
 	public List<Fee> gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException;
 
-    public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
-	
+   /* public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
+	*/
 	public Map<String, Object> getUnpaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
 
+	 public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
+		
+
+	
 	public void editFee(Fee fee) throws GSmartDatabaseException;
 
 	public void deleteFee(Fee fee) throws GSmartDatabaseException;

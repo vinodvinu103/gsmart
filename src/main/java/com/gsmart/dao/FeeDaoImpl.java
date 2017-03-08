@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -184,13 +185,13 @@ public class FeeDaoImpl implements FeeDao{
 	public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getconnection();
-		Loggers.loggerStart();
+		
 		List<Fee> paidStudentsList=null;
 		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
 		Criteria criteria = null;
 		try
 		{
-//		System.out.println(academicYear);
+
 		
 		Loggers.loggerValue("getting connections", "");
 		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -200,17 +201,16 @@ public class FeeDaoImpl implements FeeDao{
 			query=session.createQuery("From Fee where feeStatus='paid' and isActive='Y' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 		}
-		//query.setParameter("academicYear", academicYear);
-//		paidStudentsList=(List<Fee>) query.list();
+
+		paidStudentsList=(List<Fee>) query.list();
 		criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
-		criteria.setProjection(Projections.id());
 		paidStudentsList = criteria.list();
 		criteria.setProjection(Projections.rowCount());
 		Long count = (Long) criteria.uniqueResult();
 		paidfeeMap.put("totalpaidlist", query.list().size());
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(paidStudentsList);
 		
 		}
 		catch (Exception e) {
@@ -246,12 +246,11 @@ public class FeeDaoImpl implements FeeDao{
 		criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
-		criteria.setProjection(Projections.id());
 		unpaidStudentsList = criteria.list();
 		criteria.setProjection(Projections.rowCount());
 		Long count = (Long) criteria.uniqueResult();
 		unpaidfeeMap.put("totalunpaidlist", query.list().size());
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(unpaidStudentsList);
 		
 		}
 		catch (Exception e) {
@@ -263,6 +262,8 @@ public class FeeDaoImpl implements FeeDao{
 		return unpaidfeeMap;
 	
 	}
+
+
 
 	@Override
 	public void editFee(Fee fee) throws GSmartDatabaseException {

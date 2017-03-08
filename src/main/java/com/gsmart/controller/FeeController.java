@@ -140,7 +140,8 @@ public class FeeController {
 			@PathVariable("academicYear") String academicYear, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
-		Loggers.loggerStart();
+		Loggers.loggerStart(smartId);
+		Loggers.loggerStart(academicYear);
 		Loggers.loggerValue("token", token);
 		Map<String, Profile> profileMap = new HashMap<String, Profile>();
 		Map<String, Object> permissions = new HashMap<String, Object>();
@@ -166,8 +167,8 @@ public class FeeController {
 					tokenObj.getRole(), tokenObj.getHierarchy());
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
-			Loggers.loggerValue("childlist", childList);
 
+			Loggers.loggerValue("childlist", childList);
 			fees = searchService.sumUpFee(childList, profiles, academicYear, tokenObj.getRole(),
 					tokenObj.getHierarchy());
 
@@ -282,11 +283,14 @@ public class FeeController {
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/paidfee/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getPaidStudentsList(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
 
-		Loggers.loggerStart();
+	@RequestMapping(value = "/paidfee/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getPaidStudentsList(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(min);
+
+		Loggers.loggerStart(max);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -298,7 +302,7 @@ public class FeeController {
 		Map<String, Object> responseMap = new HashMap<>();
 		permission.put("modulePermission", modulePermission);
 		if (modulePermission != null) {
-			PaidStudentsList = feeServices.getPaidStudentsList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
+			PaidStudentsList = feeServices.getPaidStudentsList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 			permission.put("PaidStudentsList", PaidStudentsList);
 			responseMap.put("data", permission);
 			responseMap.put("status", 200);
@@ -382,8 +386,8 @@ public class FeeController {
 			responseMap.put("data", permission);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
-
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+		
 		} else {
 			responseMap.put("data", permission);
 			responseMap.put("status", 404);
@@ -391,6 +395,7 @@ public class FeeController {
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 		}
+		
 
 	}
 
