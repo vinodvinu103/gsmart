@@ -6,12 +6,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -81,6 +84,7 @@ public class HolidayDaoImpl implements HolidayDao {
 			criteria = session.createCriteria(Holiday.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
+			criteria.addOrder(Order.asc("entryTime"));
 			holidayList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Holiday.class);
 			criteriaCount.setProjection(Projections.rowCount());

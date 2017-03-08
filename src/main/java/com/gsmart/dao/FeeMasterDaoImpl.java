@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +68,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			criteria = session.createCriteria(FeeMaster.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
+			criteria.addOrder(Order.asc("standard"));
 			feeList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(FeeMaster.class);
 			criteriaCount.setProjection(Projections.rowCount());
