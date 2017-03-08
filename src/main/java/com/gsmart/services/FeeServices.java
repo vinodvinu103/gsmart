@@ -14,11 +14,15 @@ public interface FeeServices {
 	
 	public void addFee(Fee fee) throws GSmartServiceException;
 	
-	public ArrayList<Fee> getFeeLists(String academicYear,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public ArrayList<Fee> getFeeLists(String academicYear,Long hid) throws GSmartServiceException;
 	
 	public int gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	
+	public int getPaidFeeDashboard(String academicYear,Hierarchy hierarchy, List<String> childList) throws GSmartServiceException;
+	
 	public int gettotalpaidfee(String role,Hierarchy hierarchy) throws GSmartServiceException;
+	
+	public int getTotalFeeDashboard(String academicYear,Hierarchy hierarchy, List<String> childList) throws GSmartServiceException;
 
 	 public Map<String, Object> getPaidStudentsList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException ;
 		

@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -48,7 +49,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getFeeList(String role, Hierarchy hierarchy, int min, int max)
+	public Map<String, Object> getFeeList(Long hid, int min, int max)
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
@@ -56,20 +57,19 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		Map<String, Object> feeMap = new HashMap<>();
 		Criteria criteria = null;
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("from FeeMaster where isActive='Y'");
-			} else {
-				query = session.createQuery("from FeeMaster where isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
+				
+			
 			criteria = session.createCriteria(FeeMaster.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			feeList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(FeeMaster.class);
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
-			feeMap.put("totalfeelist", query.list().size());
+			
+			feeMap.put("totalfeelist", count);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -191,12 +191,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	private FeeMaster fetch2(FeeMaster feeMaster) {
 		Hierarchy hierarchy=feeMaster.getHierarchy();
 		FeeMaster feeMaster2=null;
-		if(feeMaster.getHierarchy()==null){
-			query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive ");
-		}else{
 		query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive and hierarchy.hid=:hierarchy");
 		query.setParameter("hierarchy", hierarchy.getHid());
-		}
+		
 		query.setParameter("standard", feeMaster.getStandard());
 		query.setParameter("isActive", "Y");
 		feeMaster2= (FeeMaster) query.uniqueResult();
@@ -237,12 +234,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	public FeeMaster getFeeMas(String entryTime,Hierarchy hierarchy)
 	{
 		Loggers.loggerStart();
-		if(hierarchy!=null){
 			query = session.createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
-		}else{
-			query = session.createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime ");
-		}
+		
 		query.setParameter("isActive", "Y");
 		query.setParameter("entryTime", entryTime);
 		FeeMaster fee=(FeeMaster) query.uniqueResult();
@@ -262,17 +256,14 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	}
 
 	@Override
-	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) {
+	public FeeMaster getFeeStructure(String standard,Long hid) {
 		getConnection();
 		try {
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
-			{
-			query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' ");
-			}else{
+			
 				query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("hierarchy", hid);
 				
-			}
+			
 			FeeMaster fee = (FeeMaster) query.list().get(0);
 			return fee;
 		} catch (Exception e) {

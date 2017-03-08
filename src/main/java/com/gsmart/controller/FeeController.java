@@ -135,9 +135,9 @@ public class FeeController {
 		}
 	}
 
-	@RequestMapping(value = "/{smartId}/{academicYear}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{smartId}/{academicYear}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> feeStructureController(@PathVariable("smartId") String smartId,
-			@PathVariable("academicYear") String academicYear, @RequestHeader HttpHeaders token,
+			@PathVariable("academicYear") String academicYear,@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart(smartId);
@@ -154,6 +154,12 @@ public class FeeController {
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 
 		permissions.put("modulePermissions", modulePermissions);
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
@@ -168,9 +174,7 @@ public class FeeController {
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 
-			Loggers.loggerValue("childlist", childList);
-			fees = searchService.sumUpFee(childList, profiles, academicYear, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			fees = searchService.sumUpFee(childList, profiles, academicYear,hid);
 
 			profileMap.put(smartId, profiles.get(smartId));
 
