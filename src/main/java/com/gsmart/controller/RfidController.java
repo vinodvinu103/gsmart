@@ -50,7 +50,7 @@ public class RfidController {
 
 		str.length();
 		
-		List<Profile> profileListWithoutRfid = null;
+		Map<String, Object> profileListWithoutRfid = null;
 		List<Profile> profileListWithRfid = null;
 
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);

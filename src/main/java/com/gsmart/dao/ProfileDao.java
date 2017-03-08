@@ -46,11 +46,13 @@ public interface ProfileDao {
 	public String updateProfile(Profile profile);
 	
 	public String deleteprofile(Profile profile);
+	
+	public boolean deleteProfileIfMailFailed(String smartId);
 
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
-	public Map<String, Object> getProfiles(String role, String smartId, String role2, Hierarchy hierarchy, int min,
+	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
 			int max);
 
 	public Profile getParentInfo(String empSmartId);
@@ -84,7 +86,7 @@ public interface ProfileDao {
 
 
 
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid()throws GSmartDatabaseException;
 	
 	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	

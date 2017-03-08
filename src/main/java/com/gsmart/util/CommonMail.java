@@ -54,15 +54,11 @@ public class CommonMail {
 		return mailSession;
 	}
 
-	private void sendMessage(Transport transport, MimeMessage message, Address[] recipients) {
-		try {
+	private void sendMessage(Transport transport, MimeMessage message, Address[] recipients) throws Exception  {
 			transport.connect();
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
-		} catch (MessagingException e) {
-			e.getMessage();
-			e.printStackTrace();
-		}
+		
 	}
 
 	public void passwordMail(Profile userProfile, String id) throws Exception {
