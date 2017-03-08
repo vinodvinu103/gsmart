@@ -64,8 +64,8 @@ public class HierarchyController {
 
 	/* String name=Loggers.moduleName(); */
 
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable ("min") Integer min,@PathVariable ("hierarchy") Long hierarchy, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -101,14 +101,14 @@ public class HierarchyController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getHierarchy(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	public ResponseEntity<Map<String, Object>> getAllHierarchys(@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		Map<String, Object> hierarchyList = null;
+		List<Hierarchy> hierarchyList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
