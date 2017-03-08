@@ -40,7 +40,7 @@ public interface ProfileServices{
 	public void editRole(Profile profile)throws GSmartServiceException;
 	
 	List<Profile> getProfileByHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
-	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
 	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
 	
@@ -50,7 +50,7 @@ public interface ProfileServices{
 
 	public void addBanner(Banners banner) throws GSmartServiceException;
 
-	public List<Banners> getBannerList() throws GSmartServiceException;
+	public Map<String, Object> getBannerList(Integer min, Integer max) throws GSmartServiceException;
 	/**
 	 * @param banner instanceOf {@link Bannners}
 	 * @return nothing 
