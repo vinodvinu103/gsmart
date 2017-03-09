@@ -83,7 +83,7 @@ public class HolidayDaoImpl implements HolidayDao {
 			criteria = session.createCriteria(Holiday.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
-			criteria.addOrder(Order.asc("entryTime"));
+			criteria.addOrder(Order.desc("holidayDate"));
 			holidayList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Holiday.class);
 			criteriaCount.setProjection(Projections.rowCount());
