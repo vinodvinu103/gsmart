@@ -1,10 +1,9 @@
 package com.gsmart.dao;
 
-import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
 
 /**
@@ -23,7 +22,7 @@ public interface FeeMasterDao {
 	 * @return list of entities available in the {@link FeeMaster} Table
 	 * @throws GSmartDatabaseException
 	 */
-	public List<FeeMaster> getFeeList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public Map<String, Object> getFeeList(Long hid, int min, int max) throws GSmartDatabaseException;
 
 	/**
 	 * @param feeMaster
@@ -50,7 +49,7 @@ public interface FeeMasterDao {
 
 	public void deleteFee(FeeMaster feeMaster) throws GSmartDatabaseException;
 
-	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy);
+	public FeeMaster getFeeStructure(String standard,Long hid);
 
 	/*public void fileUpload(FileUpload fileUpload) throws GSmartDatabaseException;*/
 

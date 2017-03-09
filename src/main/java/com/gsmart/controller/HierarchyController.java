@@ -64,8 +64,44 @@ public class HierarchyController {
 
 	/* String name=Loggers.moduleName(); */
 
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable ("min") Integer min,@PathVariable ("hierarchy") Long hierarchy, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String, Object> hierarchyList = null;
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+
+		Map<String, Object> permissions = new HashMap<>();
+		permissions.put("modulePermission", modulePermission);
+
+//		if (modulePermission != null) {
+			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
+			if(hierarchyList!=null){
+				permissions.put("status", 200);
+				permissions.put("message", "success");
+				permissions.put("hierarchyList",hierarchyList);
+				
+			}else{
+				permissions.put("status", 404);
+				permissions.put("message", "No Data Is Present");
+				
+			}
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+//		}
+
+	}
+	
+	
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getHierarchy(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	public ResponseEntity<Map<String, Object>> getAllHierarchys(@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -80,7 +116,7 @@ public class HierarchyController {
 		permissions.put("modulePermission", modulePermission);
 
 //		if (modulePermission != null) {
-			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getHierarchy());
+			hierarchyList = hierarchyServices.getHierarchyList1(tokenObj.getRole(),tokenObj.getHierarchy());
 			if(hierarchyList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");

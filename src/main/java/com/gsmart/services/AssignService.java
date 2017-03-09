@@ -1,16 +1,16 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartServiceException;
 
 public interface AssignService {
 	
-	public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws GSmartServiceException;
+	public Map<String, Object> getAssignReportee(Long hid, Integer min, Integer max) throws GSmartServiceException;
 	
 	public CompoundAssign addAssigningReportee(Assign assign) throws GSmartServiceException;
 	
@@ -20,6 +20,8 @@ public interface AssignService {
 	
 	public Assign getStaffByClassAndSection(String cls, String section, Hierarchy hierarchy);
 	
-	public boolean searchStandardFeeService(String standard) throws GSmartServiceException;
+	public boolean searchStandardFeeService(String standard,Long hid) throws GSmartServiceException;
+	
+	public List<Assign> getAssignList(Long hid) throws GSmartServiceException;
 
 }

@@ -20,13 +20,15 @@
 
 package com.gsmart.dao;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -64,11 +66,14 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Hierarchy> getHierarchyList(Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
+		Loggers.loggerStart();
 		getConnection();
 		Loggers.loggerStart();
 
 		List<Hierarchy> hierarchyList;
+		Map<String, Object> hierarchyMap = new HashMap<String, Object>();
+		Criteria criteria = null;
 		try {
 			if (hierarchy==null) {
 				query = session.createQuery("from Hierarchy where isActive='Y'");
@@ -76,8 +81,14 @@ public class HierarchyDaoImpl implements HierarchyDao {
 				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
 				query.setParameter("hid", hierarchy.getHid());
 			}
-
-			hierarchyList = query.list();
+			criteria = session.createCriteria(Hierarchy.class);
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			hierarchyList = criteria.list();
+			Criteria criteriaCount = session.createCriteria(Hierarchy.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			hierarchyMap.put("totalhierarchy", count);
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -87,7 +98,38 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			session.close();
 		}
 		Loggers.loggerEnd(hierarchyList);
-		return hierarchyList;
+		hierarchyMap.put("hierarchyList", hierarchyList);
+		return hierarchyMap;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Hierarchy> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getConnection();
+		Loggers.loggerStart();
+
+		List<Hierarchy> hierarchyList1;
+		Criteria criteria = null;
+		try {
+			if (hierarchy==null) {
+				query = session.createQuery("from Hierarchy where isActive='Y'");
+			} else {
+				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
+				query.setParameter("hid", hierarchy.getHid());
+			}
+			criteria = session.createCriteria(Hierarchy.class);
+			hierarchyList1 = criteria.list();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+
+			session.close();
+		}
+		Loggers.loggerEnd(hierarchyList1);
+		return hierarchyList1;
 	}
 
 	/**
@@ -184,15 +226,14 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public Hierarchy getHierarchy(String entryTime) {
 		try {
 
 			query = session.createQuery("from Hierarchy where IS_ACTIVE='Y' and ENTRY_TIME='" + entryTime + "'");
-			ArrayList<Hierarchy> hierarchyList = (ArrayList<Hierarchy>) query.list();
+			 Hierarchy hierarchyList =  (Hierarchy) query.uniqueResult();
 			transaction.commit();
 
-			return hierarchyList.get(0);
+			return hierarchyList;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -208,8 +249,9 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			Loggers.loggerStart();
 
 			hierarchy.setExitTime(CalendarCalculator.getTimeStamp());
-			hierarchy.setIsActive("D");
-			session.update(hierarchy);
+			/*hierarchy.setIsActive("D");
+			session.update(hierarchy);*/
+			session.delete(hierarchy);
 			transaction.commit();
 
 			Loggers.loggerEnd();
@@ -252,6 +294,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	@Override
 	public Hierarchy getHierarchyByHid(Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart(hid);
 		getConnection();
 		Hierarchy hierarchyList = null;
 		try {
@@ -263,6 +306,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			e.printStackTrace();
 
 		}
+		Loggers.loggerEnd();
 		return hierarchyList;
 	}
 

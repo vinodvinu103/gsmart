@@ -1,16 +1,20 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
@@ -28,7 +32,7 @@ public class ProfileDaoImp implements ProfileDao {
 	Session session;
 	Query query;
 	Transaction transaction;
-
+	Criteria criteria = null;
 	/* for registration */
 
 	@SuppressWarnings("unchecked")
@@ -88,7 +92,6 @@ public class ProfileDaoImp implements ProfileDao {
 				// }else{
 				// session.save(profile);
 				// }
-				System.out.println(profile);
 				profile.setEntryTime(CalendarCalculator.getTimeStamp());
 				session.save(profile);
 				transaction.commit();
@@ -112,7 +115,8 @@ public class ProfileDaoImp implements ProfileDao {
 	 * query.setParameter("standard", standard); assign = (Assign)
 	 * query.uniqueResult(); } catch (Exception e) {
 	 * 
-	 * e.printStackTrace(); } Loggers.loggerEnd(); return assign;
+	 * e.printStackTrace(); } Criteria criteria = null;Loggers.loggerEnd();
+	 * return assign;
 	 * 
 	 * }
 	 */
@@ -181,36 +185,53 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getProfiles(String role, String smartId, String loginUserRole, Hierarchy hierarchy) {
+	public Map<String, Object> getProfiles(String role, String smartId,Long hid,
+			int min, int max) {
+		Loggers.loggerStart(role);
+		Loggers.loggerStart("current smartId" + smartId);
+		/*
+		 * session = this.getSessionFactory().openSession();
+		 * session.beginTransaction();
+		 */
 		getConnection();
+
+		// List<Profile> profileList = null;
+		Map<String, Object> profileMap = new HashMap<String, Object>();
 		try {
-			Loggers.loggerStart(role);
 
-			Loggers.loggerStart("current smartId" + smartId);
-			if (loginUserRole.equalsIgnoreCase("admin") || loginUserRole.equalsIgnoreCase("owner")
-					|| loginUserRole.equalsIgnoreCase("director")) {
+			criteria = session.createCriteria(Profile.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.setFirstResult(min);
+			criteria.setMaxResults(max);
+			// criteria.setProjection(Projections.id());
+			Criteria criteriaCount = session.createCriteria(Profile.class).add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 				if (role.toLowerCase().equals("student")) {
-					query = session.createQuery("from Profile where isActive='Y'and lower(role)='student'");
+					criteria.add(Restrictions.eq("role", "student").ignoreCase());
+					
+					criteriaCount.add(Restrictions.eq("role", "student").ignoreCase());
+
+					/**
+					 * query = session.createQuery( "from Profile where
+					 * isActive='Y'and lower(role)='student'" );
+					 */
+					profileMap.put("profileMap1", criteria.list());
 				} else {
-					query = session.createQuery("from Profile where isActive='Y'and lower(role)!='student' ");
+					criteria.add(Restrictions.ne("role", "student").ignoreCase());
+					criteriaCount.add(Restrictions.ne("role", "student").ignoreCase());
+
+					/**
+					 * query = session.createQuery( "from Profile where
+					 * isActive='Y'and lower(role)!='student' " );
+					 */
+					profileMap.put("profileList", criteria.list());
 				}
 
-			} else {
-				if (role.toLowerCase().equals("student")) {
-					query = session.createQuery(
-							"from Profile where isActive='Y'and lower(role)='student' and hierarchy.hid=:hierarchy");
-				} else {
-					query = session.createQuery(
-							"from Profile where isActive='Y'and lower(role)!='student' and hierarchy.hid=:hierarchy");
-
-				}
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
-
-			Loggers.loggerEnd(query.list());
-			return (ArrayList<Profile>) query.list();
+			criteriaCount.setProjection(Projections.rowCount());
+			profileMap.put("totalProfiles", criteriaCount.uniqueResult());
+			Loggers.loggerEnd(criteria.list());
+			return profileMap;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -553,6 +574,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Banners> getBannerList() {
 		Loggers.loggerStart();
@@ -667,20 +689,19 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year) {
-		
+
 		getConnection();
 		Loggers.loggerStart();
 
 		List<Profile> profiles = null;
 		try {
-
 			query = session.createQuery(
 					"from Profile where isActive=:isActive and hierarchy.hid=:hierarchy and academicYear=:academicYear");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("isActive", "Y");
-
 			query.setParameter("academicYear", year);
 
 			profiles = (List<Profile>) query.list();
@@ -692,6 +713,37 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 
 		return profiles;
+	}
+
+	@Override
+	public boolean deleteProfileIfMailFailed(String smartId) {
+		Loggers.loggerStart();
+		getConnection();
+		try {
+			query=session.createQuery("delete from Profile where smartId=:smartId");
+			query.setParameter("smartId", smartId);
+			query.executeUpdate();
+			transaction.commit();
+			deleteLogin(smartId);
+
+		} catch (Exception e) {
+			
+          e.printStackTrace();
+          return false;
+          }
+		Loggers.loggerEnd();
+		return true;
+	}
+
+	private void deleteLogin(String smartId) {
+		Loggers.loggerStart();
+		getConnection();
+		query=session.createQuery("delete from Login where smartId=:smartId");
+		query.setParameter("smartId", smartId);
+		query.executeUpdate();
+		transaction.commit();
+		Loggers.loggerEnd();
+		
 	}
 
 }

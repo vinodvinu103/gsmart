@@ -62,16 +62,14 @@ public class BandController {
 	 */
 	// String module=getAuthorization.getModuleName();
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getBand(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("hierarchy") Integer hierarchy, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
-
-		Loggers.loggerStart();
+		Loggers.loggerStart(hierarchy);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	    str.length();
-
-		List<Band> bandList = null;
+	    Map<String, Object> bandList = null;
        
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
@@ -80,7 +78,42 @@ public class BandController {
 		permissions.put("modulePermission",modulePermission);
 		/*if (modulePermission != null) {
 			System.out.println("success");*/
-			bandList = bandServices.getBandList();
+			bandList = bandServices.getBandList(min, max);
+			if(bandList!=null){
+				permissions.put("status", 200);
+				permissions.put("message", "success");
+				permissions.put("bandList",bandList);
+				
+			}else{
+				permissions.put("status", 404);
+				permissions.put("message", "No Data Is Present");
+				
+			}
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		/*} else {
+			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		}*/
+		
+		}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getBand(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+	    str.length();
+
+	    List<Band>bandList=null;
+	    RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+		Map<String, Object> permissions = new HashMap<>();
+        
+		permissions.put("modulePermission",modulePermission);
+		/*if (modulePermission != null) {
+			System.out.println("success");*/
+		bandList = bandServices.getBandList1();
 			if(bandList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");
