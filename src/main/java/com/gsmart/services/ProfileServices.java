@@ -40,9 +40,9 @@ public interface ProfileServices{
 	public void editRole(Profile profile)throws GSmartServiceException;
 	
 	List<Profile> getProfileByHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
-	public Map<String, Object> getProfilesWithoutRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
-	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
 	public List<Profile> addRfid(Profile rfid)throws GSmartServiceException;
 	

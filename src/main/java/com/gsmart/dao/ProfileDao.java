@@ -86,11 +86,11 @@ public interface ProfileDao {
 
 
 
-	public Map<String, Object> getProfilesWithoutRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
 	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 

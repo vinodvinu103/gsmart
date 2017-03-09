@@ -160,9 +160,9 @@ public class ProfileServicesImp implements ProfileServices {
 		return profileDao.getProfileByHierarchy(hierarchy);
 	}
 
-	public Map<String, Object> getProfilesWithoutRfid() throws GSmartDatabaseException {
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max) throws GSmartDatabaseException {
 	
-		return profileDao.getProfilesWithoutRfid();
+		return profileDao.getProfilesWithoutRfid(min, max);
 	}
 
 	@Override
@@ -194,9 +194,9 @@ public class ProfileServicesImp implements ProfileServices {
 }
 
 	@Override
-	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max) throws GSmartDatabaseException {
 		
-		return profileDao.getProfilesWithRfid();
+		return profileDao.getProfilesWithRfid(min, max);
 	}
 
 	@Override
