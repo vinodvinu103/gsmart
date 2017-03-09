@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -171,26 +172,31 @@ public class FeeDaoImpl implements FeeDao {
 		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
 		Criteria criteria = null;
 		try {
-			// System.out.println(academicYear);
-
+			criteria = session.createCriteria(Fee.class);
 			Loggers.loggerValue("getting connections", "");
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("From Fee where feeStatus='paid' and isActive='Y'");
+				/*
+				 * query = session.createQuery(
+				 * "From Fee where feeStatus='paid' and isActive='Y'");
+				 */
+				criteria.add(Restrictions.eq("feeStatus", "paid"));
+				criteria.add(Restrictions.eq("isActive", "Y"));
 			} else {
-				query = session
-						.createQuery("From Fee where feeStatus='paid' and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
+				/*
+				 * query = session .createQuery(
+				 * "From Fee where feeStatus='paid' and isActive='Y' and hierarchy.hid=:hierarchy"
+				 * ); query.setParameter("hierarchy", hierarchy.getHid());
+				 */
+				criteria.add(Restrictions.eq("feeStatus", "paid"));
+				criteria.add(Restrictions.eq("isActive", "Y"));
+				criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
 			}
-			// query.setParameter("academicYear", academicYear);
-			// paidStudentsList=(List<Fee>) query.list();
-			criteria = session.createCriteria(Fee.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
 			criteria.setProjection(Projections.id());
 			paidStudentsList = criteria.list();
 			criteria.setProjection(Projections.rowCount());
-			Long count = (Long) criteria.uniqueResult();
-			paidfeeMap.put("totalpaidlist", query.list().size());
+			paidfeeMap.put("totalpaidlist", criteria.uniqueResult());
 			Loggers.loggerEnd();
 
 		} catch (Exception e) {
@@ -212,26 +218,30 @@ public class FeeDaoImpl implements FeeDao {
 		Criteria criteria = null;
 		getconnection();
 		try {
-			// System.out.println(academicYear);
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("From Fee where feeStatus='unpaid' and isActive='Y'");
-			} else {
-				query = session
-						.createQuery("From Fee where feeStatus='unpaid' and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
-			// query.setParameter("academicYear", academicYear);
-			unpaidStudentsList = (List<Fee>) query.list();
 			criteria = session.createCriteria(Fee.class);
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
+				/*
+				 * query = session.createQuery(
+				 * "From Fee where feeStatus='unpaid' and isActive='Y'");
+				 */
+				criteria.add(Restrictions.eq("feeStatus", "unpaid"));
+				criteria.add(Restrictions.eq("isActive", "Y"));
+			} else {
+				/*
+				 * query = session .createQuery(
+				 * "From Fee where feeStatus='unpaid' and isActive='Y' and hierarchy.hid=:hierarchy"
+				 * ); query.setParameter("hierarchy", hierarchy.getHid());
+				 */
+				criteria.add(Restrictions.eq("feeStatus", "unpaid"));
+				criteria.add(Restrictions.eq("isActive", "Y"));
+				criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+			}
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
-			criteria.setProjection(Projections.id());
 			unpaidStudentsList = criteria.list();
 			criteria.setProjection(Projections.rowCount());
-			Long count = (Long) criteria.uniqueResult();
-			unpaidfeeMap.put("totalunpaidlist", query.list().size());
+			unpaidfeeMap.put("totalunpaidlist", criteria.uniqueResult());
 			Loggers.loggerEnd();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

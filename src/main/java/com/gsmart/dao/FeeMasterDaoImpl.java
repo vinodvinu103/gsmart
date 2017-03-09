@@ -60,8 +60,6 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		Map<String, Object> feeMap = new HashMap<>();
 		Criteria criteria = null;
 		try {
-				
-			
 			criteria = session.createCriteria(FeeMaster.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
