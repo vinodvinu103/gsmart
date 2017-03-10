@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 
 	@Autowired
 	InventoryAssignmentsDao inventoryAssignmentsDao;
-	
+
 	@Autowired
 	InventoryDaoImpl inventoryDao;
 
@@ -45,6 +46,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 		try {
 			Loggers.loggerStart(inventoryAssignments);
 			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments,oldInventory);
+
 			Loggers.loggerEnd(compoundKey);
 		} catch (GSmartDatabaseException e) {
 			e.printStackTrace();
@@ -54,11 +56,10 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 
 	@Override
 	public InventoryAssignments editInventoryDetails(InventoryAssignments inventoryAssignments) {
-		InventoryAssignments ab=null;
+		InventoryAssignments ab = null;
 		try {
-			ab=inventoryAssignmentsDao.editInventoryDetails(inventoryAssignments);
+			ab = inventoryAssignmentsDao.editInventoryDetails(inventoryAssignments);
 		} catch (GSmartDatabaseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return ab;
@@ -68,16 +69,52 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments) {
 		try {
 			Loggers.loggerStart();
-			Logger.getLogger(InventoryAssignmentsServicesImpl.class).info("navigating to dao impl to delete the record with entry time : " + inventoryAssignments.getEntryTime());
+			Logger.getLogger(InventoryAssignmentsServicesImpl.class)
+					.info("navigating to dao impl to delete the record with entry time : "
+							+ inventoryAssignments.getEntryTime());
 			inventoryAssignmentsDao.deleteInventoryDetails(inventoryAssignments);
 		} catch (GSmartDatabaseException e) {
-			// TODO Auto-generated catch block
-			Logger.getLogger(InventoryAssignmentsServicesImpl.class).info("tried navigating the record with entry time : " + inventoryAssignments.getEntryTime() + " but ended with exception");
+			Logger.getLogger(InventoryAssignmentsServicesImpl.class)
+					.info("tried navigating the record with entry time : " + inventoryAssignments.getEntryTime()
+							+ " but ended with exception");
 			e.printStackTrace();
 		}
 	}
 
 	@Override
+	public List<InventoryAssignments> getInventoryDashboardData(ArrayList<String> smartIdList, Hierarchy hierarchy)
+			throws GSmartServiceException {
+		return inventoryAssignmentsDao.getInventoryDashboardData(smartIdList, hierarchy);
+	}
+
+	@Override
+	public List<InventoryAssignments> groupCategoryAndItem(List<InventoryAssignments> inventoryAssignmentList,
+			List<Inventory> inventory) throws GSmartServiceException {
+		List<InventoryAssignments> responseList = new ArrayList<>();
+		for (int i = 0; i < inventory.size(); i++) {
+			Loggers.loggerStart("inventory loop : " + i);
+			InventoryAssignments inAssignments = new InventoryAssignments();
+			int totalQuantity = 0;
+			for (int j = 0; j < inventoryAssignmentList.size(); j++) {
+				Loggers.loggerStart("inventoryAssignmentList loop : " + j);
+				if (inventory.get(i).getCategory().equalsIgnoreCase(inventoryAssignmentList.get(j).getCategory())) {
+					if (inventory.get(i).getItemType().equalsIgnoreCase(inventoryAssignmentList.get(j).getItemType())) {
+						Loggers.loggerStart("inAssignments adding inventory : " + inventory.get(i).getItemType());
+						inAssignments.setCategory(inventory.get(i).getCategory());
+						inAssignments.setItemType(inventory.get(i).getItemType());
+						totalQuantity += inventoryAssignmentList.get(j).getQuantity();
+						inAssignments.setQuantity(totalQuantity);
+						inAssignments.setTotalQuantity(inventory.get(i).getQuantity());
+					}
+				}
+			}
+			if (inAssignments.getCategory() != null) {
+				responseList.add(inAssignments);
+			}
+		}
+		return responseList;
+	}
+
 	public Map<String, Object> getInventoryList(String role, Hierarchy hierarchy, Integer min, Integer max)
 			throws GSmartServiceException {
 		// TODO Auto-generated method stub

@@ -1,6 +1,5 @@
 package com.gsmart.services;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.gsmart.dao.FeeMasterDao;
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -36,10 +34,10 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 	 * @return calls {@link FeeMasterDao}'s <code>getFeeList()</code> method
 	 */
 	@Override
-	public Map<String, Object> getFeeList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
+	public Map<String, Object> getFeeList(Long hid, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return feeMasterDao.getFeeList(role,hierarchy, min, max);
+			return feeMasterDao.getFeeList(hid, min, max);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -113,11 +111,11 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 	}
 
 	@Override
-	public FeeMaster getFeeStructure(String standard,String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 	try{
 		
-		return feeMasterDao.getFeeStructure(standard,role,hierarchy);
+		return feeMasterDao.getFeeStructure(standard,hid);
 	}
 	catch (Exception e) {
 		e.printStackTrace();

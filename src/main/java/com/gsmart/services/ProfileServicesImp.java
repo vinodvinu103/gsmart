@@ -85,9 +85,9 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 	
 	@Override
-	public Map<String, Object> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
+	public Map<String, Object> getProfiles(String role,String smartId,Long hid, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
-		return profileDao.getProfiles(role,smartId,role2,hierarchy, min, max);
+		return profileDao.getProfiles(role,smartId,hid, min, max);
 	}
 
 

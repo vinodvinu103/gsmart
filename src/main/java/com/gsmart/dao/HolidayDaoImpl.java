@@ -18,8 +18,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gsmart.model.Assign;
-import com.gsmart.model.Band;
 import com.gsmart.model.CompoundHoliday;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
@@ -64,8 +62,8 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getHolidayList(String role, Hierarchy hierarchy, Integer min, Integer max)
-			throws GSmartDatabaseException {
+	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy,int min,int max )throws GSmartDatabaseException {
+
 		Loggers.loggerStart();
 		getConnection();
 		List<Holiday> holidayList = null;
@@ -78,14 +76,15 @@ public class HolidayDaoImpl implements HolidayDao {
 				 query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy.hid=:hierarchy");
 				 query.setParameter("hierarchy", hierarchy.getHid());
 			}
+
 			criteria = session.createCriteria(Holiday.class);
-			criteria.setMaxResults(max);
-			criteria.setFirstResult(min);
+
 			holidayList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Holiday.class);
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
-			holidayMap.put("totalholidaylist", query.list().size());
+			System.out.println("count"+count);
+			holidayMap.put("totalholidaylist", count);
 		} catch (Throwable e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
@@ -106,32 +105,23 @@ public class HolidayDaoImpl implements HolidayDao {
 	 * @return Nothing
 	 */
 	@Override
-	public CompoundHoliday addHoliday(Holiday holiday, int min, int max) throws GSmartDatabaseException {
+	public CompoundHoliday addHoliday(Holiday holiday) throws GSmartDatabaseException {
 		getConnection();
 		CompoundHoliday ch = null;
 		Loggers.loggerStart();
 		
 		try {
-			Hierarchy hierarchy = holiday.getHierarchy();
-			query = session.createQuery(
-					"FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
-			query.setParameter("holidayDate", holiday.getHolidayDate());
-			query.setParameter("isActive", "Y");
-			Holiday holiday1 = (Holiday) query.uniqueResult();
-			if(holiday1 !=null){
-				return null;
-			}
-			else{
-				System.out.println("null");
 			
+			Holiday holiday1=fetch(holiday);
+			if(holiday1==null){
 			holiday.setHolidayDate(getTimeWithOutMillis(holiday.getHolidayDate()));
 			holiday.setEntryTime(CalendarCalculator.getTimeStamp());
 			holiday.setIsActive("Y");
 			ch = (CompoundHoliday) session.save(holiday);
 			session.save(holiday);
 			transaction.commit();
-		}}catch (ConstraintViolationException e) {
+			}
+		}catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
@@ -157,22 +147,16 @@ public class HolidayDaoImpl implements HolidayDao {
 		Holiday ch=null;
 		try {
 			Holiday oldholiday = getHolidayLists(holiday.getEntryTime(), holiday.getHierarchy());
-			oldholiday.setIsActive("N");
-			oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
-			session.update(oldholiday);
 
-			holiday.setIsActive("Y");
-			holiday.setEntryTime(CalendarCalculator.getTimeStamp());
-			session.save(holiday);
-			transaction.commit();
+			ch=updateHoliday(oldholiday, holiday);
+			addHoliday(holiday);
+			
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
 			Loggers.loggerException(e.getMessage());
 
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 		/*finally {
 			session.close();
@@ -233,12 +217,9 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 	}
 	private Holiday fetch2(Holiday holiday) {
 		Loggers.loggerStart();
-		if(holiday.getHierarchy()!=null){
 			query=session.createQuery("from Holiday where holidayDate=:holidayDate and description=:description and isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", holiday.getHierarchy().getHid());
-		}else{
-			query=session.createQuery("from Holiday where holidayDate=:holidayDate and description=:description and isActive=:isActive");
-		}
+		
 		
 		query.setParameter("isActive", "Y");
 		query.setParameter("holidayDate", getTimeWithOutMillis(holiday.getHolidayDate()));
@@ -250,12 +231,10 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 }
 	public Holiday getHolidayLists(String entryTime,Hierarchy hierarchy) {
 		try {
-			if(hierarchy!=null){
+
 				query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
-			}else{
-				query=session.createQuery("from Holiday where isActive=:isActive and entryTime=:entryTime");
-			}
+			
 			query.setParameter("isActive", "Y");
 			query.setParameter("entryTime", entryTime);
 			
@@ -272,14 +251,9 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 		Loggers.loggerStart();
 		Holiday holidayList=null;
 		try {
-			if(holiday.getHierarchy()!=null){
 				
 				query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", holiday.getHierarchy().getHid());
-			}else{
-				query = session.createQuery("FROM Holiday where holidayDate=:holidayDate and isActive=:isActive");
-				
-			}
 			
 			query.setParameter("holidayDate", getTimeWithOutMillis(holiday.getHolidayDate()));
 			query.setParameter("isActive", "Y");
@@ -321,4 +295,5 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 		}
 		Loggers.loggerEnd();
 	}
+
 }
