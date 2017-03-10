@@ -62,7 +62,7 @@ public interface ProfileDao {
 	/* for login */
 	public Profile getProfileDetails(String empSmartId);
 
-	public List<Profile> getAllRecord(String academicYear, String role, Hierarchy hierarchy);
+	public List<Profile> getAllRecord(String academicYear, Long hid);
 
 	/**
 	 * @return list of Profile entities available in the {@link Profile} Table
@@ -79,7 +79,6 @@ public interface ProfileDao {
 	public void editRole(Profile profile) throws GSmartDatabaseException;
 
 	public List<Profile> getsearchRep(Search search, String role, Hierarchy hierarchy);
-	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 
