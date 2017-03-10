@@ -41,6 +41,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	Session session = null;
 	Transaction transaction = null;
 	Query query;
+	Criteria criteria = null;
 
 	/**
 	 * to view the list of records available in {@link FeeMaster} table
@@ -53,10 +54,9 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
-		System.out.println("min"+min+"/t"+"max"+max+"/t"+"hid"+hid);
 		List<FeeMaster> feeList = null;
 		Map<String, Object> feeMap = new HashMap<>();
-		Criteria criteria = null;
+		
 		try {
 				
 			
@@ -67,6 +67,8 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			feeList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(FeeMaster.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
 			

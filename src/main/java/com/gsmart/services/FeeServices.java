@@ -10,7 +10,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface FeeServices {
 	
-	public List<Fee> getFeeList(Fee fee,String role,Hierarchy hierachy) throws GSmartServiceException;
+	public List<Fee> getFeeList(Fee fee,Long hid) throws GSmartServiceException;
 	
 	public void addFee(Fee fee) throws GSmartServiceException;
 	

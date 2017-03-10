@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Inventory;
 import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -35,32 +34,33 @@ public class FeeDaoImpl implements FeeDao {
 	Session session;
 	Transaction transaction;
 	Query query;
+	Criteria criteria = null;
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Fee> getFeeList(Fee fee, String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+	public ArrayList<Fee> getFeeList(Fee fee, Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getconnection();
 		Loggers.loggerStart(fee.getAcademicYear());
 		
 		ArrayList<Fee> feeList;
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("from Fee where smartId =:smartId and academicYear =:academicYear");
-			} else {
+			
 
 				query = session.createQuery(
 						"from Fee where smartId =:smartId and academicYear =:academicYear and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
+				query.setParameter("hierarchy", hid);
+			
 			query.setParameter("smartId", fee.getSmartId());
 			query.setParameter("academicYear", fee.getAcademicYear());
 			feeList = (ArrayList<Fee>) query.list();
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		} /*
-			 * finally{ session.close(); }
-			 */
+		} 
+			finally{
+				session.close(); 
+				}
+			 
 		Loggers.loggerEnd();
 		return feeList;
 	}
@@ -180,32 +180,35 @@ public class FeeDaoImpl implements FeeDao {
 		
 		List<Fee> paidStudentsList=null;
 		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
-		Criteria criteria = null;
+		
 		try
 		{
-
-		
-
-		paidStudentsList=(List<Fee>) query.list();
-		criteria = session.createCriteria(Fee.class);
+			getconnection();
+	   criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
 		 criteria.add(Restrictions.eq("isActive", "Y"));
 	     criteria.add(Restrictions.eq("hierarchy.hid", hid));
-		paidStudentsList = criteria.list();
-		 Criteria criteriaCount = session.createCriteria(Inventory.class);
+	     criteria.add(Restrictions.eq("feeStatus", "paid"));
+	     paidStudentsList=criteria.list();
+	 
+		 Criteria criteriaCount = session.createCriteria(Fee.class);
+		 criteriaCount.add(Restrictions.eq("isActive", "Y"));
+		 criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
+		 criteriaCount.add(Restrictions.eq("feeStatus", "paid"));
 	     criteriaCount.setProjection(Projections.rowCount());
 		Long count = (Long) criteriaCount.uniqueResult();
 		paidfeeMap.put("totalpaidlist", count);
 		Loggers.loggerEnd(paidStudentsList);
+		paidfeeMap.put("paidStudentsList", paidStudentsList);
 		
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		} finally {
+		} /*finally {
 			session.close();
-		}
-		paidfeeMap.put("paidStudentsList", paidStudentsList);
+		}*/
+		
 		return paidfeeMap;
 	}
 
@@ -216,31 +219,34 @@ public class FeeDaoImpl implements FeeDao {
 		Loggers.loggerStart();
 		List<Fee> unpaidStudentsList = null;
 		Map<String, Object> unpaidfeeMap = new HashMap<String, Object>();
-		Criteria criteria = null;
 		getconnection();
 		try {
-		unpaidStudentsList=(List<Fee>) query.list();
+			getconnection();
 		criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
 		 criteria.add(Restrictions.eq("isActive", "Y"));
 	     criteria.add(Restrictions.eq("hierarchy.hid", hid));
+	     criteria.add(Restrictions.eq("feeStatus", "unpaid"));
 		unpaidStudentsList = criteria.list();
-		criteria.setProjection(Projections.rowCount());
-	    Criteria criteriaCount = session.createCriteria(Inventory.class);
+		
+	    Criteria criteriaCount = session.createCriteria(Fee.class);
 	     criteriaCount.setProjection(Projections.rowCount());
-	     
-	     Long count = (Long) criteriaCount.uniqueResult();
-		unpaidfeeMap.put("totalunpaidlist", count);
+	     criteriaCount.add(Restrictions.eq("isActive", "Y"));
+	     criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
+	     criteriaCount.add(Restrictions.eq("feeStatus", "unpaid"));
+//	     Long count = (Long) criteria.uniqueResult();
+		unpaidfeeMap.put("totalunpaidlist", criteriaCount.uniqueResult());
 		Loggers.loggerEnd(unpaidStudentsList);
+		unpaidfeeMap.put("unpaidStudentsList", unpaidStudentsList);
 		
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		} finally {
+		} /*finally {
 			session.close();
-		}
-		unpaidfeeMap.put("unpaidStudentsList", unpaidStudentsList);
+		}*/
+		
 		return unpaidfeeMap;
 
 	}
@@ -286,7 +292,6 @@ public class FeeDaoImpl implements FeeDao {
 		query.setParameter("entryTime", entryTime);
 		Fee fee = (Fee) query.uniqueResult();
 
-		session.close();
 		Loggers.loggerValue("feeList", fee);
 		return fee;
 
@@ -320,6 +325,7 @@ public class FeeDaoImpl implements FeeDao {
 		Loggers.loggerEnd();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Fee> getFeeDashboard(String academicYear, Hierarchy hierarchy, List<String> childList)
 			throws GSmartServiceException {

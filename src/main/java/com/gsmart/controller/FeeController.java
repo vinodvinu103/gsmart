@@ -57,8 +57,8 @@ public class FeeController {
 	@Autowired
 	HierarchyServices hierarchyServices;
 
-	@RequestMapping(value = "/viewFee", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, ArrayList<Fee>>> getFeeList(@RequestBody Fee fee,
+	@RequestMapping(value = "/viewFee/{smartId}/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, ArrayList<Fee>>> getFeeList(@PathVariable("smartId") String smartId,@PathVariable("academicYear") String academicYear,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
@@ -69,14 +69,17 @@ public class FeeController {
 
 		str.length();
 		Map<String, ArrayList<Fee>> jsonMap = new HashMap<String, ArrayList<Fee>>();
-		// Map<String, ArrayList<Fee>> responseMap = new HashMap<String,
-		// ArrayList<Fee>>();
+		
+		Fee fee =new Fee();
+		fee.setAcademicYear(academicYear);
+		fee.setSmartId(smartId);
 		Map<String, Object> responseMap = new HashMap<>();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+		RolePermission modulePermissions = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		
+		if(modulePermissions!=null){
 
-			ArrayList<Fee> feeList = (ArrayList<Fee>) feeServices.getFeeList(fee, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			ArrayList<Fee> feeList = (ArrayList<Fee>) feeServices.getFeeList(fee,tokenObj.getHierarchy().getHid());
 
 			if (feeList.size() != 0) {
 				jsonMap.put("result", feeList);
@@ -135,7 +138,7 @@ public class FeeController {
 		}
 	}
 
-	@RequestMapping(value = "/{smartId}/{academicYear}/{hierarchy}", method = RequestMethod.GET)
+	@RequestMapping(value = "/feeOrg/{smartId}/{academicYear}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> feeStructureController(@PathVariable("smartId") String smartId,
 			@PathVariable("academicYear") String academicYear,@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
@@ -154,12 +157,7 @@ public class FeeController {
 
 		permissions.put("modulePermissions", modulePermissions);
 		Long hid=null;
-		if(tokenObj.getHierarchy()==null){
-			hid=hierarchy;
-			 profile=profileSevices.getProfileDetails(smartId);
-		}else{
-			hid=tokenObj.getHierarchy().getHid();
-		}
+		
 
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
@@ -167,6 +165,13 @@ public class FeeController {
 
 		ArrayList<Profile> self = new ArrayList<Profile>();
 		Profile selfProfile = new Profile();
+		
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+
 
 		if (modulePermissions != null) {
 			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear,
@@ -177,9 +182,14 @@ public class FeeController {
 			fees = searchService.sumUpFee(childList, profiles, academicYear,hid);
 
 			profileMap.put(smartId, profiles.get(smartId));
+			if(tokenObj.getHierarchy()==null){
+				 profile=profileSevices.getProfileDetails(smartId);
+			}else{
+				profile = profiles.get(smartId);
+			}
 
-			profile = profiles.get(smartId);
-
+			
+			
 			System.out.println("self profile" + profile);
 
 			selfProfile = searchService.totalFessToAdmin(profile, fees);
@@ -224,7 +234,7 @@ public class FeeController {
 		str.length();
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		Long hid=null;
+//		Long hid=null;
 		/*if(tokenObj.getHierarchy()==null){
 			hid=hierarchy;
 		}else{
@@ -404,8 +414,8 @@ public class FeeController {
 		permission.put("modulePermission", modulePermission);
 		if (modulePermission != null) {
 			unPaidStudentsList = feeServices.getUnpaidStudentsList(hid, min, max);
-			permission.put("unPaidStudentsList", unPaidStudentsList);
 			responseMap.put("data", permission);
+			responseMap.put("unpaidList", unPaidStudentsList);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);

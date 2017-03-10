@@ -11,7 +11,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface FeeDao {
 	
-	public ArrayList<Fee> getFeeList(Fee fee,String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public ArrayList<Fee> getFeeList(Fee fee,Long hid) throws GSmartDatabaseException;
 	
 	public void addFee(Fee fee) throws GSmartDatabaseException;
 	
