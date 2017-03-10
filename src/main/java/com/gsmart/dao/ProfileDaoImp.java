@@ -556,6 +556,8 @@ public class ProfileDaoImp implements ProfileDao {
 			Criteria criteria = session.createCriteria(Profile.class);
 			criteria.add(Restrictions.isNotNull("rfId"));
 			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.setFirstResult(min);
+			criteria.setMaxResults(max);
 			profileListWithRfid = criteria.list();
 			System.out.println("dfcsdgcysyhfvgyhfgv" + profileListWithRfid);
 			rfidWithMap.put("profileListWithRfid", profileListWithRfid);
