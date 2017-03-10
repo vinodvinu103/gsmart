@@ -13,6 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -61,7 +62,7 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy,int min,int max )throws GSmartDatabaseException {
+	public Map<String, Object> getHolidayList(Long hid,int min,int max )throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
 		getConnection();
@@ -69,17 +70,16 @@ public class HolidayDaoImpl implements HolidayDao {
 		Map<String, Object> holidayMap = new HashMap<>();
 		Criteria criteria = null;
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("from Holiday WHERE isActive='Y' ");
-				 } else {
-				 query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy.hid=:hierarchy");
-				 query.setParameter("hierarchy", hierarchy.getHid());
-			}
+			
 
 			criteria = session.createCriteria(Holiday.class);
 
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			holidayList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Holiday.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
 			System.out.println("count"+count);

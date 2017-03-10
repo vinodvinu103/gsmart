@@ -78,7 +78,7 @@ public class LeaveServicesImpl implements LeaveServices {
 			throws GSmartServiceException {
 		Loggers.loggerStart();
 		CompoundLeave cl = null;
-		Map<String, Object> list = getholidaylist.getHolidayList(role,hierarchy, 1, 1);
+		Map<String, Object> list = getholidaylist.getHolidayList(hierarchy.getHid(), 1, 1);
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
@@ -213,7 +213,7 @@ public  int getWorkingDaysBetweenTwoDates(Calendar startCal, Calendar endCal) th
 			System.out.println("days: " + days);
 
 			@SuppressWarnings("unchecked")
-			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList(role,hierarchy, min, max);
+			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList(hierarchy.getHid(), min, max);
 
 			long eStartDate = getEpoch(leave.getStartDate());
 			System.out.println("start date >>>>>>>......"+leave.getStartDate());
