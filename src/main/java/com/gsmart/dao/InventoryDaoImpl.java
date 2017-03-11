@@ -1,6 +1,5 @@
 package com.gsmart.dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +64,8 @@ public class InventoryDaoImpl implements InventoryDao {
 //		     criteria.setProjection(Projections.id());
 		     inventoryList = criteria.list();
 		     Criteria criteriaCount = session.createCriteria(Inventory.class);
+		     criteriaCount.add(Restrictions.eq("isActive", "Y"));
+		     criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 		     criteriaCount.setProjection(Projections.rowCount());
 		     Long count = (Long) criteriaCount.uniqueResult();
 		     inventoryMap.put("totalinventory", count);
@@ -262,6 +263,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Inventory> getInventoryList(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
