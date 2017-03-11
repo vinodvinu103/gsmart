@@ -24,6 +24,39 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 		try {
      		
 			 list= weekday.getWeekList();
+			 
+			 for (WeekDays weekDays : list) {
+					String wk=weekDays.getWeekDay();
+					String day=null;
+						switch(wk) {
+						case "1":
+							day="SUNDAY";
+							break;
+
+						case "2":
+							day="MONDAY";
+							break;
+							
+						case "3":
+							day="TUESDAY";
+							break;
+						case "4":
+							day="WEDNESDAY";
+							break;
+						case "5":
+							day="THURSDAY";
+							break;
+						case "6":
+							day="FRIDAY";
+							break;
+						case "7":
+							day="SATURDAY";
+							break;
+						}
+					
+					weekDays.setWeekDay(day);
+					System.out.println("weekdays +++++"+weekDays.getWeekDay());
+					}
 			
 			 return list;
 		}  catch (GSmartDatabaseException exception) {
@@ -33,6 +66,7 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
 		}
+	
 	}	
 
 	@Override
@@ -88,6 +122,37 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 	@Override
 	public void deleteWeekdaysList(WeekDays weekdays) throws GSmartServiceException {
 		Loggers.loggerStart();
+		String day=weekdays.getWeekDay();
+		String wd=day.toUpperCase();
+		switch(wd) {
+		case "SUNDAY":
+			day="1";
+			break;
+
+		case "MONDAY":
+			day="2";
+			break;
+			
+		case "TUESDAY":
+			day="3";
+			break;
+		case "WEDNESDAY":
+			day="4";
+			break;
+		case "THURSDAY":
+			day="5";
+			break;
+		case "FRIDAY":
+			day="6";
+			break;
+		case "SATURDAY":
+			day="7";
+			break;
+		}
+		weekdays.setWeekDay(day);
+		weekday.addWeekDays(weekdays);	
+		Loggers.loggerEnd();
+	
 		try{
 	weekday.deleteweekdays(weekdays);
 		}catch (GSmartDatabaseException exception) {

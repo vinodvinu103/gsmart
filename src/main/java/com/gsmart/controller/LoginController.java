@@ -40,7 +40,6 @@ public class LoginController {
 	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody Login login, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		
 		String tokenNumber = null;
-		
 		if(token.get("Authorization")!=null)
 			tokenNumber = token.get("Authorization").get(0);
 		

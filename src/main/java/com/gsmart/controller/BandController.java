@@ -62,8 +62,11 @@ public class BandController {
 	 */
 	// String module=getAuthorization.getModuleName();
 
+
+
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("hierarchy") Integer hierarchy, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+
 			throws GSmartBaseException {
 		Loggers.loggerStart(hierarchy);
 		String tokenNumber = token.get("Authorization").get(0);
@@ -173,7 +176,7 @@ public class BandController {
         	respMap.put("message", "Permission Denied");
                }
         Loggers.loggerEnd();
-    	return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+        return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 	     
 	}
 
@@ -184,16 +187,19 @@ public class BandController {
 	 * @see IAMResponse
 	 */
 	
+
 	@RequestMapping (value="/{task}",method=RequestMethod.PUT)
     public ResponseEntity<Map<String, Object>> editDeleteBand(@RequestBody Band band ,@PathVariable("task") String task,
     @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException{
 		Loggers.loggerStart(band);
 		Band cb=null;
 		Map<String, Object> respMap=new HashMap<>();
+
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
+
 
 		 if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){
@@ -223,3 +229,4 @@ public class BandController {
 	     return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 
 }}
+

@@ -115,11 +115,11 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	@Override
 	public void deleteweekdays(WeekDays weekdays) throws GSmartDatabaseException {
 		getConnection();
-		Loggers.loggerStart();
+		Loggers.loggerStart(weekdays);
 		try {
 			
 			weekdays.setIsActive("D");
-			session.save(weekdays);
+			session.update(weekdays);
 			transaction.commit();
 			session.close();
 

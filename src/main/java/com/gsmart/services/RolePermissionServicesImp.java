@@ -165,6 +165,9 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 					break;					
 				case "Assign":
 					rolePermission.setIcon("white fa fa-th-list fa-3x");
+					break;	
+				case "Grades":
+					rolePermission.setIcon("white fa fa-percent fa-3x");
 					break;
 				case "Banner":
 					rolePermission.setIcon("white fa fa-picture-o fa-3x");

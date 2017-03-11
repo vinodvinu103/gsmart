@@ -5,11 +5,30 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scripting.jruby.JRubyScriptUtils.JRubyExecutionException;
+import org.springframework.stereotype.Repository;
 
-public class CalendarCalculator implements Job {
+import com.google.gson.JsonSerializationContext;
+
+@Repository
+public class CalendarCalculator {
+	
+	@Autowired
+	SessionFactory sessionFactroy;
+
+	Session session = null;
+	Query query;
+	Transaction tranction = null;
+
+	public void getConnection() {
+		session = sessionFactroy.openSession();
+		tranction = session.beginTransaction();
+	}
 
 	public static String getTimeStamp() {
 		try {
@@ -25,7 +44,7 @@ public class CalendarCalculator implements Job {
 		}
 	}
 
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void execute(JsonSerializationContext context) throws JRubyExecutionException {
 		System.out.println("Hello Quartz!");
 	}
 	

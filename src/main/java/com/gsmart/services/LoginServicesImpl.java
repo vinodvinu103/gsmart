@@ -6,12 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.gsmart.dao.LoginDao;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
@@ -21,7 +20,7 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
-public class LoginServicesImpl implements LoginServices {
+public class LoginServicesImpl implements LoginServices{
 
 	@Autowired
 	LoginDao loginDao;

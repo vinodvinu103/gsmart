@@ -68,6 +68,12 @@ public void setWeekDay(String weekDay) {
 }
 //school and institute purpose
 
+@Override
+public String toString() {
+	return "WeekDays [school=" + school + ", institution=" + institution + ", weekDay=" + weekDay + ", isActive="
+			+ isActive + "]";
+}
+
 
 
 
