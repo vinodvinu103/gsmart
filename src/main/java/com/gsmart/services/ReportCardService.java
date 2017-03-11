@@ -11,6 +11,7 @@ import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartServiceException;
+import com.itextpdf.text.Document;
 
 public interface ReportCardService {
 	
@@ -27,8 +28,8 @@ public interface ReportCardService {
 	
 	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
 	
-	public void calculatPercentage(String smartId, List<ReportCard> childReportCards)throws GSmartServiceException;
+	public String calculatPercentage(String smartId, List<ReportCard> childReportCards)throws GSmartServiceException;
 
-	public void downloadPdf(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
+	public Document downloadPdf(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
 
 }

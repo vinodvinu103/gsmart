@@ -2,10 +2,7 @@ package com.gsmart.services;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +125,7 @@ public class ReportCardServiceImpl implements ReportCardService {
 	}
 
 	@Override
-	public void calculatPercentage(String smartId, List<ReportCard> childReportCards)
+	public String calculatPercentage(String smartId, List<ReportCard> childReportCards)
 			throws GSmartServiceException {
 		Double totalMarks = 0.0;
 		Double obtainedMarks = 0.0;
@@ -151,20 +148,19 @@ public class ReportCardServiceImpl implements ReportCardService {
 			percentage = 0.0;
 			System.out.println(" in side catch blk percentage..........." + percentage);
 		}
-
+		return ""+percentage;
 	}
 
 	@Override
-	public void downloadPdf(Token tokenDetail, String examName, String academicYear)
+	public Document downloadPdf(Token tokenDetail, String academicYear, String examName)
 			throws GSmartServiceException {
 		Calendar startMonth = Calendar.getInstance();
 		Calendar endMonth = Calendar.getInstance();
 		List<ReportCard> list=null;
+		document.open();
 		try {
-			document.open();
+			
 			while (startMonth.compareTo(endMonth) <= 0) {
-				String month = new SimpleDateFormat("MMMM").format(startMonth.getTime());
-				String year = new SimpleDateFormat("yyyy").format(startMonth.getTime());
 
 				list = reportCardDao.search(tokenDetail, academicYear, examName);
 				try {
@@ -174,7 +170,7 @@ public class ReportCardServiceImpl implements ReportCardService {
 					e.printStackTrace();
 				}
 				
-				generatePDF(list, examName, academicYear);
+				document=generatePDF(list, examName, academicYear);
 				Loggers.loggerValue(academicYear, "pdfgenerated");
 				startMonth.add(Calendar.MONTH, 1);
 			}
@@ -182,15 +178,16 @@ public class ReportCardServiceImpl implements ReportCardService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return document;
 
 	}
 
-	public void generatePDF(List<ReportCard> card, String examName, String academicYear) {
+	public Document generatePDF(List<ReportCard> card, String examName, String academicYear) throws GSmartServiceException {
 
 		// Image image = null;
 
 		try {
-
+			document.open();
 			/*
 			 * try { image =
 			 * Image.getInstance("/home/gtpl/Desktop/gowdanar.png");
@@ -249,10 +246,11 @@ public class ReportCardServiceImpl implements ReportCardService {
 			gap.setSpacingAfter(25f);
 			document.add(gap);
 
-			PdfPTable empDetails = new PdfPTable(4);
+			PdfPTable empDetails = new PdfPTable(3);
 
 			PdfPCell cell1 = new PdfPCell(new Paragraph("Smart Id", labels));
 			PdfPCell cell2 = new PdfPCell(new Paragraph(card.get(0).getSmartId(), contents));
+			System.out.println("smart id of student "+card.get(0).getSmartId());
 			PdfPCell cell3 = new PdfPCell(new Paragraph("Student Name", labels));
 			PdfPCell cell4 = new PdfPCell(new Paragraph(card.get(0).getStudentName(), contents));
 			PdfPCell cell5 = new PdfPCell(new Paragraph("Exam Name", labels));
@@ -271,7 +269,7 @@ public class ReportCardServiceImpl implements ReportCardService {
 			empDetails.addCell(cell3);
 			empDetails.addCell(cell4);
 			empDetails.addCell(cell5);
-			empDetails.addCell(cell6);
+			//empDetails.addCell(cell6);
 
 			document.add(empDetails);
 
@@ -300,12 +298,13 @@ public class ReportCardServiceImpl implements ReportCardService {
 				salDetails.addCell(reportcard.getSubjectGrade());
 				i++;
 			}
-			
+			salDetails.addCell("TOTAL PERCENTAGE % IS "+calculatPercentage("", card));
 			document.add(salDetails);
-
+			System.out.println("***************** Generate PDF **************** ");
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
+		return document;
 	}
 	
 }

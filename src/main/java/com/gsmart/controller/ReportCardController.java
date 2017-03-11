@@ -1,5 +1,6 @@
 package com.gsmart.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,9 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping(Constants.REPORTCARD)
@@ -82,7 +86,6 @@ public class ReportCardController {
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
 				list = reportCardService.search(tokenObj,academicYear,examName);
-				reportCardService.downloadPdf(tokenObj, academicYear, examName);
 				permission.put("reportCard", list);
 				//permission.put("downLaodPDF", pdf);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
@@ -358,11 +361,16 @@ public class ReportCardController {
 	}
 	
 	@RequestMapping(value="/download/{academicYear}/{examName}", method=RequestMethod.GET)
-	public ResponseEntity<Map<String, String>> generatePDF(@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName,@RequestHeader HttpHeaders token,HttpSession httpSession)throws GSmartBaseException{
+	public ResponseEntity<Map<String, byte[]>> generatePDF(@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName,@RequestHeader HttpHeaders token,HttpSession httpSession)throws GSmartBaseException, DocumentException{
 		Loggers.loggerStart();
+		Map<String, byte[]> pdf=new HashMap<>();
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-		reportCardService.downloadPdf(tokenObj, academicYear, examName);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		Document document=reportCardService.downloadPdf(tokenObj, academicYear, examName);
+		PdfWriter.getInstance(document, baos);
+		byte[] pdfFile = baos.toByteArray();
+		pdf.put("pdf", pdfFile);
 		Loggers.loggerEnd();
-		return null;
+		return new ResponseEntity<Map<String, byte[]>>(pdf,HttpStatus.OK);
 	}
 }
