@@ -146,11 +146,11 @@ public class FeeServicesImpl implements FeeServices {
 	}
 
 	@Override
-	public int getPaidFeeDashboard(String academicYear, Hierarchy hierarchy, List<String> childList) throws GSmartServiceException {
+	public int getPaidFeeDashboard(String academicYear, Long hid, List<String> childList) throws GSmartServiceException {
 		Loggers.loggerStart();
 		List<Fee> feeList = new ArrayList<>();
 		int paidFees = 0;
-		feeList = feeDao.getFeeDashboard(academicYear, hierarchy, childList);
+		feeList = feeDao.getFeeDashboard(academicYear, hid, childList);
 		for (Fee fee : feeList) {
 			paidFees += fee.getTotalFee();
 		}
@@ -159,12 +159,12 @@ public class FeeServicesImpl implements FeeServices {
 	}
 
 	@Override
-	public int getTotalFeeDashboard(String academicYear, Hierarchy hierarchy, List<String> childList)
+	public int getTotalFeeDashboard(String academicYear, Long hid, List<String> childList)
 			throws GSmartServiceException {
 		Loggers.loggerStart();
 		List<Fee> feeList = new ArrayList<>();
 		int totalFees = 0;
-		feeList = feeDao.getFeeDashboard(academicYear, hierarchy, childList);
+		feeList = feeDao.getFeeDashboard(academicYear, hid, childList);
 		for (Fee fee : feeList) {
 			totalFees += fee.getPaidFee();
 		}

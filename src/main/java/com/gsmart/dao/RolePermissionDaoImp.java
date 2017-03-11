@@ -170,15 +170,14 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			if (rolePermission.getSubModuleName() == null) {
 				if (oldRolePermission.getRole().equals(rolePermission.getRole())
 						&& oldRolePermission.getModuleName().equals(rolePermission.getModuleName())) {
-					rolePermission1 = fetch(rolePermission);
-					if (rolePermission1 == null) {
+					
 						oldRolePermission.setUpdatedTime(CalendarCalculator.getTimeStamp());
 						oldRolePermission.setIsActive("N");
 						session.update(oldRolePermission);
 
 						transaction.commit();
 						return oldRolePermission;
-					}
+					
 				} else {
 					rolePermission1 = fetch3(rolePermission);
 					if (rolePermission1 == null) {
@@ -196,8 +195,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 				if (oldRolePermission.getRole().equals(rolePermission.getRole())
 						&& oldRolePermission.getModuleName().equals(rolePermission.getModuleName())
 						&& oldRolePermission.getSubModuleName().equals(rolePermission.getSubModuleName())) {
-					rolePermission1 = fetch2(rolePermission);
-					if (rolePermission1 == null) {
+					
 						oldRolePermission.setUpdatedTime(CalendarCalculator.getTimeStamp());
 						oldRolePermission.setIsActive("N");
 						session.update(oldRolePermission);
@@ -205,7 +203,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 						transaction.commit();
 						return oldRolePermission;
 
-					}
+					
 				} else {
 
 					rolePermission1 = fetch4(rolePermission);
@@ -258,7 +256,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		return rolePermissionList;
 	}
 
-	private RolePermission fetch2(RolePermission rolePermission) {
+	/*private RolePermission fetch2(RolePermission rolePermission) {
 		Loggers.loggerStart();
 		RolePermission rolePermissionList = null;
 		query = session.createQuery(
@@ -276,8 +274,8 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		Loggers.loggerEnd(rolePermissionList);
 		return rolePermissionList;
 	}
-
-	public RolePermission fetch(RolePermission rolePermission) {
+*/
+	/*public RolePermission fetch(RolePermission rolePermission) {
 
 		Loggers.loggerStart();
 		getConnection();
@@ -301,7 +299,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		}
 		return rolePermissionList;
 
-	}
+	}*/
 
 	/**
 	 * removes the permission entity from the database.
