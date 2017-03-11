@@ -21,11 +21,11 @@ public class FeeServicesImpl implements FeeServices {
 	FeeDao feeDao;
 
 	@Override
-	public ArrayList<Fee> getFeeList(Fee fee, String role, Hierarchy hierarchy) throws GSmartServiceException {
+	public ArrayList<Fee> getFeeList(Fee fee, Long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 		ArrayList<Fee> feeList = null;
 		try {
-			feeList = (ArrayList<Fee>) feeDao.getFeeList(fee, role, hierarchy);
+			feeList = (ArrayList<Fee>) feeDao.getFeeList(fee,hid);
 			Loggers.loggerStart(feeList);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
@@ -48,41 +48,36 @@ public class FeeServicesImpl implements FeeServices {
 		Loggers.loggerEnd();
 	}
 
-	/*
-	 * @Override public ArrayList<Fee> getFeeLists(String academicYear) throws
-	 * GSmartDatabaseException { Loggers.loggerStart(); return
-	 * feeDao.getFeeLists(academicYear);
-	 * 
-	 * }
-	 */
 	@Override
-	public Map<String, Object> getPaidStudentsList(String role, Hierarchy hierarchy, Integer min, Integer max)
+	public Map<String, Object> getPaidStudentsList(Long hid, Integer min, Integer max)
 			throws GSmartServiceException {
 		Loggers.loggerStart();
 		Map<String, Object> paidStudentsList = null;
 		try {
-			paidStudentsList = (Map<String, Object>) feeDao.getPaidStudentsList(role, hierarchy, min, max);
-			Loggers.loggerStart(paidStudentsList);
+			paidStudentsList = feeDao.getPaidStudentsList(hid, min, max);
 		} catch (GSmartDatabaseException exception) {
+			exception.printStackTrace();
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
 		}
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(paidStudentsList);
 		return paidStudentsList;
 	}
 
 	@Override
-	public Map<String, Object> getUnpaidStudentsList(String role, Hierarchy hierarchy, Integer min, Integer max)
+	public Map<String, Object> getUnpaidStudentsList(Long hid, Integer min, Integer max)
 			throws GSmartServiceException {
 		Loggers.loggerStart();
 		Map<String, Object> unpaidStudentsList = null;
 		try {
-			unpaidStudentsList = (Map<String, Object>) feeDao.getUnpaidStudentsList(role, hierarchy, min, max);
-			Loggers.loggerStart(unpaidStudentsList);
+			unpaidStudentsList = feeDao.getUnpaidStudentsList(hid, min, max);
 		} catch (GSmartDatabaseException exception) {
+			exception.printStackTrace();
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
 		}
 		Loggers.loggerEnd();
@@ -90,10 +85,8 @@ public class FeeServicesImpl implements FeeServices {
 	}
 
 	@Override
-	public ArrayList<Fee> getFeeLists(String academicYear, String role, Hierarchy hierarchy)
-			throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return feeDao.getFeeLists(academicYear, role, hierarchy);
+	public ArrayList<Fee> getFeeLists(String academicYear,Long hid) throws GSmartServiceException {
+		return feeDao.getFeeLists(academicYear,hid);
 	}
 
 	@Override
@@ -127,11 +120,11 @@ public class FeeServicesImpl implements FeeServices {
 	}
 
 	@Override
-	public int gettotalfee(String role, Hierarchy hierarchy) throws GSmartServiceException {
+	public int gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		Loggers.loggerStart();
 		List<Fee> feeList = new ArrayList<>();
 		int totalFees = 0;
-		feeList = feeDao.gettotalfee(role, hierarchy);
+		feeList = feeDao.gettotalfee(role,hierarchy);
 		for (Fee fee : feeList) {
 			totalFees = totalFees + fee.getTotalFee();
 		}
@@ -180,3 +173,10 @@ public class FeeServicesImpl implements FeeServices {
 	}
 
 }
+/*------
+List<Fee> feeListFromMap = (List<Fee>)fee.get("feeList");
+for (int i = 0; i < feeListFromMap.size(); i++) {
+	String smartId = feeListFromMap.get(i).getSmartId();
+	System.out.println(((Fee) fee.get(i)).getStandard());
+
+}*/
