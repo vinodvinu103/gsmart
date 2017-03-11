@@ -1,6 +1,8 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.gsmart.dao.RolePermissionDao;
@@ -164,6 +166,12 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 				case "Assign":
 					rolePermission.setIcon("white fa fa-th-list fa-3x");
 					break;	
+				case "Grades":
+					rolePermission.setIcon("white fa fa-percent fa-3x");
+					break;
+				case "Banner":
+					rolePermission.setIcon("white fa fa-picture-o fa-3x");
+					break;						  
 				}
 				
 			}
