@@ -1,7 +1,6 @@
 package com.gsmart.services;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -79,7 +78,7 @@ public class LeaveServicesImpl implements LeaveServices {
 			throws GSmartServiceException {
 		Loggers.loggerStart();
 		CompoundLeave cl = null;
-		Map<String, Object> list = getholidaylist.getHolidayList(role, hierarchy, 1, 1);
+		Map<String, Object> list = getholidaylist.getHolidayList(hierarchy.getHid(), 1, 1);
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
@@ -89,6 +88,7 @@ public class LeaveServicesImpl implements LeaveServices {
 			startCal.setTime(leave.getStartDate());
 			endCal.setTime(leave.getEndDate());
 			int work = getWorkingDaysBetweenTwoDates(startCal, endCal);
+			@SuppressWarnings("unchecked")
 			List<Object> holidayList = (List<Object>) list.get("holidayList");
 			for (Object holidayObj : holidayList) {
 				Holiday holiday = (Holiday) holidayObj;
@@ -168,7 +168,7 @@ public  int getWorkingDaysBetweenTwoDates(Calendar startCal, Calendar endCal) th
 	public CompoundLeave addLeave(Leave leave,Integer noOfdays,String smartId,String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		Profile profile=null;
-		profile=profileDao.profileDetails(smartId);
+		profile=profileDao.getProfileDetails(smartId);
 		String school=profile.getSchool();
 		String institution=profile.getInstitution();
 		CompoundLeave cl=null;
@@ -212,7 +212,8 @@ public  int getWorkingDaysBetweenTwoDates(Calendar startCal, Calendar endCal) th
 
 			System.out.println("days: " + days);
 
-			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList(role,hierarchy, min, max);
+			@SuppressWarnings("unchecked")
+			ArrayList<Holiday> list = (ArrayList<Holiday>) getholidaylist.getHolidayList(hierarchy.getHid(), min, max);
 
 			long eStartDate = getEpoch(leave.getStartDate());
 			System.out.println("start date >>>>>>>......"+leave.getStartDate());

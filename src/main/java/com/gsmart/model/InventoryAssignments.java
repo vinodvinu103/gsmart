@@ -44,6 +44,9 @@ public class InventoryAssignments implements Serializable
 	@Column(name="QUANTITY")
 	private int quantity;
 	
+	@Transient
+	private int totalQuantity;
+	
 	@Id
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
@@ -156,6 +159,14 @@ public class InventoryAssignments implements Serializable
 	}
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
+	}
+
+	public int getTotalQuantity() {
+		return totalQuantity;
+	}
+
+	public void setTotalQuantity(int totalQuantity) {
+		this.totalQuantity = totalQuantity;
 	}
 	
 	
