@@ -1,9 +1,6 @@
 package com.gsmart.controller;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
@@ -86,7 +81,6 @@ public class AttendanceController {
 		Map<String, Object> holidayList = null;
 		Calendar cal = new GregorianCalendar(year, month, 0);
 		Date date = cal.getTime();
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(year, month - 1, 1);
 		Long startDate = calendar.getTimeInMillis() / 1000;
@@ -169,8 +163,8 @@ public class AttendanceController {
 		resultmap.put("modulePermisson", modulePermisson);
 		if (modulePermisson != null) {
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018", tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",
+					tokenObj.getHierarchy().getHid());
 			Loggers.loggerValue("profile is ", profile);
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("child is", childList);

@@ -2,18 +2,16 @@ package com.gsmart.services;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 import com.gsmart.model.Hierarchy;
 //import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.util.GSmartServiceException;
-import com.gsmart.util.Loggers;
 
 public interface SearchService {
 	
-	Map<String, Profile> getAllProfiles(String academicYear,String role,Hierarchy hierarchy);
+	Map<String, Profile> getAllProfiles(String academicYear,Long hid);
 	
 	ArrayList<Profile> getEmployeeInfo(String emp, Map<String, Profile> map);
 

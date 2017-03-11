@@ -46,7 +46,7 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 		}
 
 	}
-
+	
 	/**
 	 * calls {@link FeeMasterDao}'s <code>addFee(...)</code> method
 	 * @param feeMaster an instance of {@link FeeMaster} class

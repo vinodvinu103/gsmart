@@ -62,7 +62,7 @@ public class HolidayDaoImpl implements HolidayDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy,int min,int max )throws GSmartDatabaseException {
+	public Map<String, Object> getHolidayList(Long hid,int min,int max )throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
 		getConnection();
@@ -70,17 +70,16 @@ public class HolidayDaoImpl implements HolidayDao {
 		Map<String, Object> holidayMap = new HashMap<>();
 		Criteria criteria = null;
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("from Holiday WHERE isActive='Y' ");
-				 } else {
-				 query = session.createQuery("from Holiday WHERE isActive='Y' and hierarchy.hid=:hierarchy");
-				 query.setParameter("hierarchy", hierarchy.getHid());
-			}
+			
 
 			criteria = session.createCriteria(Holiday.class);
 
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			holidayList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Holiday.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
 			System.out.println("count"+count);
@@ -181,8 +180,6 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 	Holiday ch = null;
 		try {
 			if(getTimeWithOutMillis(oldholiday.getHolidayDate()).equals(getTimeWithOutMillis(holiday.getHolidayDate()))){
-				holiday1 = fetch2(holiday);
-				if (holiday1 == null) {
 					oldholiday.setUpdatedTime(CalendarCalculator.getTimeStamp());
 					oldholiday.setIsActive("N");
 					session.update(oldholiday);
@@ -190,7 +187,7 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 					
 					transaction.commit();
 					return oldholiday;
-			}
+			
 			}else{
 				holiday1=fetch(holiday);
 				if (holiday1 == null) {
@@ -215,20 +212,8 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 		return ch;
 
 	}
-	private Holiday fetch2(Holiday holiday) {
-		Loggers.loggerStart();
-			query=session.createQuery("from Holiday where holidayDate=:holidayDate and description=:description and isActive=:isActive and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", holiday.getHierarchy().getHid());
-		
-		
-		query.setParameter("isActive", "Y");
-		query.setParameter("holidayDate", getTimeWithOutMillis(holiday.getHolidayDate()));
-		
-		query.setParameter("description", holiday.getDescription());
-		Holiday holiday1 = (Holiday) query.uniqueResult();
-		Loggers.loggerEnd();
-		return holiday1 ;
-}
+	
+
 	public Holiday getHolidayLists(String entryTime,Hierarchy hierarchy) {
 		try {
 
