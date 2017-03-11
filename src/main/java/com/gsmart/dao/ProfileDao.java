@@ -97,7 +97,7 @@ public interface ProfileDao {
 
 	public List<Banners> getBannerList();
 	
-	public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;
+	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 
 	public void deleteBanner(Banners banner)throws GSmartDatabaseException;
 
