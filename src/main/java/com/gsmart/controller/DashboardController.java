@@ -82,8 +82,8 @@ public class DashboardController {
 		if (tokenObj.getHierarchy() == null) {
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
-				Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getRole(),
-						hierarchy);
+				Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear,
+						hierarchy.getHid());
 				ArrayList<String> childsList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 				childsList.add(tokenObj.getSmartId());
 				inventoryAssignmentList = inventoryAssignmentServices.getInventoryDashboardData(childsList, hierarchy);
@@ -99,8 +99,7 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
-			Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getHierarchy().getHid());
 			ArrayList<String> childsList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 			childsList.add(tokenObj.getSmartId());
 			inventoryAssignmentList = inventoryAssignmentServices.getInventoryDashboardData(childsList, tokenObj.getHierarchy());
@@ -163,9 +162,12 @@ public class DashboardController {
 			System.out.println("in side if condition for fees");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
+
 				System.out.println("in side for loop condition for fees");
-				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
-						hierarchy);
+				
+				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
+						hierarchy.getHid());
+
 				List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 				childList.add(tokenObj.getSmartId());
 				totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
@@ -179,9 +181,12 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
+
 			System.out.println("in side else -if condition for fees");
-			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+
+			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
+					tokenObj.getHierarchy().getHid());
+
 			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 			childList.add(tokenObj.getSmartId());
 			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);

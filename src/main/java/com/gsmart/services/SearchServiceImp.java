@@ -38,30 +38,14 @@ public class SearchServiceImp implements SearchService {
 	@Autowired
 	FeeMasterServices feeMasterServices;
 
-	/*
-	 * @Autowired
-	 * 
-	 * @RequestMapping(value = "/searchRep", method = RequestMethod.POST) public
-	 * ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody
-	 * Search search) {
-	 * 
-	 * Map<String, ArrayList<Profile>> jsonMap = new HashMap<String,
-	 * ArrayList<Profile>>(); Map<String, Profile> map =
-	 * searchService.searchRep(search); ArrayList<Profile> profiles =
-	 * searchService.getEmployeeInfo(search.getName(), map);
-	 * jsonMap.put("result", profiles); return new ResponseEntity<Map<String,
-	 * ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-	 * 
-	 * }
-	 */
 
 	private Map<String, Profile> allProfiles;
 
 	@Override
-	public Map<String, Profile> getAllProfiles(String academicYear, String role, Hierarchy hierarchy) {
+	public Map<String, Profile> getAllProfiles(String academicYear,Long hid) {
 		Loggers.loggerStart();
 		allProfiles = new HashMap<String, Profile>();
-		List<Profile> profiles = profiledao.getAllRecord(academicYear, role, hierarchy);
+		List<Profile> profiles = profiledao.getAllRecord(academicYear, hid);
 		Loggers.loggerValue("returnd to getall Profiles in serviceImpl ", "");
 		for (Profile profile : profiles) {
 			Loggers.loggerValue("smartIds :", profile.getSmartId());
@@ -207,7 +191,7 @@ public class SearchServiceImp implements SearchService {
 			Loggers.loggerValue("if childList is not empty", "");
 
 			if (childList.get(0).getRole().toLowerCase().equals("student")) {
-				fees = studentFees(childList,academicYear,hid,1,20);
+				fees = studentFees(childList,academicYear,hid,0,20);
 
 				return fees;
 
@@ -224,7 +208,7 @@ public class SearchServiceImp implements SearchService {
 						Loggers.loggerValue("temp1 value ", temp1);
 					
 					if (boo) {
-						fees = studentFees(temp1,academicYear,hid, 1, 20);
+						fees = studentFees(temp1,academicYear,hid, 0, 20);
 					}
 					/*}else
 					{
@@ -284,6 +268,7 @@ public class SearchServiceImp implements SearchService {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> studentFees(ArrayList<Profile> childList,String academicYear,Long hid, int min, int max) throws GSmartServiceException {
 
@@ -291,23 +276,30 @@ public class SearchServiceImp implements SearchService {
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
 		ArrayList<Fee> feeList = feeServices.getFeeLists(academicYear,hid);
+		
+		System.out.println("min"+min+"/t"+"max"+max+"/t"+"hid"+hid);
+		
+		System.out.println("feeList"+feeList);
 
-		@SuppressWarnings("unchecked")
-		ArrayList<FeeMaster> fee = (ArrayList<FeeMaster>) feeMasterServices.getFeeList(hid, min, max);
+		 Map<String, Object> fee = ( Map<String, Object>) feeMasterServices.getFeeList(hid, min, max);
 
 		Map<String, Fee> feeMap = new HashMap<String, Fee>();
 
 		Map<String, Integer> feeMasterMap = new HashMap<String, Integer>();
 
 		for (int i = 0; i < feeList.size(); i++) {
+			Loggers.loggerStart(feeList.size());
 			feeMap.put(feeList.get(i).getSmartId(), feeList.get(i));
 		}
 
-		for (int i = 0; i < fee.size(); i++) {
+	List<FeeMaster> feeMaster=	(List<FeeMaster>) fee.get("feeList");
+		for (int i = 0; i < feeMaster.size(); i++) {
+			Loggers.loggerStart(feeMaster.size());
 
-			feeMasterMap.put(fee.get(i).getStandard(), fee.get(i).getTotalFee());
+			feeMasterMap.put((feeMaster.get(i)).getStandard(), (feeMaster.get(i)).getTotalFee());
 
 		}
+		
 
 		for (Profile profile : childList) {
 

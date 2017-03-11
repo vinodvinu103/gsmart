@@ -1,6 +1,5 @@
 package com.gsmart.model;
 
-import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,23 +7,13 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.sql.rowset.serial.SerialBlob;
 
-import org.hibernate.annotations.Type;
 
 
 @Entity
 @Table(name = "banners")
 @IdClass(com.gsmart.model.CompoundBanner.class)
 public class Banners {
-
-	/**
-	 * Title of Image
-	 */
-	
-	@Column(name = "TITLE")
-	private String title;
-
 	/**
 	 * Image
 	 */
@@ -32,13 +21,13 @@ public class Banners {
 	@Column(name = "IMAGE",length = 400000)
 	private byte[] image;
 
-	public String getTitle() {
+	/*public String getTitle() {
 		return title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
+	}*/
 
 	public byte[] getImage() {
 		return image;
@@ -92,12 +81,5 @@ public class Banners {
 		this.isActive = isActive;
 	}
 
-	@Override
-	public String toString() {
-		return "Banners [title=" + title + ", image=" + image + ", entryTime=" + entryTime + ", exitTime=" + exitTime
-				+ ", updatedTime=" + updatedTime + ", isActive=" + isActive + "]";
-	}
-
-	
 
 }
