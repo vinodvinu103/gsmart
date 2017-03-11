@@ -152,15 +152,18 @@ public class DashboardController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Loggers.loggerStart(modulePermission);
 		str.length();
-		int totalPaidFees;
-		int totalFees;
+		int totalPaidFees=0;
+		int totalFees=0;
 		List<Map<String, Object>> responseList = new ArrayList<>();
 		Map<String, Object> responseMap = new HashMap<>();
 		Map<String, Object> dataMap = new HashMap<>();
 		if (tokenObj.getHierarchy() == null && modulePermission != null) {
+			System.out.println("in side if condition for fees");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
+				System.out.println("in side for loop condition for fees");
 				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
 						hierarchy);
 				List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
@@ -176,6 +179,7 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
+			System.out.println("in side else -if condition for fees");
 			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
 					tokenObj.getHierarchy());
 			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
@@ -190,11 +194,13 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else {
+			System.out.println("in side else condition for fees");
 			responseMap.put("data", null);
 			responseMap.put("status", 404);
 			responseMap.put("message", "Data not found");
 		}
-
+		System.out.println("The paid fees passed here is: "+totalPaidFees);
+		System.out.println("The total fees passed here is"+totalFees);
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
