@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Leave;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -236,4 +237,23 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		
 	}
 
+	@Override
+	public List<LeaveMaster> getLeaveMasterListForApplyLeave(String role, Hierarchy hierarchy)
+			throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		Criteria criteria=null;
+		List<LeaveMaster> masterList=null;
+		getconnection();
+		try {
+			criteria = session.createCriteria(LeaveMaster.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid",  hierarchy.getHid()));
+			masterList=criteria.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(masterList);
+		return masterList;
+	}
+	
 }

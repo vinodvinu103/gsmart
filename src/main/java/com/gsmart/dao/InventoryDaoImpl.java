@@ -279,6 +279,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		} finally {
 			session.close();
 		}
+		Loggers.loggerEnd(inventoryList);
 		return inventoryList;
 	}
 

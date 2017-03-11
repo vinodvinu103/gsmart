@@ -18,11 +18,11 @@ public interface FeeServices {
 	
 	public int gettotalfee(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	
-	public int getPaidFeeDashboard(String academicYear,Hierarchy hierarchy, List<String> childList) throws GSmartServiceException;
+	public int getPaidFeeDashboard(String academicYear,Long hid, List<String> childList) throws GSmartServiceException;
 	
 	public int gettotalpaidfee(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	
-	public int getTotalFeeDashboard(String academicYear,Hierarchy hierarchy, List<String> childList) throws GSmartServiceException;
+	public int getTotalFeeDashboard(String academicYear,Long hid, List<String> childList) throws GSmartServiceException;
 
 	 public Map<String, Object> getPaidStudentsList(Long hid, Integer min, Integer max) throws GSmartServiceException ;
 		

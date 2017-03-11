@@ -227,6 +227,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		tx = session.beginTransaction();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<InventoryAssignments> getInventoryDashboardData(ArrayList<String> smartIdList, Hierarchy hierarchy)
 			throws GSmartDatabaseException {
@@ -238,15 +239,15 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			query = session
 					.createQuery("From InventoryAssignments where isActive=:isActive and hierarchy.hid=:hierarchy and smartId in (:smartIdList)");
 			query.setParameter("hierarchy", hierarchy.getHid());
-			query.setParameter("smartIdList", smartIdList.toString());
+			query.setParameterList("smartIdList", smartIdList);
 			query.setParameter("isActive", "Y");
-			inventoryAssignmentList = (List<InventoryAssignments>) query.list();
+			inventoryAssignmentList =  query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			session.close();
 		}
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(inventoryAssignmentList);
 		return inventoryAssignmentList;
 	}
 

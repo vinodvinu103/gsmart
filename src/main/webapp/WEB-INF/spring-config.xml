@@ -43,6 +43,10 @@
 				<value>com.gsmart.model.ReportCard</value>
 				<value>com.gsmart.model.InventoryAssignments</value>
 				<value>com.gsmart.model.Fee</value>
+				<value>com.gsmart.model.PaySlip</value>
+				<value>com.gsmart.model.Modules</value>
+				<value>com.gsmart.model.SalaryStructure</value>
+				<value>com.gsmart.model.GenerateSalaryStatement</value>
 				<value>com.gsmart.model.Modules</value>
 				<value>com.gsmart.model.ReportCard</value>
 				<value>com.gsmart.model.LeaveDetails</value>

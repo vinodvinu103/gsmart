@@ -50,7 +50,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("smartId", profileInfo.getSmartId());
 			}
-			leavelist = (List<Leave>) query.list();
+			leavelist = query.list();
 
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());

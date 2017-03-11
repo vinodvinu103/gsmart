@@ -1,0 +1,41 @@
+package com.gsmart.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.gsmart.dao.SalaryStructureDAO;
+import com.gsmart.model.SalaryStructure;
+
+@Service
+public class SalaryStructureServiceImpl implements SalaryStructureService{
+
+	@Autowired
+	private SalaryStructureDAO salaryStructureDAO;
+	
+	@Override
+	public List<SalaryStructure> view() {
+	
+		return salaryStructureDAO.view();
+	}
+
+	@Override
+	public void add(SalaryStructure salaryStructure) {
+
+		salaryStructureDAO.add(salaryStructure);
+	}
+
+	@Override
+	public void edit(SalaryStructure salaryStructure) {
+
+		salaryStructureDAO.edit(salaryStructure);
+	}
+
+	@Override
+	public void delete(SalaryStructure salaryStructure) {
+
+		salaryStructureDAO.delete(salaryStructure);
+	}
+
+}
