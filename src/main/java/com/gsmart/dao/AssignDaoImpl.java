@@ -1,19 +1,22 @@
 package com.gsmart.dao;
 
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import org.hibernate.Criteria;
 import javax.validation.ConstraintViolationException;
-
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
+import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -37,30 +40,35 @@ public class AssignDaoImpl implements AssignDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Assign> getAssignReportee(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getAssignReportee(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
 		List<Assign> assignList = null;
+		Map<String, Object> assignMap = new HashMap<>();
+		Criteria criteria = null;
 		try {
 
 			getConnection();
 				
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
-	 			query = session.createQuery("from Assign where isActive=:isActive");
-			else {
-				query = session.createQuery("from Assign where isActive=:isActive and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
-			query.setParameter("isActive", "Y");
-			assignList = query.list();
+	 		
+			criteria = session.createCriteria(Assign.class);
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
+			assignList = criteria.list();
+			Criteria criteriaCount = session.createCriteria(Assign.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			assignMap.put("totalassign", count);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
 			session.close();
 		}
-
+		assignMap.put("assignList", assignList);
 		Loggers.loggerEnd();
-		return assignList;
+		return assignMap;
 	}
 	
 	@Override
@@ -71,11 +79,9 @@ public class AssignDaoImpl implements AssignDao {
 		CompoundAssign compoundAssign = null;
 		Assign assign2=null;
 		try {
-			if(assign.getHierarchy().getHid() == null){
-				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
-			}else{
+			
 				assign2=fetch2(assign);
-			}
+			
 			if (assign2 == null) {
 				assign.setEntryTime(CalendarCalculator.getTimeStamp());
 				assign.setIsActive("Y");
@@ -96,11 +102,8 @@ public class AssignDaoImpl implements AssignDao {
 		getConnection();
 		Assign assignList = null;
 		try {
-			if(assign.getHierarchy().getHid() == null){
-				query = session.createQuery("FROM Assign WHERE standard=:standard AND isActive=:isActive");
-			}else{
+			
 			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy and teacherSmartId=:teacherSmartId");
-			}
 			query.setParameter("teacherSmartId", assign.getTeacherSmartId());
 			query.setParameter("standard", assign.getStandard());
 			query.setParameter("isActive", "Y");
@@ -122,7 +125,7 @@ public class AssignDaoImpl implements AssignDao {
 		try {
 			getConnection();			
 			
-			Assign oldAssign = getAssigns(assign.getEntryTime());
+			Assign oldAssign = getAssigns(assign.getEntryTime(),assign.getHierarchy());
 			asgn = updateAssign(oldAssign, assign);
 			CompoundAssign ch =	addAssigningReportee(assign);
 			if(ch!=null){
@@ -137,7 +140,7 @@ public class AssignDaoImpl implements AssignDao {
 				query.setParameter("section", assign.getSection());
 				query.setParameter("teacherName", assign.getTeacherName());
 				query.setParameter("hierarchy", assign.getHierarchy().getHid());
-				int a=query.executeUpdate();
+				query.executeUpdate();
 				transaction.commit();
 				session.close();
 			}			
@@ -194,10 +197,11 @@ public class AssignDaoImpl implements AssignDao {
 		return assignList;
 	}
 
-	public Assign getAssigns(String entryTime) {
+	public Assign getAssigns(String entryTime,Hierarchy hierarchy) {
 		Loggers.loggerStart();
 		try {
-			query = session.createQuery("from Assign where isActive='Y' and entryTime='" + entryTime + "'");
+			query = session.createQuery("from Assign where isActive='Y' and entryTime='" + entryTime + "' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			Assign assign = (Assign) query.uniqueResult();
 			return assign;
 
@@ -249,5 +253,54 @@ public class AssignDaoImpl implements AssignDao {
 		}finally {
 			session.close();
 		}
+	}
+	
+	@Override
+	public boolean searchStandardFeeDao(String standard,Long hid){
+		getConnection();
+		Loggers.loggerStart();
+		boolean status = false;
+		try{
+			query = session.createQuery("from FeeMaster where standard =:standard and isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("standard", standard);
+			query.setParameter("isActive", "Y");
+			query.setParameter("hierarchy", hid);
+			FeeMaster fem =(FeeMaster) query.uniqueResult();
+			if(fem == null){
+				status=true;
+			}
+			else{
+				status= false;
+			}	
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			session.close();
+		}
+		Loggers.loggerEnd();
+		return status;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Assign> getAssignList(Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getConnection();
+		List<Assign> assignList=null;
+		try {
+			query = session.createQuery("FROM Assign WHERE isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hid);
+			query.setParameter("isActive", "Y");
+			assignList=query.list();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		Loggers.loggerEnd(assignList);
+		return assignList;
 	}
 }

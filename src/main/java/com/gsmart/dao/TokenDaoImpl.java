@@ -28,10 +28,10 @@ public class TokenDaoImpl implements TokenDao{
 		getConnection();
 		Loggers.loggerStart(token);
 		try {			
-			query = session.createQuery("from Login where smartId=:smartId");
-			query.setParameter("smartId", loginObj.getSmartId());
-			Login login = (Login)query.uniqueResult();
-			token.setHierarchy(login.getHierarchy());
+//			query = session.createQuery("from Login where smartId=:smartId");
+//			query.setParameter("smartId", loginObj.getSmartId());
+//			Login login = (Login)query.uniqueResult();
+			token.setHierarchy(loginObj.getHierarchy());
 			session.save(token);
 			tx.commit();
 		} catch (ConstraintViolationException e) {
@@ -67,6 +67,7 @@ public class TokenDaoImpl implements TokenDao{
 		/*finally {
 			session.close();
 		}*/
+
 		return token;
 	}
 

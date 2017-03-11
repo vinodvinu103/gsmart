@@ -28,15 +28,15 @@ public class Fee {
 	private String name;
 	
 	@Column(name="ISACTIVE")
-	private String IsActive;
+	private String isActive;
 	
 	
 	public String getIsActive() {
-		return IsActive;
+		return isActive;
 	}
 
 	public void setIsActive(String isActive) {
-		IsActive = isActive;
+		isActive = isActive;
 	}
 
 	public String getUpdatedTime() {

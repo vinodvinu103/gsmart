@@ -15,6 +15,7 @@
 	<context:component-scan base-package="com.gsmart" />
 
 	<mvc:annotation-driven />
+	<mvc:default-servlet-handler/>
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
@@ -48,10 +49,12 @@
 				<value>com.gsmart.model.Leave</value>
 				<value>com.gsmart.model.Notice</value>
 				<value>com.gsmart.model.Assign</value>
-				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.WeekDays</value>
+                <value>com.gsmart.model.Attendance</value>
 				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.Banners</value>
+				<value>com.gsmart.model.MessageDetails</value>
+				<value>com.gsmart.model.Attendance</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

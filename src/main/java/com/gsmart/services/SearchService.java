@@ -11,7 +11,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface SearchService {
 	
-	Map<String, Profile> getAllProfiles(String academicYear,String role,Hierarchy hierarchy);
+	Map<String, Profile> getAllProfiles(String academicYear,Long hid);
 	
 	ArrayList<Profile> getEmployeeInfo(String emp, Map<String, Profile> map);
 
@@ -25,20 +25,22 @@ public interface SearchService {
 	
 	
 	
-	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear,Long hid, int min, int max) throws GSmartServiceException;
 	
 	ArrayList<Profile> gotoloop(ArrayList<Profile> profile ,Map<String, Profile> profiles) throws GSmartServiceException;
 	
-	ArrayList<Profile> sumUpFee(ArrayList<Profile> childList,Map<String, Profile> profiles,String academicYear,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	ArrayList<Profile> sumUpFee(ArrayList<Profile> childList,Map<String, Profile> profiles,String academicYear,Long hid) throws GSmartServiceException;
 
 	ArrayList<Profile> totalfees(Map<String, Profile> profileMap, ArrayList<Profile> fees);
+	
 
-
-
-
+	public ArrayList<String> getAllChildSmartId(String mySmartId, Map<String, Profile> allProfiles);
+	
+	
 
 	
 	public Map<String, Object> getParentInfo(String smartId);
 
 	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees);
+
 }

@@ -30,12 +30,12 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	 * @return calls {@link PermissionDao}'s <code>getPermissionList()</code> method
 	 */
 	@Override
-	public List<RolePermission> getPermissionList(String role,Hierarchy hierarchy)  throws GSmartServiceException{ 
+	public Map<String, Object> getPermissionList(String role,Hierarchy hierarchy, Integer min, Integer max)  throws GSmartServiceException{ 
 		
 		Loggers.loggerStart();
 		try {
 			Loggers.loggerEnd();
-			return rolePermissionDao.getPermissionList(role,hierarchy);
+			return rolePermissionDao.getPermissionList(role,hierarchy, min, max);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -165,10 +165,10 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 					break;					
 				case "Assign":
 					rolePermission.setIcon("white fa fa-th-list fa-3x");
-					break;	
+                    break;	
 				case "Grades":
 					rolePermission.setIcon("white fa fa-percent fa-3x");
-					break;
+					 break;
 				case "Banner":
 					rolePermission.setIcon("white fa fa-picture-o fa-3x");
 					break;						  

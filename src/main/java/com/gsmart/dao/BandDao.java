@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
@@ -20,7 +21,7 @@ public interface BandDao {
 	 * @return list of Band entities available in the {@link Band} Table
 	 * @throws GSmartDatabaseException
 	 */
-	public List<Band> getBandList() throws GSmartDatabaseException;
+	public Map<String, Object> getBandList(int min, int max) throws GSmartDatabaseException;
 	
 	/**
 	 * @param band instanceOf {@link Band}
@@ -48,5 +49,7 @@ public interface BandDao {
 	public void deleteBand(Band band)throws GSmartDatabaseException;
 	
 	public Band getMaxband() throws GSmartDatabaseException;
+
+	public List<Band> getBandList1() throws GSmartDatabaseException;
 
 }
