@@ -3,6 +3,7 @@ package com.gsmart.controller;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,14 +69,11 @@ public class ReportCardController {
 	@Autowired
 	ReportCardDao reportCardDao;
 
-
 	@RequestMapping(value="/{academicYear}/{examName}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getList(@RequestHeader HttpHeaders token, HttpSession httpSession,@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName)
-
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
-		
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -88,11 +86,13 @@ public class ReportCardController {
 			// String teacherSmartId=smartId.getSmartId();
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
-
 				list = reportCardService.search(tokenObj,academicYear,examName);
-
 				permission.put("reportCard", list);
-				//permission.put("downLaodPDF", pdf);
+				double per=reportCardService.calculatPercentage(tokenObj.getSmartId(), list);
+				String percentage=reportCardService.grade(per,tokenObj.getHierarchy().getHid());
+				ReportCard rpcd=new ReportCard();
+				rpcd.setTotalGrade(percentage);
+				permission.put("totalGrade", rpcd);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}
 		} catch (Exception e) {
@@ -118,6 +118,11 @@ public class ReportCardController {
 				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 				card.setHierarchy(tokenObj.getHierarchy());
 				card.setReportingManagerId(tokenObj.getSmartId());
+				List<ReportCard> cardForPercentage=new LinkedList<>();
+				cardForPercentage.add(card);
+				double percentage=reportCardService.calculatPercentage("",cardForPercentage);
+				String subjectGrade=reportCardService.grade(percentage, tokenObj.getHierarchy().getHid());
+				card.setSubjectGrade(subjectGrade);
 				card2 = reportCardService.addReportCard(card);
 				if (card2 != null)
 					iamResponse = new IAMResponse("success");

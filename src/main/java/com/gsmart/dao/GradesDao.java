@@ -8,7 +8,7 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 
 public interface GradesDao {
-	public List<Grades> getGradesList()throws GSmartServiceException;
+	public List<Grades> getGradesList(Long hid)throws GSmartServiceException;
 
 	public boolean addGrades(Grades grades)throws GSmartDatabaseException;
     

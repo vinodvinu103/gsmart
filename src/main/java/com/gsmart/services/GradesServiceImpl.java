@@ -21,11 +21,11 @@ public class GradesServiceImpl implements GradesService {
 	GradesDao gradesDao;
 	
 	   @Override
-	   public List<Grades> getGradesList()throws GSmartServiceException{
+	   public List<Grades> getGradesList(Long hid)throws GSmartServiceException{
 		Loggers.loggerStart();
 		List<Grades> list=null;
 		try {
-			return gradesDao.getGradesList();
+			return gradesDao.getGradesList(hid);
 		}catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());

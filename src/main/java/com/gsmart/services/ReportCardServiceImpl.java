@@ -3,15 +3,18 @@ package com.gsmart.services;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gsmart.dao.GradesDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Grades;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.Constants;
@@ -46,13 +49,16 @@ public class ReportCardServiceImpl implements ReportCardService {
 
 	@Autowired
 	SearchService searchService;
-	
+
+	@Autowired
+	GradesDao gradeDao;
+
 	Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-	
+
 	@Override
 	public List<ReportCard> reportCardList() throws GSmartServiceException {
 		Loggers.loggerStart();
-	List<ReportCard> list = null;
+		List<ReportCard> list = null;
 		try {
 			// list = reportCardDao.reportCardList();
 
@@ -125,8 +131,8 @@ public class ReportCardServiceImpl implements ReportCardService {
 	}
 
 	@Override
-	public String calculatPercentage(String smartId, List<ReportCard> childReportCards)
-			throws GSmartServiceException {
+	public double calculatPercentage(String smartId, List<ReportCard> childReportCards) throws GSmartServiceException {
+		Loggers.loggerStart();
 		Double totalMarks = 0.0;
 		Double obtainedMarks = 0.0;
 		Double percentage = 0.0;
@@ -148,29 +154,29 @@ public class ReportCardServiceImpl implements ReportCardService {
 			percentage = 0.0;
 			System.out.println(" in side catch blk percentage..........." + percentage);
 		}
-		return ""+percentage;
+		Loggers.loggerEnd();
+		return percentage;
 	}
 
 	@Override
-	public Document downloadPdf(Token tokenDetail, String academicYear, String examName)
-			throws GSmartServiceException {
+	public Document downloadPdf(Token tokenDetail, String academicYear, String examName) throws GSmartServiceException {
 		Calendar startMonth = Calendar.getInstance();
 		Calendar endMonth = Calendar.getInstance();
-		List<ReportCard> list=null;
+		List<ReportCard> list = null;
 		document.open();
 		try {
-			
+
 			while (startMonth.compareTo(endMonth) <= 0) {
 
 				list = reportCardDao.search(tokenDetail, academicYear, examName);
 				try {
-					PdfWriter.getInstance(document,
-							new FileOutputStream(tokenDetail.getSmartId() + " " + examName + " " + academicYear + ".pdf"));
+					PdfWriter.getInstance(document, new FileOutputStream(
+							tokenDetail.getSmartId() + " " + examName + " " + academicYear + ".pdf"));
 				} catch (FileNotFoundException | DocumentException e) {
 					e.printStackTrace();
 				}
-				
-				document=generatePDF(list, examName, academicYear);
+
+				document = generatePDF(list, examName, academicYear);
 				Loggers.loggerValue(academicYear, "pdfgenerated");
 				startMonth.add(Calendar.MONTH, 1);
 			}
@@ -182,7 +188,8 @@ public class ReportCardServiceImpl implements ReportCardService {
 
 	}
 
-	public Document generatePDF(List<ReportCard> card, String examName, String academicYear) throws GSmartServiceException {
+	public Document generatePDF(List<ReportCard> card, String examName, String academicYear)
+			throws GSmartServiceException {
 
 		// Image image = null;
 
@@ -250,12 +257,11 @@ public class ReportCardServiceImpl implements ReportCardService {
 
 			PdfPCell cell1 = new PdfPCell(new Paragraph("Smart Id", labels));
 			PdfPCell cell2 = new PdfPCell(new Paragraph(card.get(0).getSmartId(), contents));
-			System.out.println("smart id of student "+card.get(0).getSmartId());
+			System.out.println("smart id of student " + card.get(0).getSmartId());
 			PdfPCell cell3 = new PdfPCell(new Paragraph("Student Name", labels));
 			PdfPCell cell4 = new PdfPCell(new Paragraph(card.get(0).getStudentName(), contents));
 			PdfPCell cell5 = new PdfPCell(new Paragraph("Exam Name", labels));
 			PdfPCell cell6 = new PdfPCell(new Paragraph(card.get(0).getExamName(), contents));
-			
 
 			cell1.setPadding(5f);
 			cell2.setPadding(5f);
@@ -269,7 +275,7 @@ public class ReportCardServiceImpl implements ReportCardService {
 			empDetails.addCell(cell3);
 			empDetails.addCell(cell4);
 			empDetails.addCell(cell5);
-			//empDetails.addCell(cell6);
+			// empDetails.addCell(cell6);
 
 			document.add(empDetails);
 
@@ -281,24 +287,24 @@ public class ReportCardServiceImpl implements ReportCardService {
 
 			PdfPCell scell1 = new PdfPCell(new Paragraph("S.No.", labels));
 			PdfPCell scell2 = new PdfPCell(new Paragraph("SUBJECTS", labels));
-			PdfPCell scell3 = new PdfPCell(new Paragraph(examName+" Grade", labels));
+			PdfPCell scell3 = new PdfPCell(new Paragraph(examName + " Grade", labels));
 
 			scell1.setPadding(2f);
 			scell2.setPadding(5f);
 			scell3.setPadding(3f);
-		
+
 			salDetails.addCell(scell1);
 			salDetails.addCell(scell2);
 			salDetails.addCell(scell3);
 			for (ReportCard reportcard : card) {
-				int i=1;
-				String sno=""+i;
+				int i = 1;
+				String sno = "" + i;
 				salDetails.addCell(sno);
 				salDetails.addCell(reportcard.getSubject());
 				salDetails.addCell(reportcard.getSubjectGrade());
 				i++;
 			}
-			salDetails.addCell("TOTAL PERCENTAGE % IS "+calculatPercentage("", card));
+			salDetails.addCell("TOTAL PERCENTAGE % IS " + calculatPercentage("", card));
 			document.add(salDetails);
 			System.out.println("***************** Generate PDF **************** ");
 		} catch (DocumentException e) {
@@ -306,5 +312,25 @@ public class ReportCardServiceImpl implements ReportCardService {
 		}
 		return document;
 	}
-	
+
+	@Override
+	public String grade(Double percentage,Long hid) {
+		Loggers.loggerStart();
+		String totalGrade=null;
+		try {
+			
+			List<Grades> grades=gradeDao.getGradesList(hid);
+			for (Grades grades2 : grades) {
+				for (int i = 0; i < grades.size(); i++) {
+					if(grades2.getEndPercentage()>=percentage&&grades2.getStartPercentage()<=percentage){
+						totalGrade=grades2.getGrade();
+					}
+				}
+			}
+		} catch (GSmartServiceException e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd();
+		return totalGrade;
+	}
 }

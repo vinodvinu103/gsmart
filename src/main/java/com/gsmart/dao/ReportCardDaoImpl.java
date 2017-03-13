@@ -58,7 +58,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			list = query.list();
-			System.out.println("Serch based on smartid..." + list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -148,7 +147,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 
 	public ReportCard fetch(ReportCard card) throws GSmartDatabaseException {
-		Loggers.loggerStart("smartid");
+		Loggers.loggerStart();
 
 		try {
 			query = session.createQuery(
@@ -196,7 +195,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	public ReportCard getCard(String entryTime) {
 		getConnection();
-		Loggers.loggerStart(entryTime);
+		Loggers.loggerStart();
 		ReportCard reportCard = null;
 		try {
 
@@ -265,7 +264,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		XSSFWorkbook workBook = null;
 		XSSFSheet sheet = null;
 		FileInputStream file = null;
-		Loggers.loggerStart(smartId);
+		Loggers.loggerStart();
 		try {
 			/*
 			 * file = new FileInputStream(new
@@ -385,12 +384,10 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			for (String yearAndExamName1 : year) {
 				ReportCard yeaAndex = new ReportCard();
 				yeaAndex.setAcademicYear(yearAndExamName1);
-				System.out.println("academicYear...." + yeaAndex);
 				yearAndExamName.add(yeaAndex);
 			}
 			session.close();
-			Loggers.loggerValue("size", yearAndExamName.size());
-
+			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -400,7 +397,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	@Override
 	public ArrayList<ReportCard> examName(Token tokenDetail, String acdemicYear) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		System.out.println("academic Year ??>>?>>>"+acdemicYear);
 		getConnection();
 		ArrayList<ReportCard> examName = new ArrayList<>();
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
@@ -428,14 +424,13 @@ public class ReportCardDaoImpl implements ReportCardDao {
 					String string = (String) iterator.next();
 					ex.setStandard(string);
 				}
-				System.out.println("examName...." + ex);
 				examName.add(ex);
 			}
 			session.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Loggers.loggerEnd(examName);
+		Loggers.loggerEnd();
 		return examName;
 	}
 

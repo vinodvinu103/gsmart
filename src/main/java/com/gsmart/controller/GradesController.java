@@ -66,7 +66,7 @@ import com.gsmart.util.Loggers;
 	    str.length(); 
 	    
 	    List<Grades> list = null;
-	   
+	    Token tokenObj= tokenDaoImpl.getToken(tokenNumber);
 	    RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 	    
 		Map<String, Object> resultMap = new HashMap<>();
@@ -74,7 +74,7 @@ import com.gsmart.util.Loggers;
 		resultMap.put("modulePermission",modulePermission);
 		
 		
-			list = gradesService.getGradesList();
+			list = gradesService.getGradesList(tokenObj.getHierarchy().getHid());
 					
 			resultMap.put("data", list);
 			resultMap.put("status", 200);

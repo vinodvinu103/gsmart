@@ -7,7 +7,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface GradesService {
 
-	public List<Grades> getGradesList()throws GSmartServiceException;
+	public List<Grades> getGradesList(Long hid)throws GSmartServiceException;
 
 	public boolean addGrades(Grades grades)throws GSmartServiceException;
 	
