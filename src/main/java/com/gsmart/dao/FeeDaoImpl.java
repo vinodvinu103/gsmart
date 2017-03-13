@@ -327,18 +327,18 @@ public class FeeDaoImpl implements FeeDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Fee> getFeeDashboard(String academicYear, Hierarchy hierarchy, List<String> childList)
+	public List<Fee> getFeeDashboard(String academicYear, Long hid, List<String> childList)
 			throws GSmartServiceException {
 		Loggers.loggerStart();
 		getconnection();
-		Loggers.loggerStart("Academic year : " + academicYear + " hierarchy : " + hierarchy.getHid()
-				+ " childlist size : " + childList.size());
-		List<Fee> feeList = new ArrayList<>();
+		System.out.println("Academic year : " + academicYear + " hierarchy : " + hid
+				+ " childlist size : " + childList.size()+ " childlist  : " + childList.toString());
+		List<Fee> feeList = null;
 		try {
 			query = session.createQuery(
-					"from Fee where smartId in (:smartId) and academicYear =:academicYear and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
-			query.setParameter("smartId", childList.toString());
+					"from Fee where academicYear =:academicYear and hierarchy.hid=:hierarchy and smartId in (:smartId) ");
+			query.setParameter("hierarchy", hid);
+			query.setParameterList("smartId", childList);
 			query.setParameter("academicYear", academicYear);
 			feeList = query.list();
 			Loggers.loggerStart("query.list() : " + feeList);
