@@ -13,8 +13,6 @@ import com.gsmart.util.GSmartServiceException;
 public interface InventoryAssignmentsServices {
 
 	public Map<String, Object> getInventoryAssignList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
-	public Map<String, Object> getInventoryList(String role, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
-	//public List<InventoryAssignments> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException;
 
 	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory);
 
