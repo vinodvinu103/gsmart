@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
-import com.gsmart.model.LeaveMaster;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -84,7 +83,7 @@ public class LeaveDaoImpl implements LeaveDao {
 			
 			 Hierarchy hierarchy=leave.getHierarchy();
 			 query=session.createQuery(
-			 "FROM Leave WHERE smartId=:smartId and not(startDate>:startDate and endDate<:endDate) and isActive=:isActive and leaveStatus!='Rejected*' and hierarchy.hid=:hierarchy");
+			 "FROM Leave WHERE smartId=:smartId and startDate=:startDate and endDate=:endDate and isActive=:isActive and leaveStatus!='Rejected*' and hierarchy.hid=:hierarchy");
 			 query.setParameter("smartId", leave.getSmartId());
 			 query.setParameter("startDate", startDate);
 			 query.setParameter("endDate", endDate);

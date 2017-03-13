@@ -238,7 +238,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 	}
 
 	@Override
-	public List<LeaveMaster> getLeaveMasterListForApplyLeave(String role, Hierarchy hierarchy)
+	public List<LeaveMaster> getLeaveMasterListForApplyLeave(Long hid)
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Criteria criteria=null;
@@ -247,7 +247,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		try {
 			criteria = session.createCriteria(LeaveMaster.class);
 			criteria.add(Restrictions.eq("isActive", "Y"));
-			criteria.add(Restrictions.eq("hierarchy.hid",  hierarchy.getHid()));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			masterList=criteria.list();
 		} catch (Exception e) {
 			e.printStackTrace();
