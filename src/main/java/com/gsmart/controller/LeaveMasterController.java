@@ -1,6 +1,7 @@
 package com.gsmart.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.HierarchyDao;
+import com.gsmart.dao.LeaveMasterDao;
 import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.model.RolePermission;
@@ -40,6 +42,8 @@ public class LeaveMasterController {
 	
 	@Autowired
 	HierarchyDao hierarchyDao;
+	@Autowired
+	LeaveMasterDao leaveMasterDao;
 
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getleavemaster(@PathVariable("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable("max") Integer max, @RequestHeader HttpHeaders token,
@@ -171,5 +175,35 @@ public class LeaveMasterController {
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getleavemasterForApplyLeave(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		List<LeaveMaster> leaveMasterList =null;
+
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		System.out.println("hierarchy" + tokenObj.getHierarchy());
+		Map<String, Object> permissions = new HashMap<>();
+		leaveMasterList =leaveMasterDao.getLeaveMasterListForApplyLeave(tokenObj.getRole(), tokenObj.getHierarchy());
+		if (leaveMasterList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("leaveMasterList", leaveMasterList);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+		}
+		permissions.put("leaveMasterList", leaveMasterList);
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
 }
