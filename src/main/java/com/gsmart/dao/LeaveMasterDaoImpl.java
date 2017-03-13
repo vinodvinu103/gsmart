@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Leave;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
@@ -51,6 +52,8 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 //			criteria.setProjection(Projections.id());
 			leavemasterlist = criteria.list();
 			Criteria criteriaCount = session.createCriteria(LeaveMaster.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 			
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
@@ -132,38 +135,13 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		}
 		return ch;
 	}
-	public LeaveMaster fetch(LeaveMaster leaveMaster) {
-
-		Loggers.loggerStart();
-		LeaveMaster leaveMasterList = null;
-		try {
-			if(leaveMaster.getHierarchy()!=null){
-				query = session.createQuery(
-						"FROM LeaveMaster WHERE leaveType=:leaveType and daysAllow=:daysAllow and hierarchy.hid=:hierarchy AND isActive=:isActive");
-				query.setParameter("hierarchy", leaveMaster.getHierarchy().getHid());
-			}else{
-				query = session.createQuery(
-						"FROM LeaveMaster WHERE leaveType=:leaveType and daysAllow=:daysAllow AND isActive=:isActive");
-			}
-			query.setParameter("daysAllow", leaveMaster.getDaysAllow());
-			query.setParameter("isActive", "Y");
-			query.setParameter("leaveType", leaveMaster.getLeaveType());
-			leaveMasterList = (LeaveMaster) query.uniqueResult();
-			Loggers.loggerEnd();
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-		return leaveMasterList;
-
-	}
+	
 	private LeaveMaster updateLeaveMaster(LeaveMaster oldLeaveMaster, LeaveMaster leaveMaster) throws GSmartDatabaseException {
 
 		LeaveMaster ch = null;
 		try {
 			if(oldLeaveMaster.getLeaveType().equals(leaveMaster.getLeaveType())){
-				LeaveMaster leaveMaster1 = fetch(leaveMaster);
-				if (leaveMaster1 == null) {
+				
 					oldLeaveMaster.setUpdateTime(CalendarCalculator.getTimeStamp());
 					oldLeaveMaster.setIsActive("N");
 					session.update(oldLeaveMaster);
@@ -171,7 +149,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 					transaction.commit();
 					return oldLeaveMaster;
 
-				}
+				
 			}else{
 				LeaveMaster leaveMaster1 = fetch2(leaveMaster);
 				if (leaveMaster1 == null) {
@@ -259,4 +237,23 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		
 	}
 
+	@Override
+	public List<LeaveMaster> getLeaveMasterListForApplyLeave(String role, Hierarchy hierarchy)
+			throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		Criteria criteria=null;
+		List<LeaveMaster> masterList=null;
+		getconnection();
+		try {
+			criteria = session.createCriteria(LeaveMaster.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid",  hierarchy.getHid()));
+			masterList=criteria.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(masterList);
+		return masterList;
+	}
+	
 }

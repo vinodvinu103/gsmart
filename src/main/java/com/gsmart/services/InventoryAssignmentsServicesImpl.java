@@ -90,6 +90,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	@Override
 	public List<InventoryAssignments> groupCategoryAndItem(List<InventoryAssignments> inventoryAssignmentList,
 			List<Inventory> inventory) throws GSmartServiceException {
+		Loggers.loggerStart();
 		List<InventoryAssignments> responseList = new ArrayList<>();
 		for (int i = 0; i < inventory.size(); i++) {
 			Loggers.loggerStart("inventory loop : " + i);
@@ -105,6 +106,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 						totalQuantity += inventoryAssignmentList.get(j).getQuantity();
 						inAssignments.setQuantity(totalQuantity);
 						inAssignments.setTotalQuantity(inventory.get(i).getQuantity());
+						System.out.println("inAssignments"+inAssignments);
 					}
 				}
 			}
@@ -112,6 +114,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 				responseList.add(inAssignments);
 			}
 		}
+		Loggers.loggerEnd(responseList);
 		return responseList;
 	}
 }

@@ -67,14 +67,15 @@ public class DashboardController {
 		Map<String, Object> responseMap = new HashMap<>();
 		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
 		Map<String, Object> finalResponse = new HashMap<>();
-		Map<String, Object> dataMap = new HashMap<>();
+		
 		List<InventoryAssignments> inventoryAssignmentList = null;
 		List<Inventory> inventoryList = null;
 		if (tokenObj.getHierarchy() == null) {
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
-				Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getRole(),
-						hierarchy);
+				Map<String, Object> dataMap = new HashMap<>();
+				Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear,
+						hierarchy.getHid());
 				ArrayList<String> childsList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 				childsList.add(tokenObj.getSmartId());
 				inventoryAssignmentList = inventoryAssignmentServices.getInventoryDashboardData(childsList, hierarchy);
@@ -90,8 +91,8 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
-			Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			Map<String, Object> dataMap = new HashMap<>();
+			Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getHierarchy().getHid());
 			ArrayList<String> childsList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 			childsList.add(tokenObj.getSmartId());
 			inventoryAssignmentList = inventoryAssignmentServices.getInventoryDashboardData(childsList, tokenObj.getHierarchy());
@@ -106,7 +107,7 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		}
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(responseMap);
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 
@@ -146,18 +147,19 @@ public class DashboardController {
 		str.length();
 		int totalPaidFees;
 		int totalFees;
-		List<Map<String, Object>> responseList = new ArrayList<>();
+		List<Map<String, Object>> responseList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> responseMap = new HashMap<>();
-		Map<String, Object> dataMap = new HashMap<>();
+		
 		if (tokenObj.getHierarchy() == null && modulePermission != null) {
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
-				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
-						hierarchy);
+				Map<String, Object> dataMap = new HashMap<>();
+				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
+						hierarchy.getHid());
 				List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 				childList.add(tokenObj.getSmartId());
-				totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
-				totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
+				totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, hierarchy.getHid(), childList);
+				totalFees = feeServices.getPaidFeeDashboard(academincYear, hierarchy.getHid(), childList);
 				dataMap.put("totalPaidFees", totalPaidFees);
 				dataMap.put("hierarchy", hierarchy);
 				dataMap.put("totalFees", totalFees);
@@ -167,12 +169,13 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
-			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			Map<String, Object> dataMap = new HashMap<>();
+			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
+					tokenObj.getHierarchy().getHid());
 			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 			childList.add(tokenObj.getSmartId());
-			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
-			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
+			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
+			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
 			dataMap.put("totalPaidFees", totalPaidFees);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
 			dataMap.put("totalFees", totalFees);

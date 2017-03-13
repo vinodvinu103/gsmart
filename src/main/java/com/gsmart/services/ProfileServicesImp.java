@@ -233,10 +233,9 @@ public class ProfileServicesImp implements ProfileServices {
 		// TODO Auto-generated method stub
 		return profileDao.getBannerList();
 	}
-	
-	
-	
-	@Override
+
+	/*@Override
+>>>>>>> 5a605812816b13c3ad7139025cd14377f05faa9e
 	public Banners editBanner(Banners banner) throws GSmartServiceException {
 		Loggers.loggerStart();
 		Banners banners=null;
@@ -249,7 +248,7 @@ public class ProfileServicesImp implements ProfileServices {
 		}
 		Loggers.loggerEnd();
 		return banners;
-	}
+	}*/
 	@Override
 	public void deleteBanner(Banners banner) throws GSmartServiceException {
 		
