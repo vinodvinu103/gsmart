@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.ProfileDaoImp;
 import com.gsmart.dao.TokenDaoImpl;
-import com.gsmart.model.Band;
+import com.gsmart.model.CompoundFeeMaster;
+import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
@@ -85,6 +86,8 @@ public class WeekDayController {
 		IAMResponse rsp = null;
 		weekDaysService.addWeekDaysList(weekDays);
 		rsp = new IAMResponse("success");
+		
+		System.out.println("added......");
 
 		Loggers.loggerEnd();
 
@@ -92,19 +95,6 @@ public class WeekDayController {
 	}
 
 	// delete
-
-	/*@RequestMapping(method = RequestMethod.DELETE)
-	public ResponseEntity<IAMResponse> deleteWeekDays(@RequestBody WeekDays weekDays) throws GSmartBaseException {
-
-		Loggers.loggerStart(weekDays);
-		IAMResponse rsp = null;
-		weekDaysService.deleteWeekdaysList(weekDays);
-		rsp = new IAMResponse("success");
-
-		Loggers.loggerEnd();
-
-		return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
-	}*/
 	
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<IAMResponse> deleteWeekDays(@RequestBody WeekDays weekDays, @PathVariable("task") String task,
