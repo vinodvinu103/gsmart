@@ -255,11 +255,14 @@ public class FeeDaoImpl implements FeeDao {
 	@Override
 	public void editFee(Fee fee) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		try {
-
-			Fee oldFee = getFee(fee.getEntryTime());
+	
+			Fee oldFee = getFee(fee.getEntryTime(),fee.getHierarchy());
 			oldFee.setUpdatedTime(CalendarCalculator.getTimeStamp());
+			//System.out.println(oldFee);
 			oldFee.setIsActive("N");
+			//System.out.println("--------------------"+oldFee);
 			session.update(oldFee);
 
 			/*
@@ -283,10 +286,11 @@ public class FeeDaoImpl implements FeeDao {
 
 	}
 
-	public Fee getFee(String entryTime) {
-		getconnection();
-		Loggers.loggerStart();
-		query = session.createQuery("from Fee where isActive=:isActive and entryTime =:entryTime");
+public Fee getFee(String entryTime,Hierarchy hierarchy) {
+		
+		Loggers.loggerStart(entryTime);
+		query = session.createQuery("from Fee where isActive=:isActive and entryTime =:entryTime and hierarchy.hid=:hierarchy");
+		query.setParameter("hierarchy", hierarchy.getHid());
 		query.setParameter("isActive", "Y");
 		query.setParameter("entryTime", entryTime);
 		Fee fee = (Fee) query.uniqueResult();
