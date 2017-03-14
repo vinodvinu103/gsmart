@@ -35,7 +35,7 @@ public class HierarchyServicesImpl implements HierarchyServices {
 	}
 	
 	@Override
-	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public List<Hierarchy> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartServiceException {
 		return hierarchyDao.getHierarchyList1(role,hierarchy);
 	}
 

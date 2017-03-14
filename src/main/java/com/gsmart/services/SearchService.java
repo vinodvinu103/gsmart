@@ -2,18 +2,16 @@ package com.gsmart.services;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 import com.gsmart.model.Hierarchy;
 //import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.util.GSmartServiceException;
-import com.gsmart.util.Loggers;
 
 public interface SearchService {
 	
-	Map<String, Profile> getAllProfiles(String academicYear,String role,Hierarchy hierarchy);
+	Map<String, Profile> getAllProfiles(String academicYear,Long hid);
 	
 	ArrayList<Profile> getEmployeeInfo(String emp, Map<String, Profile> map);
 
@@ -27,11 +25,11 @@ public interface SearchService {
 	
 	
 	
-	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear,String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
+	ArrayList<Profile> studentFees(ArrayList<Profile> profile,String academicYear,Long hid, int min, int max) throws GSmartServiceException;
 	
 	ArrayList<Profile> gotoloop(ArrayList<Profile> profile ,Map<String, Profile> profiles) throws GSmartServiceException;
 	
-	ArrayList<Profile> sumUpFee(ArrayList<Profile> childList,Map<String, Profile> profiles,String academicYear,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	ArrayList<Profile> sumUpFee(ArrayList<Profile> childList,Map<String, Profile> profiles,String academicYear,Long hid) throws GSmartServiceException;
 
 	ArrayList<Profile> totalfees(Map<String, Profile> profileMap, ArrayList<Profile> fees);
 	
@@ -45,6 +43,4 @@ public interface SearchService {
 
 	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees);
 
-	ArrayList<Profile> studentFees(ArrayList<Profile> childList, String academicYear, String role, Hierarchy hierarchy,
-			Integer min, Integer max) throws GSmartServiceException;
 }

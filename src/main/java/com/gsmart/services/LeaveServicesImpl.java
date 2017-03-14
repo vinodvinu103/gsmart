@@ -80,7 +80,7 @@ public class LeaveServicesImpl implements LeaveServices {
 			throws GSmartServiceException {
 		Loggers.loggerStart();
 		Profile profile = null;
-		profile = profileDao.profileDetails(smartId);
+		profile = profileDao.getProfileDetails(smartId);
 		String school = profile.getSchool();
 		String institution = profile.getInstitution();
 		CompoundLeave cl = null;
@@ -129,7 +129,7 @@ public class LeaveServicesImpl implements LeaveServices {
 
 				System.out.println("days: " + days);
 
-				List<Holiday> list = holidayDao.holidayList(role, hierarchy.getHid());
+				List<Holiday> list = holidayDao.holidayList(hierarchy.getHid());
 
 				long eStartDate = getEpoch(leave.getStartDate());
 				long eEndDate = getEpoch(leave.getEndDate());
@@ -253,6 +253,7 @@ public class LeaveServicesImpl implements LeaveServices {
 		List<Leave> listForAdd=leaveDao.leaveForAdding(leave, hid);
 		long aS=getEpoch(leave.getStartDate());
 		long aE=getEpoch(leave.getEndDate());
+		
 		
 		for (Leave leave2 : listForAdd) {
 			long dS=getEpoch(leave2.getStartDate());

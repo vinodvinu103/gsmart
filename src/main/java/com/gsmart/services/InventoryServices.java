@@ -24,7 +24,7 @@ public interface InventoryServices {
 	 * @see List
 	 */
 	
-	public Map<String, Object> getInventoryList(String role,Hierarchy hierarchy, int min, int max) throws GSmartServiceException;
+	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartServiceException;
 	
 	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	
@@ -40,7 +40,7 @@ public interface InventoryServices {
 	 * @return nothing
 	 * @throws user define Exception
 	 */
-	public void editInventory(Inventory inventory)throws GSmartServiceException;
+	public Inventory editInventory(Inventory inventory)throws GSmartServiceException;
 	
 	/**
 	 * @param timeStamp instanceOf {@link Inventory}

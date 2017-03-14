@@ -196,7 +196,7 @@ public class ReportCardController {
 		try {
 			Profile profile = profileServices.getProfileDetails(smartId);
 
-			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear,tokenObj.getRole(),tokenObj.getHierarchy());
+			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			if (childList.size() != 0) {

@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
-import com.gsmart.model.LeaveMaster;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
