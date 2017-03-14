@@ -31,12 +31,25 @@ public class Fee {
 	private String isActive;
 	
 	
+	
 	public String getIsActive() {
 		return isActive;
 	}
 
+	@Override
+	public String toString() {
+		return "Fee [smartId=" + smartId + ", entryTime=" + entryTime + ", academicYear=" + academicYear + ", name="
+				+ name + ", isActive=" + isActive + ", UpdatedTime=" + UpdatedTime + ", ExitTime=" + ExitTime
+				+ ", parentName=" + parentName + ", date=" + date + ", standard=" + standard + ", modeOfPayment="
+				+ modeOfPayment + ", sportsFee=" + sportsFee + ", tuitionFee=" + tuitionFee + ", idCardFee=" + idCardFee
+				+ ", miscellaneousFee=" + miscellaneousFee + ", transportationFee=" + transportationFee + ", hierarchy="
+				+ hierarchy + ", balanceFee=" + balanceFee + ", paidFee=" + paidFee + ", totalFee=" + totalFee
+				+ ", feeStatus=" + feeStatus + ", reportingManagerId=" + reportingManagerId + ", childFlag=" + childFlag
+				+ ", parentFlag=" + parentFlag + "]";
+	}
+
 	public void setIsActive(String isActive) {
-		isActive = isActive;
+		this.isActive = isActive;
 	}
 
 	public String getUpdatedTime() {
