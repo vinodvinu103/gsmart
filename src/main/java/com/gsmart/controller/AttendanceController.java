@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gsmart.dao.HolidayDao;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
@@ -32,7 +33,6 @@ import com.gsmart.model.RolePermission;
 import com.gsmart.model.SyncRequestObject;
 import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
-import com.gsmart.services.HolidayServices;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
@@ -58,7 +58,7 @@ public class AttendanceController {
 	ProfileServices profileServices;
 
 	@Autowired
-	HolidayServices holidayService;
+	HolidayDao holidayDao;
 
 	@RequestMapping(value = "/calendar/{month}/{year}/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
@@ -78,7 +78,7 @@ public class AttendanceController {
 		permissions.put("modulePermission", modulePermission);
 
 		List<Map<String, Object>> attendanceList = null;
-		Map<String, Object> holidayList = null;
+		List<Holiday> holidayList = null;
 		Calendar cal = new GregorianCalendar(year, month, 0);
 		Date date = cal.getTime();
 		Calendar calendar = Calendar.getInstance();
@@ -86,7 +86,9 @@ public class AttendanceController {
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
-		holidayList = holidayService.getHolidayList(tokenObj.getHierarchy().getHid(),1,1);
+
+		holidayList = holidayDao.holidayList(tokenObj.getHierarchy().getHid());
+
 
 		permissions.put("attendanceList", attendanceList);
 		System.out.println("attendanceList:" + attendanceList);
