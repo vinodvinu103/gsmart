@@ -68,9 +68,12 @@ public class WeekDayController {
 
 	// add
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<IAMResponse> addWeekDays(@RequestBody WeekDays weekDays,@RequestHeader HttpHeaders token) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> addWeekDays(@RequestBody WeekDays weekDays,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(weekDays);
 		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
 		
 		Token tokenObj= tokenDaoImpl.getToken(tokenNumber);
 		 String smartid=tokenObj.getSmartId();
@@ -83,16 +86,25 @@ public class WeekDayController {
 		System.out.println("weekdays info display>>>>>>"+weekDays);
 		
 		
-		IAMResponse rsp = null;
-		weekDaysService.addWeekDaysList(weekDays);
-		rsp = new IAMResponse("success");
-		
-		System.out.println("added......");
-
+		Map<String, Object> respMap=new HashMap<>();
+		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			boolean status =weekDaysService.addWeekDaysList(weekDays);
+			  
+			if (status) {
+				respMap.put("status", 200);
+	        	respMap.put("message", "Saved Successfully");
+			} else {
+				respMap.put("status", 400);
+	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+			}
+		} else {
+			respMap.put("status", 403);
+        	respMap.put("message", "Permission Denied");
+		}
 		Loggers.loggerEnd();
-
-		return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
+		
 
 	// delete
 	

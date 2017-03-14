@@ -28,9 +28,11 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<WeekDays> getWeekList() throws GSmartDatabaseException {
+		boolean status;
 		getConnection();
 		Loggers.loggerStart();
 		List<WeekDays> WeekDaysList = null;
+		
 		try {
 			
 
@@ -49,23 +51,27 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	}
 
 	@Override
-	public void addWeekDays(WeekDays weekdays) throws GSmartDatabaseException {
-		getConnection();
-		Loggers.loggerStart();
-
+	public boolean addWeekDays(WeekDays weekdays) throws GSmartDatabaseException {
+		
+		Loggers.loggerStart(weekdays);
+		boolean status;
 		try {
-			
+			//WeekDays weekdays1= fetch(weekdays);
+			getConnection();
 			weekdays.setIsActive("Y");
 			session.save(weekdays);
 			transaction.commit();
 			session.close();
+			status = true;
 
 		} catch (Exception exception) {
+			status = false;
 			exception.getMessage();
 		}finally {
 			session.close();
 		}
 		Loggers.loggerEnd();
+		return status;
 
 	}
 

@@ -11,7 +11,7 @@ public interface WeekDaysDao {
 
 	public List<WeekDays> getWeekList()throws GSmartDatabaseException ;
 	
-	public void addWeekDays(WeekDays weekdays) throws GSmartDatabaseException;
+	public boolean addWeekDays(WeekDays weekdays) throws GSmartDatabaseException;
     
  
     public void editweekdays(WeekDays weekdays) throws GSmartDatabaseException;

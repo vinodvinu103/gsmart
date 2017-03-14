@@ -70,8 +70,11 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 	}	
 
 	@Override
-	public void addWeekDaysList(WeekDays weekdays) throws GSmartServiceException {
+	public boolean addWeekDaysList(WeekDays weekdays) throws GSmartServiceException {
 		Loggers.loggerStart();
+		
+		boolean status=false;
+		
 		String day=weekdays.getWeekDay();
 		String wd=day.toUpperCase();
 		switch(wd) {
@@ -100,9 +103,10 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 			break;
 		}
 		weekdays.setWeekDay(day);
-		weekday.addWeekDays(weekdays);	
+		status = weekday.addWeekDays(weekdays);	
 		Loggers.loggerEnd();
-	
+		
+	    return status;
 	}
 
 	@Override
