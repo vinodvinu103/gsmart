@@ -18,12 +18,12 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 	WeekDaysDao weekday;
 	
 	@Override
-	public List<WeekDays> getWeekDaysList() throws GSmartServiceException {
+	public List<WeekDays> getWeekDaysList(long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 		List<WeekDays> list=null;
 		try {
      		
-			 list= weekday.getWeekList();
+			 list= weekday.getWeekList(hid);
 			 
 			 for (WeekDays weekDays : list) {
 					String wk=weekDays.getWeekDay();

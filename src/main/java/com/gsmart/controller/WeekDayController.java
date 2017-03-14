@@ -23,9 +23,11 @@ import com.gsmart.dao.TokenDaoImpl;
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Profile;
+import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
 import com.gsmart.services.WeekDaysService;
+import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -50,17 +52,41 @@ public class WeekDayController {
 	GetAuthorization getAuthorization;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getWeekDaysList() throws GSmartBaseException {
-		Loggers.loggerStart();
-		Map<String, Object> resultMap = new HashMap<>();
+	public ResponseEntity<Map<String, Object>> getWeekDaysList(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart("loggers start for weekdays +++++++++++++++++++");
+		
 		List<WeekDays> list = null;
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("modulePremission", modulePermission);
+	
+		 System.out.println("weekdays...map entery.......");
 		try {
-			list = weekDaysService.getWeekDaysList();
-			resultMap.put("data", list);
-			resultMap.put("status", 200);
-			resultMap.put("message", "success");
+			
+			System.out.println("weekdays try block entry...........");
+			if (modulePermission.getView()){
+				System.out.println("in side if condition for get weekdays>>>>>>>>>>>");
+				list = weekDaysService.getWeekDaysList(tokenObj.getHierarchy().getHid());
+				resultMap.put("data", list);
+				resultMap.put("status", 200);
+				resultMap.put("message", "success");
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+			}
+			else{
+				System.out.println("in side else >>>>>>>>>>>");
+			}
+			
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new GSmartBaseException(e.getMessage());
+			
 		}
 
 		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
@@ -82,7 +108,8 @@ public class WeekDayController {
 		 
 		 weekDays.setInstitution(profileinfo.getInstitution());
 		 weekDays.setSchool(profileinfo.getSchool());
-		 
+		 weekDays.setHierarchy(tokenObj.getHierarchy());
+		 weekDays.setEntryTime(CalendarCalculator.getTimeStamp());
 		System.out.println("weekdays info display>>>>>>"+weekDays);
 		
 		
