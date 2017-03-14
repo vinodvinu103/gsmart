@@ -2,12 +2,10 @@ package com.gsmart.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -34,7 +32,6 @@ import com.gsmart.services.NoticeService;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.services.TokenService;
-import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
@@ -79,7 +76,7 @@ public class NoticeController
 		
 	try 
 		{
-			Map<String, Profile> allprofiles=searchService.getAllProfiles( year,tokenObj.getRole(),tokenObj.getHierarchy());
+			Map<String, Profile> allprofiles=searchService.getAllProfiles( year,tokenObj.getHierarchy().getHid());
 			ArrayList<String> parentSmartIdList =searchService.searchParentInfo(smartId, allprofiles);
 			 
 			parentSmartIdList.remove(smartId);
@@ -199,7 +196,6 @@ public class NoticeController
         e.printStackTrace();
         return null;
     
-		// TODO: handle exception
 	     }
     	
     

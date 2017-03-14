@@ -261,7 +261,6 @@ private Band updateBand(Band oldBand,Band band) throws GSmartDatabaseException {
 			query = session.createQuery("FROM Band WHERE bandId IN (SELECT MIN(bandId) FROM Band where isActive='Y')");
 			band = (Band) query.list().get(0);
 			transaction.commit();
-			session.close();
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();

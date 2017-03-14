@@ -44,6 +44,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	Session session = null;
 	Transaction transaction = null;
 	Query query;
+	Criteria criteria = null;
 
 	/**
 	 * to view the list of records available in {@link FeeMaster} table
@@ -58,7 +59,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		getConnection();
 		List<FeeMaster> feeList = null;
 		Map<String, Object> feeMap = new HashMap<>();
-		Criteria criteria = null;
+		
 		try {
 			criteria = session.createCriteria(FeeMaster.class);
 			criteria.setMaxResults(max);
@@ -68,6 +69,8 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			feeList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(FeeMaster.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
 			
@@ -81,9 +84,14 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
+		System.out.println(feeList);
 		feeMap.put("feeList", feeList);
+	
 		return feeMap;
 	}
+	
+	
+	
 
 	/**
 	 * Adds new fee entity to {@link FeeMaster} save it in database

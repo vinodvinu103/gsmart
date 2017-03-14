@@ -56,7 +56,7 @@ public interface ProfileServices{
 	 * @return nothing 
 	 * @throws GSmartServiceException
 	 */
-	public Banners editBanner(Banners banner) throws GSmartServiceException;
+	/*public Banners editBanner(Banners banner) throws GSmartServiceException;*/
 	
 	/**
 	 * @param banner instanceOf {@link Banners}

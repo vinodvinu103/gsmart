@@ -126,13 +126,14 @@ public class BannerController {
 		str.length();
 
 		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-			if (task.equals("edit")) {
+			/*if (task.equals("edit")) {
 				banners = profileServices.editBanner(banner);
 				if (banners != null)
 					myResponse = new IAMResponse("SUCCESS");
 				else
 					myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
-			} else if (task.equals("delete")) {
+			} else*/ 
+			if (task.equals("delete")) {
 				profileServices.deleteBanner(banner);
 				myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
 			}
