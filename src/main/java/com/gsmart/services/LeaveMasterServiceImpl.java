@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,5 +81,18 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 
 		Loggers.loggerEnd();
 		return ch;
+	}
+
+	@Override
+	public List<LeaveMaster> getLeaveMasterInfo(Long hid) throws GSmartServiceException {
+		try {
+			return leavemasterdao.getLeaveMasterListForApplyLeave(hid);
+
+		} catch (GSmartDatabaseException Exception) {
+			throw (GSmartServiceException) Exception;
+
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
 	}
 }
