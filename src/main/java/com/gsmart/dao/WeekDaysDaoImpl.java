@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Band;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.WeekDays;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -27,14 +28,17 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<WeekDays> getWeekList() throws GSmartDatabaseException {
+	public List<WeekDays> getWeekList(long hid) throws GSmartDatabaseException {
+		boolean status;
 		getConnection();
 		Loggers.loggerStart();
 		List<WeekDays> WeekDaysList = null;
+		
 		try {
 			
 
-			query = session.createQuery("from WeekDays where isActive='Y' ");
+			query = session.createQuery("from WeekDays where hid=:hierarchy and isActive='Y'");
+			query.setParameter("hierarchy", hid);
 			WeekDaysList = query.list();
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
@@ -49,23 +53,24 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	}
 
 	@Override
-	public void addWeekDays(WeekDays weekdays) throws GSmartDatabaseException {
-		getConnection();
-		Loggers.loggerStart();
-
+	public boolean addWeekDays(WeekDays weekdays) throws GSmartDatabaseException {
+		
+		Loggers.loggerStart(weekdays);
+		boolean status;
 		try {
-			
+			//WeekDays weekdays1= fetch(weekdays);
+			getConnection();
 			weekdays.setIsActive("Y");
 			session.save(weekdays);
 			transaction.commit();
 			session.close();
-
+			status = true;
 		} catch (Exception exception) {
+			status = false;
 			exception.getMessage();
-		}finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
+		return status;
 
 	}
 
@@ -115,19 +120,17 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	@Override
 	public void deleteweekdays(WeekDays weekdays) throws GSmartDatabaseException {
 		getConnection();
-		Loggers.loggerStart();
+		Loggers.loggerStart(weekdays);
 		try {
 			
 			weekdays.setIsActive("D");
-			session.save(weekdays);
+			session.update(weekdays);
 			transaction.commit();
 			session.close();
 
 		} catch (Exception exception) {
 
 			exception.getMessage();
-		}finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
 	}

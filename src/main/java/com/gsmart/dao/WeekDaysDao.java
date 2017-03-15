@@ -9,9 +9,9 @@ import com.gsmart.util.GSmartDatabaseException;
 public interface WeekDaysDao {
 	
 
-	public List<WeekDays> getWeekList()throws GSmartDatabaseException ;
+	public List<WeekDays> getWeekList(long hid)throws GSmartDatabaseException ;
 	
-	public void addWeekDays(WeekDays weekdays) throws GSmartDatabaseException;
+	public boolean addWeekDays(WeekDays weekdays) throws GSmartDatabaseException;
     
  
     public void editweekdays(WeekDays weekdays) throws GSmartDatabaseException;

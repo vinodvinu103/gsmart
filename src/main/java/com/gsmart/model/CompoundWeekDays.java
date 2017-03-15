@@ -14,8 +14,15 @@ public class CompoundWeekDays implements Serializable {
 	private String school;
 	private String institution;
 	private String weekDay;
+	private String entryTime;
 	
 	
+	public String getEntryTime() {
+		return entryTime;
+	}
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
 	public String getInstitution() {
 		return institution;
 	}
