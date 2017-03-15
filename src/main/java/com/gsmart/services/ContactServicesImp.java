@@ -61,27 +61,15 @@ public class ContactServicesImp implements ContactServices {
 	}
 	
 	@Override
-	public Map<String, Object> studentChat(MessageDetails details){
-		
-		Map<String, Object> chat= null;
-		try {
-			return dao.studentChat(details);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return chat;
+	public Map<String, Object> teacherChat(MessageDetails details) throws Exception {
+		return dao.teacherChat(details);
 	}
+
 	
 	@Override
-	public Map<String, Object> teacherChat(MessageDetails details){
+	public Map<String, Object> studentChat(MessageDetails details) throws Exception {
 		
-		Map<String, Object> chat1= null;
-		try {
-			return dao.studentChat(details);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return chat1;
+		return dao.studentChat(details);
 	}
 
 	/*@Override

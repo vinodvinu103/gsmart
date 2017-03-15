@@ -26,8 +26,8 @@ public interface ContactServices
 
 	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception;
 
-	public Map<String, Object> studentChat(MessageDetails details);
+	public Map<String, Object> studentChat(MessageDetails details) throws Exception;
 
-	public Map<String, Object> teacherChat(MessageDetails details);
+	public Map<String, Object> teacherChat(MessageDetails details) throws Exception;
 
 }

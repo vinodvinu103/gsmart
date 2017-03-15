@@ -1,5 +1,7 @@
 package com.gsmart.model;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,6 +18,14 @@ import javax.print.DocFlavor.INPUT_STREAM;
 @IdClass(com.gsmart.model.CompoundMessageDetails.class)
 public class MessageDetails
 {
+	/*@Override
+	public String toString() {
+		return "MessageDetails [smartId=" + smartId + ", entryTime=" + entryTime + ", reportingManagerId="
+				+ reportingManagerId + ", readByTeacher=" + readByTeacher + ", childFlag=" + childFlag + ", postedBy="
+				+ postedBy + ", message=" + message + ", readByStudent=" + readByStudent + ", studentName="
+				+ studentName + ", format=" + format + ", image=" + Arrays.toString(image) + "]";
+	}*/
+
 	@Id
 	@Column(name = "SMART_ID")
 	String smartId;

@@ -74,7 +74,8 @@ public class ContactDaoImp implements ContactDao {
 			return false;
 		} finally {
 			session.close();
-		}}*/
+		}
+	}*/
 
 	@Override
 	public List<MessageDetails> msgList(MessageDetails details) throws Exception {
@@ -234,26 +235,43 @@ public class ContactDaoImp implements ContactDao {
 		return list;
 
 	}
-
 	
 	@Override
-	public Map<String, Object> studentChat(MessageDetails details) throws Exception {
+	public Map<String, Object> teacherChat(MessageDetails details) throws Exception {
 		Loggers.loggerStart();
 		List<MessageDetails> messages = null;
-		Map<String, Object> msgMap = new HashMap<>();
+		Map<String, Object> messageMap = new HashMap<>();
 		getConnection();
 		try {
-			
+			String smartId = details.getSmartId();
 			String reportingManagerId = details.getReportingManagerId();
 			System.out.println("before reporting manager id :"+reportingManagerId);
 
 			query = session.createQuery(
-					"from MessageDetails where smartId=:rId ORDER BY entryTime DESC");
+					"from MessageDetails where smartId=:smartId or smartId=:rId ORDER BY entryTime ASC");
+			query.setParameter("smartId", smartId);
 			query.setParameter("rId", reportingManagerId);
 			messages = (List<MessageDetails>) query.list();
 			
-			System.out.println("reporting manager id :"+reportingManagerId);			
-			msgMap.put("messages", messages);
+			/*Criteria criteria1 = session.createCriteria(MessageDetails.class);
+			criteria1.add(Restrictions.eq("postedBy", "STUDENT"));
+			criteria1.addOrder(Order.desc("entryTime"));*/
+			
+			System.out.println("reporting manager id :"+reportingManagerId);
+			
+//			criteria1.setProjection(Projections.projectionList().add(Projections.groupProperty("entryTime"),"entryTime").add(Projections.rowCount(),"max")).addOrder(Order.desc("entryTime"));
+//			criteria1.setProjection(Projections.rowCount());
+			/*criteria1.setMaxResults(max);
+			criteria1.setFirstResult(min);
+			messages = criteria1.list();
+			Criteria criteriaCount1 = session.createCriteria(MessageDetails.class);
+			criteriaCount1.add(Restrictions.eq("postedBy", "STUDENT"));
+			criteriaCount1.setProjection(Projections.rowCount());*/
+//			Long count = criteriaCount.uniqueResult();
+//			messageMap.put("totalmessage", criteriaCount1.uniqueResult());
+			
+//			Long count = (Long) criteria1.uniqueResult();
+//			messageMap.put("messages", count);
 
 			/*transaction.commit();*/
 			Loggers.loggerEnd(messages);
@@ -267,31 +285,46 @@ public class ContactDaoImp implements ContactDao {
 		{
 			session.close();
 		}
-		msgMap.put("messages", messages);
-		return msgMap;
+		messageMap.put("messages", messages);
+		return messageMap;
 	}
-	
+
 	@Override
-	public Map<String, Object> teacherChat(MessageDetails details) throws Exception {
+	public Map<String, Object> studentChat(MessageDetails details) throws Exception {
 		Loggers.loggerStart();
 		List<MessageDetails> messages = null;
 		Map<String, Object> msgMap = new HashMap<>();
 		getConnection();
 		try {
-			
+			String smartId = details.getSmartId();
 			String reportingManagerId = details.getReportingManagerId();
 			System.out.println("before reporting manager id :"+reportingManagerId);
 
 			query = session.createQuery(
-					"from MessageDetails where smartId=:rId ORDER BY entryTime DESC");
-			query.setParameter("rId", reportingManagerId);
+					"from MessageDetails where smartId=:smartId or reportingManagerId=:smartId ORDER BY entryTime ASC");
+			query.setParameter("smartId", smartId);
+	//		query.setParameter("rId", reportingManagerId);
 			messages = (List<MessageDetails>) query.list();
 			
-			System.out.println("reporting manager id :"+reportingManagerId);			
-			msgMap.put("messages", messages);
+			/*Criteria criteria = session.createCriteria(MessageDetails.class);
+			criteria.add(Restrictions.eq("postedBy", "TEACHER"));
+			criteria.addOrder(Order.desc("entryTime"));*/
+			
+			System.out.println("reporting manager id :"+reportingManagerId);
+			
+//			criteria.setProjection(Projections.projectionList().add(Projections.groupProperty("entryTime"),"entryTime").add(Projections.rowCount(),"max")).addOrder(Order.desc("entryTime"));
+			/*criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			messages = criteria.list();
+			Criteria criteriaCount = session.createCriteria(MessageDetails.class);
+			criteriaCount.add(Restrictions.eq("postedBy", "TEACHER"));
+			criteriaCount.setProjection(Projections.rowCount());*/
+//			Long count = criteriaCount.uniqueResult();
+//			msgMap.put("totalmessage", criteriaCount.uniqueResult());
 
 			/*transaction.commit();*/
 			Loggers.loggerEnd(messages);
+			
 		}
 		catch (Exception e) 
 		{
