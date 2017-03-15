@@ -131,6 +131,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 				addInventoryDetails(inventoryAssignments,oldInventory);
 			}
 		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
       }
 		return inventoryAssignments;
@@ -148,8 +149,8 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			Loggers.loggerEnd();
 			return oldInventory;
 		} catch (Throwable e) {
-
-			throw new GSmartDatabaseException(e.getMessage());
+		e.printStackTrace();
+      	throw new GSmartDatabaseException(e.getMessage());
         } 
 
 	}

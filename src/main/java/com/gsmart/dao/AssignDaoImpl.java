@@ -49,8 +49,6 @@ public class AssignDaoImpl implements AssignDao {
 		try {
 
 			getConnection();
-				
-	 		
 			criteria = session.createCriteria(Assign.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
@@ -130,10 +128,8 @@ public class AssignDaoImpl implements AssignDao {
 			CompoundAssign ch =	addAssigningReportee(assign);
 			if(ch!=null){
 				getConnection();
-								
-			
-				query = session.createQuery("UPDATE Profile SET reportingManagerName=:teacherName, reportingManagerId=:reportingManagerId, counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
 				
+				query = session.createQuery("UPDATE Profile SET reportingManagerName=:teacherName, reportingManagerId=:reportingManagerId, counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
 				query.setParameter("reportingManagerId", assign.getTeacherSmartId());
 				query.setParameter("counterSigningManagerId", assign.getHodSmartId());
 				query.setParameter("standard", assign.getStandard());

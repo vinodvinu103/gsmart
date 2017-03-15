@@ -756,4 +756,10 @@ public class ProfileDaoImp implements ProfileDao {
 		
 	}
 
+	@Override
+	public Profile profileDetails(String smartId) throws GSmartDatabaseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

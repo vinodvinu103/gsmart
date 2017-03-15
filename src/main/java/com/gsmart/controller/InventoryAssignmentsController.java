@@ -23,8 +23,10 @@ import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
+import com.gsmart.services.AssignService;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.InventoryAssignmentsServices;
+import com.gsmart.services.ProfileServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -43,7 +45,6 @@ public class InventoryAssignmentsController {
 	TokenService tokenService;
 	@Autowired
 	HierarchyServices hierarchyServices;
-
 	
 	@RequestMapping(value="/assign/{min}/{max}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventoryAssign(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
@@ -112,9 +113,8 @@ public class InventoryAssignmentsController {
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-
-		str.length();
-
+        str.length();
+                
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)){
 			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 			inventoryAssignments.setHierarchy(tokenObj.getHierarchy());
