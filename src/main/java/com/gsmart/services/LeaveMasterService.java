@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.CompoundLeaveMaster;
@@ -15,5 +16,7 @@ public interface LeaveMasterService {
 	public void deleteLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException;
 
 	public LeaveMaster editLeaveMaster(LeaveMaster leaveMaster) throws GSmartServiceException;
+	
+	public List<LeaveMaster> getLeaveMasterInfo(Long hid) throws GSmartServiceException;
 
 }

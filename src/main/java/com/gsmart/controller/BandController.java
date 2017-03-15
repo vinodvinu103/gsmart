@@ -190,10 +190,13 @@ public class BandController {
 		Loggers.loggerStart(band);
 		Band cb=null;
 		Map<String, Object> respMap=new HashMap<>();
+
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
+
+
 
 		 if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){
@@ -223,3 +226,4 @@ public class BandController {
 	     return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 
 }}
+

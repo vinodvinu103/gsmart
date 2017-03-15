@@ -18,12 +18,45 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 	WeekDaysDao weekday;
 	
 	@Override
-	public List<WeekDays> getWeekDaysList() throws GSmartServiceException {
+	public List<WeekDays> getWeekDaysList(long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 		List<WeekDays> list=null;
 		try {
      		
-			 list= weekday.getWeekList();
+			 list= weekday.getWeekList(hid);
+			 
+			 for (WeekDays weekDays : list) {
+					String wk=weekDays.getWeekDay();
+					String day=null;
+						switch(wk) {
+						case "1":
+							day="SUNDAY";
+							break;
+
+						case "2":
+							day="MONDAY";
+							break;
+							
+						case "3":
+							day="TUESDAY";
+							break;
+						case "4":
+							day="WEDNESDAY";
+							break;
+						case "5":
+							day="THURSDAY";
+							break;
+						case "6":
+							day="FRIDAY";
+							break;
+						case "7":
+							day="SATURDAY";
+							break;
+						}
+					
+					weekDays.setWeekDay(day);
+					System.out.println("weekdays +++++"+weekDays.getWeekDay());
+					}
 			
 			 return list;
 		}  catch (GSmartDatabaseException exception) {
@@ -33,10 +66,65 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
 		}
+	
 	}	
 
 	@Override
-	public void addWeekDaysList(WeekDays weekdays) throws GSmartServiceException {
+	public boolean addWeekDaysList(WeekDays weekdays) throws GSmartServiceException {
+		Loggers.loggerStart();
+		
+		boolean status=false;
+		
+		String day=weekdays.getWeekDay();
+		String wd=day.toUpperCase();
+		switch(wd) {
+		case "SUNDAY":
+			day="1";
+			break;
+
+		case "MONDAY":
+			day="2";
+			break;
+			
+		case "TUESDAY":
+			day="3";
+			break;
+		case "WEDNESDAY":
+			day="4";
+			break;
+		case "THURSDAY":
+			day="5";
+			break;
+		case "FRIDAY":
+			day="6";
+			break;
+		case "SATURDAY":
+			day="7";
+			break;
+		}
+		weekdays.setWeekDay(day);
+		status = weekday.addWeekDays(weekdays);	
+		Loggers.loggerEnd();
+		
+	    return status;
+	}
+
+	@Override
+	public void editWeekdaysList(WeekDays weekdays) throws GSmartServiceException {
+		Loggers.loggerStart();
+		try{
+	weekday.editweekdays(weekdays);
+		}catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		
+	}
+
+	@Override
+	public void deleteWeekdaysList(WeekDays weekdays) throws GSmartServiceException {
 		Loggers.loggerStart();
 		String day=weekdays.getWeekDay();
 		String wd=day.toUpperCase();
@@ -69,25 +157,6 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 		weekday.addWeekDays(weekdays);	
 		Loggers.loggerEnd();
 	
-	}
-
-	@Override
-	public void editWeekdaysList(WeekDays weekdays) throws GSmartServiceException {
-		Loggers.loggerStart();
-		try{
-	weekday.editweekdays(weekdays);
-		}catch (GSmartDatabaseException exception) {
-			throw (GSmartServiceException) exception;
-		} catch (Exception e) {
-			throw new GSmartServiceException(e.getMessage());
-		}
-		Loggers.loggerEnd();
-		
-	}
-
-	@Override
-	public void deleteWeekdaysList(WeekDays weekdays) throws GSmartServiceException {
-		Loggers.loggerStart();
 		try{
 	weekday.deleteweekdays(weekdays);
 		}catch (GSmartDatabaseException exception) {

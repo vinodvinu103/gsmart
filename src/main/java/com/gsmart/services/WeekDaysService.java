@@ -7,9 +7,9 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface WeekDaysService {
 	
-	public List<WeekDays> getWeekDaysList()throws GSmartServiceException;
+	public List<WeekDays> getWeekDaysList(long hid)throws GSmartServiceException;
 	
-	public void addWeekDaysList(WeekDays weekdays) throws GSmartServiceException;
+	public boolean addWeekDaysList(WeekDays weekdays) throws GSmartServiceException;
 	
 	public void deleteWeekdaysList(WeekDays weekdays) throws GSmartServiceException;
 

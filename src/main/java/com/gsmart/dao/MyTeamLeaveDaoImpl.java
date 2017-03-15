@@ -10,7 +10,6 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
 import com.gsmart.model.LeaveDetails;
 import com.gsmart.model.LeaveMaster;
@@ -36,20 +35,17 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@SuppressWarnings("unchecked")
 	@Override
 
-	public List<Leave> getLeavelist(Profile profileInfo, Hierarchy hierarchy) throws GSmartDatabaseException {
+	public List<Leave> getLeavelist(Profile profileInfo,Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Leave> leavelist = null;
 		getConnection();
 		try {
-			String role = profileInfo.getRole();
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("FROM Leave WHERE isActive='Y'");
-			} else {
+			
 				query = session.createQuery(
 						"FROM Leave WHERE reportingManagerId=:smartId and lower(leaveStatus)!='rejected*' and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("hierarchy", hid);
 				query.setParameter("smartId", profileInfo.getSmartId());
-			}
+			
 			leavelist = query.list();
 
 		} catch (Exception e) {
@@ -103,7 +99,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 
 		
 		applyLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
-		applyLeave.setLeaveStatus("Sanction");
+		applyLeave.setLeaveStatus("Sanctioned");
 
 		
 		session.update(applyLeave);
