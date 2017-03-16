@@ -20,10 +20,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.ProfileDaoImp;
 import com.gsmart.dao.TokenDaoImpl;
+
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
+
+import com.gsmart.model.Band;
+import com.gsmart.model.Profile;
+
 import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
 import com.gsmart.services.WeekDaysService;
@@ -52,9 +57,11 @@ public class WeekDayController {
 	GetAuthorization getAuthorization;
 	
 	@RequestMapping(method = RequestMethod.GET)
+
 	public ResponseEntity<Map<String, Object>> getWeekDaysList(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart("loggers start for weekdays +++++++++++++++++++");
 		
+
 		List<WeekDays> list = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -94,10 +101,12 @@ public class WeekDayController {
 
 	// add
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+
 	public ResponseEntity<Map<String, Object>> addWeekDays(@RequestBody WeekDays weekDays,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(weekDays);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
 
 		str.length();
 		
@@ -135,6 +144,29 @@ public class WeekDayController {
 
 	// delete
 	
+	/*@RequestMapping(method = RequestMethod.DELETE)
+	public ResponseEntity<IAMResponse> deleteWeekDays(@RequestBody WeekDays weekDays) throws GSmartBaseException {
+>>>>>>> 1cce2f1761ede54e101224a98348a4736b85399d
+
+		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+			if (task.equals("delete")) {
+				weekDaysService.deleteWeekdaysList(weekDays);
+			
+					myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
+			}
+			Loggers.loggerEnd();
+
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
+
+		else {
+			myResponse = new IAMResponse("Permission Denied");
+			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
+	}*/
+	
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<IAMResponse> deleteWeekDays(@RequestBody WeekDays weekDays, @PathVariable("task") String task,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
@@ -161,7 +193,6 @@ public class WeekDayController {
 			myResponse = new IAMResponse("Permission Denied");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
-
 	}
 
 	// update

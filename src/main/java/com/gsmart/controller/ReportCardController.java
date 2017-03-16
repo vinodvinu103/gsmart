@@ -1,7 +1,9 @@
 package com.gsmart.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +40,9 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping(Constants.REPORTCARD)
@@ -83,6 +88,11 @@ public class ReportCardController {
 			if (modulePermission.getView()) {
 				list = reportCardService.search(tokenObj,academicYear,examName);
 				permission.put("reportCard", list);
+				double per=reportCardService.calculatPercentage(tokenObj.getSmartId(), list);
+				String percentage=reportCardService.grade(per,tokenObj.getHierarchy().getHid());
+				ReportCard rpcd=new ReportCard();
+				rpcd.setTotalGrade(percentage);
+				permission.put("totalGrade", rpcd);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}
 		} catch (Exception e) {
@@ -108,6 +118,11 @@ public class ReportCardController {
 				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 				card.setHierarchy(tokenObj.getHierarchy());
 				card.setReportingManagerId(tokenObj.getSmartId());
+				List<ReportCard> cardForPercentage=new LinkedList<>();
+				cardForPercentage.add(card);
+				double percentage=reportCardService.calculatPercentage("",cardForPercentage);
+				String subjectGrade=reportCardService.grade(percentage, tokenObj.getHierarchy().getHid());
+				card.setSubjectGrade(subjectGrade);
 				card2 = reportCardService.addReportCard(card);
 				if (card2 != null)
 					iamResponse = new IAMResponse("success");
@@ -355,11 +370,17 @@ public class ReportCardController {
 
 	}
 	
-	@RequestMapping(value="/download", method=RequestMethod.GET)
-	public ResponseEntity<Map<String, String>> generatePDF(@RequestHeader HttpHeaders token,HttpSession httpSession){
+	@RequestMapping(value="/download/{academicYear}/{examName}", method=RequestMethod.GET)
+	public ResponseEntity<Map<String, byte[]>> generatePDF(@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName,@RequestHeader HttpHeaders token,HttpSession httpSession)throws GSmartBaseException, DocumentException{
 		Loggers.loggerStart();
-		
+		Map<String, byte[]> pdf=new HashMap<>();
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		Document document=reportCardService.downloadPdf(tokenObj, academicYear, examName);
+		PdfWriter.getInstance(document, baos);
+		byte[] pdfFile = baos.toByteArray();
+		pdf.put("pdf", pdfFile);
 		Loggers.loggerEnd();
-		return null;
+		return new ResponseEntity<Map<String, byte[]>>(pdf,HttpStatus.OK);
 	}
 }

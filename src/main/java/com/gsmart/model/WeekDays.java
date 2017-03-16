@@ -92,6 +92,12 @@ public class WeekDays implements Serializable{
 			this.isActive = isActive;
 		}
 
+@Override
+public String toString() {
+	return "WeekDays [school=" + school + ", institution=" + institution + ", weekDay=" + weekDay + ", isActive="
+			+ isActive + "]";
+}
+
 
 		public Hierarchy getHierarchy() {
 			return hierarchy;

@@ -67,7 +67,7 @@ public class ReportCard {
 	@Column(name="SUBJECT_GRADE")
 	private String subjectGrade;
 	
-	@Column(name="TOTAL_GRADE")
+	@Transient
 	private String totalGrade;
 	
 	@Column(name="RESULT")

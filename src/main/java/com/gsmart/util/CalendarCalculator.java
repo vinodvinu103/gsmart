@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -42,6 +43,7 @@ public class CalendarCalculator {
 	}
 
 	/*public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void execute(JsonSerializationContext context) throws JRubyExecutionException {
 		System.out.println("Hello Quartz!");
 	}*/
 	

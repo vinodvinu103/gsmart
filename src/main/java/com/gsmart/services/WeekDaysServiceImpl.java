@@ -22,8 +22,9 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 		Loggers.loggerStart();
 		List<WeekDays> list=null;
 		try {
-     		
+     	
 			 list= weekday.getWeekList(hid);
+
 			 
 			 for (WeekDays weekDays : list) {
 					String wk=weekDays.getWeekDay();
