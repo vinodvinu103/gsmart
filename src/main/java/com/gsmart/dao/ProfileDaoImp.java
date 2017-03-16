@@ -668,6 +668,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		getConnection();
 		Loggers.loggerStart();
+		System.out.println("Year >>>>>>>>>>>> "+year);
 
 		List<Profile> profiles = null;
 		try {

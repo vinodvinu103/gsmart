@@ -126,7 +126,6 @@ public class DashboardController {
 
 		Loggers.loggerStart();
 		Loggers.loggerStart("Given date is : " + date);
-		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		// String str = getAuthorization.getAuthentication(tokenNumber,
 		// httpSession);
@@ -134,14 +133,20 @@ public class DashboardController {
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		List<Hierarchy> hierarchyList = new ArrayList<>();
 		Map<String, Object> responseMap = new HashMap<>();
+		List<Map<String,  Object>> attendanceList=null;
 		if (tokenObj.getHierarchy() == null) {
+			System.out.println("in side if");
 			hierarchyList = hierarchyServices.getAllHierarchy();
+			System.out.println("hid for admiin <><><>   "+hierarchyList.size());
 		} else {
+			System.out.println("in side else");
 			hierarchyList.add(tokenObj.getHierarchy());
 		}
+		attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
 		responseMap.put("message", "success");
 		responseMap.put("status", 200);
-		responseMap.put("data", attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList));
+		responseMap.put("data", attendanceList);
+		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 	
@@ -158,8 +163,7 @@ public class DashboardController {
 
 		int totalPaidFees=0;
 		int totalFees=0;
-		
-		List<Map<String, Object>> responseList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> responseList = new ArrayList<>();
 
 		Map<String, Object> responseMap = new HashMap<>();
 		
@@ -188,6 +192,7 @@ public class DashboardController {
 		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
 
 			Map<String, Object> dataMap = new HashMap<>();
+
 			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
 					tokenObj.getHierarchy().getHid());
 

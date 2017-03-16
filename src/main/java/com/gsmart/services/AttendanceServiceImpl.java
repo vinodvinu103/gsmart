@@ -2,6 +2,7 @@ package com.gsmart.services;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,35 +70,49 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	@Override
 	public List<Map<String, Object>> getAttendanceByhierarchy(String smartId, Long date, List<Hierarchy> hidList) {
-		// TODO Auto-generated method stub
 		List<Map<String, Object>> responseList = new ArrayList<>();
-		for (Hierarchy hierarchy : hidList) {
-			Map<String, Object> schoolData = new HashMap<>();
-			List<Attendance> attendanceList = attendancedao.getAttendanceByhierarchy(date, hierarchy);
-			int totalCount = 0;
-			int totalPresent = 0;
-			Date dateObj = new Date(date * 1000);
-			int year = dateObj.getYear();
-			Map<String, Profile> profileMap = new HashMap<>();
-			List<Profile> profileList = profileDao.getProfileByHierarchyAndYear(hierarchy, year + "-" + (year + 1));
-			for(Profile profile : profileList) {
-				profileMap.put(profile.getSmartId(), profile);
-			}
-			ArrayList<String> childsList = searchService.getAllChildSmartId(smartId, profileMap);
-			totalCount = childsList.size();
-			for (Attendance attendance : attendanceList) {
-				for (String childSmartId : childsList) {
-					if (childSmartId.equalsIgnoreCase(attendance.getSmartId())) {
-						++totalPresent;
-						childsList.remove(childSmartId);
-						attendanceList.remove(attendance);
+		try {
+			
+			for (Hierarchy hierarchy : hidList) {
+				Map<String, Object> schoolData = new HashMap<>();
+				List<Attendance> attendanceList = attendancedao.getAttendanceByhierarchy(date, hierarchy);
+				Loggers.loggerStart(attendanceList);
+				int totalCount = 0;
+				int totalPresent = 0;
+				// Date dateObj = new Date(date * 1000);
+				int year = Calendar.getInstance().get(Calendar.YEAR);
+				Map<String, Profile> profileMap = new HashMap<>();
+				List<Profile> profileList = profileDao.getProfileByHierarchyAndYear(hierarchy, year + "-" + (year + 1));
+				Loggers.loggerStart(profileList);
+				for(Profile profile : profileList) {
+					profileMap.put(profile.getSmartId(), profile);
+				}
+				ArrayList<String> childsList = searchService.getAllChildSmartId(smartId, profileMap);
+				Loggers.loggerStart(childsList);
+				totalCount = childsList.size();
+				System.out.println("total child count"+totalCount);
+				for (Attendance attendance : attendanceList) {
+					System.out.println("in side 1st for loop attendance>>>>>>>>>>>>>>>>>>>>>>>>>>");
+					for (String childSmartId : childsList) {
+						System.out.println("in side 2nd  for loop child list >>  >  >>>>   >>>>>>");
+						if (childSmartId.equalsIgnoreCase(attendance.getSmartId())) {
+							System.out.println("if condition to clculate");
+							++totalPresent;
+							System.out.println("total child present ><><><><  "+totalPresent);
+							// childsList.remove(childSmartId);
+						// 	attendanceList.remove(attendance);
+						}
 					}
 				}
+				schoolData.put("totalCount", totalCount);
+				schoolData.put("totalPresent", totalPresent);
+				schoolData.put("hierarchy", hierarchy);
+				responseList.add(schoolData);
 			}
-			schoolData.put("totalCount", totalCount);
-			schoolData.put("totalPresent", totalPresent);
-			schoolData.put("hierarchy", hierarchy);
-			responseList.add(schoolData);
+			Loggers.loggerEnd(responseList);
+			return responseList;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return responseList;
 	}
