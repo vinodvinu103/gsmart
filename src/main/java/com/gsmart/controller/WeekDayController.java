@@ -18,16 +18,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.HierarchyDao;
 import com.gsmart.dao.ProfileDaoImp;
 import com.gsmart.dao.TokenDaoImpl;
-import com.gsmart.model.CompoundFeeMaster;
-import com.gsmart.model.FeeMaster;
-import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
 import com.gsmart.services.WeekDaysService;
-import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -51,8 +48,11 @@ public class WeekDayController {
 	@Autowired
 	GetAuthorization getAuthorization;
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getWeekDaysList(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
+	@Autowired
+	HierarchyDao hierarchyDao;
+	
+	@RequestMapping(value="/{hierarchy}",method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getWeekDaysList(@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart("loggers start for weekdays +++++++++++++++++++");
 		
 		List<WeekDays> list = null;
@@ -69,12 +69,18 @@ public class WeekDayController {
 		resultMap.put("modulePremission", modulePermission);
 	
 		 System.out.println("weekdays...map entery.......");
+		 Long hid=null;
+			if(tokenObj.getHierarchy()==null){
+				hid=hierarchy;
+			}else{
+				hid=tokenObj.getHierarchy().getHid();
+			}
 		try {
 			
 			System.out.println("weekdays try block entry...........");
 			if (modulePermission.getView()){
 				System.out.println("in side if condition for get weekdays>>>>>>>>>>>");
-				list = weekDaysService.getWeekDaysList(tokenObj.getHierarchy().getHid());
+				list = weekDaysService.getWeekDaysList(hid);
 				resultMap.put("data", list);
 				resultMap.put("status", 200);
 				resultMap.put("message", "success");
@@ -93,8 +99,8 @@ public class WeekDayController {
 	}
 
 	// add
-	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, Object>> addWeekDays(@RequestBody WeekDays weekDays,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(value="{hierarchy}",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> addWeekDays(@PathVariable("hierarchy") Long hierarchy,@RequestBody WeekDays weekDays,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(weekDays);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -102,14 +108,12 @@ public class WeekDayController {
 		str.length();
 		
 		Token tokenObj= tokenDaoImpl.getToken(tokenNumber);
-		 String smartid=tokenObj.getSmartId();
-		 
-		 Profile profileinfo = profileDaoImp.getProfileDetails(smartid);
-		 
-		 weekDays.setInstitution(profileinfo.getInstitution());
-		 weekDays.setSchool(profileinfo.getSchool());
-		 weekDays.setHierarchy(tokenObj.getHierarchy());
-		 weekDays.setEntryTime(CalendarCalculator.getTimeStamp());
+		 if(tokenObj.getHierarchy()==null){
+			 weekDays.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
+			}else{
+				weekDays.setHierarchy(tokenObj.getHierarchy());
+			}
+		
 		System.out.println("weekdays info display>>>>>>"+weekDays);
 		
 		
