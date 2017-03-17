@@ -33,7 +33,6 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	@Override
 	public List<WeekDays> getWeekList(long hid) throws GSmartDatabaseException {
 
-		boolean status;
 
 		getConnection();
 		Loggers.loggerStart();

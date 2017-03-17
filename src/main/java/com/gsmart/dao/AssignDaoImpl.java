@@ -53,9 +53,6 @@ public class AssignDaoImpl implements AssignDao {
 		Map<String, Object> assignMap = new HashMap<>();
 		
 		try {
-
-			
-				
 	 		
 			criteria = session.createCriteria(Assign.class);
 			criteria.setMaxResults(max);
