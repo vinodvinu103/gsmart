@@ -67,20 +67,20 @@ public class NoticeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		
-		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-		
-		Map<String,Object> responseMap = new HashMap<>();
-		
-		List<Notice> list=new ArrayList<Notice>();
-		
-	try 
-		{
-			Map<String, Profile> allprofiles=searchService.getAllProfiles( year,tokenObj.getHierarchy().getHid());
-			ArrayList<String> parentSmartIdList =searchService.searchParentInfo(smartId, allprofiles);
-			 
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+
+		Map<String, Object> responseMap = new HashMap<>();
+
+		List<Notice> list = new ArrayList<Notice>();
+
+		try {
+			Map<String, Profile> allprofiles = searchService.getAllProfiles(year, tokenObj.getRole(),
+					tokenObj.getHierarchy());
+			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
+
 
 			parentSmartIdList.remove(smartId);
 			list = noticeService.viewNotice(parentSmartIdList);
@@ -199,49 +199,10 @@ public class NoticeController {
 		try {
 			System.out.println("role coming from frontend" + type);
 
-<<<<<<< HEAD
+
 			list = noticeService.viewGenericNotice(type);
 			for (Notice notice : list) {
-=======
-	}*/
-	/*@RequestMapping(value = "/childNotice/{smartId}",method = RequestMethod.GET)
-	public ResponseEntity<Map<String,List<Notice>>> childNotice(@PathVariable("smartId") String smartId, @RequestHeader HttpHeaders token,HttpSession httpSession){
-    Map<String,List<Notice>> responseMap = new HashMap<>();
-    List<Notice> list=new ArrayList<Notice>();
-    Loggers.loggerStart();
-    Loggers.loggerStart(smartId);
-    try
-    {
-    	
-    	list=noticeService.childNotice(smartId);
-    	responseMap.put("childNotice", list);
-    	return new ResponseEntity<Map<String,List<Notice>>>(responseMap, HttpStatus.OK);
-    }
-    catch (Exception e){
-	
-        e.printStackTrace();
-        return null;
-    
-	     }
-    	
-    
-	}*/
-	@RequestMapping(value = "/generic/{type}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> viewGenericNotice(@PathVariable("type") String type){
-		Loggers.loggerStart();
-		
-		
-		
-		List<Notice> list=new ArrayList<Notice>();
-		Map<String, Object> responeMap=new HashMap<>();
-		
-		try 
-		{
-			System.out.println("role coming from frontend"+type);
-			 
-			list=noticeService.viewGenericNotice(type);
-			for(Notice notice : list ){
->>>>>>> a8d7d891407b6257acc6481f27ca0e891b337e65
+
 				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 				Date d = f.parse(notice.getEntryTime());
 				notice.setEntryTime(String.valueOf(d.getTime()));
