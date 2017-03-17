@@ -39,7 +39,8 @@ public class ContactDaoImp implements ContactDao {
 		Loggers.loggerStart();
 		try {
 			getConnection();
-			details.setEntryTime(CalendarCalculator.getTimeStamp());
+			details.setEntryTime(CalendarCalculator.getTimeStamp())
+			;
 			
 			details.setPostedBy(role);
 			details.setReadByTeacher("Y");
