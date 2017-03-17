@@ -1,6 +1,5 @@
 package com.gsmart.model;
 
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,34 +9,28 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-@SuppressWarnings("serial")
 @Entity
 @Table(name="WEEKDAYS")
 @IdClass(com.gsmart.model.CompoundWeekDays.class)
 
-public class WeekDays implements Serializable{
+public class WeekDays {
 	
 	
 	@Id
-	@Column(name = "SCHOOL")
-	private String school;
-	
-	
-		@Id
-		@Column(name = "INSTITUTION")
-		private String institution;
+	@Column(name="WEEK_DAY")
+	private String weekDay;
 		
-		@Id
-		@Column(name="WEEKDAY")
-		private String weekDay;
-
+		
 		@Column(name="ISACTIVE")
 		private String isActive;
 
+		
+	
 		@OneToOne(fetch=FetchType.EAGER)
 		@JoinColumn(name="hid")
 		private Hierarchy hierarchy;
 		
+	
 		@Id
 		@Column(name="ENTRY_TIME")
 		private String entryTime;
@@ -53,24 +46,8 @@ public class WeekDays implements Serializable{
 		}
 
 
-		public String getSchool() {
-			return school;
-		}
+		
 
-
-		public void setSchool(String school) {
-			this.school = school;
-		}
-
-
-		public String getInstitution() {
-			return institution;
-		}
-
-
-		public void setInstitution(String institution) {
-			this.institution = institution;
-		}
 
 
 		public String getWeekDay() {
@@ -105,7 +82,7 @@ public class WeekDays implements Serializable{
 
 		@Override
 		public String toString() {
-			return "WeekDays [school=" + school + ", institution=" + institution + ", weekDay=" + weekDay
+			return "WeekDays [ weekDay=" + weekDay
 					+ ", isActive=" + isActive + ", hierarchy=" + hierarchy + "]";
 		}
 

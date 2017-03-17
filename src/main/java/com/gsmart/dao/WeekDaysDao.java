@@ -18,6 +18,6 @@ public interface WeekDaysDao {
     
     public void deleteweekdays(WeekDays weekdays) throws GSmartDatabaseException;
     
-    public List<WeekDays> getWeekdaysForHoliday(String school, String institution) throws GSmartDatabaseException;
+    public List<WeekDays> getWeekdaysForHoliday(Long hid) throws GSmartDatabaseException;
  
 }
