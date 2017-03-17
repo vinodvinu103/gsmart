@@ -32,6 +32,10 @@ public class ReportCard {
 	@Column(name="ENTRYTIME")
 	private String entryTime;
 	
+	@Id
+	@Column(name="EXAM_NAME")
+	private String examName;
+	
 	@Column(name="STUDENT_NAME")
 	private String studentName;
 	
@@ -110,6 +114,14 @@ public class ReportCard {
 
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
+	}
+	
+	public String getExamName() {
+		return examName;
+	}
+
+	public void setExamName(String examName) {
+		this.examName = examName;
 	}
 
 	public String getStudentName() {
@@ -253,13 +265,15 @@ public class ReportCard {
 
 	@Override
 	public String toString() {
-		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", studentName=" + studentName
-				+ ", standard=" + standard + ", section=" + section + ", reportingManagerId=" + reportingManagerId
-				+ ", teacherName=" + teacherName + ", subject=" + subject + ", maxMarks=" + maxMarks + ", minMarks="
-				+ minMarks + ", marksObtained=" + marksObtained + ", subjectGrade=" + subjectGrade + ", totalGrade="
-				+ totalGrade + ", result=" + result + ", academicYear=" + academicYear + ", isActive=" + isActive
-				+ ", updateTime=" + updateTime + ", exitTime=" + exitTime + "]";
+		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", examName=" + examName
+				+ ", studentName=" + studentName + ", standard=" + standard + ", section=" + section
+				+ ", reportingManagerId=" + reportingManagerId + ", teacherName=" + teacherName + ", subject=" + subject
+				+ ", maxMarks=" + maxMarks + ", minMarks=" + minMarks + ", marksObtained=" + marksObtained
+				+ ", subjectGrade=" + subjectGrade + ", totalGrade=" + totalGrade + ", result=" + result
+				+ ", academicYear=" + academicYear + ", isActive=" + isActive + ", updateTime=" + updateTime
+				+ ", exitTime=" + exitTime + ", childReportFlag=" + childReportFlag + ", hierarchy=" + hierarchy + "]";
 	}
+
 	
 
 	

@@ -1,6 +1,5 @@
 package com.gsmart.model;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.persistence.Column;

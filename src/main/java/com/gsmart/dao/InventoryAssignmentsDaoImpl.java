@@ -1,5 +1,6 @@
 package com.gsmart.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,6 +225,30 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 	public void getConnection() {
 		session = sessionFactory.openSession();
 		tx = session.beginTransaction();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<InventoryAssignments> getInventoryDashboardData(ArrayList<String> smartIdList, Hierarchy hierarchy)
+			throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<InventoryAssignments> inventoryAssignmentList = null;
+		try {
+			getConnection();
+			Loggers.loggerStart("smartIdList : " + smartIdList);
+			query = session
+					.createQuery("From InventoryAssignments where isActive=:isActive and hierarchy.hid=:hierarchy and smartId in (:smartIdList)");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			query.setParameterList("smartIdList", smartIdList);
+			query.setParameter("isActive", "Y");
+			inventoryAssignmentList =  query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		Loggers.loggerEnd(inventoryAssignmentList);
+		return inventoryAssignmentList;
 	}
 
 }

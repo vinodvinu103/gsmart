@@ -9,16 +9,16 @@ public class CompoundBanner implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
-	private String title;
+/*	private String title;*/
 	private String entryTime;
 	
 	
-	public String getTitle() {
+	/*public String getTitle() {
 		return title;
 	}
 	public void setTitle(String title) {
 		this.title = title;
-	}
+	}*/
 	public String getEntryTime() {
 		return entryTime;
 	}

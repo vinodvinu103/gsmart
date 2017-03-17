@@ -69,7 +69,7 @@ public class LeaveController {
 		//	CronJob.cronJob();	
 			
 		if (modulePermission!= null) {
-			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
+			leaveList = leaveServices.getLeaveList(tokenObj,tokenObj.getHierarchy(), min, max);
 			leave.put("leaveList", leaveList);
 			Loggers.loggerEnd(leaveList);
 			return new ResponseEntity<Map<String,Object>>(leave, HttpStatus.OK);
@@ -80,8 +80,8 @@ public class LeaveController {
 	}
 		
 		
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addLeave(@PathVariable ("min") int min, @PathVariable ("max") int max, String role, Hierarchy hierarchy, @RequestBody Leave leave, Integer noOfdays, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<IAMResponse> addLeave(@RequestBody Leave leave, Integer noOfdays, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
 		IAMResponse resp=new IAMResponse();
@@ -98,12 +98,11 @@ public class LeaveController {
 			leave.setReportingManagerId(profileInfo.getReportingManagerId());
 			leave.setFullName(profileInfo.getFirstName()+" "+profileInfo.getLastName());
 			leave.setHierarchy(tokenObj.getHierarchy());
-			System.out.println("leave details>>>>>>>>>>>>>."+leave);
-			CompoundLeave cl=leaveServices.addLeave(leave, noOfdays, role, hierarchy, min, max);
+			CompoundLeave cl=leaveServices.addLeave(leave, noOfdays, tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
 			if(cl!=null)
 			resp.setMessage("success");
 		else
-			resp.setMessage("Already exists");
+			resp.setMessage("You already applied a same/wrong DATE ,please choose another DATE");
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse> (resp, HttpStatus.OK);
@@ -112,7 +111,7 @@ public class LeaveController {
 			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 		}
 	}
-	@RequestMapping(value = "/{task}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 	public  ResponseEntity<IAMResponse> editLeave(@RequestBody Leave leave, @PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse;
@@ -149,8 +148,7 @@ public class LeaveController {
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			leftLeaves=leaveServices.getLeftLeaves(tokenObj.getRole(),tokenObj.getHierarchy(),smartId, leaveType);
 			
-		} catch (GSmartServiceException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
