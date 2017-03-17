@@ -15,7 +15,6 @@ public class CompoundWeekDays implements Serializable {
 	
 	public String getEntryTime() {
 		return entryTime;
-
 	}
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
@@ -33,3 +32,4 @@ public class CompoundWeekDays implements Serializable {
 	
 	
 }	
+	
