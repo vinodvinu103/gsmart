@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -58,11 +61,10 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		Map<String, Object> feeMap = new HashMap<>();
 		
 		try {
-				
-			
 			criteria = session.createCriteria(FeeMaster.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
+			criteria.addOrder(Order.asc("standard"));
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			feeList = criteria.list();
