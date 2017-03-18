@@ -53,6 +53,7 @@ public class LoginServicesImpl implements LoginServices{
 				jsonMap.put("permissions", rolePermissions);
 				jsonMap.put("profile", profile);
 				jsonMap.put("token", tokenDetails.getTokenNumber());
+				jsonMap.put("tokenObj", tokenDetails);
 				jsonMap.put("result", 0);
 				jsonMap.put("message", "welcome back");
 			} else {
@@ -65,10 +66,11 @@ public class LoginServicesImpl implements LoginServices{
 					Profile profile = profileServices.getProfileDetails(smartId);
 					String role = profile.getRole();
 					List<RolePermission> rolePermissions = permissionServices.getPermission(role);
-					String token = issueToken(smartId, role, loginObj);
+					Token token = issueToken(smartId, role, loginObj);
 					jsonMap.put("permissions", rolePermissions);
 					jsonMap.put("profile", profile);
-					jsonMap.put("token", token);
+					jsonMap.put("token", token.getTokenNumber());
+					jsonMap.put("tokenObj", token);
 					jsonMap.put("result", 0);
 					jsonMap.put("message", "welcome");
 				} else if (authentication != null && (int)authentication.get("status") == 1) {
@@ -97,7 +99,7 @@ public class LoginServicesImpl implements LoginServices{
 		return jsonMap;
 	}
 
-	private String issueToken(String smartId, String role, Login loginObj) throws GSmartServiceException {
+	private Token issueToken(String smartId, String role, Login loginObj) throws GSmartServiceException {
 
 		Token token = null;
 		String tokenNumber = null;
@@ -110,6 +112,7 @@ public class LoginServicesImpl implements LoginServices{
 			token.setTokenNumber(tokenNumber);
 			token.setSmartId(smartId);
 			token.setRole(role);
+			token.setHierarchy(loginObj.getHierarchy());
 			tokenService.saveToken(token, loginObj);
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
@@ -118,8 +121,8 @@ public class LoginServicesImpl implements LoginServices{
 			throw new GSmartServiceException(e.getMessage());
 		}
 
-		Loggers.loggerValue("Token generated: ", tokenNumber);
-		return tokenNumber;
+		Loggers.loggerValue("Token generated: ", token);
+		return token;
 	}
 
 	private Token getTokenDetails(String tokenNumber) throws GSmartServiceException {
