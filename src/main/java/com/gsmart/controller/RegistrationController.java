@@ -66,8 +66,7 @@ public class RegistrationController {
 	TokenService tokenService;
 
 	@Autowired
-
-	PasswordServices passwordServices;
+    PasswordServices passwordServices;
 
 	@Autowired
 	HierarchyServices hierarchyServices;
