@@ -111,6 +111,7 @@ public class FeeController {
 		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			
 			try {
 				Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 				fee.setHierarchy(tokenObj.getHierarchy());
