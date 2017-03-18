@@ -9,6 +9,11 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+
+import com.gsmart.model.Band;
+import com.gsmart.model.Hierarchy;
+
+
 import com.gsmart.model.WeekDays;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartDatabaseException;
@@ -27,6 +32,8 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<WeekDays> getWeekList(long hid) throws GSmartDatabaseException {
+
+
 		getConnection();
 		Loggers.loggerStart();
 		List<WeekDays> WeekDaysList = null;
@@ -51,6 +58,7 @@ public class WeekDaysDaoImpl implements WeekDaysDao {
 
 	@Override
 	public boolean addWeekDays(WeekDays weekdays) throws GSmartDatabaseException {
+
 		getConnection();
 		Loggers.loggerStart(weekdays);
 		boolean status=false;
