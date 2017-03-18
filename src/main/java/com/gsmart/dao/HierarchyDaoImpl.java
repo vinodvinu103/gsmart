@@ -23,12 +23,17 @@ package com.gsmart.dao;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -75,15 +80,17 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		Map<String, Object> hierarchyMap = new HashMap<String, Object>();
 		Criteria criteria = null;
 		try {
-			if (hierarchy==null) {
+			/*if (hierarchy==null) {
 				query = session.createQuery("from Hierarchy where isActive='Y'");
 			} else {
 				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
 				query.setParameter("hid", hierarchy.getHid());
-			}
+			}*/
 			criteria = session.createCriteria(Hierarchy.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.addOrder(Order.asc("school"));
 			hierarchyList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Hierarchy.class);
 			criteriaCount.setProjection(Projections.rowCount());

@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Criteria;
+
 import javax.validation.ConstraintViolationException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class AssignDaoImpl implements AssignDao {
 	Session session = null;;
 	Query query;
 	Transaction transaction = null;
+	Criteria criteria = null;
+	Criteria criteriaCount=null;
+	Long count=null;
 	
 	public void getConnection() {
 		session = sessionFactory.openSession();
@@ -44,22 +49,21 @@ public class AssignDaoImpl implements AssignDao {
 		getConnection();
 		Loggers.loggerStart();
 		List<Assign> assignList = null;
+		
 		Map<String, Object> assignMap = new HashMap<>();
-		Criteria criteria = null;
+		
 		try {
-
-			getConnection();
-				
 	 		
 			criteria = session.createCriteria(Assign.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
+			criteria.addOrder(Order.asc("standard"));
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			assignList = criteria.list();
-			Criteria criteriaCount = session.createCriteria(Assign.class);
+			criteriaCount= session.createCriteria(Assign.class);
 			criteriaCount.setProjection(Projections.rowCount());
-			Long count = (Long) criteriaCount.uniqueResult();
+			 count= (Long) criteriaCount.uniqueResult();
 			assignMap.put("totalassign", count);
 		} catch (Exception e) {
 			e.printStackTrace();
