@@ -161,9 +161,10 @@ public class ProfileServicesImp implements ProfileServices {
 		return profileDao.getProfileByHierarchy(hierarchy);
 	}
 
-	public List<Profile> getProfilesWithoutRfid(Hierarchy hierarchy) throws GSmartDatabaseException {
+
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
 	
-		return profileDao.getProfilesWithoutRfid(hierarchy);
+		return profileDao.getProfilesWithoutRfid(min, max,hierarchy);
 	}
 
 	@Override
@@ -194,9 +195,9 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 
 	@Override
-	public List<Profile> getProfilesWithRfid(Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
 		
-		return profileDao.getProfilesWithRfid(hierarchy);
+		return profileDao.getProfilesWithRfid(min, max,hierarchy);
 	}
 	
 	@Override
@@ -229,9 +230,9 @@ public class ProfileServicesImp implements ProfileServices {
 		profileDao.addBanner(banner);
 	}
 	@Override
-	public List<Banners> getBannerList() throws GSmartServiceException {
+	public Map<String, Object> getBannerList(Integer min, Integer max) throws GSmartServiceException {
 		// TODO Auto-generated method stub
-		return profileDao.getBannerList();
+		return profileDao.getBannerList(min, max);
 	}
 
 	/*@Override

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.gsmart.dao.ModulesDao;
 import com.gsmart.model.CompoundModules;
 import com.gsmart.model.Hierarchy;
+
 import com.gsmart.model.Modules;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -45,4 +46,39 @@ public class ModulesServicesImpl implements ModulesServices{
 		Loggers.loggerEnd();
 		return cb;
 	}
+	@Override
+	public Modules editmodule(Modules modules) throws GSmartServiceException {
+		Loggers.loggerStart();
+		Modules ch=null;
+		try {
+		ch=	modulesDao.editModule(modules);
+			
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+
+			throw new GSmartServiceException(e.getMessage());
+
+		}
+
+		Loggers.loggerEnd();
+		return ch;
+	}
+	@Override
+	public void deletemodule(Modules modules) throws GSmartServiceException {
+
+		Loggers.loggerStart();
+		try {
+			modulesDao.deleteModule(modules);
+
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+
+		Loggers.loggerEnd();
+
+	}
+	
 }

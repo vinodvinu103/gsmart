@@ -85,11 +85,11 @@ public interface ProfileDao {
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 
-	public List<Profile> getProfilesWithoutRfid(Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	
-	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException;
+	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public List<Profile> getProfilesWithRfid(Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 	
@@ -99,7 +99,7 @@ public interface ProfileDao {
 	
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public List<Banners> getBannerList();
+	public Map<String, Object> getBannerList(Integer min, Integer max);
 	
 	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 

@@ -10,6 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -180,13 +181,13 @@ public class FeeDaoImpl implements FeeDao {
 		
 		List<Fee> paidStudentsList=null;
 		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
-		
 		try
 		{
 			getconnection();
 	   criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
+		criteria.addOrder(Order.asc("smartId"));
 		 criteria.add(Restrictions.eq("isActive", "Y"));
 	     criteria.add(Restrictions.eq("hierarchy.hid", hid));
 	     criteria.add(Restrictions.eq("feeStatus", "paid"));
@@ -225,6 +226,7 @@ public class FeeDaoImpl implements FeeDao {
 		criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
+		criteria.addOrder(Order.asc("smartId"));
 		 criteria.add(Restrictions.eq("isActive", "Y"));
 	     criteria.add(Restrictions.eq("hierarchy.hid", hid));
 	     criteria.add(Restrictions.eq("feeStatus", "unpaid"));

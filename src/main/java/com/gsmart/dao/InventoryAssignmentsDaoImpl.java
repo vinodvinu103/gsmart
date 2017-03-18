@@ -11,6 +11,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -63,6 +64,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
+		criteria.addOrder(Order.asc("standard"));
 		inventoryList = criteria.list();
 		
 		criteriaCount.setProjection(Projections.rowCount());
