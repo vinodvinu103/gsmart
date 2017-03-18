@@ -15,6 +15,7 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Grades;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.Constants;
@@ -110,8 +111,8 @@ public class ReportCardServiceImpl implements ReportCardService {
 	}
 
 	@Override
-	public void excelToDB(String smartId, MultipartFile fileUpload) throws Exception {
-		reportCardDao.excelToDB(smartId, fileUpload);
+	public void excelToDB(String smartId, MultipartFile fileUpload,Hierarchy hid) throws Exception {
+		reportCardDao.excelToDB(smartId, fileUpload,hid);
 	}
 
 	@Override

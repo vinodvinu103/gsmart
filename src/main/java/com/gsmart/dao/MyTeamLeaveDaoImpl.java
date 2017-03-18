@@ -1,12 +1,17 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +20,7 @@ import com.gsmart.model.Leave;
 import com.gsmart.model.LeaveDetails;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.model.Profile;
+import com.gsmart.model.ReportCard;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -27,6 +33,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	Session session = null;
 	Transaction transaction = null;
 	Query query;
+	Criteria criteria=null;
 
 	public void getConnection() {
 		session = sessionFactory.openSession();
@@ -36,23 +43,52 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@SuppressWarnings("unchecked")
 	@Override
 
-	public List<Leave> getLeavelist(Profile profileInfo, Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getLeavelist(Profile profileInfo, Hierarchy hierarchy,Integer min,Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		List<Leave> leavelist = null;
+		Map<String, Object> leavelist =new HashMap<>();
 		getConnection();
 		try {
 			String role = profileInfo.getRole();
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("FROM Leave WHERE isActive='Y'");
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")||role.equalsIgnoreCase("hr")) {
+				System.out.println("in side if condition>>>>>>>>...");
+				criteria = session.createCriteria(Leave.class);
+				criteria.add(Restrictions.eq("isActive", "Y"));
+				criteria.addOrder(Order.asc("fullName"));
+				criteria.setFirstResult(min);
+				criteria.setMaxResults(max);
+				leavelist.put("myTeamLeaveList", criteria.list());
+				
+				criteria = session.createCriteria(ReportCard.class).add(Restrictions.eq("isActive", "Y"))
+						.setProjection(Projections.rowCount());
+				Long count = (Long) criteria.uniqueResult();
+				leavelist.put("totalListCount", count);
 			} else {
-				query = session.createQuery(
+				System.out.println("in side else condition    <><><><>...");
+				/*query = session.createQuery(
 						"FROM Leave WHERE reportingManagerId=:smartId and lower(leaveStatus)!='rejected*' and isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
-				query.setParameter("smartId", profileInfo.getSmartId());
+				query.setParameter("smartId", profileInfo.getSmartId());*/
+				criteria = session.createCriteria(Leave.class);
+				criteria.add(Restrictions.eq("isActive", "Y"));
+				criteria.add(Restrictions.ne("leaveStatus", "Rejected*").ignoreCase());
+				criteria.add(Restrictions.eq("reportingManagerId", profileInfo.getSmartId()));
+				criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+				criteria.addOrder(Order.asc("fullName"));
+				criteria.setFirstResult(min);
+				criteria.setMaxResults(max);
+				leavelist.put("myTeamLeaveList", criteria.list());
+				
+				criteria = session.createCriteria(Leave.class).add(Restrictions.eq("isActive", "Y"))
+						.add(Restrictions.eq("reportingManagerId", profileInfo.getSmartId()))
+						.add(Restrictions.ne("leaveStatus", "Rejected*").ignoreCase())
+						.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()))
+						.setProjection(Projections.rowCount());
+				Long count = (Long) criteria.uniqueResult();
+				leavelist.put("totalListCount", count);
 			}
-			leavelist = query.list();
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
 		} finally {
 

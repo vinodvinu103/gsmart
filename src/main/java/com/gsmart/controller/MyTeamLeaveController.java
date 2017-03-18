@@ -58,7 +58,7 @@ public class MyTeamLeaveController {
 
 		str.length();
 
-		List<Leave> myTeamList = null;
+		Map<String, Object> myTeamList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
@@ -68,7 +68,7 @@ public class MyTeamLeaveController {
 		Profile profileInfo=profileDao.getProfileDetails(smartId);
 		
 		if (modulePermission != null) {
-			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy());
+			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy(),min,max);
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);
