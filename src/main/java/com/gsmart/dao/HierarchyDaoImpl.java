@@ -23,11 +23,15 @@ package com.gsmart.dao;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -86,6 +90,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
 			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.addOrder(Order.asc("school"));
 			hierarchyList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Hierarchy.class);
 			criteriaCount.setProjection(Projections.rowCount());

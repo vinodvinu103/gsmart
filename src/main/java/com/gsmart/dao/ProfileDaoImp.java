@@ -10,6 +10,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -197,7 +199,9 @@ public class ProfileDaoImp implements ProfileDao {
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
-			// criteria.setProjection(Projections.id());
+			criteria.addOrder(Order.asc("smartId"));
+//			criteria.setProjection(Projections.id());
+
 			Criteria criteriaCount = session.createCriteria(Profile.class).add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
@@ -221,7 +225,6 @@ public class ProfileDaoImp implements ProfileDao {
 					 */
 					profileMap.put("profileList", criteria.list());
 				}
-
 			criteriaCount.setProjection(Projections.rowCount());
 			profileMap.put("totalProfiles", criteriaCount.uniqueResult());
 			Loggers.loggerEnd(criteria.list());
@@ -455,15 +458,28 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> getProfilesWithoutRfid() throws GSmartDatabaseException {
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max) throws GSmartDatabaseException {
 		getConnection();
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithoutRfid;
+		Map<String, Object> rfidMap = new HashMap<>();
+		Criteria criteria = session.createCriteria(Profile.class);
 		try {
 			getConnection();
-			query = session.createQuery("from Profile where rfId is null AND isActive='Y'");
-			profileListWithoutRfid = query.list();
-
+			/*
+			 * query = session.createQuery(
+			 * "from Profile where rfId is null AND isActive='Y'");
+			 * profileListWithoutRfid = query.list();
+			 */
+			criteria.add(Restrictions.isNull("rfId"));
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.setFirstResult(min);
+			criteria.setMaxResults(max);
+			profileListWithoutRfid = criteria.list();
+			System.out.println("withoutjhfvdbjdfhvjhdfbvjdh" + profileListWithoutRfid);
+			rfidMap.put("profileListWithoutRfid", profileListWithoutRfid);
+			criteria.setProjection(Projections.rowCount());
+			rfidMap.put("totalrfid", criteria.uniqueResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -472,11 +488,11 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 
 		Loggers.loggerEnd(profileListWithoutRfid);
-		return profileListWithoutRfid;
+		return rfidMap;
 		// return null;
 	}
 
-	public List<Profile> addRfid(Profile rfid) throws GSmartDatabaseException {
+	public Map<String, Object> addRfid(Profile rfid) throws GSmartDatabaseException {
 
 		getConnection();
 		// List<Profile> profileListWithoutRfid = null;
@@ -495,19 +511,31 @@ public class ProfileDaoImp implements ProfileDao {
 		} finally {
 			session.close();
 		}
-		return getProfilesWithoutRfid();
+		return getProfilesWithoutRfid(1, 1);
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> getProfilesWithRfid() throws GSmartDatabaseException {
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max) throws GSmartDatabaseException {
 		getConnection();
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithRfid;
+		Map<String, Object> rfidWithMap = new HashMap<>();
 		try {
 			getConnection();
-			query = session.createQuery("from Profile where rfId is not null AND isActive='Y'");
-			profileListWithRfid = query.list();
+			/*
+			 * query = session.createQuery(
+			 * "from Profile where rfId is not null AND isActive='Y'");
+			 * profileListWithRfid = query.list();
+			 */
+			Criteria criteria = session.createCriteria(Profile.class);
+			criteria.add(Restrictions.isNotNull("rfId"));
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			profileListWithRfid = criteria.list();
+			System.out.println("dfcsdgcysyhfvgyhfgv" + profileListWithRfid);
+			rfidWithMap.put("profileListWithRfid", profileListWithRfid);
+			criteria.setProjection(Projections.rowCount());
+			rfidWithMap.put("totalwithrfid", criteria.uniqueResult());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -517,7 +545,7 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 
 		Loggers.loggerEnd(profileListWithRfid);
-		return profileListWithRfid;
+		return rfidWithMap;
 
 	}
 
@@ -541,27 +569,36 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 
 		Loggers.loggerEnd();
-		return getProfilesWithRfid();
+		return (List<Profile>) getProfilesWithRfid(1,1);
 
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Banners> getBannerList() {
+	public Map<String, Object> getBannerList(Integer min, Integer max) {
 		Loggers.loggerStart();
 		List<Banners> bannerlist = null;
+		Map<String, Object> bannerMap = new HashMap<>();
 		try {
 			getConnection();
-			Query query = session.createQuery("FROM Banners WHERE isActive='Y' order by image desc");
-			bannerlist = query.list();
-
+			Criteria criteria = session.createCriteria(Banners.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.setFirstResult(min);
+			criteria.setMaxResults(max);
+			bannerlist = criteria.list();
+			bannerMap.put("bannerlist", bannerlist);
+			Criteria criteriaCount = session.createCriteria(Banners.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			bannerMap.put("totalbanner", count);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			session.close();
 		}
 		Loggers.loggerEnd(bannerlist);
-		return bannerlist;
+		return bannerMap;
 	}
 
 	@Override

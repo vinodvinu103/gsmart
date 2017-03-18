@@ -154,6 +154,9 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 			break;
 		}
 		weekdays.setWeekDay(day);
+
+	
+
 		Loggers.loggerEnd();
 	
 		try{
