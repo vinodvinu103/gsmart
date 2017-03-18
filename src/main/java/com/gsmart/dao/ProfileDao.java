@@ -85,17 +85,17 @@ public interface ProfileDao {
 
 
 
-	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
-	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException;
+	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public List<Banners> getBannerList();
+	public Map<String, Object> getBannerList(Integer min, Integer max);
 	
 	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 
