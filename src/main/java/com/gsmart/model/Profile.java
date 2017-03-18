@@ -117,7 +117,7 @@ public class Profile {
 	private String motherMobNumber;
 
 	@Column(name = "TEACHER_ID")
-	private long teacherId;
+	private String teacherId;
 
 	@Column(name = "UPD_SMARTID")
 	private String updSmartId;
@@ -264,7 +264,7 @@ public class Profile {
 	private String academicYear;
 
 	@Column(name = "STUDENT_ID")
-	private long studentId;
+	private String studentId;
 
 	@Column(name = "CLASS")
 	private String standard;
@@ -622,11 +622,11 @@ public class Profile {
 		this.motherMobNumber = motherMobNumber;
 	}
 
-	public long getTeacherId() {
+	public String getTeacherId() {
 		return teacherId;
 	}
 
-	public void setTeacherId(long teacherId) {
+	public void setTeacherId(String teacherId) {
 		this.teacherId = teacherId;
 	}
 
@@ -958,11 +958,11 @@ public class Profile {
 		this.academicYear = academicYear;
 	}
 
-	public long getStudentId() {
+	public String getStudentId() {
 		return studentId;
 	}
 
-	public void setStudentId(long studentId) {
+	public void setStudentId(String studentId) {
 		this.studentId = studentId;
 	}
 
