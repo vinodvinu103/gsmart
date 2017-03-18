@@ -59,6 +59,7 @@
 				<value>com.gsmart.model.Banners</value>
 				<value>com.gsmart.model.MessageDetails</value>
 				<value>com.gsmart.model.Attendance</value>
+
 			</list>
 		</property>
 		<property name="hibernateProperties">
