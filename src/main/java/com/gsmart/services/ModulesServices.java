@@ -10,4 +10,7 @@ import com.gsmart.util.GSmartServiceException;
 public interface ModulesServices {
 	public List<Modules> getModulesList(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	public CompoundModules addModules(Modules modules) throws GSmartServiceException;
+	public Modules editmodule(Modules modules) throws GSmartServiceException;
+
+	public void deletemodule(Modules modules) throws GSmartServiceException;
 }
