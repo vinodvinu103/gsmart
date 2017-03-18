@@ -667,8 +667,10 @@ public class ProfileDaoImp implements ProfileDao {
 
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			query = session.createQuery("from Banners where isActive='Y' and entryTime='" + entryTime + "'");
-			banners = (Banners) query.uniqueResult();
+
+			query = session.createQuery("from Banners where isActive='Y'  ORDER BY entryTime desc");
+			banners=(Banners) query.uniqueResult();
+
 			Loggers.loggerEnd(banners);
 			return banners;
 		} catch (Exception e) {
@@ -698,8 +700,10 @@ public class ProfileDaoImp implements ProfileDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year) {
+
 		getConnection();
 		Loggers.loggerStart();
+		System.out.println("Year >>>>>>>>>>>> "+year);
 
 		List<Profile> profiles = null;
 		try {
