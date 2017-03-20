@@ -63,12 +63,13 @@ public class Token {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
+
 	@Override
 	public String toString() {
-		
-		return "\nToken [\n\tTokenNumber="+tokenNumber+"\n\tSmartID="+smartId+"\n\tRole="+role+"\n\tReportingManagerId="+reportingManagerId+"\n\t]";
+		return "Token [\t tokenNumber=" + tokenNumber + ",\t smartId=" + smartId + ",\t role=" + role + ",\t hierarchy="
+				+ hierarchy + "\n\tRole="+role+"\n\tReportingManagerId="+reportingManagerId+"\n\t]";
 	}
+	
 	
 	
 }

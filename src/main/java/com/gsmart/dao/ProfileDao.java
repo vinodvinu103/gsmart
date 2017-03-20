@@ -20,6 +20,7 @@ package com.gsmart.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
@@ -35,7 +36,7 @@ import com.gsmart.util.GSmartDatabaseException;
  * @author Shakti Panigrahi
  */
 public interface ProfileDao {
-	
+
 	/* for registration */
 
 	public String getMaxSmartId();
@@ -43,61 +44,63 @@ public interface ProfileDao {
 	public boolean userProfileInsert(Profile profile);
 
 	public String updateProfile(Profile profile);
+	
+	public String deleteprofile(Profile profile);
+	
+	public boolean deleteProfileIfMailFailed(String smartId);
 
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
-	public ArrayList<Profile> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy);
+	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
+			int max);
 
 	public Profile getParentInfo(String empSmartId);
 
 	public ArrayList<Profile> getReportingProfiles(String parentSmartId);
 
-	/* for login */	
+	/* for login */
 	public Profile getProfileDetails(String empSmartId);
 
-	public List<Profile> getAllRecord(String academicYear,String role,Hierarchy  hierarchy);
+	public List<Profile> getAllRecord(String academicYear, Long hid);
 
-	
 	/**
 	 * @return list of Profile entities available in the {@link Profile} Table
 	 * @throws GSmartDatabaseException
 	 */
 	public List<Profile> search(Profile profile) throws GSmartDatabaseException;
 
-	
 	/**
-	 * @param profile instanceOf {@link Profile}
+	 * @param profile
+	 *            instanceOf {@link Profile}
 	 * @return Nothing
 	 * @throws GSmartDatabaseException
 	 */
-	public void editRole(Profile profile)throws GSmartDatabaseException;
+	public void editRole(Profile profile) throws GSmartDatabaseException;
 
-	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
-	
-
-	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
+	public List<Profile> getsearchRep(Search search, String role, Hierarchy hierarchy);
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 
 
 
 
-	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
-	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException;
+	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public List<Banners> getBannerList();
+	public Map<String, Object> getBannerList(Integer min, Integer max);
 	
-	public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;
+	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 
 	public void deleteBanner(Banners banner)throws GSmartDatabaseException;
-	
+
+	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year);
 
 }

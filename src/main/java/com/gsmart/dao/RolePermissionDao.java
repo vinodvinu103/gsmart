@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
@@ -23,7 +24,7 @@ public interface RolePermissionDao {
 	 * @throws GSmartDatabaseException
 	 */
 
-	public List<RolePermission> getPermissionList(String role,Hierarchy hierarchy) throws GSmartBaseException;
+	public Map<String, Object> getPermissionList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartBaseException;
 	/**
 	 * @param permission instanceOf {@link RolePermission}
 	 * @return Nothing
@@ -41,7 +42,7 @@ public interface RolePermissionDao {
 	 * @return Nothing
 	 * @throws GSmartDatabaseException
 	 */
-	public void editPermission(RolePermission permission)throws GSmartBaseException;
+	public RolePermission editPermission(RolePermission permission)throws GSmartBaseException;
 
 	public List<RolePermission> getPermission(String role)throws GSmartBaseException;
 	

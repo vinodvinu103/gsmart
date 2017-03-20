@@ -1,11 +1,18 @@
 package com.gsmart.dao;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,32 +36,38 @@ public class LeaveDaoImpl implements LeaveDao {
 	Transaction transaction;
 
 	@SuppressWarnings("unchecked")
-	public List<Leave> getLeaveList(Token tokenObj, Hierarchy hierarchy) throws GSmartDatabaseException {
+	@Override
+	public Map<String, Object> getLeaveList(Token tokenObj, Hierarchy hierarchy, int min, int max)
+			throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getConnection();
 		Loggers.loggerStart(tokenObj);
-
 		System.out.println("vgyhuhuygy");
-
 		List<Leave> leave = null;
+		Criteria criteria = null;
+		Map<String, Object> leaveMap = new HashMap<>();
 		try {
-			getConnection();
-			String role = tokenObj.getRole();
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("hr") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("FROM Leave WHERE isActive='Y'");
-			} else {
-				query = session
-						.createQuery("FROM Leave WHERE smartId=:smartId and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-				query.setParameter("smartId", tokenObj.getSmartId());
-			}
-			leave = (List<Leave>) query.list();
-			session.close();
+			criteria = session.createCriteria(Leave.class);
+			criteria.add(Restrictions.eq("smartId",tokenObj.getSmartId()));
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid",  hierarchy.getHid()));
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			leave = criteria.list();
+
+			Criteria criteriaCount = session.createCriteria(Leave.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y")).setProjection(Projections.rowCount());
+			criteriaCount.add(Restrictions.eq("hierarchy.hid",hierarchy.getHid()));
+			criteriaCount.setProjection(Projections.rowCount());
+			leaveMap.put("totalleavelist",criteriaCount.uniqueResult());
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
 			session.close();
 		}
-		Loggers.loggerEnd();
-		return leave;
+		Loggers.loggerEnd(leave);
+		leaveMap.put("leave", leave);
+		return leaveMap;
 	}
 
 	public CompoundLeave addLeave(Leave leave, Integer noOfdays) throws GSmartDatabaseException {
@@ -63,47 +76,43 @@ public class LeaveDaoImpl implements LeaveDao {
 
 		CompoundLeave cl = null;
 		try {
-			/*
-			 * Hierarchy hierarchy=leave.getHierarchy();
-			 * query=session.createQuery(
-			 * "FROM Leave WHERE smartId=:smartId AND isActive=:isActive and hierarchy.hid=:hierarchy"
-			 * ); query.setParameter("smartId", leave.getSmartId());
-			 * query.setParameter("hierarchy", hierarchy.getHid());
-			 * //query.setParameter("reportingManagerId",
-			 * leave.getReportingManagerId()); query.setParameter("isActive",
-			 * "Y"); Leave leave1=(Leave)query.uniqueResult(); if(leave1==null)
-			 * {
-			 */
-			leave.setEntryTime(CalendarCalculator.getTimeStamp());
-			leave.setIsActive("Y");
-			leave.setNumberOfDays(noOfdays);
-			leave.setLeaveStatus("Pending");
-
-			cl = (CompoundLeave) session.save(leave);
-
-			/* session.save(details); */
-			/* } */
-			transaction.commit();
+			
+			Date startDate=getTimeWithOutMills(leave.getStartDate());
+			Date endDate = getTimeWithOutMills(leave.getEndDate());
+			 
+				 leave.setStartDate(startDate);
+				 leave.setEndDate(endDate);
+				 leave.setEntryTime(CalendarCalculator.getTimeStamp());
+				 leave.setIsActive("Y");
+				 leave.setNumberOfDays(noOfdays);
+				 leave.setLeaveStatus("Pending");
+				 cl = (CompoundLeave) session.save(leave);
+				 transaction.commit();
+			
 		} catch (ConstraintViolationException e) {
-			Loggers.loggerEnd();
-
 			e.printStackTrace();
-			// throw new
-			// GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
-			Loggers.loggerException(Constants.CONSTRAINT_VIOLATION);
-		}
-
-		catch (Exception e) {
+			 throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Exception e) {
 			e.printStackTrace();
-			// throw new GSmartDatabaseException(e.getMessage());
-			Loggers.loggerException(e.getMessage());
+			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 			session.close();
 		}
-		// logger.debug("End :: PermissionDaoImp.addPermission()");
-		// Loggers.loggerEnd();
+		Loggers.loggerEnd();
 		return cl;
 
+	}
+	public Date getTimeWithOutMills(Date date){
+		Loggers.loggerStart();
+		Calendar calendar=Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		Date date2=calendar.getTime();
+		return date2;
+		
 	}
 
 	public void getConnection() {
@@ -172,6 +181,52 @@ public class LeaveDaoImpl implements LeaveDao {
 			session.close();
 		}
 		Loggers.loggerEnd();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Leave> getLeaves(String role, Hierarchy hierarchy, String smartId, String leaveType) {
+		Loggers.loggerStart();
+		getConnection();
+		List<Leave> leaveList = null;
+		try {
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")) {
+				query = session.createQuery(
+						"from Leave where smartId=:smartId and leaveType=:leaveType and lower(leaveStatus)!='rejected*' and isActive='Y'");
+			} else {
+				query = session.createQuery(
+						"from Leave where smartId=:smartId and leaveType=:leaveType and lower(leaveStatus)!='rejected*' and isActive='Y' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+
+			query.setParameter("smartId", smartId);
+			query.setParameter("leaveType", leaveType);
+			leaveList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+
+		return leaveList;
+	}
+	
+	@Override
+	public List<Leave> leaveForAdding(Leave leave,Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<Leave> leaveAddList=null;
+		try {
+			getConnection();
+			query=session.createQuery("from Leave where isActive='Y' and smartId=:smartId and leaveStatus!='Rejected*' and hid=:hierarchy");
+			query.setParameter("smartId", leave.getSmartId());
+			query.setParameter("hierarchy",hid);
+			leaveAddList=query.list();
+			session.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd();
+		return leaveAddList;
 	}
 
 }

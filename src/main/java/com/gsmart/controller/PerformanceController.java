@@ -179,7 +179,7 @@ public class PerformanceController {
 		if (modulePermission != null) {
 
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getRole(),tokenObj.getHierarchy());
+			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getHierarchy().getHid());
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			teamappraisalList  = appraisalservice.getTeamAppraisalList(smartId, year,tokenObj.getRole(),tokenObj.getHierarchy());

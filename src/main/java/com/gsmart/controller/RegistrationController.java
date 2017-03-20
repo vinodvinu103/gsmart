@@ -3,9 +3,7 @@ package com.gsmart.controller;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Login;
-
+import com.gsmart.dao.HierarchyDao;
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Fee;
 import com.gsmart.model.FeeMaster;
-
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
@@ -32,7 +31,6 @@ import com.gsmart.model.Token;
 
 import com.gsmart.services.PasswordServices;
 
-import com.gsmart.services.AssignService;
 import com.gsmart.services.FeeMasterServices;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
@@ -71,8 +69,6 @@ public class RegistrationController {
 
 	PasswordServices passwordServices;
 
-	AssignService assignService;
-
 	@Autowired
 	HierarchyServices hierarchyServices;
 
@@ -81,24 +77,37 @@ public class RegistrationController {
 
 	@Autowired
 	FeeServices feeService;
+	@Autowired
+	HierarchyDao hierarchyDao;
+	@Autowired
+	ProfileDao profileDao;
 
-	@RequestMapping(value = "/employee", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> viewEmployeeProfiles(@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+	int i = 0;
+
+	@RequestMapping(value = "/employee/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> viewEmployeeProfiles(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @PathVariable("hierarchy") Long hierarchy,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> jsonMap = new HashMap<>();
 
-		List<Profile> profileList = null;
+		Map<String, Object> profileList = null;
 		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		jsonMap.put("modulePermisson", modulePermisson);
+		Long hid = null;
+		if (tokenObj.getHierarchy() == null) {
+			hid = hierarchy;
+
+		} else {
+			hid = tokenObj.getHierarchy().getHid();
+		}
 
 		if (modulePermisson != null) {
-			profileList = profileServices.getProfiles("employee", tokenObj.getSmartId(), tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			profileList = profileServices.getProfiles("employee", tokenObj.getSmartId(), hid, min, max);
 			if (profileList != null) {
 				jsonMap.put("status", 200);
 				jsonMap.put("result", profileList);
@@ -120,9 +129,10 @@ public class RegistrationController {
 
 	}
 
-	@RequestMapping(value = "/student", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> viewStudentProfiles(@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(value = "/student/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> viewStudentProfiles(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token,
+			@PathVariable("hierarchy") Long hierarchy, HttpSession httpSession) throws GSmartBaseException {
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -132,14 +142,21 @@ public class RegistrationController {
 		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		jsonMap.put("modulePermisson", modulePermisson);
 
-		List<Profile> profileList = null;
+		Map<String, Object> profileMap1 = null;
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Long hid = null;
+		if (tokenObj.getHierarchy() == null) {
+			hid = hierarchy;
+
+		} else {
+			hid = tokenObj.getHierarchy().getHid();
+		}
+
 		if (modulePermisson != null) {
-			profileList = profileServices.getProfiles("student", tokenObj.getSmartId(), tokenObj.getRole(),
-					tokenObj.getHierarchy());
-			if (profileList != null) {
+			profileMap1 = profileServices.getProfiles("student", tokenObj.getSmartId(), hid, min, max);
+			if (profileMap1 != null) {
 				jsonMap.put("status", 200);
-				jsonMap.put("result", profileList);
+				jsonMap.put("result", profileMap1);
 				jsonMap.put("message", "success");
 				jsonMap.put("modulePermisson", modulePermisson);
 			} else {
@@ -156,9 +173,10 @@ public class RegistrationController {
 		}
 	}
 
-	@RequestMapping(value = "/addProfile", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addUser(@RequestBody Profile profile, Login login,
-			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(value = "/addProfile/{hierarchy}", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addUser(@RequestBody Profile profile,
+			@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -169,23 +187,27 @@ public class RegistrationController {
 			// String updSmartId = tokenObj.getSmartId();
 
 			Loggers.loggerStart(profile.getFirstName());
+			System.out.println("hid"+hierarchy);
 
 			String smartId = String.valueOf((Integer.parseInt(profileServices.getmaxSamrtId()) + 1));
 			if (profile.getRole().equalsIgnoreCase("student")) {
-				profile.setHierarchy(tokenObj.getHierarchy());
-				Loggers.loggerStart("institution by hierarchy is : " + tokenObj.getHierarchy().getInstitution());
-				Loggers.loggerStart("school by hierarchy is : " + tokenObj.getHierarchy().getSchool());
-				profile.setSchool(tokenObj.getHierarchy().getSchool());
-				profile.setInstitution(tokenObj.getHierarchy().getInstitution());
-				/*
-				 * Hierarchy hierarchy =
-				 * hierarchyServices.getHierarchyByHid(tokenObj.getHierarchy().
-				 * getHid()); Assign assign =
-				 * assignService.getStaffByClassAndSection(profile.getStandard()
-				 * , profile.getSection(), hierarchy);
-				 * profile.setReportingManagerId(assign.getTeacherSmartId());
-				 * profile.setCounterSigningManagerId(assign.getHodSmartId());
-				 */
+				if (tokenObj.getHierarchy() == null) {
+					Hierarchy hierarchy2=hierarchyDao.getHierarchyByHid(hierarchy);
+					profile.setHierarchy(hierarchy2);
+					profile.setSchool(hierarchy2.getSchool());
+					profile.setInstitution(hierarchy2.getInstitution());
+
+				} else {
+					profile.setHierarchy(tokenObj.getHierarchy());
+					profile.setSchool(tokenObj.getHierarchy().getSchool());
+					profile.setInstitution(tokenObj.getHierarchy().getInstitution());
+
+				}
+
+				
+				
+				
+				 
 			}
 
 			profile.setSmartId(smartId);
@@ -193,13 +215,13 @@ public class RegistrationController {
 
 			if (profileServices.insertUserProfileDetails(profile)) {
 
+				Login login = new Login();
 				login.setReferenceSmartId(Encrypt.md5(smartId));
 				login.setSmartId(smartId);
 				passwordServices.setPassword(login, profile.getHierarchy());
 
 				if (profile.getRole().equalsIgnoreCase("student")) {
-					FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), tokenObj.getRole(),
-							tokenObj.getHierarchy());
+					FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
 					Fee fee = new Fee();
 					fee.setSmartId(profile.getSmartId());
 					fee.setName(profile.getFirstName());
@@ -222,15 +244,22 @@ public class RegistrationController {
 					fee.setBalanceFee(feeMaster.getTotalFee());
 					feeService.addFee(fee);
 				}
-				CommonMail commonMail = new CommonMail();
-				try {
-					commonMail.passwordMail(profile, Encrypt.md5(smartId));
-				} catch (Exception e) {
-					e.printStackTrace();
+				if (!sendMail(profile)) {
+					if (profileDao.deleteProfileIfMailFailed(profile.getSmartId())) {
+						jsonMap.put("status", 404);
+						jsonMap.put("message", "please try again.. server is busy");
+					} else {
+						jsonMap.put("status", 500);
+						jsonMap.put("message", "profile not recorded ..please contact admin");
+					}
+
+				} else {
+					jsonMap.put("status", 200);
+					jsonMap.put("message", "success");
+					jsonMap.put("Id", smartId);
+
 				}
-				jsonMap.put("status", 200);
-				jsonMap.put("message", "success");
-				jsonMap.put("Id", smartId);
+
 			} else {
 				jsonMap.put("status", 500);
 				jsonMap.put("message", "EmailID is already Registered");
@@ -242,8 +271,25 @@ public class RegistrationController {
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 	}
 
+	private boolean sendMail(Profile profile) {
+		CommonMail commonMail = new CommonMail();
+		try {
+			i++;
+			commonMail.passwordMail(profile, profile.getSmartId());
+			return true;
+		} catch (Exception e) {
+			if (i < 3) {
+				sendMail(profile);
+			}
+			e.printStackTrace();
+			return false;
+
+		}
+
+	}
+
 	@RequestMapping(value = "/updateProfile/{updEmpSmartId}", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> updateProfile(@RequestBody Profile profile,
+	public ResponseEntity<Map<String, Object>> updateProfile(@RequestBody Profile profile,
 			@PathVariable("updEmpSmartId") String updEmpSmartId, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
@@ -252,16 +298,42 @@ public class RegistrationController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Loggers.loggerValue("Updated by: ", updEmpSmartId);
-		Map<String, String> jsonResult = new HashMap<>();
+		Map<String, Object> jsonResult = new HashMap<>();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 			profile.setHierarchy(tokenObj.getHierarchy());
 			String result = profileServices.updateProfile(profile);
+			jsonResult.put("status", 200);
 			jsonResult.put("result", result);
-			Loggers.loggerEnd(jsonResult);
+		} else {
+			jsonResult.put("status", 500);
+			jsonResult.put("result", "Not Updated..!, Please try again.");
 		}
-		return new ResponseEntity<Map<String, String>>(jsonResult, HttpStatus.OK);
+		Loggers.loggerEnd(jsonResult);
+		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 
+	}
+
+	@RequestMapping(value = "/delete/{task}", method = RequestMethod.PUT)
+	public ResponseEntity<Map<String, Object>> deleteProfile(@RequestBody Profile profile,
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String, Object> jsonResult = new HashMap();
+		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+			if (task.equals("delete")) {
+				String result = profileServices.deleteprofile(profile);
+				jsonResult.put("result", result);
+				Loggers.loggerEnd(jsonResult);
+
+			}
+
+		}
+		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
@@ -316,4 +388,5 @@ public class RegistrationController {
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 
 	}
+
 }

@@ -46,8 +46,8 @@ public class MyTeamLeaveController {
 	@Autowired
 	ProfileDao profileDao;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getLeave(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}/{hierarchy}",method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getLeave(@PathVariable ("hierarchy") Long hierarchy,@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -67,8 +67,15 @@ public class MyTeamLeaveController {
 		String smartId=tokenObj.getSmartId();
 		Profile profileInfo=profileDao.getProfileDetails(smartId);
 		
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		
 		if (modulePermission != null) {
-			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy());
+			myTeamList = myteamleaveServices.getLeavelist(profileInfo,hid);
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);
@@ -79,7 +86,7 @@ public class MyTeamLeaveController {
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteBand(@RequestHeader HttpHeaders token, HttpSession httpSession,
+	public ResponseEntity<IAMResponse> editDeleteMyTeamLeave(@RequestHeader HttpHeaders token, HttpSession httpSession,
 			@RequestBody Leave leave, @PathVariable("task") String task) throws GSmartBaseException {
 		Loggers.loggerStart(leave);
 		IAMResponse myResponse;

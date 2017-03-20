@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.CompoundLeave;
-import com.gsmart.model.Holiday;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
@@ -27,8 +27,8 @@ import com.gsmart.model.Token;
 import com.gsmart.services.LeaveServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
-import com.gsmart.util.CronJob;
 import com.gsmart.util.GSmartBaseException;
+import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
@@ -47,10 +47,9 @@ public class LeaveController {
 	
 	@Autowired
 	ProfileDao profileDao;
-	
-	
-	@RequestMapping( method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> getLeave(@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> getLeave(@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
 		String tokenNumber = token.get("Authorization").get(0);
@@ -58,7 +57,7 @@ public class LeaveController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		
-		List<Leave> leaveList = null;
+		Map<String, Object> leaveList = null;
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 
@@ -70,8 +69,7 @@ public class LeaveController {
 		//	CronJob.cronJob();	
 			
 		if (modulePermission!= null) {
-			leaveList = leaveServices.getLeaveList(tokenObj,tokenObj.getHierarchy());
-			
+			leaveList = leaveServices.getLeaveList(tokenObj,tokenObj.getHierarchy(), min, max);
 			leave.put("leaveList", leaveList);
 			Loggers.loggerEnd(leaveList);
 			return new ResponseEntity<Map<String,Object>>(leave, HttpStatus.OK);
@@ -82,7 +80,7 @@ public class LeaveController {
 	}
 		
 		
-	@RequestMapping( method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<IAMResponse> addLeave(@RequestBody Leave leave, Integer noOfdays, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
@@ -93,20 +91,18 @@ public class LeaveController {
 
 		str.length();
 		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-
-			
+	
 			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			Profile profileInfo=profileDao.getProfileDetails(tokenObj.getSmartId());
 			leave.setSmartId(profileInfo.getSmartId());
 			leave.setReportingManagerId(profileInfo.getReportingManagerId());
 			leave.setFullName(profileInfo.getFirstName()+" "+profileInfo.getLastName());
 			leave.setHierarchy(tokenObj.getHierarchy());
-			System.out.println("leave details>>>>>>>>>>>>>."+leave);
-			CompoundLeave cl1=leaveServices.addLeave(leave,noOfdays,tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
-			if(cl1!=null)
+			CompoundLeave cl=leaveServices.addLeave(leave, noOfdays, tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
+			if(cl!=null)
 			resp.setMessage("success");
 		else
-			resp.setMessage("Already exists");
+			resp.setMessage("You already applied a same/wrong DATE ,please choose another DATE");
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse> (resp, HttpStatus.OK);
@@ -115,7 +111,7 @@ public class LeaveController {
 			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 		}
 	}
-	@RequestMapping(value = "/{task}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 	public  ResponseEntity<IAMResponse> editLeave(@RequestBody Leave leave, @PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse;
@@ -138,6 +134,27 @@ public class LeaveController {
 			myResponse = new IAMResponse("Permission Denied");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
+	}
+	@RequestMapping(value="/leftleaves/{smartId}/{leaveType}",method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getLeftLeaves(@RequestHeader HttpHeaders token,HttpSession httpSession,@PathVariable ("smartId") String smartId,@PathVariable("leaveType") String leaveType){
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		Map<String, Object>leftLeaves=null;
+		str.length();
+		try {
+			getAuthorization.authorizationForGet(tokenNumber, httpSession);
+			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			leftLeaves=leaveServices.getLeftLeaves(tokenObj.getRole(),tokenObj.getHierarchy(),smartId, leaveType);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String,Object>>(leftLeaves, HttpStatus.OK);
+		
 	}
 	
 	}

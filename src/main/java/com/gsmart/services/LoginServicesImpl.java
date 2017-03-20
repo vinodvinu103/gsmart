@@ -6,12 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.gsmart.dao.LoginDao;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
@@ -21,7 +20,7 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
-public class LoginServicesImpl implements LoginServices {
+public class LoginServicesImpl implements LoginServices{
 
 	@Autowired
 	LoginDao loginDao;
@@ -54,6 +53,7 @@ public class LoginServicesImpl implements LoginServices {
 				jsonMap.put("permissions", rolePermissions);
 				jsonMap.put("profile", profile);
 				jsonMap.put("token", tokenDetails.getTokenNumber());
+				jsonMap.put("tokenObj", tokenDetails);
 				jsonMap.put("result", 0);
 				jsonMap.put("message", "welcome back");
 			} else {
@@ -67,10 +67,11 @@ public class LoginServicesImpl implements LoginServices {
 					String role = profile.getRole();
 					String reportingId = profile.getReportingManagerId();
 					List<RolePermission> rolePermissions = permissionServices.getPermission(role);
-					String token = issueToken(smartId, role,reportingId, loginObj);
+					Token token = issueToken(smartId, role, loginObj,reportingId);
 					jsonMap.put("permissions", rolePermissions);
 					jsonMap.put("profile", profile);
-					jsonMap.put("token", token);
+					jsonMap.put("token", token.getTokenNumber());
+					jsonMap.put("tokenObj", token);
 					jsonMap.put("result", 0);
 					jsonMap.put("message", "welcome");
 				} else if (authentication != null && (int)authentication.get("status") == 1) {
@@ -99,7 +100,7 @@ public class LoginServicesImpl implements LoginServices {
 		return jsonMap;
 	}
 
-	private String issueToken(String smartId, String role,String reportingId, Login loginObj) throws GSmartServiceException {
+	private Token issueToken(String smartId, String role, Login loginObj,String reportingId) throws GSmartServiceException {
 
 		Token token = null;
 		String tokenNumber = null;
@@ -113,16 +114,17 @@ public class LoginServicesImpl implements LoginServices {
 			token.setSmartId(smartId);
 			token.setRole(role);
 			token.setReportingManagerId(reportingId);
+			token.setHierarchy(loginObj.getHierarchy());
 			tokenService.saveToken(token, loginObj);
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
-			issueToken(smartId, role,reportingId, loginObj);
+			issueToken(smartId, role, loginObj,reportingId);
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
 
-		Loggers.loggerValue("Token generated: ", tokenNumber);
-		return tokenNumber;
+		Loggers.loggerValue("Token generated: ", token);
+		return token;
 	}
 
 	private Token getTokenDetails(String tokenNumber) throws GSmartServiceException {

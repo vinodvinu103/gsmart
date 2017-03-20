@@ -2,6 +2,7 @@ package com.gsmart.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,7 +13,7 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface ReportCardDao {
 
-	public List<ReportCard> reportCardList() throws GSmartDatabaseException;
+	public List<ReportCard> reportCardList(Token tokenDetail) throws GSmartDatabaseException;
 	
 	public CompoundReportCard addReportCard(ReportCard card)throws GSmartDatabaseException;
 	
@@ -22,8 +23,11 @@ public interface ReportCardDao {
 	
 	public void excelToDB(String smartId,MultipartFile fileUpload) throws Exception;
 	
-	public List<ReportCard> search(Token tokenDetail)throws GSmartDatabaseException;
+	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartDatabaseException;
 	
 	public ArrayList<ReportCard> reportCardBasedOnAcademicYear(String academicYear)throws GSmartDatabaseException;
 	
+	public List<ReportCard> acdemicYearAndExamName(Token tokenDetail)throws GSmartDatabaseException;
+	
+	public ArrayList<ReportCard> examName(Token tokenDetail,String acdemicYear)throws GSmartDatabaseException;
 }

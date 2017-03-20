@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,13 @@ public class HierarchyServicesImpl implements HierarchyServices {
 	 *         method
 	 */
 	@Override
-	public List<Hierarchy> getHierarchyList(String role,Hierarchy hierarchy) throws GSmartServiceException {
-		return hierarchyDao.getHierarchyList(role,hierarchy);
+	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+		return hierarchyDao.getHierarchyList(role,hierarchy, min, max);
+	}
+	
+	@Override
+	public List<Hierarchy> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartServiceException {
+		return hierarchyDao.getHierarchyList1(role,hierarchy);
 	}
 
 	/**

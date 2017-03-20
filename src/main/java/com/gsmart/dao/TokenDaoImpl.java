@@ -27,12 +27,11 @@ public class TokenDaoImpl implements TokenDao{
 	public void saveToken(Token token, Login loginObj) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart(token);
-		try {
+		try {			
+//			query = session.createQuery("from Login where smartId=:smartId");
+//			query.setParameter("smartId", loginObj.getSmartId());
+//			Login login = (Login)query.uniqueResult();
 			
-			query = session.createQuery("from Login where smartId=:smartId");
-			query.setParameter("smartId", loginObj.getSmartId());
-			Login login = (Login)query.uniqueResult();
-			token.setHierarchy(login.getHierarchy());
 			session.save(token);
 			tx.commit();
 		} catch (ConstraintViolationException e) {
