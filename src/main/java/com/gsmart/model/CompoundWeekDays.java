@@ -10,17 +10,14 @@ public class CompoundWeekDays implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	
-	private String school;
-	private String institution;
 	private String weekDay;
+	private String entryTime;
 	
-	
-	public String getInstitution() {
-		return institution;
+	public String getEntryTime() {
+		return entryTime;
 	}
-	public void setInstitution(String institution) {
-		this.institution = institution;
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
 	}
 	public String getWeekDay() {
 		return weekDay;
@@ -28,13 +25,11 @@ public class CompoundWeekDays implements Serializable {
 	public void setWeekDay(String weekDay) {
 		this.weekDay = weekDay;
 	}
-	public String getSchool() {
-		return school;
-	}
-	public void setSchool(String school) {
-		this.school = school;
-	}
+	
+	
+	
 	
 	
 	
 }	
+	

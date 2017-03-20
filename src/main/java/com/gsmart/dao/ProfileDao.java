@@ -46,11 +46,13 @@ public interface ProfileDao {
 	public String updateProfile(Profile profile);
 	
 	public String deleteprofile(Profile profile);
+	
+	public boolean deleteProfileIfMailFailed(String smartId);
 
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
-	public Map<String, Object> getProfiles(String role, String smartId, String role2, Hierarchy hierarchy, int min,
+	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
 			int max);
 
 	public Profile getParentInfo(String empSmartId);
@@ -60,7 +62,7 @@ public interface ProfileDao {
 	/* for login */
 	public Profile getProfileDetails(String empSmartId);
 
-	public List<Profile> getAllRecord(String academicYear, String role, Hierarchy hierarchy);
+	public List<Profile> getAllRecord(String academicYear, Long hid);
 
 	/**
 	 * @return list of Profile entities available in the {@link Profile} Table
@@ -83,11 +85,11 @@ public interface ProfileDao {
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 
-	public List<Profile> getProfilesWithoutRfid(Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Hierarchy hierarchy, Integer min, Integer max)throws GSmartDatabaseException;
 	
-	public List<Profile> addRfid(Profile rfid)throws GSmartDatabaseException;
+	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public List<Profile> getProfilesWithRfid(Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Hierarchy hierarchy, Integer min, Integer max)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 	
@@ -97,9 +99,9 @@ public interface ProfileDao {
 	
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public List<Banners> getBannerList();
+	public Map<String, Object> getBannerList(Integer min, Integer max);
 	
-	public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;
+	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 
 	public void deleteBanner(Banners banner)throws GSmartDatabaseException;
 

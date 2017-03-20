@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
+
 import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
@@ -29,7 +30,6 @@ public class LoginDaoImpl implements LoginDao {
 	Query query;
 
 	@Override
-
 	public Map<String, Object> authenticate(Login loginDetails) throws GSmartDatabaseException {
 		getConnection();
 		Map<String, Object> authMap = new HashMap<>();
@@ -52,7 +52,15 @@ public class LoginDaoImpl implements LoginDao {
 				{
 					Loggers.loggerEnd(2);
 					authMap.put("status", 2);
-				} else if ((Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword()))
+					
+				}else if (!(Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword()))
+						&& login.getAttempt() >= 4) {
+					Loggers.loggerEnd(2);
+					authMap.put("status", 2);
+					
+				} 
+				
+				else if ((Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword()))
 						&& login.getAttempt() <= 4) {
 					
 					if (login.getAttempt() > 0)
@@ -71,6 +79,7 @@ public class LoginDaoImpl implements LoginDao {
 				Loggers.loggerEnd(1);
 				authMap.put("status", 1);
 			}
+			
 			return authMap;
 		} catch (Exception e) {
 			e.printStackTrace();

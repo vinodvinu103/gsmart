@@ -10,8 +10,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.loader.plan.build.spi.QuerySpaceTreePrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.gsmart.model.CompoundInventory;
@@ -48,30 +48,27 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-
-	public Map<String, Object> getInventoryList(String role,Hierarchy hierarchy, int min, int max) throws GSmartDatabaseException {
+	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getconnection();
 		Map<String, Object> inventoryMap = new HashMap<String, Object>();
 		List<Inventory> inventoryList;
 		Criteria criteria = null;
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery("from Inventory where isActive='Y' ");
-			} else {
-				query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy ");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
 
 			criteria=session.createCriteria(Inventory.class);
 			criteria.setFirstResult(min);
 		     criteria.setMaxResults(max);
-		     criteria.setProjection(Projections.id());
+		     criteria.add(Restrictions.eq("isActive", "Y"));
+		     criteria.add(Restrictions.eq("hierarchy.hid", hid));
+//		     criteria.setProjection(Projections.id());
 		     inventoryList = criteria.list();
 		     Criteria criteriaCount = session.createCriteria(Inventory.class);
+		     criteriaCount.add(Restrictions.eq("isActive", "Y"));
+		     criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 		     criteriaCount.setProjection(Projections.rowCount());
 		     Long count = (Long) criteriaCount.uniqueResult();
-		     inventoryMap.put("totalinventory", query.list().size());
+		     inventoryMap.put("totalinventory", count);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,14 +108,26 @@ public class InventoryDaoImpl implements InventoryDao {
 				session.close();
 			}
 
-			
+		/*CompoundInventory cb = null;*/
+
+		try {
+			getconnection();
+			Inventory inventory2=fetch(inventory);
+			if (inventory2 ==null) {
+				inventory.setEntryTime((CalendarCalculator.getTimeStamp()));
+				inventory.setIsActive("Y");
+				cb = (CompoundInventory) session.save(inventory);
+			}
+
+			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
-		} catch (Exception e) {
+		} 
+		}catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		Loggers.loggerEnd(inventory);
-		return cb;
+		return cb;	
+		
 	}
 
 	public Inventory fetch(Inventory inventory) {
@@ -150,9 +159,10 @@ public class InventoryDaoImpl implements InventoryDao {
 	 * @return Nothing
 	 */
 	@Override
-	public void editInventory(Inventory inventory) throws GSmartDatabaseException {
+	public Inventory editInventory(Inventory inventory) throws GSmartDatabaseException {
 		getconnection();
 		Loggers.loggerStart();
+		Inventory ch = null;
 		try {
 
 			Inventory oldInvertory = getInventory(inventory.getEntryTime(), inventory.getHierarchy());
@@ -164,6 +174,11 @@ public class InventoryDaoImpl implements InventoryDao {
 			session.save(inventory);
 			transaction.commit();
 
+			
+			Inventory oldInvertory1 = getInventory(inventory.getEntryTime(),inventory.getHierarchy());
+			ch=updateInventory(oldInvertory, inventory);
+			addInventory(inventory);
+	
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
@@ -172,6 +187,57 @@ public class InventoryDaoImpl implements InventoryDao {
 		} finally {
 			session.close();
 		}
+		
+		Loggers.loggerEnd();
+		return ch;
+	}
+	private Inventory updateInventory(Inventory oldInventory, Inventory inventory) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		Inventory ch = null;
+			try {
+				if(oldInventory.getCategory().equals(inventory.getCategory()) && oldInventory.getItemType().equals(inventory.getItemType())){
+					oldInventory.setUpdateTime(CalendarCalculator.getTimeStamp());
+					oldInventory.setIsActive("N");
+					session.update(oldInventory);
+					transaction.commit();
+					return oldInventory;
+				}else{
+					Inventory inventory2=fetch(inventory);
+					if(inventory2==null){
+						oldInventory.setUpdateTime(CalendarCalculator.getTimeStamp());
+						oldInventory.setIsActive("N");
+						session.update(oldInventory);
+						transaction.commit();
+						return oldInventory;
+						
+					}
+				}
+				
+			} catch (ConstraintViolationException e) {
+				throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+			} catch (Throwable e) {
+				throw new GSmartDatabaseException(e.getMessage());
+			}
+			Loggers.loggerEnd();
+			return ch;
+
+		}
+
+	
+	private Inventory fetch2(Inventory inventory) {
+		Loggers.loggerStart();
+			query=session.createQuery("FROM Inventory WHERE category=:category AND itemType=:itemType AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			
+			query.setParameter("hierarchy", inventory.getHierarchy().getHid());
+			
+		
+		
+		query.setParameter("category", inventory.getCategory());
+		query.setParameter("itemType", inventory.getItemType());
+		query.setParameter("isActive", "Y");
+		Inventory inventory2=(Inventory) query.uniqueResult();
+		Loggers.loggerEnd();
+		return inventory2;
 	}
 
 	/**
@@ -187,8 +253,12 @@ public class InventoryDaoImpl implements InventoryDao {
 
 			query = session.createQuery(
 					"from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
+				query = session.createQuery("from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+				
+		
+
 			query.setParameter("entryTime", entryTime);
-			query.setParameter("hierarchy", hierarchy.getHid());
 			Inventory inventry = (Inventory) query.uniqueResult();
 
 			return inventry;
@@ -199,7 +269,6 @@ public class InventoryDaoImpl implements InventoryDao {
 			 * ArrayList<Holiday> holi=(ArrayList<Holiday>) query.list(); return
 			 * holi.get(0);
 			 */
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -252,6 +321,26 @@ public class InventoryDaoImpl implements InventoryDao {
 		}
 		Loggers.loggerEnd();
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Inventory> getInventoryList(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getconnection();
+		List<Inventory> inventoryList;
+		try {
+			query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+			inventoryList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
+			session.close();
+		}
+		Loggers.loggerEnd(inventoryList);
+		return inventoryList;
 	}
 
 }
