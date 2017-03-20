@@ -532,7 +532,9 @@ public class ProfileDaoImp implements ProfileDao {
 			Criteria criteria = session.createCriteria(Profile.class);
 			criteria.add(Restrictions.isNotNull("rfId"));
 			criteria.add(Restrictions.eq("isActive", "Y"));
-			criteria.add(Restrictions.eq("hierarchy", hierarchy.getHid()));
+			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+			criteria.setFirstResult(min);
+			criteria.setMaxResults(max);
 			profileListWithRfid = criteria.list();
 			System.out.println("dfcsdgcysyhfvgyhfgv" + profileListWithRfid);
 			rfidWithMap.put("profileListWithRfid", profileListWithRfid);
@@ -711,8 +713,10 @@ public class ProfileDaoImp implements ProfileDao {
 
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			query = session.createQuery("from Banners where isActive='Y' and entryTime='" + entryTime + "'");
-			banners = (Banners) query.uniqueResult();
+
+			query = session.createQuery("from Banners where isActive='Y'  ORDER BY entryTime desc");
+			banners=(Banners) query.uniqueResult();
+
 			Loggers.loggerEnd(banners);
 			return banners;
 		} catch (Exception e) {
@@ -742,8 +746,10 @@ public class ProfileDaoImp implements ProfileDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year) {
+
 		getConnection();
 		Loggers.loggerStart();
+		System.out.println("Year >>>>>>>>>>>> "+year);
 
 		List<Profile> profiles = null;
 		try {

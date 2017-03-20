@@ -16,6 +16,7 @@
 
 	<mvc:annotation-driven />
 	<mvc:default-servlet-handler/>
+	
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
@@ -29,6 +30,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<list>
+			
 		
 				<value>com.gsmart.model.RolePermission</value>
 				<value>com.gsmart.model.Login</value>
@@ -59,6 +61,7 @@
 				<value>com.gsmart.model.Banners</value>
 				<value>com.gsmart.model.MessageDetails</value>
 				<value>com.gsmart.model.Attendance</value>
+
 			</list>
 		</property>
 		<property name="hibernateProperties">
