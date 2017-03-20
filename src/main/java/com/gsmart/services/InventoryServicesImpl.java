@@ -129,7 +129,7 @@ public class InventoryServicesImpl implements InventoryServices {
 
 	@Override
 	public List<Inventory> getInventoryList(String role, Hierarchy hierarchy) throws GSmartServiceException {
-		return inventoryDao.getInventoryList(role, hierarchy);
+		return inventoryDao.getInventoryList( role, hierarchy);
 	}
 
 }
