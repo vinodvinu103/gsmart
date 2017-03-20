@@ -177,6 +177,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	@Override
 	public List<Attendance> getAttendanceByhierarchy(Long date, Hierarchy hierarchy) {
 		Loggers.loggerStart();
+		System.out.println("intime >>>>>>>>>>>>>>>>>>>>>>>>>> "+date);
 		getconnection();
 		try {
 			query = session.createQuery("from Attendance where inDate=:inDate and hierarchy.hid=:hId");

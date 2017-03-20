@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.HierarchyDao;
+import com.gsmart.dao.InventoryDao;
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.RolePermission;
@@ -57,6 +58,9 @@ public class InventoryController {
 	@Autowired
 	HierarchyDao hierarchyDao;
 	
+	@Autowired
+	InventoryDao inventorydao;
+	
 
 	/**
 	 * to view {@link Inventory} details.
@@ -68,7 +72,32 @@ public class InventoryController {
 	 * @throws GSmartBaseException
 	 */
 	
-	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET )
+	@RequestMapping(value="/List" , method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> inventoryList(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		List<Inventory> inveList= null;
+		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Map<String, Object> permissions = new HashMap<>();
+		permissions.put("modulePermission", modulePermission); 
+		Long hid=null;
+		
+		inveList=inventorydao.getInventory(hid);
+		permissions.put("modulePermission", modulePermission); 
+		permissions.put("inventoryList", inveList); 
+		
+		Loggers.loggerEnd("InventoryList:" + inveList);
+		
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		
+		}
+	
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventory(@PathVariable ("min") int min, @PathVariable("hierarchy") Long hierarchy,@PathVariable ("max") int max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
@@ -128,7 +157,6 @@ public class InventoryController {
 				
 			}
 
-			
 			CompoundInventory cb = inventoryServices.addInventory(inventory);
 
 			if(cb!=null)
@@ -143,7 +171,6 @@ public class InventoryController {
 		    	
 		    }
 		    
-	    	
         }else{
         	respMap.put("status", 403);
         	respMap.put("message", "Permission Denied");

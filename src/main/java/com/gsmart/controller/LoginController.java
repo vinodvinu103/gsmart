@@ -48,8 +48,8 @@ public class LoginController {
 		Map<String, Object> jsonMap = loginServices.authenticate(login, tokenNumber);
 		Loggers.loggerEnd(jsonMap);
 		httpSession.setAttribute("tokenNumber", jsonMap.get("token"));
-		Loggers.loggerValue("Token Number", jsonMap.get("token"));
-		Loggers.loggerValue("Session Attribute: ", httpSession.getAttribute("tokenNumber"));
+		httpSession.setAttribute("token", jsonMap.get("tokenObj"));
+	System.out.println(httpSession.getAttribute("token"));
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 	}
 	
