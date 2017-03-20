@@ -98,6 +98,12 @@ public class LeaveController {
 			leave.setReportingManagerId(profileInfo.getReportingManagerId());
 			leave.setFullName(profileInfo.getFirstName()+" "+profileInfo.getLastName());
 			leave.setHierarchy(tokenObj.getHierarchy());
+			if(tokenObj.getRole().equalsIgnoreCase("student")){
+				leave.setTeacherOrStudentId(profileInfo.getStudentId());
+			}
+			else{
+				leave.setTeacherOrStudentId(profileInfo.getTeacherId());
+			}
 			CompoundLeave cl=leaveServices.addLeave(leave, noOfdays, tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
 			if(cl!=null)
 			resp.setMessage("success");
