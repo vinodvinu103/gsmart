@@ -22,6 +22,32 @@ public class Notice {
 	private String exitTime;
 	@Column(name = "UPDATE_TIME")
 	private String update_time;
+	
+	
+	
+	@Lob
+	@Column(name = "Image")
+	private byte[] image;
+	
+	
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	@Column(name= "Format")
+	private String format;
 
 	@Column(name = "ROLE")
 	private String role;
@@ -100,36 +126,13 @@ public class Notice {
 		this.type = type;
 	}
 
-	public String getSmart_id() {
-		return smartId;
-	}
-
-	public void setSmart_id(String smart_id) {
-		this.smartId = smart_id;
-	}
-
+	
 	public String getMessage() {
 		return message;
 	}
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public String getEntry_time() {
-		return entryTime;
-	}
-
-	public void setEntry_time(String entry_time) {
-		this.entryTime = entry_time;
-	}
-
-	public String getExit_time() {
-		return exitTime;
-	}
-
-	public void setExit_time(String exit_time) {
-		this.exitTime = exit_time;
 	}
 
 	public String getUpdate_time() {
@@ -140,20 +143,14 @@ public class Notice {
 		this.update_time = update_time;
 	}
 
-	public String getIs_active() {
-		return isActive;
+	@Override
+	public String toString() {
+		return "Notice [entryTime=" + entryTime + ", smartId=" + smartId + ", message=" + message + ", exitTime="
+				+ exitTime + ", update_time=" + update_time + ", role=" + role + ", isActive=" + isActive + ", type="
+				+ type + ", childFlag=" + childFlag + ", updatedId=" + updatedId + ", image=" + image + ", format=" + format + "]";
+	}
+	
+
 	}
 
-	public void setIs_active(String is_active) {
-		this.isActive = is_active;
-	}
 
-	public String getUpdated_id() {
-		return updatedId;
-	}
-
-	public void setUpdated_id(String updated_id) {
-		this.updatedId = updated_id;
-	}
-
-}

@@ -33,7 +33,6 @@ import com.gsmart.model.RolePermission;
 import com.gsmart.model.SyncRequestObject;
 import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
-import com.gsmart.services.HolidayServices;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
@@ -87,7 +86,9 @@ public class AttendanceController {
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
+
 		holidayList = holidayDao.holidayList(tokenObj.getHierarchy().getHid());
+
 
 		permissions.put("attendanceList", attendanceList);
 		System.out.println("attendanceList:" + attendanceList);

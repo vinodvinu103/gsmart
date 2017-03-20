@@ -46,8 +46,8 @@ public class MyTeamLeaveController {
 	@Autowired
 	ProfileDao profileDao;
 
-	@RequestMapping(value="/{min}/{max}",method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getLeave(@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}/{hierarchy}",method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getLeave(@PathVariable ("hierarchy") Long hierarchy,@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -66,6 +66,13 @@ public class MyTeamLeaveController {
 		myteam.put("modulePermission", modulePermission);
 		String smartId=tokenObj.getSmartId();
 		Profile profileInfo=profileDao.getProfileDetails(smartId);
+		
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 		
 		if (modulePermission != null) {
 			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy(),min,max);

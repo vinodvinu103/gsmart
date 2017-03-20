@@ -43,6 +43,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@SuppressWarnings("unchecked")
 	@Override
 
+
 	public Map<String, Object> getLeavelist(Profile profileInfo, Hierarchy hierarchy,Integer min,Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Map<String, Object> leavelist =new HashMap<>();
@@ -139,7 +140,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 
 		
 		applyLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
-		applyLeave.setLeaveStatus("Sanction");
+		applyLeave.setLeaveStatus("Sanctioned");
 
 		
 		session.update(applyLeave);

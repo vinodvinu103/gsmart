@@ -66,6 +66,9 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			list = query.list();
+
+			System.out.println("Serch based on smartid..." + list);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

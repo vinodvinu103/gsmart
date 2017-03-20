@@ -192,7 +192,7 @@ public class LeaveMasterController {
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		System.out.println("hierarchy" + tokenObj.getHierarchy());
 		Map<String, Object> permissions = new HashMap<>();
-		leaveMasterList =leaveMasterDao.getLeaveMasterListForApplyLeave(tokenObj.getRole(), tokenObj.getHierarchy());
+		leaveMasterList =leaveMasterDao.getLeaveMasterListForApplyLeave(tokenObj.getHierarchy().getHid());
 		if (leaveMasterList != null) {
 			permissions.put("status", 200);
 			permissions.put("message", "success");

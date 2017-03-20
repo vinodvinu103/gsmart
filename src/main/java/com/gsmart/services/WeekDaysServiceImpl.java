@@ -18,12 +18,12 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 	WeekDaysDao weekday;
 	
 	@Override
-	public List<WeekDays> getWeekDaysList() throws GSmartServiceException {
+	public List<WeekDays> getWeekDaysList(long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 		List<WeekDays> list=null;
 		try {
      		
-			 list= weekday.getWeekList();
+			 list= weekday.getWeekList(hid);
 			 
 			 for (WeekDays weekDays : list) {
 					String wk=weekDays.getWeekDay();
@@ -70,8 +70,11 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 	}	
 
 	@Override
-	public void addWeekDaysList(WeekDays weekdays) throws GSmartServiceException {
+	public boolean addWeekDaysList(WeekDays weekdays) throws GSmartServiceException {
 		Loggers.loggerStart();
+		
+		boolean status=false;
+		
 		String day=weekdays.getWeekDay();
 		String wd=day.toUpperCase();
 		switch(wd) {
@@ -100,9 +103,10 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 			break;
 		}
 		weekdays.setWeekDay(day);
-		weekday.addWeekDays(weekdays);	
+		status = weekday.addWeekDays(weekdays);	
 		Loggers.loggerEnd();
-	
+		
+	    return status;
 	}
 
 	@Override
@@ -150,7 +154,9 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 			break;
 		}
 		weekdays.setWeekDay(day);
-		weekday.addWeekDays(weekdays);	
+
+	
+
 		Loggers.loggerEnd();
 	
 		try{

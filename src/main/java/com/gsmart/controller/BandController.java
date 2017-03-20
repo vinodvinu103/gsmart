@@ -187,7 +187,6 @@ public class BandController {
 	 * @see IAMResponse
 	 */
 	
-
 	@RequestMapping (value="/{task}",method=RequestMethod.PUT)
     public ResponseEntity<Map<String, Object>> editDeleteBand(@RequestBody Band band ,@PathVariable("task") String task,
     @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException{
@@ -199,7 +198,6 @@ public class BandController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-
 
 		 if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){

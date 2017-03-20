@@ -10,6 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -180,13 +181,13 @@ public class FeeDaoImpl implements FeeDao {
 		
 		List<Fee> paidStudentsList=null;
 		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
-		
 		try
 		{
 			getconnection();
 	   criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
+		criteria.addOrder(Order.asc("smartId"));
 		 criteria.add(Restrictions.eq("isActive", "Y"));
 	     criteria.add(Restrictions.eq("hierarchy.hid", hid));
 	     criteria.add(Restrictions.eq("feeStatus", "paid"));
@@ -225,6 +226,7 @@ public class FeeDaoImpl implements FeeDao {
 		criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
+		criteria.addOrder(Order.asc("smartId"));
 		 criteria.add(Restrictions.eq("isActive", "Y"));
 	     criteria.add(Restrictions.eq("hierarchy.hid", hid));
 	     criteria.add(Restrictions.eq("feeStatus", "unpaid"));
@@ -256,11 +258,14 @@ public class FeeDaoImpl implements FeeDao {
 	@Override
 	public void editFee(Fee fee) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		getconnection();
 		try {
-
-			Fee oldFee = getFee(fee.getEntryTime());
+	
+			Fee oldFee = getFee(fee.getEntryTime(),fee.getHierarchy());
 			oldFee.setUpdatedTime(CalendarCalculator.getTimeStamp());
+			//System.out.println(oldFee);
 			oldFee.setIsActive("N");
+			//System.out.println("--------------------"+oldFee);
 			session.update(oldFee);
 
 			/*
@@ -284,10 +289,11 @@ public class FeeDaoImpl implements FeeDao {
 
 	}
 
-	public Fee getFee(String entryTime) {
-		getconnection();
-		Loggers.loggerStart();
-		query = session.createQuery("from Fee where isActive=:isActive and entryTime =:entryTime");
+public Fee getFee(String entryTime,Hierarchy hierarchy) {
+		
+		Loggers.loggerStart(entryTime);
+		query = session.createQuery("from Fee where isActive=:isActive and entryTime =:entryTime and hierarchy.hid=:hierarchy");
+		query.setParameter("hierarchy", hierarchy.getHid());
 		query.setParameter("isActive", "Y");
 		query.setParameter("entryTime", entryTime);
 		Fee fee = (Fee) query.uniqueResult();

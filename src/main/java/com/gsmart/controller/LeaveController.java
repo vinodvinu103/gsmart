@@ -98,12 +98,11 @@ public class LeaveController {
 			leave.setReportingManagerId(profileInfo.getReportingManagerId());
 			leave.setFullName(profileInfo.getFirstName()+" "+profileInfo.getLastName());
 			leave.setHierarchy(tokenObj.getHierarchy());
-			System.out.println("leave details>>>>>>>>>>>>>."+leave);
 			CompoundLeave cl=leaveServices.addLeave(leave, noOfdays, tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
 			if(cl!=null)
 			resp.setMessage("success");
 		else
-			resp.setMessage("Already exists");
+			resp.setMessage("You already applied a same/wrong DATE ,please choose another DATE");
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse> (resp, HttpStatus.OK);

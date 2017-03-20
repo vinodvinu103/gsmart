@@ -44,9 +44,10 @@ public class CalendarCalculator {
 		}
 	}
 
-	public void execute(JsonSerializationContext context) throws JRubyExecutionException {
+	/*public void execute(JobExecutionContext context) throws JobExecutionException {
+>>>>>>> 9414e452c71ca0becbdf7170c286e7ac273c0d1f
 		System.out.println("Hello Quartz!");
-	}
+	}*/
 	
 	private Long getUnixtime(String timestamp) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
