@@ -117,11 +117,10 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 		return responseList;
 	}
 
+	@Override
 	public Map<String, Object> getInventoryList(String role, Hierarchy hierarchy, Integer min, Integer max)
 			throws GSmartServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 }

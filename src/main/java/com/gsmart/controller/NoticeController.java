@@ -78,8 +78,8 @@ public class NoticeController {
 
 		try {
 			Map<String, Profile> allprofiles = searchService.getAllProfiles(year, tokenObj.getHierarchy().getHid());
-			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
 
+			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
 
 			parentSmartIdList.remove(smartId);
 			list = noticeService.viewNotice(parentSmartIdList);

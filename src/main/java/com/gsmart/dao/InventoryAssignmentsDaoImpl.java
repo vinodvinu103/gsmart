@@ -13,6 +13,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -46,24 +47,28 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		Map<String, Object> inventoryassignMap = new HashMap<String, Object>();
 		Criteria criteria = null;
 		getConnection();
+		criteria = session.createCriteria(InventoryAssignments.class);
+		Criteria criteriaCount = session.createCriteria(InventoryAssignments.class);
 		try
 		{
 		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
 		{
-		query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y'");
+		criteria.add(Restrictions.eq("isActive", "Y"));
+		criteriaCount.add(Restrictions.eq("isActive", "Y"));
 		}else{
-			query=session.createQuery("FROM InventoryAssignments WHERE isActive='Y' and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
 		}
-		criteria = session.createCriteria(InventoryAssignments.class);
+		
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
 		criteria.addOrder(Order.asc("standard"));
 		inventoryList = criteria.list();
-		Criteria criteriaCount = session.createCriteria(InventoryAssignments.class);
+		
 		criteriaCount.setProjection(Projections.rowCount());
-		Long count = (Long) criteriaCount.uniqueResult();
-		inventoryassignMap.put("totalinventoryassign", query.list().size());
+		inventoryassignMap.put("totalinventoryassign", criteriaCount.uniqueResult());
 		 Loggers.loggerEnd();
 		 inventoryassignMap.put("inventoryList", inventoryList);
 		
@@ -124,12 +129,11 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 				oldInventory.setUpdatedTime(CalendarCalculator.getTimeStamp());
 				session.update(oldInventory);
                 tx.commit();
-                inventoryAssignments.setIsActive("Y");
-                inventoryAssignments.setEntryTime(CalendarCalculator.getTimeStamp());
-    			
+                
 				addInventoryDetails(inventoryAssignments,oldInventory);
 			}
 		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
       }
 		return inventoryAssignments;
@@ -147,18 +151,14 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			Loggers.loggerEnd();
 			return oldInventory;
 		} catch (Throwable e) {
+		e.printStackTrace();
+      	throw new GSmartDatabaseException(e.getMessage());
+        } 
 
-			throw new GSmartDatabaseException(e.getMessage());
-
-		} /*finally {
-			session.close();
-		}
-*/
 	}
 
 	private int updateInventory(String cat, String item, int requestQuantity, InventoryAssignments oldInventory) {
 		Loggers.loggerStart();
-		// int leftQuantity=0;
 		Inventory inventory = null;
 		getConnection();
 		query = session.createQuery("from Inventory where category=:category and itemType=:itemType and isActive='Y' ");
@@ -166,7 +166,6 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		query.setParameter("itemType", item);
 		inventory = (Inventory) query.uniqueResult();
 		int numOfLeftQunt = inventory.getLeftQuantity();
-		
 		if (numOfLeftQunt - requestQuantity < 0) {
 			return 400;
 		} else {

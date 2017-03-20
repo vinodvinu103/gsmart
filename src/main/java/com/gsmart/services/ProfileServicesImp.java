@@ -162,9 +162,10 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 
 
-	public Map<String, Object> getProfilesWithoutRfid(Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
+
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
 	
-		return profileDao.getProfilesWithoutRfid(hierarchy, min, max);
+		return profileDao.getProfilesWithoutRfid(min, max,hierarchy);
 	}
 
 	@Override
@@ -195,6 +196,12 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 
 	@Override
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
+		
+		return profileDao.getProfilesWithRfid(min, max,hierarchy);
+	}
+	
+	@Override
 	public List<Profile> searchProfilesWithoutRfid(String profileListWithoutRfid,String role,Hierarchy hierarchy) throws GSmartServiceException {
 		try {
 			return profileDao.searchProfilesWithoutRfid(profileListWithoutRfid,role,hierarchy);
@@ -204,12 +211,6 @@ public class ProfileServicesImp implements ProfileServices {
 			throw new GSmartServiceException(e.getMessage());
 		}
 	}
-
-	public Map<String, Object> getProfilesWithRfid(Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
-		
-		return profileDao.getProfilesWithRfid(hierarchy, min, max);
-	}
-
 	
 	@Override
 	public List<Profile> searchProfilesWithRfid(String profileListWithRfid,String role,Hierarchy hierarchy) throws GSmartServiceException {
@@ -234,7 +235,11 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 
 	/*@Override
+<<<<<<< HEAD
 >>>>>>> 9414e452c71ca0becbdf7170c286e7ac273c0d1f
+=======
+>>>>>>> 5a605812816b13c3ad7139025cd14377f05faa9e
+>>>>>>> 1c82695e08813998812c475e74b37fd38e315c00
 	public Banners editBanner(Banners banner) throws GSmartServiceException {
 		Loggers.loggerStart();
 		Banners banners=null;
@@ -260,6 +265,6 @@ public class ProfileServicesImp implements ProfileServices {
 			throw new GSmartServiceException(e.getMessage());
 		}
 		Loggers.loggerEnd();
-		
 	}
+
 }
