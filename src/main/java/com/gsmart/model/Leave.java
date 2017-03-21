@@ -61,6 +61,9 @@ public class Leave {
 	@Column(name="NAME")
 	private String fullName;
 	
+	@Column(name="TEACHER_STUDENT_ID")
+	private String teacherOrStudentId;
+	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
@@ -146,14 +149,23 @@ public class Leave {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
+	
+	public String getTeacherOrStudentId() {
+		return teacherOrStudentId;
+	}
+	public void setTeacherOrStudentId(String teacherOrStudentId) {
+		this.teacherOrStudentId = teacherOrStudentId;
+	}
 	@Override
 	public String toString() {
 		return "Leave [smartId=" + smartId + ", reportingManagerId=" + reportingManagerId + ", entryTime=" + entryTime
 				+ ", startDate=" + startDate + ", endDate=" + endDate + ", numberOfDays=" + numberOfDays
 				+ ", description=" + description + ", leaveType=" + leaveType + ", updatedTime=" + updatedTime
 				+ ", isActive=" + isActive + ", exitTime=" + exitTime + ", leaveStatus=" + leaveStatus + ", fullName="
-				+ fullName + ", hierarchy=" + hierarchy + "]";
+				+ fullName + ", teacherOrStudentId=" + teacherOrStudentId + ", hierarchy=" + hierarchy + "]";
 	}
+	
+	
 	
 	
 	

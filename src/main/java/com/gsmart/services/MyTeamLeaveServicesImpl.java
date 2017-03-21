@@ -1,10 +1,13 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.MyTeamLeaveDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartDatabaseException;
@@ -16,11 +19,11 @@ public class MyTeamLeaveServicesImpl implements MyTeamLeaveServices {
 	MyTeamLeaveDao myteamleaveDao;
 	
 	@Override
-	public List<Leave> getLeavelist(Profile profileInfo,Long hid) throws GSmartServiceException{
+	public Map<String, Object> getLeavelist(Profile profileInfo,Long hierarchy,Integer min,Integer max) throws GSmartServiceException{
 		Loggers.loggerStart();
-		List<Leave> list = null;
+		Map<String, Object> list = null;
 		try {
-		list= myteamleaveDao.getLeavelist(profileInfo,hid);
+		list= myteamleaveDao.getLeavelist(profileInfo,hierarchy,min,max);
 		/*for (Leave leave : list) {
 			
 			switch(leave.getLeaveStatus()){
