@@ -44,7 +44,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@Override
 
 
-	public Map<String, Object> getLeavelist(Profile profileInfo, Hierarchy hierarchy,Integer min,Integer max) throws GSmartDatabaseException {
+	public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy,Integer min,Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Map<String, Object> leavelist =new HashMap<>();
 		getConnection();
@@ -73,7 +73,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 				criteria.add(Restrictions.eq("isActive", "Y"));
 				criteria.add(Restrictions.ne("leaveStatus", "Rejected*").ignoreCase());
 				criteria.add(Restrictions.eq("reportingManagerId", profileInfo.getSmartId()));
-				criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+				criteria.add(Restrictions.eq("hierarchy.hid", hierarchy));
 				criteria.addOrder(Order.asc("fullName"));
 				criteria.setFirstResult(min);
 				criteria.setMaxResults(max);
@@ -82,7 +82,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 				criteria = session.createCriteria(Leave.class).add(Restrictions.eq("isActive", "Y"))
 						.add(Restrictions.eq("reportingManagerId", profileInfo.getSmartId()))
 						.add(Restrictions.ne("leaveStatus", "Rejected*").ignoreCase())
-						.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()))
+						.add(Restrictions.eq("hierarchy.hid", hierarchy))
 						.setProjection(Projections.rowCount());
 				Long count = (Long) criteria.uniqueResult();
 				leavelist.put("totalListCount", count);

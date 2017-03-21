@@ -19,7 +19,7 @@ public class MyTeamLeaveServicesImpl implements MyTeamLeaveServices {
 	MyTeamLeaveDao myteamleaveDao;
 	
 	@Override
-	public Map<String, Object> getLeavelist(Profile profileInfo,Hierarchy hierarchy,Integer min,Integer max) throws GSmartServiceException{
+	public Map<String, Object> getLeavelist(Profile profileInfo,Long hierarchy,Integer min,Integer max) throws GSmartServiceException{
 		Loggers.loggerStart();
 		Map<String, Object> list = null;
 		try {

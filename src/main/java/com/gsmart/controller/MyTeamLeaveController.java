@@ -75,7 +75,7 @@ public class MyTeamLeaveController {
 		}
 		
 		if (modulePermission != null) {
-			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy(),min,max);
+			myTeamList = myteamleaveServices.getLeavelist(profileInfo,hid,min,max);
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);
