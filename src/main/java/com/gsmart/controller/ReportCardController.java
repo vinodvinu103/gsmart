@@ -168,12 +168,12 @@ public class ReportCardController {
 		return new ResponseEntity<IAMResponse>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/excelToDB", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> excelToDB(@RequestBody ReportCard fileUpload,@RequestHeader HttpHeaders token,
+	@RequestMapping(value = "/excelToDB", method = RequestMethod.POST , consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Map<String, String>> excelToDB(@RequestBody MultipartFile fileUpload,@RequestHeader HttpHeaders token,
 			HttpSession httpSession) {
 		// , consumes=MediaType.MULTIPART_FORM_DATA_VALUE
 		Loggers.loggerStart(fileUpload);
-		MultipartFile multipartFile =fileUpload.getMultiPartFile();
+		//MultipartFile multipartFile =fileUpload.getMultiPartFile();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -183,7 +183,7 @@ public class ReportCardController {
 		try {if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
 		{
 //			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-			reportCardService.excelToDB(smartId, multipartFile, tokenObj.getHierarchy());
+			reportCardService.excelToDB(smartId, fileUpload, tokenObj.getHierarchy());
 			jsonMap.put("result", "fail");
 		}
 			Loggers.loggerEnd();
