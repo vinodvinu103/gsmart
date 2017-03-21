@@ -111,7 +111,7 @@ public class RolePermissionController {
 
 		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		System.out.println("Token object" + tokenObj);
-		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(), tokenObj.getHierarchy());
+		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole());
 		System.out.println("submodule ::" + subModules);
 
 		return new ResponseEntity<List<RolePermission>>(subModules, HttpStatus.OK);

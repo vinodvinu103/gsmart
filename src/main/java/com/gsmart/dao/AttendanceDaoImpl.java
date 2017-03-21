@@ -77,6 +77,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 					rfidList.add(attendance.getRfId());
 				}
 			}
+			System.out.println("atttenfdenceListjj"+attendanceList);
 			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -84,6 +85,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		} finally {
 			session.close();
 		}
+		Loggers.loggerEnd(rfidList);
 		return rfidList;
 	}
 
