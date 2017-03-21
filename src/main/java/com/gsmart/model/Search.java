@@ -10,6 +10,10 @@ public class Search implements Serializable {
 	String school;
 	
 	int band;
+	
+	String teacherId;
+	
+	String studentId;
 
 	public String getName() {
 		return name;

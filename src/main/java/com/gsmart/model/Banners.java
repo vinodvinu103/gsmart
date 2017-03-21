@@ -14,14 +14,6 @@ import javax.persistence.Table;
 @Table(name = "banners")
 @IdClass(com.gsmart.model.CompoundBanner.class)
 public class Banners {
-
-	/**
-	 * Title of Image
-	 */
-	/*@Id
-	@Column(name = "TITLE")
-	private String title;*/
-
 	/**
 	 * Image
 	 */

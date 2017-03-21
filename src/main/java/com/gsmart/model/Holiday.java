@@ -44,7 +44,7 @@ public class Holiday {
 	/**
 	 * description of holiday
 	 */
-	@Id
+	
 	@Column(name="DESCRIPTION")
 	private String description;
 	@Id

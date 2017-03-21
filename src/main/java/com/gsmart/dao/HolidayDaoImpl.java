@@ -6,12 +6,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -73,9 +76,9 @@ public class HolidayDaoImpl implements HolidayDao {
 			
 
 			criteria = session.createCriteria(Holiday.class);
-
-			criteria.add(Restrictions.eq("isActive", "Y"));
-			criteria.add(Restrictions.eq("hierarchy.hid", hid));
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			criteria.addOrder(Order.desc("holidayDate"));
 			holidayList = criteria.list();
 			Criteria criteriaCount = session.createCriteria(Holiday.class);
 			criteriaCount.add(Restrictions.eq("isActive", "Y"));
@@ -281,4 +284,14 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 		Loggers.loggerEnd();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Holiday> holidayList(Long hid) throws GSmartDatabaseException {
+		getConnection();
+		query=session.createQuery("from Holiday where isActive=:isActive and hierarchy.hid=:hierarchy");
+		query.setParameter("isActive", "Y");
+		query.setParameter("hierarchy", hid);
+		
+		return query.list();
+	}
 }

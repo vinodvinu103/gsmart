@@ -41,11 +41,12 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	}
 
 	@Override
-	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments) {
-		InventoryAssignmentsCompoundKey compoundKey = null;
+	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory) {
+		InventoryAssignmentsCompoundKey compoundKey=null;
 		try {
 			Loggers.loggerStart(inventoryAssignments);
-			compoundKey = inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments);
+			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments,oldInventory);
+
 			Loggers.loggerEnd(compoundKey);
 		} catch (GSmartDatabaseException e) {
 			e.printStackTrace();
@@ -89,6 +90,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	@Override
 	public List<InventoryAssignments> groupCategoryAndItem(List<InventoryAssignments> inventoryAssignmentList,
 			List<Inventory> inventory) throws GSmartServiceException {
+		Loggers.loggerStart();
 		List<InventoryAssignments> responseList = new ArrayList<>();
 		for (int i = 0; i < inventory.size(); i++) {
 			Loggers.loggerStart("inventory loop : " + i);
@@ -104,6 +106,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 						totalQuantity += inventoryAssignmentList.get(j).getQuantity();
 						inAssignments.setQuantity(totalQuantity);
 						inAssignments.setTotalQuantity(inventory.get(i).getQuantity());
+						System.out.println("inAssignments"+inAssignments);
 					}
 				}
 			}
@@ -111,14 +114,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 				responseList.add(inAssignments);
 			}
 		}
+		Loggers.loggerEnd(responseList);
 		return responseList;
 	}
-
-	public Map<String, Object> getInventoryList(String role, Hierarchy hierarchy, Integer min, Integer max)
-			throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 }

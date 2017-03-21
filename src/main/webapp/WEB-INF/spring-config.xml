@@ -16,19 +16,22 @@
 
 	<mvc:annotation-driven />
 	<mvc:default-servlet-handler/>
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://localhost:5432/magicbag_test" />
-		<property name="username" value="postgres" />
-		<property name="password" value="postgres" />
-	</bean>
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+ 		<property name="driverClassName" value="org.postgresql.Driver" />
+ 		<property name="url" value="jdbc:postgresql://localhost:5432/magicbag_test" />
+ 		<property name="username" value="postgres" />
+ 		<property name="password" value="postgres" />
+		<property name="initialSize" value="20" />
+  		<property name="maxActive" value="60000" />
+ 	</bean>
+
 	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<list>
+			
 		
 				<value>com.gsmart.model.RolePermission</value>
 				<value>com.gsmart.model.Login</value>
@@ -43,6 +46,10 @@
 				<value>com.gsmart.model.ReportCard</value>
 				<value>com.gsmart.model.InventoryAssignments</value>
 				<value>com.gsmart.model.Fee</value>
+				<value>com.gsmart.model.PaySlip</value>
+				<value>com.gsmart.model.Modules</value>
+				<value>com.gsmart.model.SalaryStructure</value>
+				<value>com.gsmart.model.GenerateSalaryStatement</value>
 				<value>com.gsmart.model.Modules</value>
 				<value>com.gsmart.model.ReportCard</value>
 				<value>com.gsmart.model.LeaveDetails</value>
@@ -55,6 +62,7 @@
 				<value>com.gsmart.model.Banners</value>
 				<value>com.gsmart.model.MessageDetails</value>
 				<value>com.gsmart.model.Attendance</value>
+
 			</list>
 		</property>
 		<property name="hibernateProperties">

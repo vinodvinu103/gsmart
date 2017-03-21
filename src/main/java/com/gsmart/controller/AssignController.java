@@ -111,7 +111,6 @@ public class AssignController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		
-	
 		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
@@ -125,9 +124,7 @@ public class AssignController {
 		}else{
 			hid=tokenObj.getHierarchy().getHid();
 		}
-
-
-          assignList = assignService.getAssignList(hid);
+            assignList = assignService.getAssignList(hid);
 			if(assignList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");
@@ -242,6 +239,8 @@ public class AssignController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}
+	
+	
 	@RequestMapping(value="/searchstandardfee/{hierarchy}/{standard}", method=RequestMethod.GET)
 	public ResponseEntity<Map<String,Object>> searchStandardFee(@PathVariable("standard") String standard,@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException{
 		Loggers.loggerStart(standard);

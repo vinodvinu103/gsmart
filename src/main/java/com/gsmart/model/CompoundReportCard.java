@@ -15,6 +15,8 @@ public class CompoundReportCard implements Serializable{
 	 
 	 private String subject;
 	 
+	 private String examName;
+	 
 
 	public String getSmartId() {
 		return smartId;
@@ -40,10 +42,12 @@ public class CompoundReportCard implements Serializable{
 		this.subject = subject;
 	}
 
+	public String getExamName() {
+		return examName;
+	}
 
-	
+	public void setExamName(String examName) {
+		this.examName = examName;
+	}
 
-	 
-	
-	 
 }
