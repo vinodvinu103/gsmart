@@ -103,7 +103,6 @@ public class AssignDaoImpl implements AssignDao {
 	
 	public Assign fetch(Assign assign) {
 		Loggers.loggerStart(assign);
-		getConnection();
 		Assign assignList = null;
 		try {
 			
@@ -127,7 +126,6 @@ public class AssignDaoImpl implements AssignDao {
 		Loggers.loggerStart();
 		Assign asgn = null;
 		try {
-			getConnection();			
 			
 			Assign oldAssign = getAssigns(assign.getEntryTime(),assign.getHierarchy());
 			asgn = updateAssign(oldAssign, assign);
@@ -219,7 +217,6 @@ public class AssignDaoImpl implements AssignDao {
 		getConnection();
 		Loggers.loggerStart();
 		try {
-			getConnection();
 			
 			query = session.createQuery("UPDATE Profile SET reportingManagerId='null', standard='null', section='null' WHERE standard=:standard and section=:section");
 			query.setParameter("standard", assign.getStandard());
