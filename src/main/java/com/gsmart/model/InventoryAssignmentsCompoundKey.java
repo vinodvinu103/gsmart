@@ -4,21 +4,43 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-@SuppressWarnings("serial")
 @Embeddable
 public class InventoryAssignmentsCompoundKey implements Serializable
 {
+	private static final long serialVersionUID = 1L;	
 	private String category;
 	private String itemType;
-	private String smartId;
+	private String entryTime;
 	
-	@Override
+	
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public String getItemType() {
+		return itemType;
+	}
+	public void setItemType(String itemType) {
+		this.itemType = itemType;
+	}
+	public String getEntryTime() {
+		return entryTime;
+	}
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
+	
+	
+	
+	/*@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((category == null) ? 0 : category.hashCode());
 		result = prime * result + ((itemType == null) ? 0 : itemType.hashCode());
-		result = prime * result + ((smartId == null) ? 0 : smartId.hashCode());
+		result = prime * result + ((entryTime == null) ? 0 : entryTime.hashCode());
 		return result;
 	}
 	@Override
@@ -40,9 +62,9 @@ public class InventoryAssignmentsCompoundKey implements Serializable
 				return false;
 		} else if (!itemType.equals(other.itemType))
 			return false;
-		if (smartId != other.smartId)
+		if (entryTime != other.entryTime)
 			return false;
 		return true;
-	}
+	}*/
 	
 }

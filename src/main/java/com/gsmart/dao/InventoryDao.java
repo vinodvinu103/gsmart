@@ -1,7 +1,6 @@
 
 package com.gsmart.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +53,9 @@ public interface InventoryDao {
 	public Inventory editInventory(Inventory inventory) throws GSmartDatabaseException;
 
 	public void deleteInventory(Inventory inventory) throws GSmartDatabaseException;
-
+	
+	public List<Inventory> getInventory(Long hid) throws GSmartDatabaseException;
+	
 	/**
 	 * @param timeStamp
 	 *            instanceOf {@link Inventory}
