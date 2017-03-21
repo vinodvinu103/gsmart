@@ -199,7 +199,7 @@ public class ProfileDaoImp implements ProfileDao {
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
-			criteria.addOrder(Order.asc("smartId"));
+			criteria.addOrder(Order.asc("firstName"));
 //			criteria.setProjection(Projections.id());
 
 			Criteria criteriaCount = session.createCriteria(Profile.class).add(Restrictions.eq("isActive", "Y"));
