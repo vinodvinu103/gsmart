@@ -10,7 +10,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface PerformanceRecordService {
 	
-	public Map<String, Object> getPerformanceRecord(String year,String smartId,String role,Hierarchy hierarchy,String reportingId)throws GSmartServiceException;
+	public Map<String, Object> getPerformanceRecord(String year,String smartId,Long hid,String reportingId)throws GSmartServiceException;
 
 	public void addAppraisalRecord(PerformanceRecord appraisal)throws GSmartServiceException;
 
@@ -19,7 +19,7 @@ public interface PerformanceRecordService {
 	public void deleteAppraisalrecord(PerformanceAppraisal appraisal)throws GSmartServiceException;
 
 	public Map<String, Object> getPerformanceRecordManager(String reportingManagerId, String smartId, String year,
-			String role, Hierarchy hierarchy)throws GSmartServiceException;
+			Long hid)throws GSmartServiceException;
 
 	public void addAppraisalRecordManager(PerformanceRecord appraisal)throws GSmartServiceException;
 

@@ -30,26 +30,23 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getPerformanceRecord(String smartId, String year,String role,Hierarchy hierarchy,String reportingId) throws GSmartDatabaseException {
+	public Map<String, Object> getPerformanceRecord(String smartId, String year,Long hid,String reportingId) throws GSmartDatabaseException {
 		
 		Map<String, Object> recordobject=new HashMap<>();
 		Loggers.loggerStart(smartId);
+		Loggers.loggerStart(reportingId);
 		getConnection();
 		List<PerformanceRecord> performancerecordList = null;
-		List<PerformanceRecord> performancerecordList1=getRecord( reportingId,  smartId,  year, role,  hierarchy);
+		List<PerformanceRecord> performancerecordList1=getRecord( reportingId,  smartId,  year, hid);
 		try {
 			
 			System.out.println(smartId);
 			Loggers.loggerStart();
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director") || role.equalsIgnoreCase("owner"))
-			{
-				query = session
-						.createQuery("from PerformanceRecord where smartId=:smartId AND year=:year AND isActive=:isActive");
-			}else{
+			
 			query = session
 					.createQuery("from PerformanceRecord where smartId=:smartId AND reportingManagerID=null AND  year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
-			}
+			query.setParameter("hierarchy", hid);
+			
 			query.setParameter("smartId", smartId);
 			query.setParameter("year", year);
 			query.setParameter("isActive", "Y");
@@ -68,7 +65,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	}
 	
 	public List<PerformanceRecord> getRecord(String reportingId, String smartId, String year,
-			String role, Hierarchy hierarchy) {
+			Long hid) {
 		List<PerformanceRecord> performancerecordList11=null;
 		Loggers.loggerStart();
 		
@@ -78,16 +75,12 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 			System.out.println("smartId"+smartId);
 			Loggers.loggerStart();
 			
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director") || role.equalsIgnoreCase("owner"))
-			{
-				query = session
-						.createQuery("from PerformanceRecord where year=:year AND isActive=:isActive");
-			}else{
+			
 			
 		query = session
 				.createQuery("from PerformanceRecord where smartId=:smartId AND  reportingManagerID=:reportingManagerID AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
-		query.setParameter("hierarchy", hierarchy.getHid());
-			}
+		query.setParameter("hierarchy",hid);
+			
 		query.setParameter("smartId", smartId);
 		query.setParameter("year", year);
 		query.setParameter("isActive", "Y");
@@ -110,31 +103,26 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	
 	@Override
 	public Map<String, Object> getPerformanceRecordManager(String reportingManagerId, String smartId, String year,
-			String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+			Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Map<String, Object> recordobject=new HashMap<>();
 		getConnection();
 		List<PerformanceRecord> performancerecordList = null;
 		
-		List<PerformanceRecord> performancerecordList11=getManagerRecord( reportingManagerId,  smartId,  year, role,  hierarchy);
+		List<PerformanceRecord> performancerecordList11=getManagerRecord( reportingManagerId,  smartId,  year,  hid);
 
 	
 		
 		try {
 			
 			Loggers.loggerStart();
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director") || role.equalsIgnoreCase("owner"))
-			{
-				query = session
-						.createQuery("from PerformanceRecord where year=:year AND isActive=:isActive");
-			}
-			else{
+			
 				
 			query = session
 					.createQuery("from PerformanceRecord where smartId=:smartId and reportingManagerID=null  AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
+			query.setParameter("hierarchy", hid);
 			
-			}
+			
 		//	query.setParameter("reportingManagerID", reportingManagerId);
 			query.setParameter("smartId", smartId);
 			query.setParameter("year", year);
@@ -160,25 +148,20 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	
 
 	public List<PerformanceRecord> getManagerRecord(String reportingManagerId, String smartId, String year,
-			String role, Hierarchy hierarchy) {
+			Long hid) {
 		List<PerformanceRecord> performancerecordList1=null;
 		Loggers.loggerStart();
 		Loggers.loggerValue("reportingId", reportingManagerId);
 
 		try {
 			System.out.println("smartId"+smartId);
-			System.out.println();
 			Loggers.loggerStart();
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director") || role.equalsIgnoreCase("owner"))
-			{
-				query = session
-						.createQuery("from PerformanceRecord where year=:year AND isActive=:isActive");
-			}else{
+			
 			
 		query = session
 				.createQuery("from PerformanceRecord where smartId=:smartId AND  reportingManagerID=:reportingManagerID AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
-		query.setParameter("hierarchy", hierarchy.getHid());
-			}
+		query.setParameter("hierarchy", hid);
+			
 		query.setParameter("smartId", smartId);
 		query.setParameter("year", year);
 		query.setParameter("isActive", "Y");

@@ -62,13 +62,14 @@ public class PerformanceController {
 	@Autowired
 	ProfileServices profileServices;
 
-	@RequestMapping(value = "/{year}/{smartId}/", method = RequestMethod.GET)
+	@RequestMapping(value = "/{year}/{smartId}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> performance(@PathVariable("year") String year,
-			@PathVariable("smartId") String smartId, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			@PathVariable("smartId") String smartId, @PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
-		Loggers.loggerStart();
+		Loggers.loggerStart(hierarchy);
 		Loggers.loggerStart(year);
 		Loggers.loggerStart(smartId);
+		
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
@@ -83,11 +84,17 @@ public class PerformanceController {
 		Map<String, Object> permissions = new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
 		IAMResponse rsp = new IAMResponse();
-		
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+
 		if (modulePermission != null) {
 
-			appraisalList = appraisalservice.getAppraisalList(tokenObj.getReportingManagerId(), year,tokenObj.getRole(),tokenObj.getHierarchy());
-			performancerecordList = performancerecord.getPerformanceRecord(smartId, year,tokenObj.getRole(),tokenObj.getHierarchy(),tokenObj.getReportingManagerId());
+			appraisalList = appraisalservice.getAppraisalList(tokenObj.getReportingManagerId(), year,hid);
+			performancerecordList = performancerecord.getPerformanceRecord(smartId, year,hid,tokenObj.getReportingManagerId());
 			jsonMap.put("appraisalList", appraisalList);
 			jsonMap.put("performancerecord", performancerecordList);
 			Loggers.loggerEnd(jsonMap);
@@ -157,9 +164,9 @@ public class PerformanceController {
 		}
 	}
 
-	@RequestMapping(value = "/record/{year}/{smartId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/record/{year}/{smartId}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getReportingRecord(@PathVariable("year") String year,
-			@PathVariable("smartId") String smartId, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			@PathVariable("smartId") String smartId,@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 
@@ -175,6 +182,12 @@ public class PerformanceController {
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		permissions.put("modulePermission", modulePermission);
 		IAMResponse rsp = new IAMResponse();
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 
 		if (modulePermission != null) {
 
@@ -182,7 +195,7 @@ public class PerformanceController {
 			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getHierarchy().getHid());
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
-			teamappraisalList  = appraisalservice.getTeamAppraisalList(smartId, year,tokenObj.getRole(),tokenObj.getHierarchy());
+			teamappraisalList  = appraisalservice.getTeamAppraisalList(smartId, year, hid);
 			jsonMap.put("performancerecord", childList);
 			jsonMap.put("teamAppraisalLiat", teamappraisalList);
 			Loggers.loggerEnd(permissions);
@@ -256,9 +269,9 @@ public class PerformanceController {
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 		}
 	}*/
-	@RequestMapping(value = "/manager/{year}/{smartId}/{reportingManagerId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/manager/{year}/{smartId}/{reportingManagerId}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> performanceManager(@PathVariable("year") String year,
-			@PathVariable("smartId") String smartId,@PathVariable("reportingManagerId") String reportingManagerId, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			@PathVariable("smartId") String smartId,@PathVariable("reportingManagerId") String reportingManagerId,@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		Loggers.loggerStart(year);
@@ -277,11 +290,17 @@ public class PerformanceController {
 		Map<String, Object> permissions = new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
 		IAMResponse rsp = new IAMResponse();
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 		
 		if (modulePermission != null) {
 
 			
-			performancerecordList1 = performancerecord.getPerformanceRecordManager(reportingManagerId,smartId, year,tokenObj.getRole(),tokenObj.getHierarchy());
+			performancerecordList1 = performancerecord.getPerformanceRecordManager(reportingManagerId,smartId, year,hid);
 			
 			jsonMap.put("performancerecord", performancerecordList1);
 			Loggers.loggerEnd(jsonMap);

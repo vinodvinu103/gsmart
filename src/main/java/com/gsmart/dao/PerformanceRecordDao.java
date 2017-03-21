@@ -10,7 +10,7 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface PerformanceRecordDao {
 
-	public Map<String, Object> getPerformanceRecord(String smartId,String year,String role,Hierarchy hierarchy,String reportingId) throws GSmartDatabaseException;
+	public Map<String, Object> getPerformanceRecord(String smartId,String year,Long hid,String reportingId) throws GSmartDatabaseException;
 
 	public void addAppraisalRecord(PerformanceRecord appraisal)throws GSmartDatabaseException;
 
@@ -19,7 +19,7 @@ public interface PerformanceRecordDao {
 	public void deletAppraisalRecord(PerformanceAppraisal appraisal)throws GSmartDatabaseException;
 
 	public Map<String, Object> getPerformanceRecordManager(String reportingManagerId, String smartId, String year,
-			String role, Hierarchy hierarchy)throws GSmartDatabaseException;
+			Long hid)throws GSmartDatabaseException;
 
 	public void addAppraisalRecordManager(PerformanceRecord appraisal)throws GSmartDatabaseException;
 

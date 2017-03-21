@@ -10,7 +10,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface PerformanceAppraisalService {
 
-	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,Long hid) throws GSmartServiceException;
 
 	public void addAppraisal(PerformanceAppraisal performanceAppraisal) throws GSmartServiceException;
 
@@ -18,7 +18,7 @@ public interface PerformanceAppraisalService {
 
 	public void deleteAppraisal(PerformanceAppraisal appraisal) throws GSmartServiceException;
 
-	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,String role,Hierarchy hierarchy)throws GSmartServiceException;
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,Long hid)throws GSmartServiceException;
 
 
 

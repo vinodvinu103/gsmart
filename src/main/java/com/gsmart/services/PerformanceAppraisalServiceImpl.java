@@ -24,10 +24,10 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 
 	
 	@Override
-	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,Long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return appraisalDao.getAppraisalList(reportingId,year,role,hierarchy);
+			return appraisalDao.getAppraisalList(reportingId,year,hid);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -37,10 +37,10 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 		}
 	}
 	@Override
-	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,Long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return appraisalDao.getTeamAppraisalList(smartId,year,role,hierarchy);
+			return appraisalDao.getTeamAppraisalList(smartId,year,hid);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {

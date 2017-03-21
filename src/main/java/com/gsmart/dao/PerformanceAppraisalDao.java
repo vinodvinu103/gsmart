@@ -8,7 +8,7 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface PerformanceAppraisalDao {
 
-	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,Long hid) throws GSmartDatabaseException;
 
 	public void addAppraisal(PerformanceAppraisal performanceAppraisal) throws GSmartDatabaseException;
 
@@ -16,6 +16,6 @@ public interface PerformanceAppraisalDao {
 
 	public void deleteAppraisal(PerformanceAppraisal appraisal) throws GSmartDatabaseException;
 
-	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,Long hid) throws GSmartDatabaseException;
 
 }

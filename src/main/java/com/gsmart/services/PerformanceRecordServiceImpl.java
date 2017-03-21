@@ -19,10 +19,10 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 	@Autowired
 	PerformanceRecordDao performancerecordao;
 	@Override
-	public Map<String, Object> getPerformanceRecord(String smartId,String year,String role,Hierarchy hierarchy,String reportingId) throws GSmartServiceException {
+	public Map<String, Object> getPerformanceRecord(String smartId,String year,Long hid,String reportingId) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-	return	performancerecordao.getPerformanceRecord(smartId,year,role,hierarchy, reportingId);
+	return	performancerecordao.getPerformanceRecord(smartId,year,hid, reportingId);
 		
 	
 	} catch (GSmartDatabaseException exception) {
@@ -36,10 +36,10 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 }
 	@Override
 	public Map<String, Object> getPerformanceRecordManager(String reportingManagerId, String smartId, String year,
-			String role, Hierarchy hierarchy) throws GSmartServiceException {
+			Long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return performancerecordao.getPerformanceRecordManager(reportingManagerId,smartId,year,role,hierarchy);
+			return performancerecordao.getPerformanceRecordManager(reportingManagerId,smartId,year,hid);
 			
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
