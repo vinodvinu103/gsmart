@@ -19,6 +19,8 @@ import javax.persistence.ManyToMany;*/
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.springframework.web.multipart.MultipartFile;
+
 @Entity
 @Table(name="REPORT_CARD")
 @IdClass(com.gsmart.model.CompoundReportCard.class)
@@ -67,7 +69,7 @@ public class ReportCard {
 	@Column(name="SUBJECT_GRADE")
 	private String subjectGrade;
 	
-	@Column(name="TOTAL_GRADE")
+	@Transient
 	private String totalGrade;
 	
 	@Column(name="RESULT")
@@ -87,6 +89,9 @@ public class ReportCard {
 	
 	@Transient
 	private int childReportFlag;
+	
+	@Transient
+	private MultipartFile multiPartFile;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -261,6 +266,14 @@ public class ReportCard {
 
 	public void setChildReportFlag(int childReportFlag) {
 		this.childReportFlag = childReportFlag;
+	}
+
+	public MultipartFile getMultiPartFile() {
+		return multiPartFile;
+	}
+
+	public void setMultiPartFile(MultipartFile multiPartFile) {
+		this.multiPartFile = multiPartFile;
 	}
 
 	@Override
