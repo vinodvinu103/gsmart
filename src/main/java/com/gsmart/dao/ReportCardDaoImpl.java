@@ -384,7 +384,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 				yeaAndex.setAcademicYear(yearAndExamName1);
 				yearAndExamName.add(yeaAndex);
 			}
-			session.close();
+			
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
