@@ -100,7 +100,6 @@ public class InventoryDaoImpl implements InventoryDao {
 		CompoundInventory cb = null;
 
 		try {
-			getconnection();
 			Inventory inventory2=fetch(inventory);
 			if (inventory2 ==null) {
 				inventory.setEntryTime((CalendarCalculator.getTimeStamp()));
@@ -113,6 +112,8 @@ public class InventoryDaoImpl implements InventoryDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd(inventory);
 		return cb;
@@ -121,7 +122,6 @@ public class InventoryDaoImpl implements InventoryDao {
 	public Inventory fetch(Inventory inventory) {
 		Inventory inventory2 = null;
 		try {
-			getconnection();
 			System.out.println("i am going "+ inventory);
 			Hierarchy hierarchy = inventory.getHierarchy();
 			query = session.createQuery(
@@ -154,13 +154,8 @@ public class InventoryDaoImpl implements InventoryDao {
 		try {
 
 			Inventory oldInvertory = getInventory(inventory.getEntryTime(), inventory.getHierarchy());
-			oldInvertory.setIsActive("N");
-			oldInvertory.setUpdateTime(CalendarCalculator.getTimeStamp());
-			session.update(oldInvertory);
-			inventory.setEntryTime(CalendarCalculator.getTimeStamp());
-			inventory.setIsActive("Y");
-			session.save(inventory);
-			transaction.commit();
+			ch=updateInventory(oldInvertory, inventory);
+			addInventory(inventory);
 
 
 		} catch (ConstraintViolationException e) {
@@ -292,6 +287,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		return inventoryList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Inventory> getInventory(Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
@@ -310,6 +306,8 @@ public class InventoryDaoImpl implements InventoryDao {
 			inventory = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd("inveList:"+inventory);
 		return inventory;

@@ -466,7 +466,6 @@ public class ProfileDaoImp implements ProfileDao {
 		Map<String, Object> rfidMap = new HashMap<>();
 		Criteria criteria = session.createCriteria(Profile.class);
 		try {
-			getConnection();
 			/*
 			 * query = session.createQuery(
 			 * "from Profile where rfId is null AND isActive='Y'");
@@ -740,6 +739,8 @@ public class ProfileDaoImp implements ProfileDao {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 	}
 
@@ -785,7 +786,9 @@ public class ProfileDaoImp implements ProfileDao {
 			
           e.printStackTrace();
           return false;
-          }
+          }finally {
+			session.close();
+		}
 		Loggers.loggerEnd();
 		return true;
 	}
@@ -801,10 +804,6 @@ public class ProfileDaoImp implements ProfileDao {
 		
 	}
 
-	@Override
-	public Profile profileDetails(String smartId) throws GSmartDatabaseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 }

@@ -74,18 +74,12 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
-		Loggers.loggerStart();
 
 		List<Hierarchy> hierarchyList;
 		Map<String, Object> hierarchyMap = new HashMap<String, Object>();
 		Criteria criteria = null;
 		try {
-			/*if (hierarchy==null) {
-				query = session.createQuery("from Hierarchy where isActive='Y'");
-			} else {
-				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
-				query.setParameter("hid", hierarchy.getHid());
-			}*/
+			
 			criteria = session.createCriteria(Hierarchy.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
@@ -115,7 +109,6 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	public List<Hierarchy> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
-		Loggers.loggerStart();
 
 		List<Hierarchy> hierarchyList1;
 		Criteria criteria = null;
@@ -281,7 +274,6 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	public Hierarchy fetch(Hierarchy hierarchy) {
 
 		Loggers.loggerStart(hierarchy);
-		getConnection();
 		Hierarchy hierarchyList = null;
 		try {
 			query = session.createQuery(
@@ -312,6 +304,8 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 			e.printStackTrace();
 
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 		return hierarchyList;

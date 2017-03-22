@@ -256,6 +256,8 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 			masterList=criteria.list();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd(masterList);
 		return masterList;

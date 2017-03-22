@@ -67,6 +67,7 @@ public class AssignDaoImpl implements AssignDao {
 			assignMap.put("totalassign", count);
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
 		}finally {
 			session.close();
 		}
@@ -116,6 +117,7 @@ public class AssignDaoImpl implements AssignDao {
 			Loggers.loggerEnd(assignList);
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		}
 		return assignList;
 	}
@@ -146,8 +148,7 @@ public class AssignDaoImpl implements AssignDao {
 			}			
 		} catch (Exception e) {
 			e.printStackTrace();
-			// throw new GSmartDatabaseException(e.getMessage());
-			Loggers.loggerException(e.getMessage());
+			throw new GSmartDatabaseException(e.getMessage());
 		}
 		return asgn;
 	}
@@ -229,7 +230,9 @@ public class AssignDaoImpl implements AssignDao {
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 			Loggers.loggerException(e.getMessage());
+			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 			session.close();
 		}
@@ -296,6 +299,7 @@ public class AssignDaoImpl implements AssignDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
 		}finally {
 			session.close();
 		}

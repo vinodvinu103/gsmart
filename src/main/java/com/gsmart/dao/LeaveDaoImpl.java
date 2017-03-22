@@ -41,8 +41,6 @@ public class LeaveDaoImpl implements LeaveDao {
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
-		Loggers.loggerStart(tokenObj);
-		System.out.println("vgyhuhuygy");
 		List<Leave> leave = null;
 		Criteria criteria = null;
 		Map<String, Object> leaveMap = new HashMap<>();
@@ -190,14 +188,11 @@ public class LeaveDaoImpl implements LeaveDao {
 		getConnection();
 		List<Leave> leaveList = null;
 		try {
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")) {
-				query = session.createQuery(
-						"from Leave where smartId=:smartId and leaveType=:leaveType and lower(leaveStatus)!='rejected*' and isActive='Y'");
-			} else {
+			
 				query = session.createQuery(
 						"from Leave where smartId=:smartId and leaveType=:leaveType and lower(leaveStatus)!='rejected*' and isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
-			}
+			
 
 			query.setParameter("smartId", smartId);
 			query.setParameter("leaveType", leaveType);
@@ -211,6 +206,7 @@ public class LeaveDaoImpl implements LeaveDao {
 		return leaveList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Leave> leaveForAdding(Leave leave,Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
@@ -224,7 +220,9 @@ public class LeaveDaoImpl implements LeaveDao {
 			session.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}/*finally {
+			session.close();
+		}*/
 		Loggers.loggerEnd();
 		return leaveAddList;
 	}

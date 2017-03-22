@@ -77,7 +77,7 @@ public class WeekDayController {
 				resultMap.put("message", "success");
 			
 			
-Loggers.loggerEnd();
+         Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
 
