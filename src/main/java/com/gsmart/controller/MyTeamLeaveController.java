@@ -57,7 +57,7 @@ public class MyTeamLeaveController {
 
 		str.length();
 
-		List<Leave> myTeamList = null;
+		Map<String, Object> myTeamList = null;
 
 		Token tokenObj=(Token) httpSession.getAttribute("token");
 		Map<String, Object> myteam = new HashMap<>();
@@ -71,7 +71,7 @@ public class MyTeamLeaveController {
 			hid=tokenObj.getHierarchy().getHid();
 		}
 		
-			myTeamList = myteamleaveServices.getLeavelist(profileInfo,hid);
+			myTeamList = myteamleaveServices.getLeavelist(profileInfo,hid,min,max);
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);

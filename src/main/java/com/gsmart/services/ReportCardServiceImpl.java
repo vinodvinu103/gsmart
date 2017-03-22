@@ -2,26 +2,20 @@ package com.gsmart.services;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import javax.swing.event.ChangeListener;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gsmart.dao.GradesDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
-import com.gsmart.model.Fee;
-import com.gsmart.model.FeeMaster;
-import com.gsmart.model.GenerateSalaryStatement;
-import com.gsmart.model.Profile;
+import com.gsmart.model.Grades;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.Constants;
@@ -56,13 +50,16 @@ public class ReportCardServiceImpl implements ReportCardService {
 
 	@Autowired
 	SearchService searchService;
-	
+
+	@Autowired
+	GradesDao gradeDao;
+
 	Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-	
+
 	@Override
 	public List<ReportCard> reportCardList() throws GSmartServiceException {
 		Loggers.loggerStart();
-	List<ReportCard> list = null;
+		List<ReportCard> list = null;
 		try {
 			// list = reportCardDao.reportCardList();
 
@@ -114,8 +111,8 @@ public class ReportCardServiceImpl implements ReportCardService {
 	}
 
 	@Override
-	public void excelToDB(String smartId, MultipartFile fileUpload) throws Exception {
-		reportCardDao.excelToDB(smartId, fileUpload);
+	public void excelToDB(String smartId, MultipartFile fileUpload,Hierarchy hid) throws Exception {
+		reportCardDao.excelToDB(smartId, fileUpload,hid);
 	}
 
 	@Override
@@ -135,8 +132,8 @@ public class ReportCardServiceImpl implements ReportCardService {
 	}
 
 	@Override
-	public void calculatPercentage(String smartId, ArrayList<ReportCard> childReportCards)
-			throws GSmartServiceException {
+	public double calculatPercentage(String smartId, List<ReportCard> childReportCards) throws GSmartServiceException {
+		Loggers.loggerStart();
 		Double totalMarks = 0.0;
 		Double obtainedMarks = 0.0;
 		Double percentage = 0.0;
@@ -158,58 +155,47 @@ public class ReportCardServiceImpl implements ReportCardService {
 			percentage = 0.0;
 			System.out.println(" in side catch blk percentage..........." + percentage);
 		}
-
+		Loggers.loggerEnd();
+		return percentage;
 	}
 
-	/*@Override
-	public List<ReportCard> downloadPdf(Token tokenDetail, String examName, String academicYear)
-			throws GSmartServiceException {
+	@Override
+	public Document downloadPdf(Token tokenDetail, String academicYear, String examName) throws GSmartServiceException {
 		Calendar startMonth = Calendar.getInstance();
 		Calendar endMonth = Calendar.getInstance();
-		List<ReportCard> list=null;
-		*//***********************************************************//*
+		List<ReportCard> list = null;
+		document.open();
 		try {
-			document.open();
+
 			while (startMonth.compareTo(endMonth) <= 0) {
-				String month = new SimpleDateFormat("MMMM").format(startMonth.getTime());
-				String year = new SimpleDateFormat("yyyy").format(startMonth.getTime());
 
 				list = reportCardDao.search(tokenDetail, academicYear, examName);
-				for (ReportCard reportCard : list) {
-					String subject=reportCard.getSubject();
-					String subjectGrade=reportCard.getSubjectGrade();
-					list.add(reportCard);
-				}
 				try {
-					PdfWriter.getInstance(document,
-							new FileOutputStream(tokenDetail.getSmartId() + " " + examName + " " + academicYear + ".pdf"));
+					PdfWriter.getInstance(document, new FileOutputStream(
+							tokenDetail.getSmartId() + " " + examName + " " + academicYear + ".pdf"));
 				} catch (FileNotFoundException | DocumentException e) {
 					e.printStackTrace();
 				}
-				
-				//generatePDF(list, examName, academicYear);
+
+				document = generatePDF(list, examName, academicYear);
 				Loggers.loggerValue(academicYear, "pdfgenerated");
 				startMonth.add(Calendar.MONTH, 1);
 			}
 			document.close();
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return document;
 
 	}
-*/
-	@Override
-	public List<ReportCard> downloadPdf(Token tokenDetail, String academicYear, String examName)
+
+	public Document generatePDF(List<ReportCard> card, String examName, String academicYear)
 			throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public void generatePDF(GenerateSalaryStatement salStmt, String examName, String academicYear) {
 
 		// Image image = null;
 
 		try {
-
+			document.open();
 			/*
 			 * try { image =
 			 * Image.getInstance("/home/gtpl/Desktop/gowdanar.png");
@@ -268,28 +254,15 @@ public class ReportCardServiceImpl implements ReportCardService {
 			gap.setSpacingAfter(25f);
 			document.add(gap);
 
-			PdfPTable empDetails = new PdfPTable(4);
+			PdfPTable empDetails = new PdfPTable(3);
 
-			PdfPCell cell1 = new PdfPCell(new Paragraph("Employee Code", labels));
-			PdfPCell cell2 = new PdfPCell(new Paragraph(salStmt.getSmartId().toString(), contents));
-			PdfPCell cell3 = new PdfPCell(new Paragraph("Employee Name", labels));
-			PdfPCell cell4 = new PdfPCell(new Paragraph(salStmt.getEmpName(), contents));
-			PdfPCell cell5 = new PdfPCell(new Paragraph("Designation", labels));
-			PdfPCell cell6 = new PdfPCell(new Paragraph(salStmt.getEmpDesignation(), contents));
-			PdfPCell cell7 = new PdfPCell(new Paragraph("Role", labels));
-			PdfPCell cell8 = new PdfPCell(new Paragraph(salStmt.getEmpRole(), contents));
-			PdfPCell cell9 = new PdfPCell(new Paragraph("Location", labels));
-			PdfPCell cell10 = new PdfPCell(new Paragraph("Bangalore", contents));
-			PdfPCell cell11 = new PdfPCell(new Paragraph("Bank Name", labels));
-			PdfPCell cell12 = new PdfPCell(new Paragraph("SBI", contents));
-			PdfPCell cell13 = new PdfPCell(new Paragraph("Date Of Birth", labels));
-			PdfPCell cell14 = new PdfPCell(new Paragraph("12/07/1990", contents));
-			PdfPCell cell15 = new PdfPCell(new Paragraph("Account Number", labels));
-			PdfPCell cell16 = new PdfPCell(new Paragraph("1234567890", contents));
-			PdfPCell cell17 = new PdfPCell(new Paragraph("Date Of Joining", labels));
-			PdfPCell cell18 = new PdfPCell(new Paragraph("12/03/2016", contents));
-			PdfPCell cell19 = new PdfPCell(new Paragraph("PAN Number", labels));
-			PdfPCell cell20 = new PdfPCell(new Paragraph("GOPX2119D", contents));
+			PdfPCell cell1 = new PdfPCell(new Paragraph("Smart Id", labels));
+			PdfPCell cell2 = new PdfPCell(new Paragraph(card.get(0).getSmartId(), contents));
+			System.out.println("smart id of student " + card.get(0).getSmartId());
+			PdfPCell cell3 = new PdfPCell(new Paragraph("Student Name", labels));
+			PdfPCell cell4 = new PdfPCell(new Paragraph(card.get(0).getStudentName(), contents));
+			PdfPCell cell5 = new PdfPCell(new Paragraph("Exam Name", labels));
+			PdfPCell cell6 = new PdfPCell(new Paragraph(card.get(0).getExamName(), contents));
 
 			cell1.setPadding(5f);
 			cell2.setPadding(5f);
@@ -297,145 +270,68 @@ public class ReportCardServiceImpl implements ReportCardService {
 			cell4.setPadding(5f);
 			cell5.setPadding(5f);
 			cell6.setPadding(5f);
-			cell7.setPadding(5f);
-			cell8.setPadding(5f);
-			cell9.setPadding(5f);
-			cell10.setPadding(5f);
-			cell11.setPadding(5f);
-			cell12.setPadding(5f);
-			cell13.setPadding(5f);
-			cell14.setPadding(5f);
-			cell15.setPadding(5f);
-			cell16.setPadding(5f);
-			cell17.setPadding(5f);
-			cell18.setPadding(5f);
-			cell19.setPadding(5f);
-			cell20.setPadding(5f);
 
 			empDetails.addCell(cell1);
 			empDetails.addCell(cell2);
 			empDetails.addCell(cell3);
 			empDetails.addCell(cell4);
 			empDetails.addCell(cell5);
-			empDetails.addCell(cell6);
-			empDetails.addCell(cell7);
-			empDetails.addCell(cell8);
-			empDetails.addCell(cell9);
-			empDetails.addCell(cell10);
-			empDetails.addCell(cell11);
-			empDetails.addCell(cell12);
-			empDetails.addCell(cell13);
-			empDetails.addCell(cell14);
-			empDetails.addCell(cell15);
-			empDetails.addCell(cell16);
-			empDetails.addCell(cell17);
-			empDetails.addCell(cell18);
-			empDetails.addCell(cell19);
-			empDetails.addCell(cell20);
+			// empDetails.addCell(cell6);
 
 			document.add(empDetails);
 
 			document.add(gap);
 
-			PdfPTable salDetails = new PdfPTable(4);
+			PdfPTable salDetails = new PdfPTable(3);
 
 			// salDetails.setWidthPercentage(10f);
 
-			PdfPCell scell1 = new PdfPCell(new Paragraph("Earnings", labels));
-			PdfPCell scell2 = new PdfPCell(new Paragraph("Amount", labels));
-			PdfPCell scell3 = new PdfPCell(new Paragraph("Deductions", labels));
-			PdfPCell scell4 = new PdfPCell(new Paragraph("Amount", labels));
-			PdfPCell scell5 = new PdfPCell(new Paragraph("Basic", labels));
-			PdfPCell scell6 = new PdfPCell(new Paragraph(salStmt.getBasicSalary().toString(), contents));
-			PdfPCell scell7 = new PdfPCell(new Paragraph("Provident Fund", labels));
-			PdfPCell scell8 = new PdfPCell(new Paragraph(salStmt.getPf().toString(), contents));
-			PdfPCell scell9 = new PdfPCell(new Paragraph("HRA", labels));
-			PdfPCell scell10 = new PdfPCell(new Paragraph(salStmt.getHra().toString(), contents));
-			PdfPCell scell11 = new PdfPCell(new Paragraph("Professional Tax", labels));
-			PdfPCell scell12 = new PdfPCell(new Paragraph(salStmt.getPt().toString(), contents));
-			PdfPCell scell13 = new PdfPCell(new Paragraph("Conveyance", labels));
-			PdfPCell scell14 = new PdfPCell(new Paragraph(salStmt.getConveyance().toString(), contents));
-			PdfPCell scell15 = new PdfPCell(new Paragraph("Income Tax", labels));
-			PdfPCell scell16 = new PdfPCell(new Paragraph(salStmt.getIt().toString(), contents));
-			PdfPCell scell17 = new PdfPCell(new Paragraph("Special Allowance", labels));
-			PdfPCell scell18 = new PdfPCell(new Paragraph(salStmt.getSpecialAllowance().toString(), contents));
-			PdfPCell scell19 = new PdfPCell(new Paragraph(""));
-			PdfPCell scell20 = new PdfPCell(new Paragraph(""));
-			PdfPCell scell21 = new PdfPCell(new Paragraph("Total", labels));
-			PdfPCell scell22 = new PdfPCell(new Paragraph(salStmt.getActualSalary().toString(), contents));
-			PdfPCell scell23 = new PdfPCell(new Paragraph("Total Deduction", labels));
-			PdfPCell scell24 = new PdfPCell(new Paragraph(salStmt.getDeductedSalary().toString(), contents));
-			PdfPCell scell25 = new PdfPCell(new Paragraph("Net Pay", labels));
-			PdfPCell scell26 = new PdfPCell(new Paragraph(salStmt.getPayable().toString()));
-			PdfPCell scell27 = new PdfPCell(new Paragraph("In words: xxx only"));
+			PdfPCell scell1 = new PdfPCell(new Paragraph("S.No.", labels));
+			PdfPCell scell2 = new PdfPCell(new Paragraph("SUBJECTS", labels));
+			PdfPCell scell3 = new PdfPCell(new Paragraph(examName + " Grade", labels));
 
-			scell26.setColspan(3);
-			scell27.setColspan(4);
-
-			scell1.setPadding(5f);
+			scell1.setPadding(2f);
 			scell2.setPadding(5f);
-			scell3.setPadding(5f);
-			scell4.setPadding(5f);
-			scell5.setPadding(5f);
-			scell6.setPadding(5f);
-			scell7.setPadding(5f);
-			scell8.setPadding(5f);
-			scell9.setPadding(5f);
-			scell10.setPadding(5f);
-			scell11.setPadding(5f);
-			scell12.setPadding(5f);
-			scell13.setPadding(5f);
-			scell14.setPadding(5f);
-			scell15.setPadding(5f);
-			scell16.setPadding(5f);
-			scell17.setPadding(5f);
-			scell18.setPadding(5f);
-			scell19.setPadding(5f);
-			scell20.setPadding(5f);
-			scell21.setPadding(5f);
-			scell22.setPadding(5f);
-			scell23.setPadding(5f);
-			scell24.setPadding(5f);
-			scell25.setPadding(5f);
-			scell26.setPadding(5f);
-			scell27.setPadding(5f);
+			scell3.setPadding(3f);
 
 			salDetails.addCell(scell1);
 			salDetails.addCell(scell2);
 			salDetails.addCell(scell3);
-			salDetails.addCell(scell4);
-			salDetails.addCell(scell5);
-			salDetails.addCell(scell6);
-			salDetails.addCell(scell7);
-			salDetails.addCell(scell8);
-			salDetails.addCell(scell9);
-			salDetails.addCell(scell10);
-			salDetails.addCell(scell11);
-			salDetails.addCell(scell12);
-			salDetails.addCell(scell13);
-			salDetails.addCell(scell14);
-			salDetails.addCell(scell15);
-			salDetails.addCell(scell16);
-			salDetails.addCell(scell17);
-			salDetails.addCell(scell18);
-			salDetails.addCell(scell19);
-			salDetails.addCell(scell20);
-			salDetails.addCell(scell21);
-			salDetails.addCell(scell22);
-			salDetails.addCell(scell23);
-			salDetails.addCell(scell24);
-			salDetails.addCell(scell25);
-			salDetails.addCell(scell26);
-			salDetails.addCell(scell27);
-
+			for (ReportCard reportcard : card) {
+				int i = 1;
+				String sno = "" + i;
+				salDetails.addCell(sno);
+				salDetails.addCell(reportcard.getSubject());
+				salDetails.addCell(reportcard.getSubjectGrade());
+				i++;
+			}
+			salDetails.addCell("TOTAL PERCENTAGE % IS " + calculatPercentage("", card));
 			document.add(salDetails);
-
+			System.out.println("***************** Generate PDF **************** ");
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
-		/***********************************************************/
-		System.out.println("Generated PDF File");
+		return document;
 	}
 
-	
+	@Override
+	public String grade(Double percentage,Long hid) {
+		Loggers.loggerStart();
+		String totalGrade=null;
+		try {
+			
+			List<Grades> grades=gradeDao.getGradesList(hid);
+			for (Grades grades2 : grades) {
+				for (int i = 0; i < grades.size(); i++) {
+					if(grades2.getEndPercentage()>=percentage&&grades2.getStartPercentage()<=percentage){
+						totalGrade=grades2.getGrade();
+					}
+				}
+			}
+		} catch (GSmartServiceException e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd();
+		return totalGrade;
+	}
 }

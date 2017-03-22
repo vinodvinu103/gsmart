@@ -10,7 +10,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scripting.jruby.JRubyScriptUtils.JRubyExecutionException;
 import org.springframework.stereotype.Repository;
+
+import com.google.gson.JsonSerializationContext;
 
 @Repository
 public class CalendarCalculator {
@@ -42,6 +45,7 @@ public class CalendarCalculator {
 	}
 
 	/*public void execute(JobExecutionContext context) throws JobExecutionException {
+>>>>>>> 9414e452c71ca0becbdf7170c286e7ac273c0d1f
 		System.out.println("Hello Quartz!");
 	}*/
 	
@@ -56,6 +60,5 @@ public class CalendarCalculator {
 		}
 		return unixTime;
 	}
-
 
 }

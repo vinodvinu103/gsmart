@@ -61,8 +61,11 @@ public class BandController {
 	 */
 	// String module=getAuthorization.getModuleName();
 
+
+
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("hierarchy") Integer hierarchy, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+
 			throws GSmartBaseException {
 		Loggers.loggerStart(hierarchy);
 		String tokenNumber = token.get("Authorization").get(0);
@@ -153,7 +156,7 @@ public class BandController {
 		    
 	    	
         Loggers.loggerEnd();
-    	return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+        return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 	     
 	}
 
@@ -175,8 +178,6 @@ public class BandController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-
-
 
 		    if(task.equals("edit")){
 		    	cb=bandServices.editBand(band);
