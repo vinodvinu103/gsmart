@@ -183,7 +183,7 @@ public class InventoryController {
 	public ResponseEntity<Map<String, Object>> editInventory(@RequestBody Inventory inventory,
 			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
-		Loggers.loggerStart();
+		Loggers.loggerStart(inventory);
 		Inventory ch=null;
 		String tokenNumber = token.get("Authorization").get(0);
 

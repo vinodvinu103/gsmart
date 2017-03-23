@@ -199,7 +199,6 @@ public class BandController {
 
 		str.length();
 
-
 		 if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){
 		    	cb=bandServices.editBand(band);

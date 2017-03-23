@@ -1,28 +1,39 @@
 package com.gsmart.dao;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+
+
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gsmart.model.Band;
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
@@ -41,7 +52,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	Session session = null;
 	Query query;
 	Transaction tranction = null;
-
+	Criteria criteria=null;
 	public void getConnection() {
 		session = sessionFactroy.openSession();
 		tranction = session.beginTransaction();
@@ -62,7 +73,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			list = query.list();
-			System.out.println("Serch based on smartid..." + list);
+
 /*
 		List<ReportCard> cards = null;
 //		Map<String, Object> reportcardMap = new HashMap<String, Object>();
@@ -84,6 +95,11 @@ public class ReportCardDaoImpl implements ReportCardDao {
 //		     reportcardMap.put("totalcards", query.list().size());
 			Loggers.loggerEnd(cards);
 			*/
+
+
+			System.out.println("Serch based on smartid..." + list);
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -285,27 +301,15 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 
 	@Override
-	public void excelToDB(String smartId, MultipartFile fileUpload) throws Exception {
+	public void excelToDB(String smartId, MultipartFile fileUpload,Hierarchy hid) throws Exception {
 		InputStream in = null;
 		XSSFWorkbook workBook = null;
-		XSSFSheet sheet = null;
+		XSSFSheet sheet = null; // org.apache.poi.xssf.usermodel.XSSFSheet
 		FileInputStream file = null;
 		Loggers.loggerStart();
+		Hierarchy hierarchy=hid;
 		try {
-			/*
-			 * file = new FileInputStream(new
-			 * File("/home/gtpl/Desktop/Report_Card.xlsx"));
-			 * Loggers.loggerStart(file);
-			 * 
-			 * XSSFWorkbook workbook = new XSSFWorkbook(file);
-			 * System.out.println("11111111111"); XSSFSheet sheet =
-			 * workbook.getSheetAt(0); System.out.println("222222222222");
-			 * 
-			 * // FormulaEvaluator //
-			 * fe=workBook.getCreationHelper().createFormulaEvaluator(); XSSFRow
-			 * row = null; getConnection(); System.out.println("hi>>>>." +
-			 * sheet.getLastRowNum());
-			 */
+			 
 			in = fileUpload.getInputStream();
 			workBook = new XSSFWorkbook(in);
 			sheet = workBook.getSheetAt(0);
@@ -363,12 +367,11 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 				reportCard.setSubjectGrade(row.getCell(10).getStringCellValue());
 				System.out.println("setSubjectGrade" + row.getCell(10).getStringCellValue());
-
-				reportCard.setTotalGrade(row.getCell(11).getStringCellValue());
-				System.out.println("setTotalGrade" + row.getCell(11).getStringCellValue());
-
+				
+				reportCard.setExamName(row.getCell(11).getStringCellValue());
+				reportCard.setHierarchy(hierarchy);
 				session.merge(reportCard);
-				System.out.println("dane");
+				System.out.println("done");
 			}
 
 			/*
@@ -412,7 +415,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 				yeaAndex.setAcademicYear(yearAndExamName1);
 				yearAndExamName.add(yeaAndex);
 			}
-			session.close();
+			
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -459,7 +462,35 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Loggers.loggerEnd();
 		return examName;
 	}
-
+	
+	@Override
+	public Map<String, Object> reportCardListForTeacher(Token tokenDetail, Integer min, Integer max)
+			throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		Map<String, Object> reportCard=new HashMap();
+		try {
+			getConnection();
+			criteria = session.createCriteria(ReportCard.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("reportingManagerId", tokenDetail.getSmartId()));
+			criteria.add(Restrictions.eq("hierarchy.hid", tokenDetail.getHierarchy().getHid()));
+			criteria.addOrder(Order.asc("smartId"));
+			criteria.setFirstResult(min);
+			criteria.setMaxResults(max);
+			reportCard.put("reportCardList", criteria.list());
+			
+			criteria = session.createCriteria(ReportCard.class).add(Restrictions.eq("isActive", "Y"))
+					.add(Restrictions.eq("reportingManagerId", tokenDetail.getSmartId()))
+					.add(Restrictions.eq("hierarchy.hid", tokenDetail.getHierarchy().getHid()))
+					.setProjection(Projections.rowCount());
+			Long count = (Long) criteria.uniqueResult();
+			reportCard.put("count", count);
+			Loggers.loggerEnd(reportCard);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return reportCard;
+	}
 	
 	
 }

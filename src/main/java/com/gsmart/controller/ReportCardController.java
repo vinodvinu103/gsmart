@@ -70,7 +70,7 @@ public class ReportCardController {
 	ReportCardDao reportCardDao;
 
 	@RequestMapping(value="/{academicYear}/{examName}",method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getList(@RequestHeader HttpHeaders token, HttpSession httpSession,@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName)
+	public ResponseEntity<Map<String, Object>> getListForStudent(@RequestHeader HttpHeaders token, HttpSession httpSession,@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		List<ReportCard> list = null;
@@ -168,20 +168,25 @@ public class ReportCardController {
 		return new ResponseEntity<IAMResponse>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/excelToDB/{smartId}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Map<String, String>> excelToDB(@PathVariable("smartId") String smartId,
-			@RequestBody MultipartFile fileUpload,@RequestHeader HttpHeaders token,
+	@RequestMapping(value = "/excelToDB", method = RequestMethod.POST , consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Map<String, String>> excelToDB(@RequestBody MultipartFile fileUpload,@RequestHeader HttpHeaders token,
 			HttpSession httpSession) {
+		// , consumes=MediaType.MULTIPART_FORM_DATA_VALUE
+		Loggers.loggerStart(fileUpload);
+		//MultipartFile multipartFile =fileUpload.getMultiPartFile();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		String smartId=tokenObj.getSmartId();
 		Map<String, String> jsonMap = new HashMap<>();
 		try {if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
 		{
 //			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-			reportCardService.excelToDB(smartId, fileUpload);
-			jsonMap.put("result", "success");
+			reportCardService.excelToDB(smartId, fileUpload, tokenObj.getHierarchy());
+			jsonMap.put("result", "fail");
 		}
+			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, String>>(jsonMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -341,11 +346,11 @@ public class ReportCardController {
 		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getReportList(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/forTeacher/{min}/{max}",method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getReportListForTeacher(@PathVariable("min") Integer min,@PathVariable("max") Integer max,@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
-		List<ReportCard> list = null;
+		Map<String, Object> list = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -358,7 +363,7 @@ public class ReportCardController {
 			// String teacherSmartId=smartId.getSmartId();
 			Loggers.loggerStart();
 			if (modulePermission.getView()) {
-				list = reportCardDao.reportCardList(tokenObj);
+				list = reportCardDao.reportCardListForTeacher(tokenObj, min, max);
 				permission.put("reportCard", list);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			}

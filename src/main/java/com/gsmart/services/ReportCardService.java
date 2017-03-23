@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartServiceException;
@@ -21,7 +22,7 @@ public interface ReportCardService {
 	
 	public void deleteReportCard(ReportCard card)throws GSmartServiceException;
 	
-	public void excelToDB(String smartId,MultipartFile fileUpload) throws Exception;
+	public void excelToDB(String smartId,MultipartFile fileUpload,Hierarchy hid) throws Exception;
 	
 	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
 	
