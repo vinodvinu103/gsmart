@@ -229,6 +229,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
+			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 			session.close();
 		}
