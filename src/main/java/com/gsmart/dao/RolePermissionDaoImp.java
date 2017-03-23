@@ -70,9 +70,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		     criteria.addOrder(Order.asc("role"));
 		     rolePermissions = criteria.list();		     
 		     Criteria criteriaCount = session.createCriteria(RolePermission.class);
+		     criteriaCount.add(Restrictions.eq("isActive", "Y"));
 		     criteriaCount.setProjection(Projections.rowCount());
-		     Long count = (Long) criteriaCount.uniqueResult();
-		     rolePermissionMap.put("totalpermission", count);
+		     rolePermissionMap.put("totalpermission", criteriaCount.uniqueResult());
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
