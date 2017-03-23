@@ -66,6 +66,7 @@ public class WeekDayController {
 	
 		 Long hid=null;
 			if(tokenObj.getHierarchy()==null){
+				System.out.println("entry into if tokenobj................");
 				hid=hierarchy;
 			}else{
 				hid=tokenObj.getHierarchy().getHid();

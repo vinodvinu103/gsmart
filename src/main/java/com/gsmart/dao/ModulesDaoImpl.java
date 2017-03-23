@@ -139,12 +139,14 @@ public class ModulesDaoImpl implements ModulesDao{
 			
 			cb=updatemodule(oldModule,modules);
 		
-			//addModule(modules);
+		
 			if (cb!=null) {
+				getconnection();
 				modules.setEntryTime(CalendarCalculator.getTimeStamp());
 				modules.setIsActive("Y");
 				session.save(modules);
 				transaction.commit();
+				session.close();
 				
 				
 			}
@@ -158,13 +160,20 @@ public class ModulesDaoImpl implements ModulesDao{
 		
 	}
 	
+
+
+
 	private Modules updatemodule(Modules oldModule,Modules modules)throws GSmartDatabaseException {
+		
 		Modules ch=null;
+		
 		Loggers.loggerStart(modules.getSubModules());
+		
 	      try{
 	    	  
 	    	  if ( modules.getSubModules()==null) {
 	    		  Modules module3=fetch1(modules);
+	    		  Loggers.loggerStart(module3);
 	    		  if (module3==null) {
 	    			  oldModule.setIsActive("N");
 						oldModule.setUpdateTime(CalendarCalculator.getTimeStamp());
