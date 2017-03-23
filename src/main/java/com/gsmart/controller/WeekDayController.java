@@ -53,7 +53,7 @@ public class WeekDayController {
 	
 	@RequestMapping(value="/{hierarchy}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getWeekDaysList(@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
-		Loggers.loggerStart("loggers start for weekdays +++++++++++++++++++");
+		Loggers.loggerStart("loggers start for weekdays +++++++++++++++++++"+httpSession);
 		
 		List<WeekDays> list = null;
 		String tokenNumber = token.get("Authorization").get(0);
@@ -71,13 +71,14 @@ public class WeekDayController {
 		 System.out.println("weekdays...map entery.......");
 		 Long hid=null;
 			if(tokenObj.getHierarchy()==null){
+				System.out.println("entry into if tokenobj................");
 				hid=hierarchy;
 			}else{
 				hid=tokenObj.getHierarchy().getHid();
 			}
 		try {
 			
-			System.out.println("weekdays try block entry...........");
+			System.out.println("weekdays try block entry..........."+ modulePermission);
 			if (modulePermission.getView()){
 				System.out.println("in side if condition for get weekdays>>>>>>>>>>>");
 				list = weekDaysService.getWeekDaysList(hid);
