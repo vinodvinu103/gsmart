@@ -29,7 +29,6 @@ import com.gsmart.dao.HolidayDao;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.SyncRequestObject;
 import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
@@ -73,9 +72,7 @@ public class AttendanceController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		permissions.put("modulePermission", modulePermission);
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
 		List<Map<String, Object>> attendanceList = null;
 		List<Holiday> holidayList = null;
@@ -134,7 +131,6 @@ public class AttendanceController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				attendanceService.editAttedance(attendance);
 
@@ -142,11 +138,6 @@ public class AttendanceController {
 			myResponse = new IAMResponse("success");
 			Loggers.loggerEnd(attendance);
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-
-		}
 	}
 
 	@RequestMapping(value = "/{smartId}", method = RequestMethod.GET)
@@ -157,13 +148,10 @@ public class AttendanceController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
 
-		resultmap.put("modulePermisson", modulePermisson);
-		if (modulePermisson != null) {
 			Profile profile = profileServices.getProfileDetails(smartId);
 			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",
 					tokenObj.getHierarchy().getHid());
@@ -193,9 +181,6 @@ public class AttendanceController {
 			resultmap.put("selfProfile", profile);
 			resultmap.put("childList", childList);
 			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
-		}
 
 	}
 }

@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
-import com.gsmart.model.Search;
 import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.TokenService;
@@ -52,29 +50,22 @@ public class RfidController {
 		String tokenNumber = token.get("Authorization").get(0);
 
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 
 		str.length();
 
 		Map<String, Object> profileListWithRfid = null;
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> profile = new HashMap<>();
-		profile.put("modulePermission", modulePermission);
 
 
-		if (modulePermission != null) {
 
 			profileListWithRfid = profileServices.getProfilesWithRfid(min, max,tokenObj.getHierarchy());
 			profile.put("profileListWithRfid", profileListWithRfid);
 			Loggers.loggerEnd(profileListWithRfid);
 
 			return new ResponseEntity<Map<String, Object>>(profile, HttpStatus.OK);
-
-		} else {
-			return new ResponseEntity<Map<String, Object>>(profile, HttpStatus.OK);
-		}
 
 	}
 	
@@ -87,19 +78,16 @@ public class RfidController {
 		String tokenNumber = token.get("Authorization").get(0);
 
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 
 		str.length();
 
 		Map<String, Object> profileListWithoutRfid = null;
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> profile = new HashMap<>();
-		profile.put("modulePermission", modulePermission);
 
 
-		if (modulePermission != null) {
 			profileListWithoutRfid = profileServices.getProfilesWithoutRfid(min, max,tokenObj.getHierarchy());
 			profile.put("profileListWithoutRfid", profileListWithoutRfid);
 
@@ -107,9 +95,6 @@ public class RfidController {
 
 			return new ResponseEntity<Map<String, Object>>(profile, HttpStatus.OK);
 
-		} else {
-			return new ResponseEntity<Map<String, Object>>(profile, HttpStatus.OK);
-		}
 
 	}
 		
@@ -127,14 +112,9 @@ public class RfidController {
 
 		str.length();
 		
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			profileServices.addRfid(rfid);
 			Loggers.loggerEnd();
 			return new ResponseEntity<IAMResponse> (resp, HttpStatus.OK);
-		} else {
-			resp.setMessage("Permission Denied");
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		}
 	}
 	
 	@RequestMapping(value = "/profilesListWithoutRfid/{profile}",  method = RequestMethod.POST)
@@ -148,19 +128,13 @@ public class RfidController {
 
 		str.length();
 		List<Profile> profilesListWithoutRfid = null;
-        RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-        Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+        Token tokenObj=(Token) httpSession.getAttribute("token");
 		
 		Map<String, Object> studentMap = new HashMap<>();
-		studentMap.put("modulePermission", modulePermission);
-		if (modulePermission!= null) {			
 			profilesListWithoutRfid = profileServices.searchProfilesWithoutRfid(profile,tokenObj.getRole(),tokenObj.getHierarchy());
 			studentMap.put("profilesListWithoutRfid", profilesListWithoutRfid);
 			Loggers.loggerEnd(profilesListWithoutRfid);
 		 return new ResponseEntity<Map<String, Object>>(studentMap, HttpStatus.OK);
-	} else {
-		return new ResponseEntity<Map<String, Object>>(studentMap, HttpStatus.OK);
-	}
 	}
 	
 
@@ -174,18 +148,12 @@ public class RfidController {
 		String str =getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		List<Profile> profilesListWithRfid = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber,httpSession);
-		 Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		 Token tokenObj=(Token) httpSession.getAttribute("token");
 		Map<String,Object>employeeMap = new HashMap<>();
-		employeeMap.put("modulePermission", modulePermission);
-		if(modulePermission!=null){
 			profilesListWithRfid=profileServices.searchProfilesWithRfid(profile,tokenObj.getRole(),tokenObj.getHierarchy());
 			employeeMap.put("profilesListWithRfid", profilesListWithRfid);
 			Loggers.loggerEnd(profilesListWithRfid);
 			return new ResponseEntity<Map<String,Object>>(employeeMap,HttpStatus.OK);
-		}else{
-			return new ResponseEntity<Map<String,Object>>(employeeMap,HttpStatus.OK);
-		}
 		
 	}
 	
