@@ -81,6 +81,7 @@ public interface ProfileDao {
 
 	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
 
+	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 
@@ -98,7 +99,7 @@ public interface ProfileDao {
 	
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public Map<String, Object> getBannerList(Integer min, Integer max);
+	public List<Banners> getBannerList();
 	
 	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 
