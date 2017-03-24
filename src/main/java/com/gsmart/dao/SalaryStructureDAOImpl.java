@@ -1,22 +1,99 @@
 package com.gsmart.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.gsmart.model.CompoundSalaryStructure;
 import com.gsmart.model.SalaryStructure;
-import com.gsmart.util.CalendarCalculator;
+import com.gsmart.util.GSmartDatabaseException;
+import com.gsmart.util.Loggers;
 
 public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 
 	@Autowired
-	private SessionFactory sessionFactory;
+	SessionFactory sessionFactory;
+
+	Session session = null;;
+	Query query;
+	Transaction transaction = null;
+	Criteria criteria = null;
+	Criteria criteriaCount=null;
+	Long count=null;
+	
+	public void getConnection() {
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+	}
+
+
+	@Override
+	public Map<String, Object> getSalaryStructure(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
+		getConnection();
+		Loggers.loggerStart();
+		List<SalaryStructure> salaryStructureList = null;
+		
+		Map<String, Object> salaryStructureMap = new HashMap<>();
+		
+		try {
+            criteria = session.createCriteria(SalaryStructure.class);
+			criteria.setMaxResults(max);
+			criteria.setFirstResult(min);
+			criteria.addOrder(Order.asc("standard"));
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
+			salaryStructureList = criteria.list();
+			criteriaCount= session.createCriteria(SalaryStructure.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			 count= (Long) criteriaCount.uniqueResult();
+			 salaryStructureMap.put("totalSalaryStructure", count);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		salaryStructureMap.put("assignList", salaryStructureMap);
+		Loggers.loggerEnd();
+		return salaryStructureMap;
+	}
+	
 	
 	@Override
+	public CompoundSalaryStructure addSalaryStructure(SalaryStructure salarystructure) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		getConnection();
+		CompoundSalaryStructure css=null;
+		try{
+			query=session.createQuery("from SalaryStructure where isActive=:isActive and smartId=:smartId and year=:year ");
+			query.setParameter("smartId",salarystructure.getSmartId());
+			query.setParameter("year", salarystructure.getYear());
+			css = (CompoundSalaryStructure) query.list();
+		}catch (Exception e) {
+          e.printStackTrace();
+		}
+		return css;
+	}
+
+	@Override
+	public SalaryStructure editSalaryStructure(SalaryStructure salarystructure) throws GSmartDatabaseException {
+		return null;
+	}
+	
+	
+	
+	
+	/*@Override
 	public List<SalaryStructure> view() {
 
 		Session session = sessionFactory.openSession();
@@ -67,5 +144,5 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 		session.update(oldSalaryStructure);
 		session.getTransaction().commit();
 	}
-
+*/
 }

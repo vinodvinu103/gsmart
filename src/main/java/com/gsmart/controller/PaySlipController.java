@@ -21,6 +21,9 @@ public class PaySlipController {
 	private PaySlipService paySlipService;
 	
     public	Boolean flag=false;
+    
+    
+    
 	
 	@RequestMapping("/download")
 	public ResponseEntity<Map<String,String>> download(@RequestBody PaySlip paySlip)

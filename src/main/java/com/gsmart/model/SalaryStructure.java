@@ -7,6 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+/**
+ * @author root1
+ *
+ */
 @Entity
 @Table(name="SALARY_STRUCTURE")
 @IdClass(CompoundSalaryStructure.class)
@@ -84,7 +88,16 @@ public class SalaryStructure {
 	@Column(name="STATUTORY")
 	private Double statutory;
 	
-	
+	private Hierarchy hierarchy;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
 	public String getSmartId() {
 		return smartId;
 	}
