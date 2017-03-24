@@ -14,11 +14,9 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.gsmart.model.Assign;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
@@ -46,7 +44,6 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		List<InventoryAssignments> inventoryList=null;
 		Map<String, Object> inventoryassignMap = new HashMap<String, Object>();
 		Criteria criteria = null;
-		getConnection();
 		criteria = session.createCriteria(InventoryAssignments.class);
 		Criteria criteriaCount = session.createCriteria(InventoryAssignments.class);
 		try
@@ -119,12 +116,12 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 	@Override
 	public InventoryAssignments editInventoryDetails(InventoryAssignments inventoryAssignments)
 			throws GSmartDatabaseException {
+		getConnection();
 		try {
 			getConnection();
 			Loggers.loggerStart(inventoryAssignments);
 			InventoryAssignments oldInventory = getInventory(inventoryAssignments.getEntryTime(),inventoryAssignments.getHierarchy());
 			if (oldInventory != null) {
-				getConnection();
 				oldInventory.setIsActive("N");
 				oldInventory.setUpdatedTime(CalendarCalculator.getTimeStamp());
 				session.update(oldInventory);
@@ -140,7 +137,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
       }
 
 	private InventoryAssignments getInventory(String entryTime, Hierarchy hierarchy) throws GSmartDatabaseException {
-		getConnection();
+		
 		Loggers.loggerStart();
 
 		try {
@@ -160,7 +157,6 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 	private int updateInventory(String cat, String item, int requestQuantity, InventoryAssignments oldInventory) {
 		Loggers.loggerStart();
 		Inventory inventory = null;
-		getConnection();
 		query = session.createQuery("from Inventory where category=:category and itemType=:itemType and isActive='Y' ");
 		query.setParameter("category", cat);
 		query.setParameter("itemType", item);
@@ -169,7 +165,6 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		if (numOfLeftQunt - requestQuantity < 0) {
 			return 400;
 		} else {
-			getConnection();
 		    if(oldInventory != null) {
 		    	int oldQuntity=oldInventory.getQuantity();
 				if(oldQuntity < requestQuantity){

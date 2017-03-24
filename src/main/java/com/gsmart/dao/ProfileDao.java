@@ -81,7 +81,6 @@ public interface ProfileDao {
 
 	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
 
-	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 

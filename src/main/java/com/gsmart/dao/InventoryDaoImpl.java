@@ -112,6 +112,7 @@ public class InventoryDaoImpl implements InventoryDao {
 
 		try {
 			getconnection();
+
 			Inventory inventory2=fetch(inventory);
 			if (inventory2 ==null) {
 				inventory.setEntryTime((CalendarCalculator.getTimeStamp()));
@@ -125,6 +126,8 @@ public class InventoryDaoImpl implements InventoryDao {
 		} 
 		}catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
+		}finally {
+			session.close();
 		}
 		return cb;	
 		
@@ -133,7 +136,6 @@ public class InventoryDaoImpl implements InventoryDao {
 	public Inventory fetch(Inventory inventory) {
 		Inventory inventory2 = null;
 		try {
-			getconnection();
 			System.out.println("i am going "+ inventory);
 			Hierarchy hierarchy = inventory.getHierarchy();
 			query = session.createQuery(
@@ -163,17 +165,28 @@ public class InventoryDaoImpl implements InventoryDao {
 		getconnection();
 		Loggers.loggerStart();
 		Inventory ch = null;
+		int diffQuantity =0;
 		try {
-
-			Inventory oldInvertory = getInventory(inventory.getEntryTime(), inventory.getHierarchy());
-			oldInvertory.setIsActive("N");
-			oldInvertory.setUpdateTime(CalendarCalculator.getTimeStamp());
-			session.update(oldInvertory);
-			inventory.setEntryTime(CalendarCalculator.getTimeStamp());
-			inventory.setIsActive("Y");
-			session.save(inventory);
-			transaction.commit();
-
+			Inventory oldInvertory = getInventory(inventory.getEntryTime(),inventory.getHierarchy());
+			if(inventory.getQuantity()<oldInvertory.getQuantity())
+			{
+				
+				
+				diffQuantity =oldInvertory.getQuantity()-inventory.getQuantity();
+				System.out.println("Difference........"+diffQuantity);
+				inventory.setLeftQuantity(inventory.getLeftQuantity()-diffQuantity);
+			}else{
+				
+				
+				diffQuantity=inventory.getQuantity()- oldInvertory.getQuantity();
+				System.out.println("get difference between them >>>>>>"+diffQuantity);
+				inventory.setLeftQuantity(inventory.getLeftQuantity()+diffQuantity);
+				
+			}
+			ch=updateInventory(oldInvertory, inventory);
+			
+			addInventory(inventory);
+	
 
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -187,9 +200,13 @@ public class InventoryDaoImpl implements InventoryDao {
 		Loggers.loggerEnd();
 		return ch;
 	}
+	
+	
 	private Inventory updateInventory(Inventory oldInventory, Inventory inventory) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Inventory ch = null;
+		//getInventory(role, hierarchy);
+		
 			try {
 				if(oldInventory.getCategory().equals(inventory.getCategory()) && oldInventory.getItemType().equals(inventory.getItemType())){
 					oldInventory.setUpdateTime(CalendarCalculator.getTimeStamp());
@@ -308,6 +325,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		return inventoryList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Inventory> getInventory(Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
@@ -326,6 +344,8 @@ public class InventoryDaoImpl implements InventoryDao {
 			inventory = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd("inveList:"+inventory);
 		return inventory;

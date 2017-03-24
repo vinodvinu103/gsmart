@@ -1,6 +1,5 @@
 package com.gsmart.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
-import com.gsmart.services.AssignService;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.InventoryAssignmentsServices;
-import com.gsmart.services.ProfileServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -53,17 +49,14 @@ public class InventoryAssignmentsController {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		str.length();
         System.out.println("coming");
-		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
-		Map<String, Object> finalResponse = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
 		Map<String, Object> dataMap = new HashMap<>();
 		Map<String, Object> inventoryList = null;
         System.out.println("inside the if condition");
-		if (tokenObj.getHierarchy() == null && modulePermission != null) {
+		if (tokenObj.getHierarchy() == null) {
 			System.out.println("hierarchy is null");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			System.out.println("going inside for loop");
@@ -72,19 +65,17 @@ public class InventoryAssignmentsController {
                 System.out.println("going to the map");
 				dataMap.put("inventoryList", inventoryList);
 				dataMap.put("hierarchy", hierarchy);
-				dataMap.put("modulePermissions", modulePermission);
                 Loggers.loggerEnd("Inventory List:" + inventoryList);
 				
 				}
 			responseMap.put("data", dataMap);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
-		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
+		} else if (tokenObj.getHierarchy() != null) {
 			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
-            dataMap.put("modulePermissions", modulePermission);
 			responseMap.put("data", dataMap);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
@@ -115,8 +106,7 @@ public class InventoryAssignmentsController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
         str.length();
                 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)){
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			inventoryAssignments.setHierarchy(tokenObj.getHierarchy());
 
 			InventoryAssignmentsCompoundKey ch = inventoryAssignmentsServices.addInventoryDetails(inventoryAssignments,old);
@@ -126,11 +116,6 @@ public class InventoryAssignmentsController {
 			} else {
 				resp.setMessage("Already exists");
 			}
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		} else {
-			resp.setMessage("Permission Denied");
-
-		}
 		Loggers.loggerEnd();
 		
 		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
@@ -143,7 +128,6 @@ public class InventoryAssignmentsController {
 
 		IAMResponse myResponse = null;
 
-		try {
 			String tokenNumber = token.get("Authorization").get(0);
 
 			String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -151,7 +135,6 @@ public class InventoryAssignmentsController {
 			str.length();
 			InventoryAssignments ch = null;
 
-			if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 
 				if (task.equals("edit")) {
 					ch = inventoryAssignmentsServices.editInventoryDetails(inventoryAssignments);
@@ -166,13 +149,6 @@ public class InventoryAssignmentsController {
 					myResponse = new IAMResponse("success");
 					return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 				}
-			} else {
-				myResponse = new IAMResponse("Permission Denied");
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 	}
