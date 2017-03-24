@@ -126,8 +126,9 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			throws GSmartDatabaseException {
 		try {
 
-			InventoryAssignments oldInventory = getInventory(inventoryAssignments.getEntryTime(),
-					inventoryAssignments.getHierarchy());
+			getConnection();
+			Loggers.loggerStart(inventoryAssignments);
+			InventoryAssignments oldInventory = getInventory(inventoryAssignments.getEntryTime(),inventoryAssignments.getHierarchy());
 			if (oldInventory != null) {
 				oldInventory.setIsActive("N");
 				oldInventory.setUpdatedTime(CalendarCalculator.getTimeStamp());

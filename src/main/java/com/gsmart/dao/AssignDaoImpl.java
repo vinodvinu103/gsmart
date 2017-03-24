@@ -48,16 +48,7 @@ public class AssignDaoImpl implements AssignDao {
 		Criteria criteria = null;
 		try {
 
-			getConnection();
-				
-			if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
-	 			query = session.createQuery("from Assign where isActive=:isActive");
-			else {
-				query = session.createQuery("from Assign where isActive=:isActive and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hierarchy.getHid());
-			}
-			query.setParameter("isActive", "Y");
-			criteria = session.createCriteria(Assign.class);
+            criteria = session.createCriteria(Assign.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
 			assignList = criteria.list();

@@ -132,6 +132,27 @@ public class InventoryDaoImpl implements InventoryDao {
 		return cb;
 	}
 
+	public Inventory fetch(Inventory inventory) {
+		Inventory inventory2 = null;
+		Inventory inve =null;
+		try {
+			getconnection();
+			/*inve = updateInventory(oldInventory,inventory);	*/
+			System.out.println("i am going "+ inventory);
+			Hierarchy hierarchy = inventory.getHierarchy();
+			query = session.createQuery(
+					"from Inventory WHERE category=:category and itemType=:itemType and isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("category", inventory.getCategory());
+			query.setParameter("hierarchy", hierarchy.getHid());
+			query.setParameter("itemType", inventory.getItemType());
+			query.setParameter("isActive", "Y");
+			inventory2 = (Inventory) query.uniqueResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return inventory2;
+	}
+
 	/**
 	 * persists the updated inventory instance
 	 * 
@@ -163,6 +184,38 @@ public class InventoryDaoImpl implements InventoryDao {
 			session.close();
 		}
 	}
+	
+	private Inventory updateInventory(Inventory oldInventory, Inventory inventory) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		Inventory ch = null;
+			try {
+				if(oldInventory.getCategory().equals(inventory.getCategory()) && oldInventory.getItemType().equals(inventory.getItemType())){
+					oldInventory.setUpdateTime(CalendarCalculator.getTimeStamp());
+					oldInventory.setIsActive("N");
+					session.update(oldInventory);
+					transaction.commit();
+					return oldInventory;
+				}else{
+					Inventory inventory2=fetch(inventory);
+					if(inventory2==null){
+						oldInventory.setUpdateTime(CalendarCalculator.getTimeStamp());
+						oldInventory.setIsActive("N");
+						session.update(oldInventory);
+						transaction.commit();
+						return oldInventory;
+						}
+					}
+				
+			} catch (ConstraintViolationException e) {
+				throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+			} catch (Throwable e) {
+				throw new GSmartDatabaseException(e.getMessage());
+			}
+			Loggers.loggerEnd();
+			return ch;
+
+		}
+
 
 	/**
 	 * removes the inventory entity from the database.
@@ -175,8 +228,8 @@ public class InventoryDaoImpl implements InventoryDao {
 	public Inventory getInventory(String entryTime, Hierarchy hierarchy) {
 		try {
 
-			query = session.createQuery(
-					"from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
+			query = session.createQuery("from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("entryTime", entryTime);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			Inventory inventry = (Inventory) query.uniqueResult();
