@@ -11,6 +11,8 @@ public interface ContactDao {
 
 	public boolean studentToTeacher(MessageDetails details, String role) throws Exception;
 	
+	public boolean teacherToStudent(MessageDetails details, String role) throws Exception;
+	
 	public List<MessageDetails> getList()throws GSmartDatabaseException;
 	
 	public List<MessageDetails> msgList(MessageDetails details) throws Exception;

@@ -12,6 +12,8 @@ public interface ContactServices
 
 	public boolean studentToTeacher(MessageDetails details, String role) throws Exception;
 	
+	public boolean teacherToStudent(MessageDetails details, String role) throws Exception;
+	
 	public List<MessageDetails> getData()throws GSmartServiceException;
 	
 	public List<MessageDetails> msgList(MessageDetails details) throws Exception;

@@ -120,7 +120,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 	public InventoryAssignments editInventoryDetails(InventoryAssignments inventoryAssignments)
 			throws GSmartDatabaseException {
 		try {
-			
+			getConnection();
 			Loggers.loggerStart(inventoryAssignments);
 			InventoryAssignments oldInventory = getInventory(inventoryAssignments.getEntryTime(),inventoryAssignments.getHierarchy());
 			if (oldInventory != null) {

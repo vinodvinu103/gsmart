@@ -61,6 +61,12 @@ public class ContactServicesImp implements ContactServices {
 	}
 	
 	@Override
+	public boolean teacherToStudent(MessageDetails details, String role) throws Exception {
+		
+		return dao.teacherToStudent(details,role);
+	}
+	
+	@Override
 	public Map<String, Object> teacherChat(MessageDetails details) throws Exception {
 		return dao.teacherChat(details);
 	}

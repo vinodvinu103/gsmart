@@ -45,6 +45,9 @@ public class MessageDetails
 	@Column(name = "POSTED_BY")
 	String postedBy;
 	
+	@Column(name = "POSTED_TO")
+	String postedTo;
+
 	@Id
 	@Lob
 	@Column(name = "MESSAGE",length=512)
@@ -135,6 +138,14 @@ public class MessageDetails
 
 	public void setPostedBy(String postedBy) {
 		this.postedBy = postedBy;
+	}
+	
+	public String getPostedTo() {
+		return postedTo;
+	}
+
+	public void setPostedTo(String postedTo) {
+		this.postedTo = postedTo;
 	}
 
 	public String getMessage() {
