@@ -200,10 +200,12 @@ public class ProfileDaoImp implements ProfileDao {
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
 			criteria.addOrder(Order.asc("firstName"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
+			
 //			criteria.setProjection(Projections.id());
 
 			Criteria criteriaCount = session.createCriteria(Profile.class).add(Restrictions.eq("isActive", "Y"));
-			criteria.add(Restrictions.eq("hierarchy.hid", hid));
+			
 			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 				if (role.toLowerCase().equals("student")) {
 					criteria.add(Restrictions.eq("role", "student").ignoreCase());
@@ -466,7 +468,6 @@ public class ProfileDaoImp implements ProfileDao {
 		Map<String, Object> rfidMap = new HashMap<>();
 		Criteria criteria = session.createCriteria(Profile.class);
 		try {
-			getConnection();
 			/*
 			 * query = session.createQuery(
 			 * "from Profile where rfId is null AND isActive='Y'");
@@ -740,6 +741,8 @@ public class ProfileDaoImp implements ProfileDao {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 	}
 
@@ -785,7 +788,9 @@ public class ProfileDaoImp implements ProfileDao {
 			
           e.printStackTrace();
           return false;
-          }
+          }finally {
+			session.close();
+		}
 		Loggers.loggerEnd();
 		return true;
 	}
@@ -801,10 +806,6 @@ public class ProfileDaoImp implements ProfileDao {
 		
 	}
 
-	@Override
-	public Profile profileDetails(String smartId) throws GSmartDatabaseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 }

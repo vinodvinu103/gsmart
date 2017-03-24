@@ -50,10 +50,15 @@ public class PasswordController {
 		Map<String, Object> responseMap = new HashMap<>();
 		if (token.get("Authorization")!= null) {
 			try {
+
 				String tokenNumber=token.get("Authorization").get(0);
 				//if(getAuthorization.authorizationForPost(tokenNumber, httpSession));{
 				
-				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+				//Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+
+				
+				Token tokenObj=(Token) httpSession.getAttribute("token");
+
 				String smartId = tokenObj.getSmartId();
 				login.setHierarchy(tokenObj.getHierarchy());
 				boolean pwd = passwordServices.changePassword(login, smartId,tokenObj.getHierarchy());
@@ -64,7 +69,7 @@ public class PasswordController {
 					responseMap.put("status", 404);
 					responseMap.put("message", "Enter Valid Password");
 				}
-			//}
+
 			} catch (GSmartServiceException e) {
 				e.printStackTrace();
 			}

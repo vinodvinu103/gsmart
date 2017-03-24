@@ -48,7 +48,7 @@ public class LoginServicesImpl implements LoginServices{
 				System.out.println("role is"+tokenDetails.getRole());
 				Loggers.loggerValue("User is already logged in", "");
 				
-				List<RolePermission> rolePermissions = permissionServices.getPermission(tokenDetails.getRole());
+				Map<String, Object> rolePermissions = permissionServices.getPermission(tokenDetails.getRole());
 				Profile profile = profileServices.getProfileDetails(tokenDetails.getSmartId());
 				jsonMap.put("permissions", rolePermissions);
 				jsonMap.put("profile", profile);
@@ -65,7 +65,7 @@ public class LoginServicesImpl implements LoginServices{
 					Login loginObj = ((Login)authentication.get("login"));
 					Profile profile = profileServices.getProfileDetails(smartId);
 					String role = profile.getRole();
-					List<RolePermission> rolePermissions = permissionServices.getPermission(role);
+					Map<String, Object> rolePermissions = permissionServices.getPermission(role);
 					Token token = issueToken(smartId, role, loginObj);
 					jsonMap.put("permissions", rolePermissions);
 					jsonMap.put("profile", profile);

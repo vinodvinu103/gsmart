@@ -21,7 +21,6 @@ import com.gsmart.dao.HierarchyDao;
 import com.gsmart.dao.LeaveMasterDao;
 import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.LeaveMaster;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.LeaveMasterService;
 import com.gsmart.services.TokenService;
@@ -57,12 +56,10 @@ public class LeaveMasterController {
 
 		Map<String, Object> leaveMasterList = null;
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		System.out.println("hierarchy" + tokenObj.getHierarchy());
 		Map<String, Object> permissions = new HashMap<>();
 
-		permissions.put("modulePermission", modulePermission);
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
 			hid=hierarchy;
@@ -70,7 +67,6 @@ public class LeaveMasterController {
 			hid=tokenObj.getHierarchy().getHid();
 		}
 
-		/* if (modulePermission != null) { */
 		leaveMasterList = leaveMasterService.getLeaveMasterList(hid, min, max);
 		if (leaveMasterList != null) {
 			permissions.put("status", 200);
@@ -84,10 +80,6 @@ public class LeaveMasterController {
 		permissions.put("leaveMasterList", leaveMasterList);
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		/*
-		 * } else { return new ResponseEntity<Map<String, Object>>(leavemaster,
-		 * HttpStatus.OK); }
-		 */
 
 	}
 
@@ -102,9 +94,8 @@ public class LeaveMasterController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			if(tokenObj.getHierarchy()==null){
 				leaveMaster.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
 			}else{
@@ -125,10 +116,6 @@ public class LeaveMasterController {
 
 			}
 
-		} else {
-			respMap.put("status", 403);
-			respMap.put("message", "Permission Denied");
-		}
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
@@ -148,7 +135,6 @@ public class LeaveMasterController {
 		str.length();
 		Map<String, Object> respMap = new HashMap<>();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				ch = leaveMasterService.editLeaveMaster(leaveMaster);
 				if (ch != null) {
@@ -165,13 +151,8 @@ public class LeaveMasterController {
 			respMap.put("message", "Deleted Succesfully");
 			}
 
-		}
+		
 
-		else {
-			respMap.put("status", 200);
-			respMap.put("message", "Permission Denied");
-
-		}
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
@@ -189,7 +170,7 @@ public class LeaveMasterController {
 
 		List<LeaveMaster> leaveMasterList =null;
 
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		System.out.println("hierarchy" + tokenObj.getHierarchy());
 		Map<String, Object> permissions = new HashMap<>();
 		leaveMasterList =leaveMasterDao.getLeaveMasterListForApplyLeave(tokenObj.getHierarchy().getHid());
