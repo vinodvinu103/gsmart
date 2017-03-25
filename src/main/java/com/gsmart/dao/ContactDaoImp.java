@@ -332,7 +332,7 @@ public class ContactDaoImp implements ContactDao {
 			System.out.println("posted to :"+PostedTo);
 			System.out.println("smartId"+smartId);
 
-			query = session.createQuery("from MessageDetails where (smartId=:smartId and reportingManagerId=:rId) or postedTo=:postedTo ORDER BY entryTime DESC");
+			query = session.createQuery("from MessageDetails where (smartId=:smartId and reportingManagerId=:rId) or postedTo=:postedTo ORDER BY entryTime ASC");
 			query.setParameter("postedTo", PostedTo);
 			query.setParameter("smartId", PostedTo);
 			query.setParameter("rId", smartId);
