@@ -46,6 +46,7 @@ public class InventoryDaoImpl implements InventoryDao {
 	 * @return list of inventory entities available in Inventory
 	 */
 
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartDatabaseException {
@@ -266,9 +267,9 @@ public class InventoryDaoImpl implements InventoryDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Inventory> getInventoryList(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
+		Loggers.loggerStart(hierarchy.getSchool());
 		getconnection();
-		List<Inventory> inventoryList;
+		List<Inventory> inventoryList=null;
 		try {
 			query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());

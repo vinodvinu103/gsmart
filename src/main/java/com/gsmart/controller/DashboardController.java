@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -64,8 +65,61 @@ public class DashboardController {
 	SearchService searchService;
 	@Autowired
 	FeeServices feeServices;
-
+	
 	@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getInventory1(@PathVariable("academicYear") String academicYear,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		List<Inventory> inventoryList = new ArrayList<>();
+		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
+		Map<String, Object> finalResponse = new HashMap<>();
+		Map<String, Object> responseMap = new HashMap<>();
+		
+		if (modulePermission != null) {
+			
+			if(tokenObj.getHierarchy()==null){
+				
+				List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
+				Loggers.loggerStart(hierarchyList);
+				for (Hierarchy hierarchy : hierarchyList) {
+					Map<String, Object> dataMap = new HashMap<>();
+					System.out.println("in side for >>>>>>>>>>>>>>>>>>>   >>>>>>>>>>>>>>>>>. "+hierarchy.getSchool());
+					inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), hierarchy);
+					dataMap.put("inventoryList", inventoryList);
+					dataMap.put("hierarchy", hierarchy);
+					inventoryByHierarchy.add(dataMap);
+				}
+				finalResponse.put("inventoryList", inventoryByHierarchy);
+				finalResponse.put("modulePermissions", modulePermission);
+				responseMap.put("data", finalResponse);
+				responseMap.put("status", 200);
+				responseMap.put("message", "success");
+			}else{
+				Map<String, Object> dataMap = new HashMap<>();
+				System.out.println("in side else condition   <><<><><<><><><><  >>>");
+				inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy());
+				dataMap.put("inventoryList", inventoryList);
+				dataMap.put("hierarchy", tokenObj.getHierarchy());
+				inventoryByHierarchy.add(dataMap);
+				finalResponse.put("inventoryList", inventoryByHierarchy);
+				finalResponse.put("modulePermissions", modulePermission);
+				responseMap.put("data", finalResponse);
+				responseMap.put("status", 200);
+				responseMap.put("message", "success");
+			}
+			Loggers.loggerEnd(inventoryByHierarchy);
+			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+		}
+	}
+
+	/*@RequestMapping(value = "/inventory1/{academicYear}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventory(@PathVariable("academicYear") String academicYear,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
@@ -89,6 +143,7 @@ public class DashboardController {
 				childsList.add(tokenObj.getSmartId());
 				inventoryAssignmentList = inventoryAssignmentServices.getInventoryDashboardData(childsList, hierarchy);
 				inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), hierarchy);
+				System.out.println("Inventory list::::::::::::::"+inventoryList);
 				inventoryAssignmentList = inventoryAssignmentServices.groupCategoryAndItem(inventoryAssignmentList, inventoryList);
 				dataMap.put("inventoryAssignmentList", inventoryAssignmentList);
 				dataMap.put("hierarchy", hierarchy);
@@ -118,7 +173,7 @@ public class DashboardController {
 		}
 		Loggers.loggerEnd(responseMap);
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
-	}
+	}*/
 
 	@RequestMapping(value = "/attendance/{date}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@PathVariable("date") Long date,

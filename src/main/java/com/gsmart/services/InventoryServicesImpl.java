@@ -48,6 +48,7 @@ public class InventoryServicesImpl implements InventoryServices {
 		}
 
 	}
+	
 
 	/**
 	 * calls {@link InventoryDao}'s <code>addInventory(...)</code> method
