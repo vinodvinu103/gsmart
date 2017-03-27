@@ -31,7 +31,7 @@ public class TokenDaoImpl implements TokenDao{
 //			query = session.createQuery("from Login where smartId=:smartId");
 //			query.setParameter("smartId", loginObj.getSmartId());
 //			Login login = (Login)query.uniqueResult();
-			token.setHierarchy(loginObj.getHierarchy());
+			
 			session.save(token);
 			tx.commit();
 		} catch (ConstraintViolationException e) {
@@ -64,9 +64,9 @@ public class TokenDaoImpl implements TokenDao{
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		/*finally {
+		finally {
 			session.close();
-		}*/
+		}
 
 		return token;
 	}

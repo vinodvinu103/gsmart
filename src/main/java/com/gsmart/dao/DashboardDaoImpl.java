@@ -29,6 +29,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		tx = session.beginTransaction();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Attendance> getAttendance() {
 		getConnection();

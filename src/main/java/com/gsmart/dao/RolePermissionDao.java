@@ -44,9 +44,9 @@ public interface RolePermissionDao {
 	 */
 	public RolePermission editPermission(RolePermission permission)throws GSmartBaseException;
 
-	public List<RolePermission> getPermission(String role)throws GSmartBaseException;
+	public Map<String, Object> getPermission(String role)throws GSmartBaseException;
 	
-	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<RolePermission> getSubModuleNames(String role) throws GSmartDatabaseException;
 
 	
 }

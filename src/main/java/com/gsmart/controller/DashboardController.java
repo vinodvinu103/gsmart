@@ -29,7 +29,6 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.FeeServices;
@@ -124,9 +123,7 @@ public class DashboardController {
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart();
-		String tokenNumber = token.get("Authorization").get(0);
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> responseMap = new HashMap<>();
 		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
 		Map<String, Object> finalResponse = new HashMap<>();
@@ -150,7 +147,6 @@ public class DashboardController {
 				inventoryByHierarchy.add(dataMap);
 			}
 			finalResponse.put("inventoryList", inventoryByHierarchy);
-			finalResponse.put("modulePermissions", modulePermission);
 			responseMap.put("data", finalResponse);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
@@ -166,7 +162,6 @@ public class DashboardController {
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
 			inventoryByHierarchy.add(dataMap);
 			finalResponse.put("inventoryList", inventoryByHierarchy);
-			finalResponse.put("modulePermissions", modulePermission);
 			responseMap.put("data", finalResponse);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
@@ -181,11 +176,7 @@ public class DashboardController {
 
 		Loggers.loggerStart();
 		Loggers.loggerStart("Given date is : " + date);
-		String tokenNumber = token.get("Authorization").get(0);
-		// String str = getAuthorization.getAuthentication(tokenNumber,
-		// httpSession);
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Hierarchy> hierarchyList = new ArrayList<>();
 		Map<String, Object> responseMap = new HashMap<>();
 		List<Map<String,  Object>> attendanceList=null;
@@ -211,9 +202,7 @@ public class DashboardController {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		Loggers.loggerStart(modulePermission);
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		str.length();
 
 		int totalPaidFees=0;
@@ -222,7 +211,7 @@ public class DashboardController {
 
 		Map<String, Object> responseMap = new HashMap<>();
 		
-		if (tokenObj.getHierarchy() == null && modulePermission != null) {
+		if (tokenObj.getHierarchy() == null) {
 			System.out.println("in side if condition for fees");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
@@ -244,7 +233,7 @@ public class DashboardController {
 			responseMap.put("data", responseList);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
-		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
+		} else if (tokenObj.getHierarchy() != null) {
 
 			Map<String, Object> dataMap = new HashMap<>();
 

@@ -1,6 +1,5 @@
 package com.gsmart.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -11,14 +10,11 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.fasterxml.jackson.databind.Module;
 import com.gsmart.model.CompoundModules;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Modules;
-import com.gsmart.model.Notice;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
-import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 @Repository
@@ -143,12 +139,14 @@ public class ModulesDaoImpl implements ModulesDao{
 			
 			cb=updatemodule(oldModule,modules);
 		
-			//addModule(modules);
+		
 			if (cb!=null) {
+				getconnection();
 				modules.setEntryTime(CalendarCalculator.getTimeStamp());
 				modules.setIsActive("Y");
 				session.save(modules);
 				transaction.commit();
+				session.close();
 				
 				
 			}
@@ -162,13 +160,20 @@ public class ModulesDaoImpl implements ModulesDao{
 		
 	}
 	
+
+
+
 	private Modules updatemodule(Modules oldModule,Modules modules)throws GSmartDatabaseException {
+		
 		Modules ch=null;
+		
 		Loggers.loggerStart(modules.getSubModules());
+		
 	      try{
 	    	  
 	    	  if ( modules.getSubModules()==null) {
 	    		  Modules module3=fetch1(modules);
+	    		  Loggers.loggerStart(module3);
 	    		  if (module3==null) {
 	    			  oldModule.setIsActive("N");
 						oldModule.setUpdateTime(CalendarCalculator.getTimeStamp());
