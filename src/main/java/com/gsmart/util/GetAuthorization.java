@@ -34,7 +34,6 @@ public class GetAuthorization {
 		
 
 		try {
-//			Token token = tokenService.getToken(tokenNumber);
 			Token token=(Token) httpSession.getAttribute("token");
 			System.out.println("token"+token);
 			String module = getModuleName();
@@ -64,7 +63,6 @@ public class GetAuthorization {
 			tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			if(rolePermission==null || tokenObj==null)
 			{
-//				Token token = tokenService.getToken(tokenNumber);
 				Token token=(Token) httpSession.getAttribute("token");
 				String module = getModuleName();
 				Loggers.loggerValue("Token: ", token);
@@ -96,7 +94,6 @@ public class GetAuthorization {
 			
 			if(rolePermission==null || tokenObj==null)
 			{
-//				Token token = tokenService.getToken(tokenNumber);
 				Token token=(Token) httpSession.getAttribute("token");
 				String module = getModuleName();
 				Loggers.loggerValue("Token: ", token);
@@ -131,7 +128,7 @@ public class GetAuthorization {
 		int length = str.length;
 		String moduleName = str[length-1].replace("Controller", "");
 		System.out.println(moduleName);
-		return moduleName.toUpperCase();
+		return moduleName;
 	}
 	
 	private RolePermission getPermission(Token token, String module) {

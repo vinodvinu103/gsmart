@@ -52,9 +52,6 @@ public class PasswordController {
 			try {
 
 				String tokenNumber=token.get("Authorization").get(0);
-				//if(getAuthorization.authorizationForPost(tokenNumber, httpSession));{
-				
-				//Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 
 				
 				Token tokenObj=(Token) httpSession.getAttribute("token");

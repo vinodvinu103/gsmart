@@ -97,7 +97,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		RolePermissionCompound cb = null;
 		RolePermission permission1 = null;
 		try {
-			// Hierarchy hierarchy=rolePermission.getHierarchy();
 			if (rolePermission.getSubModuleName() == null) {
 				permission1 = fetch3(rolePermission);
 			} else {
@@ -409,7 +408,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 					"from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
-			query.setParameter("moduleName", "MAINTENANCE");
+			query.setParameter("moduleName", "Maintenance");
 			rolePermissions = (List<RolePermission>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
