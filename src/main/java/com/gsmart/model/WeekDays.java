@@ -9,6 +9,9 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Index;
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="WEEKDAYS")
 @IdClass(com.gsmart.model.CompoundWeekDays.class)
@@ -22,12 +25,14 @@ public class WeekDays {
 		
 		
 		@Column(name="ISACTIVE")
+		@Index(name = "isActive")
 		private String isActive;
 
 		
 	
 		@OneToOne(fetch=FetchType.EAGER)
 		@JoinColumn(name="hid")
+		@Index(name = "hierarchy")
 		private Hierarchy hierarchy;
 		
 	
