@@ -44,6 +44,9 @@ public class ReportCard {
 	@Column(name="STUDENT_NAME")
 	private String studentName;
 	
+	@Column(name="STUDENT_ID")
+	private String studentId;
+	
 	@Column(name="STANDARD")
 	@Index(name = "standard")
 	private String standard;
@@ -281,22 +284,23 @@ public class ReportCard {
 		this.multiPartFile = multiPartFile;
 	}
 
+	public String getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(String studentId) {
+		this.studentId = studentId;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", examName=" + examName
-				+ ", studentName=" + studentName + ", standard=" + standard + ", section=" + section
-				+ ", reportingManagerId=" + reportingManagerId + ", teacherName=" + teacherName + ", subject=" + subject
-				+ ", maxMarks=" + maxMarks + ", minMarks=" + minMarks + ", marksObtained=" + marksObtained
-				+ ", subjectGrade=" + subjectGrade + ", totalGrade=" + totalGrade + ", result=" + result
-				+ ", academicYear=" + academicYear + ", isActive=" + isActive + ", updateTime=" + updateTime
-				+ ", exitTime=" + exitTime + ", childReportFlag=" + childReportFlag + ", hierarchy=" + hierarchy + "]";
+				+ ", studentName=" + studentName + ", studentId=" + studentId + ", standard=" + standard + ", section="
+				+ section + ", reportingManagerId=" + reportingManagerId + ", teacherName=" + teacherName + ", subject="
+				+ subject + ", maxMarks=" + maxMarks + ", minMarks=" + minMarks + ", marksObtained=" + marksObtained
+				+ ", subjectGrade=" + subjectGrade + ", academicYear=" + academicYear + ", isActive=" + isActive
+				+ ", hierarchy=" + hierarchy + "]";
 	}
-
-	
-
-	
-
-	
 	
 	
 	
