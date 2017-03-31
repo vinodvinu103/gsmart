@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "MODULES")
 @IdClass(com.gsmart.model.CompoundModules.class)
@@ -33,6 +36,7 @@ public class Modules {
 	}
 	@Id
 	@Column(name = "MODULE")
+	@Index(name = "modules")
 	private String modules;
 	
 	@Id
@@ -40,6 +44,7 @@ public class Modules {
 	private String entryTime;
 	
 	@Column(name = "IS_ACTIVE")
+	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name = "UPDATE_TIME")

@@ -19,8 +19,10 @@ import javax.persistence.ManyToMany;*/
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
 import org.springframework.web.multipart.MultipartFile;
 
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="REPORT_CARD")
 @IdClass(com.gsmart.model.CompoundReportCard.class)
@@ -28,6 +30,7 @@ public class ReportCard {
 
 	@Id
 	@Column(name="SMARTID")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -42,6 +45,7 @@ public class ReportCard {
 	private String studentName;
 	
 	@Column(name="STANDARD")
+	@Index(name = "standard")
 	private String standard;
 	
 	@Column(name="SECTION")
@@ -76,6 +80,7 @@ public class ReportCard {
 	private String result;
 	
 	@Column(name="ACADEMIC_YEAR")
+	@Index(name = "academicYear")
 	private String academicYear;
 	
 	@Column(name="IS_ACTIVE")
