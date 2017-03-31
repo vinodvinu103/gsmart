@@ -56,7 +56,7 @@ public interface ProfileServices{
 	
 	public void addBanner(Banners banner) throws GSmartServiceException;
 
-	public Map<String, Object> getBannerList(Integer min, Integer max) throws GSmartServiceException;
+	public List<Banners> getBannerList() throws GSmartServiceException;
 	/**
 	 * @param banner instanceOf {@link Bannners}
 	 * @return nothing 

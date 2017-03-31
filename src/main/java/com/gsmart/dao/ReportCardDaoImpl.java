@@ -18,9 +18,16 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
+
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+
+
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -67,7 +74,31 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			query.setParameter("hierarchy", hierarchy.getHid());
 			list = query.list();
 
+/*
+		List<ReportCard> cards = null;
+//		Map<String, Object> reportcardMap = new HashMap<String, Object>();
+		Criteria criteria = null;
+		try {
+
+			
+			query = session.createQuery("from ReportCard where isActive='Y'");
+			cards = query.list();
+			criteria=session.createCriteria(ReportCard.class);
+			criteria.setFirstResult(0);
+		    criteria.setMaxResults(5);
+		    criteria.addOrder(Order.asc("standard"));
+		    criteria.setProjection(Projections.id());
+//		     cards = criteria.list();
+		     Criteria criteriaCount = session.createCriteria(ReportCard.class);
+		     criteriaCount.setProjection(Projections.rowCount());
+		     Long count = (Long) criteriaCount.uniqueResult();
+//		     reportcardMap.put("totalcards", query.list().size());
+			Loggers.loggerEnd(cards);
+			*/
+
+
 			System.out.println("Serch based on smartid..." + list);
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
