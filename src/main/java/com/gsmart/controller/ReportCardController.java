@@ -398,13 +398,10 @@ public class ReportCardController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
 		tokenObj.setSmartId(smartId);
 		Map<String, Object> permission = new HashMap<>();
-		permission.put("modulePremission", modulePermission);
 		try {
-			if (modulePermission.getView()) {
 				reportForHod=reportCardDao.reportCardforHOD(tokenObj, examName, academicYear);
 				permission.put("reportCard", reportForHod);
 				double per=reportCardService.calculatPercentage(tokenObj.getSmartId(), reportForHod);
@@ -413,12 +410,10 @@ public class ReportCardController {
 				rpcd.setTotalGrade(percentage);
 				permission.put("totalGrade", rpcd);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-			}
+			
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
-		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
