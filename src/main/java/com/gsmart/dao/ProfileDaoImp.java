@@ -465,13 +465,14 @@ public class ProfileDaoImp implements ProfileDao {
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithoutRfid;
 		Map<String, Object> rfidMap = new HashMap<>();
-		Criteria criteria = session.createCriteria(Profile.class);
+	//	Criteria criteria = session.createCriteria(Profile.class);
 		try {
 			/*
 			 * query = session.createQuery(
 			 * "from Profile where rfId is null AND isActive='Y'");
 			 * profileListWithoutRfid = query.list();
 			 */
+			Criteria criteria = session.createCriteria(Profile.class);
 			criteria.add(Restrictions.isNull("rfId"));
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
