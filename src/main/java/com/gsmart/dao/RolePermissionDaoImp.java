@@ -97,7 +97,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		RolePermissionCompound cb = null;
 		RolePermission permission1 = null;
 		try {
-			// Hierarchy hierarchy=rolePermission.getHierarchy();
 			if (rolePermission.getSubModuleName() == null) {
 				permission1 = fetch3(rolePermission);
 			} else {
@@ -332,11 +331,13 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	@SuppressWarnings("unchecked")
 
 	@Override
-	public List<RolePermission> getPermission(String role) throws GSmartDatabaseException {
+	public Map<String, Object> getPermission(String role) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
 
-		List<RolePermission> rolePermissions = new ArrayList<>();
+//		List<RolePermission> rolePermissions = new ArrayList<>();
+		Map<String, Object> rolePermissions=new HashMap<>();
+		
 
 		try {
 
@@ -350,10 +351,18 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			Loggers.loggerValue("given modules size is : ", modules.size());
 			for (String moduleName : modules) {
 				RolePermission permission = new RolePermission();
-				permission.setModuleName(moduleName);
-				Loggers.loggerValue("given moduleName is : ", moduleName);
-				rolePermissions.add(permission);
+				/*permission.setModuleName(moduleName);
+				Loggers.loggerValue("given moduleName is : ", moduleName);*/
+				
+				if(moduleName.equalsIgnoreCase("maintenance")){
+					permission.setModuleName(moduleName);
+					rolePermissions.put(moduleName, permission);
+				}else{
+					rolePermissions.put(moduleName,getPermission(role,moduleName));
+				}
+				
 			}
+			
 
 
 		} catch (Exception e) {
@@ -365,13 +374,34 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		Loggers.loggerEnd(rolePermissions);
 		return rolePermissions;
 	}
+	
+	private RolePermission getPermission(String role, String module) {
+		
+		Loggers.loggerStart(role);
+		Loggers.loggerStart(module);
+		
+		RolePermission permissions=null;
+		try{
+		
+		query = session.createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName) and isActive=:isActive");
+		query.setParameter("role", role);
+		query.setParameter("moduleName", module);
+		query.setParameter("isActive","Y");
+		permissions = (RolePermission) query.uniqueResult();
+
+		Loggers.loggerEnd(permissions);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return permissions;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RolePermission> getSubModuleNames(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+	public List<RolePermission> getSubModuleNames(String role) throws GSmartDatabaseException {
 		Loggers.loggerStart(role);
 		List<RolePermission> rolePermissions = null;
-		System.out.println("hierarchry ...." + hierarchy);
 		getConnection();
 		try {
 			query = session.createQuery(

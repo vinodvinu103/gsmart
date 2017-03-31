@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.gsmart.dao.NoticeDao;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.NoticeService;
 import com.gsmart.services.ProfileServices;
@@ -68,15 +67,15 @@ public class NoticeController {
 		str.length();
 
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
 		Map<String, Object> responseMap = new HashMap<>();
 
 		List<Notice> list = new ArrayList<Notice>();
 
 		try {
+
 			Map<String, Profile> allprofiles = searchService.getAllProfiles(year, tokenObj.getHierarchy().getHid());
 
 			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
@@ -88,7 +87,6 @@ public class NoticeController {
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucess");
-			responseMap.put("modulePermission", modulePermission);
 
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 		} catch (Exception e) {
@@ -106,7 +104,6 @@ public class NoticeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> responseMap = new HashMap<>();
 
@@ -117,7 +114,6 @@ public class NoticeController {
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucess");
-			responseMap.put("modulePermission", modulePermission);
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -184,7 +180,6 @@ public class NoticeController {
 	 * 
 	 * e.printStackTrace(); return null;
 	 * 
-	 * // TODO: handle exception }
 	 * 
 	 * 
 	 * }

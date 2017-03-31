@@ -40,7 +40,6 @@ public class FeeDaoImpl implements FeeDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Fee> getFeeList(Fee fee, Long hid) throws GSmartDatabaseException {
-		Loggers.loggerStart();
 		getconnection();
 		Loggers.loggerStart(fee.getAcademicYear());
 		
@@ -183,7 +182,6 @@ public class FeeDaoImpl implements FeeDao {
 		Map<String, Object> paidfeeMap = new HashMap<String, Object>();
 		try
 		{
-			getconnection();
 	   criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
@@ -206,9 +204,10 @@ public class FeeDaoImpl implements FeeDao {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		} /*finally {
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
 			session.close();
-		}*/
+		}
 		
 		return paidfeeMap;
 	}
@@ -222,7 +221,6 @@ public class FeeDaoImpl implements FeeDao {
 		Map<String, Object> unpaidfeeMap = new HashMap<String, Object>();
 		getconnection();
 		try {
-			getconnection();
 		criteria = session.createCriteria(Fee.class);
 		criteria.setMaxResults(max);
 		criteria.setFirstResult(min);
@@ -245,9 +243,10 @@ public class FeeDaoImpl implements FeeDao {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		} /*finally {
+			throw new GSmartDatabaseException(e.getMessage());
+		} finally {
 			session.close();
-		}*/
+		}
 		
 		return unpaidfeeMap;
 
@@ -325,6 +324,7 @@ public Fee getFee(String entryTime,Hierarchy hierarchy) {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
+			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 			session.close();
 		}
@@ -351,6 +351,8 @@ public Fee getFee(String entryTime,Hierarchy hierarchy) {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
+		}finally {
+			session.close();
 		}
 		Loggers.loggerEnd();
 		return feeList;

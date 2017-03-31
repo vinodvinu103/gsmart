@@ -113,6 +113,8 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			session.close();
 		}
 
 	}
@@ -120,6 +122,8 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@Override
 	public void sactionleave(Leave leave) throws GSmartDatabaseException {
 		Loggers.loggerStart(leave);
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
 
 		try {
 			Loggers.loggerStart();
@@ -129,14 +133,14 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		} catch (org.hibernate.exception.ConstraintViolationException e) {
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
+		}finally {
+			session.close();
 		}
 	}
 
 	private void updateLeave(Leave applyLeave) throws GSmartDatabaseException {
 		Loggers.loggerStart(applyLeave);
 		System.out.println("in side update");
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
 
 		
 		applyLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
@@ -145,19 +149,16 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		
 		session.update(applyLeave);
 		transaction.commit();
-		session.close();
 	}
 
 	public Leave getLeave(Leave leave) {
 		try {
 			Loggers.loggerStart();
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
+			
 			query = session.createQuery("from Leave where entryTime=:entryTime and isActive='Y'");
 			query.setParameter("entryTime", leave.getEntryTime());
 			Leave leaveList = (Leave) query.uniqueResult();
 			transaction.commit();
-			session.close();
 			Loggers.loggerEnd(leaveList);
 			return leaveList;
 		} catch (Exception e) {
