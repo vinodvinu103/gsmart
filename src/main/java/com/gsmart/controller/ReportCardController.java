@@ -325,7 +325,7 @@ public class ReportCardController {
 	public ResponseEntity<Map<String, byte[]>> generatePDF(@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName,@RequestHeader HttpHeaders token,HttpSession httpSession)throws GSmartBaseException, DocumentException{
 		Loggers.loggerStart();
 		Map<String, byte[]> pdf=new HashMap<>();
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Document document=reportCardService.downloadPdf(tokenObj, academicYear, examName);
 		PdfWriter.getInstance(document, baos);
@@ -344,17 +344,16 @@ public class ReportCardController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		Map<String, Object> permission = new HashMap<>();
-		permission.put("modulePremission", modulePermission);
+
 		try {
 			Loggers.loggerStart();
-			if (modulePermission.getView()) {
+	
 				childTeacherAndStandard=reportCardDao.findChildTeacher(tokenObj, academicYear);
 				permission.put("childTeacherAndStandard", childTeacherAndStandard);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-			}
+			
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
@@ -371,17 +370,15 @@ public class ReportCardController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		tokenObj.setSmartId(smartId);
 		Map<String, Object> permission = new HashMap<>();
-		permission.put("modulePremission", modulePermission);
 		try {
-			if (modulePermission.getView()) {
+		
 				examName=reportCardDao.examName(tokenObj,academicYear);
 				permission.put("examName", examName);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-			}
+			
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
@@ -398,7 +395,7 @@ public class ReportCardController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		tokenObj.setSmartId(smartId);
 		Map<String, Object> permission = new HashMap<>();
 		try {
@@ -419,7 +416,7 @@ public class ReportCardController {
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<List<Profile>> getStudentList(@RequestHeader HttpHeaders token,HttpSession httpSession){
 		Loggers.loggerStart();
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		List<Profile> list=new ArrayList<>();
 		try {
 			list=reportCardDao.studentList(tokenObj);
