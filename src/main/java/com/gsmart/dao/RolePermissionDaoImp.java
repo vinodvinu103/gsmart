@@ -97,7 +97,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		RolePermissionCompound cb = null;
 		RolePermission permission1 = null;
 		try {
-			// Hierarchy hierarchy=rolePermission.getHierarchy();
 			if (rolePermission.getSubModuleName() == null) {
 				permission1 = fetch3(rolePermission);
 			} else {
