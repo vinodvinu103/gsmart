@@ -29,7 +29,7 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.Profile;
-
+import com.gsmart.model.RolePermission;
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
@@ -78,8 +78,6 @@ public class DashboardController {
 		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
 		Map<String, Object> finalResponse = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
-		
-		if (modulePermission != null) {
 			
 			if(tokenObj.getHierarchy()==null){
 				
@@ -113,10 +111,8 @@ public class DashboardController {
 			}
 			Loggers.loggerEnd(inventoryByHierarchy);
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
-		}
-	}
+		} 
+	
 
 	/*@RequestMapping(value = "/inventory1/{academicYear}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventory(@PathVariable("academicYear") String academicYear,
