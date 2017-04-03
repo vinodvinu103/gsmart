@@ -104,8 +104,6 @@ public class LeaveServicesImpl implements LeaveServices {
 			cl=avoidLeaveForSameDate(leave, hierarchy.getHid());
 			if(cl==null){
 
-				//ArrayList<WeekDays> weekOffs = (ArrayList<WeekDays>) weekDays.getWeekdaysForHoliday(school, institution);
-
 				ArrayList<WeekDays> weekOffs = (ArrayList<WeekDays>) weekDays.getWeekdaysForHoliday(hierarchy.getHid());
 
 

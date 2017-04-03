@@ -73,10 +73,11 @@ public class PasswordDaoImpl implements PasswordDao {
 
 	@Override
 	public boolean changePassword(Login login, String smartId,Hierarchy hierarchy) throws GSmartDatabaseException {
-		getConnection();
+		
 		Loggers.loggerStart(login);
 		Login currentPassword = null;
 		boolean pwd = false;
+		getConnection();
 				
 		String pass=Encrypt.md5(login.getPassword());
 		try {
@@ -91,7 +92,6 @@ public class PasswordDaoImpl implements PasswordDao {
 				currentPassword.setPassword(Encrypt.md5(login.getConfirmPassword()));
 				session.update(currentPassword);
 				transaction.commit();
-				session.close();
 				pwd = true;
 			}
 			Loggers.loggerEnd();

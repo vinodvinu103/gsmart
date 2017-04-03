@@ -101,7 +101,7 @@ public interface ProfileDao {
 	
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public Map<String, Object> getBannerList(Integer min, Integer max);
+	public List<Banners> getBannerList();
 	
 	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 

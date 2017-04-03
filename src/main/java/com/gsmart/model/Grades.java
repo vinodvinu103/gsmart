@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="GRADES")
 @IdClass(com.gsmart.model.CompoundGrades.class)
@@ -20,10 +23,12 @@ public class Grades {
 	
 	@Id
 	@Column(name="SCHOOL")
+	@Index(name = "school")
     private String school;
 	
 	@Id
 	@Column(name="INSTITUTION")
+	@Index(name = "institution")
 	private String institution;
 	
 	@Column(name="START_PERCENTAGE")
@@ -37,6 +42,7 @@ public class Grades {
 	private String grade;
 	
 	@Column(name="ISACTIVE")
+	@Index(name = "isActive")
 	private String isActive;
 
 	@Column(name="ENTRY_TIME")
