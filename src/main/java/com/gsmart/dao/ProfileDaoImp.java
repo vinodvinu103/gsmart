@@ -154,6 +154,7 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			return "Profile image not successfully updated";
 		}finally {
 			session.close();
 		}
