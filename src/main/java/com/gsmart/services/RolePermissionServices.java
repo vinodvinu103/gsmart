@@ -41,8 +41,8 @@ public interface RolePermissionServices {
 	 */
 	public RolePermissionCompound addPermission(RolePermission permission) throws GSmartServiceException;
 
-	public List<RolePermission> getPermission(String role) throws GSmartServiceException;
+	public Map<String, Object> getPermission(String role) throws GSmartServiceException;
 	
-	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartServiceException;
+	public List<RolePermission> getSubModuleNames(String role) throws GSmartServiceException;
 	
 }

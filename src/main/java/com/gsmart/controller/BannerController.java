@@ -54,18 +54,18 @@ public class BannerController {
     return "product";
 }*/
 
-	@RequestMapping(value= "/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getBanner(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getBanner(@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
 		String tokenNumber = null;
-		Map<String, Object> bannerList = null;
+		List<Banners> bannerList = null;
 		Map<String, Object> permissions = new HashMap<>();
 		if(token.get("Authorization") != null) {
 			tokenNumber = token.get("Authorization").get(0);
 		} else {
-			bannerList = profileServices.getBannerList(min, max);
+			bannerList = profileServices.getBannerList();
 			permissions.put("bannerList", bannerList);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		}
@@ -74,17 +74,12 @@ public class BannerController {
 		str.length();
 
 		
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-
-		permissions.put("modulePermission", modulePermission);
-		if (modulePermission != null) {
-			bannerList = profileServices.getBannerList(min, max);
+		
+			bannerList = profileServices.getBannerList();
 			permissions.put("bannerList", bannerList);
 			Loggers.loggerEnd(bannerList);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
+		
 
 	}
 
@@ -101,16 +96,12 @@ public class BannerController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 
 			profileServices.addBanner(banner);
 
 			Loggers.loggerEnd();
 			return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
-		} else {
-			rsp = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
-		}
+		
 
 	}
 
@@ -125,14 +116,7 @@ public class BannerController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-			/*if (task.equals("edit")) {
-				banners = profileServices.editBanner(banner);
-				if (banners != null)
-					myResponse = new IAMResponse("SUCCESS");
-				else
-					myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
-			} else*/ 
+		 
 			if (task.equals("delete")) {
 				profileServices.deleteBanner(banner);
 				myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
@@ -140,12 +124,7 @@ public class BannerController {
 			Loggers.loggerEnd();
 
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
 
-		else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
 	}
 
 	/*@RequestMapping(value = "/upload/{updSmartId}", method = RequestMethod.POST)

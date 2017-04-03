@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="Attendance")
 @IdClass(com.gsmart.model.CompoundAttendance.class)
@@ -19,6 +22,7 @@ public class Attendance {
 	private String rfId;
 	
 	@Column(name="smartId")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	@Column(name="inTime")
@@ -32,6 +36,7 @@ public class Attendance {
 	private long inDate;
 	
 	@Column(name="isActive")
+	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="STATUS")

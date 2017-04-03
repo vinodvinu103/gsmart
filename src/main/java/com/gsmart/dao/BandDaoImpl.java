@@ -56,14 +56,11 @@ public class BandDaoImpl implements BandDao {
 		Loggers.loggerStart();
 		Map<String, Object> bandMap = new HashMap<String, Object>();
 		try {
-			getConnection();
 			criteria = session.createCriteria(Band.class);
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
 			criteria.addOrder(Order.asc("bandId"));
-			criteria.setProjection(Projections.id());
-//			criteria.setProjection(Projections.id());
 			bandMap.put("bandList", criteria.list());
 			criteria = session.createCriteria(Band.class).add(Restrictions.eq("isActive", "Y"))
 					.setProjection(Projections.rowCount());
@@ -206,7 +203,6 @@ private Band updateBand(Band oldBand,Band band) throws GSmartDatabaseException {
 	}
 	
 	public Band fetch(Band band) {
-		getConnection();
 		Loggers.loggerStart(band.getBandId());
 		Band bandList=null;
 		try {
@@ -241,6 +237,7 @@ private Band updateBand(Band oldBand,Band band) throws GSmartDatabaseException {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
 		}finally {
 			session.close();
 		}
@@ -264,6 +261,7 @@ private Band updateBand(Band oldBand,Band band) throws GSmartDatabaseException {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
 		}finally {
 			session.close();
 		}

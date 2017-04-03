@@ -75,22 +75,16 @@ public class RolePermissionController {
 		str.length();
 
 		Map<String, Object> rolePermissionList = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> permissions = new HashMap<>();
 
-		permissions.put("modulePermission", modulePermission);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
-		if (modulePermission != null) {
 			rolePermissionList = rolePermissionServices.getPermissionList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
 
 			permissions.put("rolePermissionList", rolePermissionList);
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
 	}
 
 	@RequestMapping(value = "/subModules", method = RequestMethod.GET)
@@ -102,16 +96,14 @@ public class RolePermissionController {
 
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
-		getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		System.out.println("<<<<<<role permission>>>>>>>>");
 
 		str.length();
 
 		List<RolePermission> subModules = null;
 
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		System.out.println("Token object" + tokenObj);
-		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(), tokenObj.getHierarchy());
+		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole());
 		System.out.println("submodule ::" + subModules);
 
 		return new ResponseEntity<List<RolePermission>>(subModules, HttpStatus.OK);
@@ -138,8 +130,7 @@ public class RolePermissionController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			permission.setHierarchy(tokenObj.getHierarchy());
 			RolePermissionCompound cb = rolePermissionServices.addPermission(permission);
 
@@ -149,10 +140,6 @@ public class RolePermissionController {
 				resp.setMessage("Already exists");
 			Loggers.loggerEnd();
 			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		} else {
-			resp.setMessage("Permission Denied");
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		}
 
 	}
 
@@ -176,7 +163,6 @@ public class RolePermissionController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				RolePermission cb = rolePermissionServices.editPermission(permission);
 
@@ -194,12 +180,8 @@ public class RolePermissionController {
 
 			}
 
-		}
+		
 
-		else {
-			resp.setMessage("Permission Denied");
-
-		}
 
 		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 	}

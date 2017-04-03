@@ -1,12 +1,14 @@
 package com.gsmart.model;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="SALARY_STRUCTURE")
 @IdClass(CompoundSalaryStructure.class)
@@ -15,6 +17,7 @@ public class SalaryStructure {
 	
 	@Id
 	@Column(name="SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -37,9 +40,11 @@ public class SalaryStructure {
 	private String empDesignation;
 	
 	@Column(name="EMP_ROLE")
+	@Index(name = "empRole")
 	private String empRole;
 	
 	@Column(name="IS_ACTIVE")
+	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="EXIT_TIME")

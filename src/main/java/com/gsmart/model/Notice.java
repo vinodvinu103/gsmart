@@ -10,6 +10,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "notice")
 public class Notice {
@@ -17,6 +20,7 @@ public class Notice {
 	@Column(name = "ENTRY_TIME")
 	private String entryTime;
 	@Column(name = "SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 	@Lob
 	@Column(name = "MESSAGE")
@@ -40,6 +44,7 @@ public class Notice {
 	
 	@Lob
 	@Column(name = "Image")
+	@Index(name = "image")
 	private byte[] image;
 	
 	

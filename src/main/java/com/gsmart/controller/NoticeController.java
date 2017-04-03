@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.gsmart.dao.NoticeDao;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.NoticeService;
 import com.gsmart.services.ProfileServices;
@@ -120,6 +119,7 @@ public class NoticeController {
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 
+
 		Map<String, Object> responseMap = new HashMap<>();
 
 		List<Notice> list = new ArrayList<Notice>();
@@ -195,7 +195,6 @@ public class NoticeController {
 	 * 
 	 * e.printStackTrace(); return null;
 	 * 
-	 * // TODO: handle exception }
 	 * 
 	 * 
 	 * }

@@ -53,7 +53,7 @@ public class AssignDaoImpl implements AssignDao {
 		Map<String, Object> assignMap = new HashMap<>();
 		
 		try {
-	 		
+
 			criteria = session.createCriteria(Assign.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
@@ -67,6 +67,7 @@ public class AssignDaoImpl implements AssignDao {
 			assignMap.put("totalassign", count);
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
 		}finally {
 			session.close();
 		}
@@ -103,7 +104,6 @@ public class AssignDaoImpl implements AssignDao {
 	
 	public Assign fetch(Assign assign) {
 		Loggers.loggerStart(assign);
-		getConnection();
 		Assign assignList = null;
 		try {
 			
@@ -117,6 +117,7 @@ public class AssignDaoImpl implements AssignDao {
 			Loggers.loggerEnd(assignList);
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		}
 		return assignList;
 	}
@@ -127,17 +128,14 @@ public class AssignDaoImpl implements AssignDao {
 		Loggers.loggerStart();
 		Assign asgn = null;
 		try {
-			getConnection();			
 			
 			Assign oldAssign = getAssigns(assign.getEntryTime(),assign.getHierarchy());
 			asgn = updateAssign(oldAssign, assign);
 			CompoundAssign ch =	addAssigningReportee(assign);
 			if(ch!=null){
 				getConnection();
-								
-			
-				query = session.createQuery("UPDATE Profile SET reportingManagerName=:teacherName, reportingManagerId=:reportingManagerId, counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
 				
+				query = session.createQuery("UPDATE Profile SET reportingManagerName=:teacherName, reportingManagerId=:reportingManagerId, counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
 				query.setParameter("reportingManagerId", assign.getTeacherSmartId());
 				query.setParameter("counterSigningManagerId", assign.getHodSmartId());
 				query.setParameter("standard", assign.getStandard());
@@ -150,8 +148,7 @@ public class AssignDaoImpl implements AssignDao {
 			}			
 		} catch (Exception e) {
 			e.printStackTrace();
-			// throw new GSmartDatabaseException(e.getMessage());
-			Loggers.loggerException(e.getMessage());
+			throw new GSmartDatabaseException(e.getMessage());
 		}
 		return asgn;
 	}
@@ -221,7 +218,6 @@ public class AssignDaoImpl implements AssignDao {
 		getConnection();
 		Loggers.loggerStart();
 		try {
-			getConnection();
 			
 			query = session.createQuery("UPDATE Profile SET reportingManagerId='null', standard='null', section='null' WHERE standard=:standard and section=:section");
 			query.setParameter("standard", assign.getStandard());
@@ -234,7 +230,9 @@ public class AssignDaoImpl implements AssignDao {
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 			Loggers.loggerException(e.getMessage());
+			throw new GSmartDatabaseException(e.getMessage());
 		} finally {
 			session.close();
 		}
@@ -301,6 +299,7 @@ public class AssignDaoImpl implements AssignDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
 		}finally {
 			session.close();
 		}

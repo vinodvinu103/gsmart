@@ -76,26 +76,29 @@ public interface ProfileDao {
 	 * @return Nothing
 	 * @throws GSmartDatabaseException
 	 */
-	public void editRole(Profile profile) throws GSmartDatabaseException;
 
-	public List<Profile> getsearchRep(Search search, String role, Hierarchy hierarchy);
+	public void editRole(Profile profile)throws GSmartDatabaseException;
+
+	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
+
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 
-
-
-
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	
 	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
+	
+	public List<Profile> searchProfilesWithoutRfid(String profile,String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 
+	public List<Profile> searchProfilesWithRfid(String profile,String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public Map<String, Object> getBannerList(Integer min, Integer max);
+	public List<Banners> getBannerList();
 	
 	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 
