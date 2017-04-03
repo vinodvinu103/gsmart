@@ -22,7 +22,10 @@ public interface ProfileServices{
 	public String updateProfile(Profile profile)throws GSmartServiceException;
 	
 	public String deleteprofile(Profile profile)throws GSmartServiceException;
-
+	
+	/* for profile image change*/
+	
+	public String changeprofileimage(Profile profile)throws GSmartServiceException;
 
 	/*for profile*/
 

@@ -138,7 +138,28 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 		return "update successfully21";
 	}
-
+    
+	@Override
+	public String changeprofileimage(Profile profile){
+		getConnection();
+		Loggers.loggerStart();
+		try{
+			query = session.createQuery("update Profile set image=:image where smartId=:smartId and isActive=:isActive");
+			query.setParameter("image", profile.getImage());
+			query.setParameter("smartId", profile.getSmartId());
+			query.setParameter("isActive", "Y");
+			query.executeUpdate();
+			transaction.commit();
+			Loggers.loggerEnd();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return "Profile image updated";
+	}
+	
 	@Override
 	public String deleteprofile(Profile profile) {
 		getConnection();
