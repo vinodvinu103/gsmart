@@ -48,6 +48,9 @@ public interface ProfileDao {
 	public String deleteprofile(Profile profile);
 	
 	public boolean deleteProfileIfMailFailed(String smartId);
+	
+	/* for profile image change*/
+	public String changeprofileimage(Profile profile);
 
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
