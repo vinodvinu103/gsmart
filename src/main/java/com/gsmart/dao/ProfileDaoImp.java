@@ -473,7 +473,11 @@ public class ProfileDaoImp implements ProfileDao {
 			 * profileListWithoutRfid = query.list();
 			 */
 			Criteria criteria = session.createCriteria(Profile.class);
-			criteria.add(Restrictions.isNull("rfId"));
+			/*criteria.add(Restrictions.isNull("rfId"));
+			criteria.add(Restrictions.eq("rfId", "''"));*/
+			criteria.add(Restrictions.disjunction().add(
+	                Restrictions.or(Restrictions.isNull("rfId"),
+	                        Restrictions.like("rfId", ""))));
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
 			criteria.setFirstResult(min);
@@ -531,7 +535,10 @@ public class ProfileDaoImp implements ProfileDao {
 			 * profileListWithRfid = query.list();
 			 */
 			Criteria criteria = session.createCriteria(Profile.class);
-			criteria.add(Restrictions.isNotNull("rfId"));
+			criteria.add(Restrictions.neOrIsNotNull("rfId", ""));
+			/*criteria.add(Restrictions.disjunction().add(
+	                Restrictions.or(Restrictions.isNotNull("rfId"),
+	                        Restrictions.neOrIsNotNull("rfId", ""))));*/
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
 			criteria.setFirstResult(min);
