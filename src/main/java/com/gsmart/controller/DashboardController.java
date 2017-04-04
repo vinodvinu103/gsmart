@@ -91,7 +91,6 @@ public class DashboardController {
 					inventoryByHierarchy.add(dataMap);
 				}
 				finalResponse.put("inventoryList", inventoryByHierarchy);
-				finalResponse.put("modulePermissions", modulePermission);
 				responseMap.put("data", finalResponse);
 				responseMap.put("status", 200);
 				responseMap.put("message", "success");
@@ -103,7 +102,6 @@ public class DashboardController {
 				dataMap.put("hierarchy", tokenObj.getHierarchy());
 				inventoryByHierarchy.add(dataMap);
 				finalResponse.put("inventoryList", inventoryByHierarchy);
-				finalResponse.put("modulePermissions", modulePermission);
 				responseMap.put("data", finalResponse);
 				responseMap.put("status", 200);
 				responseMap.put("message", "success");
