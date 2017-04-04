@@ -2,6 +2,7 @@ package com.gsmart.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,16 +53,22 @@ public class NoticeController {
 
 	@Autowired
 	GetAuthorization getAuthorization;
+	
+	@Autowired
+	NoticeDao noticeDao;
 
 	final Logger logger = Logger.getLogger(NoticeDao.class);
 
-	@RequestMapping(value = "/viewNotice/{smartId}/{year}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> viewNotice(@PathVariable("smartId") String smartId,
-			@PathVariable("year") String year, @RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value = "/viewNotice/{smartId}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> viewNotice(@PathVariable("smartId") String smartId, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartServiceException {
 
 		Loggers.loggerStart();
-
+		Calendar now = Calendar.getInstance();   // Gets the current date and time
+		int year = now.get(Calendar.YEAR);       // The current year
+		int year1=year;
+		int year2=++year;
+		String academicYear=year1+"-"+year2;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -75,14 +82,20 @@ public class NoticeController {
 		List<Notice> list = new ArrayList<Notice>();
 
 		try {
-
-			Map<String, Profile> allprofiles = searchService.getAllProfiles(year, tokenObj.getHierarchy().getHid());
-
+			Map<String, Profile> allprofiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
 			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
-
+			System.out.println("parent list  :"+parentSmartIdList);
 
 			parentSmartIdList.remove(smartId);
-			list = noticeService.viewNotice(parentSmartIdList);
+			list = noticeService.viewNotice(parentSmartIdList,tokenObj.getHierarchy().getHid());
+			
+			for (Notice notice : list) {
+
+				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+				Date d = f.parse(notice.getEntryTime());
+				notice.setEntryTime(String.valueOf(d.getTime()));
+				Loggers.loggerStart("notice.getEntryTime : " + notice.getEntryTime());
+			}
 			System.out.printf("smart id list :", list);
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
@@ -104,13 +117,15 @@ public class NoticeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+
 
 		Map<String, Object> responseMap = new HashMap<>();
 
 		List<Notice> list = new ArrayList<Notice>();
 
 		try {
-			list = noticeService.viewMyNotice(smartId);
+			list = noticeService.viewMyNotice(smartId,tokenObj.getHierarchy().getHid());
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucess");
@@ -224,11 +239,12 @@ public class NoticeController {
 			str.length();
 			Map<String, Object> jsonMap = new HashMap<>();
 			try {
+				Token tokenObj = (Token) httpSession.getAttribute("token");
 
-				Token token1 = tokenService.getToken(tokenNumber);
+//				Token token1 = tokenService.getToken(tokenNumber);
 				// String smartId = token1.getSmartId();
-
-				noticeService.addNotice(notice, token1);
+				notice.setHierarchy(tokenObj.getHierarchy());
+				noticeService.addNotice(notice, tokenObj);
 				jsonMap.put("status", 200);
 				jsonMap.put("result", "success");
 
@@ -298,5 +314,31 @@ public class NoticeController {
 		}
 
 	}
+	@RequestMapping(value = "/adminNotice/{hid}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> viewNoticeForAdmin(@PathVariable("hid") Long hid,
+			@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartServiceException {
 
+		Loggers.loggerStart();
+
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+//		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Map<String, Object> responseMap = new HashMap<>();
+		List<Notice> list = new ArrayList<Notice>();
+
+		try {
+			list=noticeDao.viewNoticeForAdmin(hid);
+			responseMap.put("data", list);
+			responseMap.put("status", 200);
+			responseMap.put("message", "sucess");
+
+			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }

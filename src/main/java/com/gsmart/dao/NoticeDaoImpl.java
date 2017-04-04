@@ -64,14 +64,14 @@ public class NoticeDaoImpl implements NoticeDao {
 	}
 
 	@Override
-	public List<Notice> viewNotice(ArrayList<String> smartIdList) {
+	public List<Notice> viewNotice(ArrayList<String> smartIdList,Long hid) {
 		getConnection();
 		Loggers.loggerStart();
 		
 		try{
-			query=session.createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) and type='Specific' ORDER BY entryTime desc");
+			query=session.createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) and hid=:hid and type='Specific' ORDER BY entryTime desc");
 			query.setParameterList("smartIdList", smartIdList);
-
+			query.setParameter("hid", hid);
 		Loggers.loggerValue("smartIdList", smartIdList);
 			Loggers.loggerStart(smartIdList);
 
@@ -92,7 +92,7 @@ public class NoticeDaoImpl implements NoticeDao {
 		
 	}
 	@Override
-public List<Notice> viewMyNotice(String smartId) {
+public List<Notice> viewMyNotice(String smartId, Long hid) {
 		Loggers.loggerStart();
 		getConnection();
 		Loggers.loggerStart();
@@ -100,8 +100,9 @@ public List<Notice> viewMyNotice(String smartId) {
 
 		try{
 			Loggers.loggerStart(smartId);
-			query=session.createQuery("from Notice where is_active='Y' and smartId=:smartId ORDER BY entryTime desc");
+			query=session.createQuery("from Notice where is_active='Y' and smartId=(:smartId) and hid=:hid ORDER BY entryTime desc");
 			query.setParameter("smartId", smartId);
+			query.setParameter("hid", hid);
 			//query.setMaxResults(6);
 			@SuppressWarnings("unchecked")
 			List<Notice> list=query.list();
@@ -329,6 +330,22 @@ public Profile getProfileDetails(String smartId) {
      	return profile;
      
      	
+    }
+     
+     @Override
+    public List<Notice> viewNoticeForAdmin(Long hid) throws GSmartServiceException {
+    	Loggers.loggerStart(hid);
+    	List<Notice> list=new ArrayList<>();
+    	try {
+			getConnection();
+			query=session.createQuery("from Notice where hierarchy.hid=:hid and isActive='Y'");
+			query.setParameter("hid",hid);
+			list=query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+       	Loggers.loggerEnd(list);
+    	return list;
     }
 
 }
