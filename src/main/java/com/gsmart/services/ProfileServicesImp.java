@@ -71,7 +71,11 @@ public class ProfileServicesImp implements ProfileServices {
 
 		return profileDao.updateProfile(profile);
 	}
-
+    @Override
+    public String changeprofileimage(Profile profile){
+    	
+    	return profileDao.changeprofileimage(profile);
+    }
 	@Override
 	public String deleteprofile(Profile profile){
 		return profileDao.deleteprofile(profile);

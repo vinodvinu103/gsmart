@@ -36,7 +36,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getInventoryAssignList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException 
+	public Map<String, Object> getInventoryAssignList(String role, String smartId, Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException 
 	{
 		getConnection();
 		Loggers.loggerStart();
@@ -53,10 +53,13 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		criteria.add(Restrictions.eq("isActive", "Y"));
 		criteriaCount.add(Restrictions.eq("isActive", "Y"));
 		}else{
+			
 			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("smartId",smartId));
 			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
 			criteriaCount.add(Restrictions.eq("isActive", "Y"));
 			criteriaCount.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+			criteriaCount.add(Restrictions.eq("smartId",smartId));
 		}
 		
 		criteria.setMaxResults(max);

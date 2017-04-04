@@ -356,8 +356,7 @@ public class ReportCardController {
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
-		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+
 	}
 	
 	@RequestMapping(value="/examForTeacher/{academicYear}/{smartId}",method=RequestMethod.GET)
@@ -380,8 +379,7 @@ public class ReportCardController {
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
-		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+		
 	}
 	
 	@RequestMapping(value="/reportCardForHOD/{academicYear}/{examName}/{smartId}",method=RequestMethod.GET)

@@ -29,6 +29,8 @@ public interface InventoryDao {
 	 */
 
 	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartDatabaseException;
+	
+	
 
 	
 	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
