@@ -61,7 +61,7 @@ public class InventoryAssignmentsController {
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			System.out.println("going inside for loop");
 			for (Hierarchy hierarchy : hierarchyList) {
-				inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), hierarchy, min, max);
+				inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), tokenObj.getSmartId(), hierarchy, min, max);
                 System.out.println("going to the map");
 				dataMap.put("inventoryList", inventoryList);
 				dataMap.put("hierarchy", hierarchy);
@@ -72,7 +72,7 @@ public class InventoryAssignmentsController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
-			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
+			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), tokenObj.getSmartId(), tokenObj.getHierarchy(), min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
