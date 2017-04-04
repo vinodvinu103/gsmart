@@ -75,11 +75,12 @@ public class AttendanceDaoImpl implements AttendanceDao {
 					attendance.setSmartId(profile.getSmartId());
 					attendance.setHierarchy(profile.getHierarchy());
 					session.saveOrUpdate(attendance);
+					tx.commit();
 					rfidList.add(attendance.getRfId());
 				}
 			}
 			System.out.println("atttenfdenceListjj"+attendanceList);
-			tx.commit();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
