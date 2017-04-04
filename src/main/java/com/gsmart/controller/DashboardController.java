@@ -73,8 +73,7 @@ public class DashboardController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		List<Inventory> inventoryList = new ArrayList<>();
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
 		Map<String, Object> finalResponse = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
