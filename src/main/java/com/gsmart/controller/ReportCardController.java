@@ -356,6 +356,7 @@ public class ReportCardController {
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 
 	}
 	
@@ -379,6 +380,7 @@ public class ReportCardController {
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 		
 	}
 	
