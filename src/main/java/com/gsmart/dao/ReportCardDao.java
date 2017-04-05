@@ -27,13 +27,13 @@ public interface ReportCardDao {
 	
 	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartDatabaseException;
 	
-	public ArrayList<ReportCard> reportCardforHOD(Token token, String examName, String academicYear)throws GSmartDatabaseException;
+	public ArrayList<ReportCard> reportCardforHOD(Token token, String examName, String academicYear,String smartId)throws GSmartDatabaseException;
 	
 	public List<ReportCard> acdemicYearAndExamName(Token tokenDetail)throws GSmartDatabaseException;
 	
-	public ArrayList<ReportCard> examName(Token tokenDetail,String acdemicYear)throws GSmartDatabaseException;
+	public ArrayList<ReportCard> examName(Token tokenDetail,String acdemicYear,String smartId)throws GSmartDatabaseException;
 
-	public Map<String, Object> reportCardListForTeacher(Token tokenDetail,Integer min,Integer max) throws GSmartDatabaseException;
+	public Map<String, Object> reportCardListForTeacher(Token tokenDetail,Integer min,Integer max,String acdemicYear,String examName) throws GSmartDatabaseException;
 
 	public ArrayList<Profile> findChildTeacher(Token tokenObj, String acdemicYear)throws GSmartDatabaseException;
 	
