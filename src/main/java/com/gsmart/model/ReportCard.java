@@ -98,8 +98,8 @@ public class ReportCard {
 	@Transient
 	private int childReportFlag;
 	
-	@Transient
-	private MultipartFile multiPartFile;
+	@Column(name="REMARK")
+	private String remark;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -275,13 +275,14 @@ public class ReportCard {
 	public void setChildReportFlag(int childReportFlag) {
 		this.childReportFlag = childReportFlag;
 	}
+	
 
-	public MultipartFile getMultiPartFile() {
-		return multiPartFile;
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setMultiPartFile(MultipartFile multiPartFile) {
-		this.multiPartFile = multiPartFile;
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 	public String getStudentId() {
