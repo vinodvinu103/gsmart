@@ -8,8 +8,11 @@ import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 
 
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "banners")
 @IdClass(com.gsmart.model.CompoundBanner.class)
@@ -19,6 +22,7 @@ public class Banners {
 	 */
 	@Lob
 	@Column(name = "IMAGE",length = 400000)
+	@Index(name = "image")
 	private byte[] image;
 
 	/*public String getTitle() {
@@ -47,6 +51,7 @@ public class Banners {
 	private String updatedTime;
 
 	@Column(name = "IS_ACTIVE")
+	@Index(name = "isActive")
 	private String isActive;
 
 	public String getEntryTime() {

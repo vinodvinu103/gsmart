@@ -230,9 +230,9 @@ public class ProfileServicesImp implements ProfileServices {
 		profileDao.addBanner(banner);
 	}
 	@Override
-	public Map<String, Object> getBannerList(Integer min, Integer max) throws GSmartServiceException {
+	public List<Banners> getBannerList() throws GSmartServiceException {
 		// TODO Auto-generated method stub
-		return profileDao.getBannerList(min, max);
+		return profileDao.getBannerList();
 	}
 
 	/*@Override
