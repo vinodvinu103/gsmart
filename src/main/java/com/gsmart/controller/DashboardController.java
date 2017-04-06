@@ -73,8 +73,7 @@ public class DashboardController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		List<Inventory> inventoryList = new ArrayList<>();
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
 		Map<String, Object> finalResponse = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
@@ -92,7 +91,6 @@ public class DashboardController {
 					inventoryByHierarchy.add(dataMap);
 				}
 				finalResponse.put("inventoryList", inventoryByHierarchy);
-				finalResponse.put("modulePermissions", modulePermission);
 				responseMap.put("data", finalResponse);
 				responseMap.put("status", 200);
 				responseMap.put("message", "success");
@@ -104,7 +102,6 @@ public class DashboardController {
 				dataMap.put("hierarchy", tokenObj.getHierarchy());
 				inventoryByHierarchy.add(dataMap);
 				finalResponse.put("inventoryList", inventoryByHierarchy);
-				finalResponse.put("modulePermissions", modulePermission);
 				responseMap.put("data", finalResponse);
 				responseMap.put("status", 200);
 				responseMap.put("message", "success");

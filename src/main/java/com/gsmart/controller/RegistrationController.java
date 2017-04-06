@@ -284,6 +284,23 @@ public class RegistrationController {
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 
 	}
+	
+	@RequestMapping(value="/changeprofileimage",method = RequestMethod.POST)
+	public ResponseEntity<Map<String,Object>> changeprofileimage(@RequestBody Profile profile,@RequestHeader HttpHeaders token, HttpSession httpSession)
+	throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String,Object> jsonResult = new HashMap();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		profile.setSmartId(tokenObj.getSmartId());
+		String result = profileServices.changeprofileimage(profile);
+		jsonResult.put("status", 200);
+		jsonResult.put("result", result);
+		Loggers.loggerEnd(jsonResult);
+		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "/delete/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<Map<String, Object>> deleteProfile(@RequestBody Profile profile,
@@ -294,6 +311,7 @@ public class RegistrationController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		
 		Map<String, Object> jsonResult = new HashMap();
 			if (task.equals("delete")) {
 				String result = profileServices.deleteprofile(profile);
@@ -305,7 +323,8 @@ public class RegistrationController {
 		
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 	}
-
+    
+	
 	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> searchRep(@RequestBody Search search, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) {

@@ -352,12 +352,11 @@ public class ReportCardController {
 	
 				childTeacherAndStandard=reportCardDao.findChildTeacher(tokenObj, academicYear);
 				permission.put("childTeacherAndStandard", childTeacherAndStandard);
-				/*return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);*/
-			
+
+				/*return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);*/	
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
-		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 	}
 	
@@ -378,12 +377,13 @@ public class ReportCardController {
 				examName=reportCardDao.examName(tokenObj,academicYear);
 				permission.put("examName", examName);
 				/*return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);*/
+
 			
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
-		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+
 	}
 	
 	@RequestMapping(value="/reportCardForHOD/{academicYear}/{examName}/{smartId}",method=RequestMethod.GET)
