@@ -1,6 +1,5 @@
 package com.gsmart.model;
 
-import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,37 +7,31 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.sql.rowset.serial.SerialBlob;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Index;
 
 
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "banners")
 @IdClass(com.gsmart.model.CompoundBanner.class)
 public class Banners {
-
-	/**
-	 * Title of Image
-	 */
-	@Id
-	@Column(name = "TITLE")
-	private String title;
-
 	/**
 	 * Image
 	 */
 	@Lob
 	@Column(name = "IMAGE",length = 400000)
+	@Index(name = "image")
 	private byte[] image;
 
-	public String getTitle() {
+	/*public String getTitle() {
 		return title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
+	}*/
 
 	public byte[] getImage() {
 		return image;
@@ -58,6 +51,7 @@ public class Banners {
 	private String updatedTime;
 
 	@Column(name = "IS_ACTIVE")
+	@Index(name = "isActive")
 	private String isActive;
 
 	public String getEntryTime() {
@@ -92,12 +86,5 @@ public class Banners {
 		this.isActive = isActive;
 	}
 
-	@Override
-	public String toString() {
-		return "Banners [title=" + title + ", image=" + image + ", entryTime=" + entryTime + ", exitTime=" + exitTime
-				+ ", updatedTime=" + updatedTime + ", isActive=" + isActive + "]";
-	}
-
-	
 
 }

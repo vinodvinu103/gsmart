@@ -1,9 +1,6 @@
 package com.gsmart.controller;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +25,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.gsmart.dao.HolidayDao;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.SyncRequestObject;
 import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
-import com.gsmart.services.HolidayServices;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
@@ -63,13 +57,13 @@ public class AttendanceController {
 	ProfileServices profileServices;
 
 	@Autowired
-	HolidayServices holidayService;
+	HolidayDao holidayDao;
 
-	@RequestMapping(value = "/calender/{month}/{year}/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAttendance(@PathVariable("min") int min, @PathVariable("max") int max,
-			@RequestHeader HttpHeaders token, HttpSession httpSession, @PathVariable("month") Integer month,
-			@PathVariable("year") Integer year, @PathVariable("smartId") String smartId, Holiday holiday)
-			throws GSmartBaseException {
+	@RequestMapping(value = "/calendar/{month}/{year}/{smartId}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
+			@PathVariable("month") Integer month, @PathVariable("year") Integer year, 
+			@PathVariable("smartId") String smartId, Holiday holiday) throws GSmartBaseException {
+
 		Loggers.loggerStart();
 
 		Map<String, Object> permissions = new HashMap<>();
@@ -78,21 +72,21 @@ public class AttendanceController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		permissions.put("modulePermission", modulePermission);
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
 		List<Map<String, Object>> attendanceList = null;
-		Map<String, Object> holidayList = null;
+		List<Holiday> holidayList = null;
 		Calendar cal = new GregorianCalendar(year, month, 0);
 		Date date = cal.getTime();
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(year, month - 1, 1);
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getAttendance(startDate, endDate, smartId);
-		holidayList = holidayService.getHolidayList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
+
+		holidayList = holidayDao.holidayList(tokenObj.getHierarchy().getHid());
+
+
 		permissions.put("attendanceList", attendanceList);
 		System.out.println("attendanceList:" + attendanceList);
 		permissions.put("holidayList", holidayList);
@@ -117,7 +111,6 @@ public class AttendanceController {
 				responseMap.put("status", 200);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -125,9 +118,9 @@ public class AttendanceController {
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<IAMResponse> editDeleteAttendance(@RequestBody Attendance attendance,
-			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
+	public ResponseEntity<IAMResponse> editAttendance(@RequestBody Attendance attendance,
+	@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException {
+
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
 
@@ -138,7 +131,6 @@ public class AttendanceController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				attendanceService.editAttedance(attendance);
 
@@ -146,11 +138,6 @@ public class AttendanceController {
 			myResponse = new IAMResponse("success");
 			Loggers.loggerEnd(attendance);
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-
-		}
 	}
 
 	@RequestMapping(value = "/{smartId}", method = RequestMethod.GET)
@@ -160,21 +147,23 @@ public class AttendanceController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		
+		int year = Calendar.getInstance().get(Calendar.YEAR);  // Gets the current date and time
+		String academicYear=year+"-"+(year+1);
 
-		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
 
-		resultmap.put("modulePermisson", modulePermisson);
-		if (modulePermisson != null) {
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018", tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			Map<String, Profile> profiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
 			Loggers.loggerValue("profile is ", profile);
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("child is", childList);
+			
+			List<String> childListForAttendance = searchService.getAllChildSmartId(tokenObj.getSmartId(), profiles);
 
+			resultmap.put("attendanceCount", attendanceService.getAttendanceCount(childListForAttendance));
 			if (childList.size() != 0) {
 				profile.setChildFlag(true);
 			}
@@ -197,9 +186,8 @@ public class AttendanceController {
 			resultmap.put("selfProfile", profile);
 			resultmap.put("childList", childList);
 			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
-		}
 
 	}
+	
+	
 }

@@ -34,7 +34,8 @@ public class GetAuthorization {
 		
 
 		try {
-			Token token = tokenService.getToken(tokenNumber);
+			Token token=(Token) httpSession.getAttribute("token");
+			System.out.println("token"+token);
 			String module = getModuleName();
 			Loggers.loggerValue("Token: ", token);
 			Loggers.loggerValue("Module: ", module);
@@ -62,7 +63,7 @@ public class GetAuthorization {
 			tokenObj=(Token) httpSession.getAttribute("hierarchy");
 			if(rolePermission==null || tokenObj==null)
 			{
-				Token token = tokenService.getToken(tokenNumber);
+				Token token=(Token) httpSession.getAttribute("token");
 				String module = getModuleName();
 				Loggers.loggerValue("Token: ", token);
 				Loggers.loggerValue("Module: ", module);
@@ -93,7 +94,7 @@ public class GetAuthorization {
 			
 			if(rolePermission==null || tokenObj==null)
 			{
-				Token token = tokenService.getToken(tokenNumber);
+				Token token=(Token) httpSession.getAttribute("token");
 				String module = getModuleName();
 				Loggers.loggerValue("Token: ", token);
 				Loggers.loggerValue("Module: ", module);
@@ -120,6 +121,8 @@ public class GetAuthorization {
 	private String getModuleName() {
 
 		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+		
+		
 		StackTraceElement element = stacktrace[3];
 		String[] str = element.getClassName().split("\\.");
 		int length = str.length;
@@ -142,6 +145,7 @@ public class GetAuthorization {
 		query.setParameter("moduleName", module);
 		query.setParameter("isActive","Y");
 		permissions = (RolePermission) query.uniqueResult();
+
 		Loggers.loggerEnd(permissions);
 		}
 		catch (Exception e) {

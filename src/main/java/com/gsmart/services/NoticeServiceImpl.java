@@ -31,8 +31,8 @@ public class NoticeServiceImpl implements NoticeService
 	}
 
 	@Override
-	public List<Notice> viewNotice(ArrayList<String> smartIdList) throws Exception{
-		return noticeDao.viewNotice(smartIdList);
+	public List<Notice> viewNotice(ArrayList<String> smartIdList,Long hid) throws Exception{
+		return noticeDao.viewNotice(smartIdList,hid);
 		
 	}
 
@@ -56,8 +56,8 @@ public class NoticeServiceImpl implements NoticeService
 	}
 	
 	@Override
-	public List<Notice> viewMyNotice(String role) {
-		return noticeDao.viewMyNotice(role);
+	public List<Notice> viewMyNotice(String role, Long hid) {
+		return noticeDao.viewMyNotice(role,hid);
 	}
 
 	
@@ -90,5 +90,7 @@ public class NoticeServiceImpl implements NoticeService
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 
 }

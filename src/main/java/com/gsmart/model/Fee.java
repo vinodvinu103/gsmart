@@ -9,12 +9,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="FEE")
 public class Fee {
 	
 	
 	@Column(name="SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -22,21 +26,35 @@ public class Fee {
 	private String entryTime;
 	
 	@Column(name="ACADEMIC_YEAR")
+	@Index(name = "academicYear")
 	private String academicYear;
 	
 	@Column(name="NAME")
 	private String name;
 	
 	@Column(name="ISACTIVE")
-	private String IsActive;
+	private String isActive;
+	
 	
 	
 	public String getIsActive() {
-		return IsActive;
+		return isActive;
+	}
+
+	@Override
+	public String toString() {
+		return "Fee [smartId=" + smartId + ", entryTime=" + entryTime + ", academicYear=" + academicYear + ", name="
+				+ name + ", isActive=" + isActive + ", UpdatedTime=" + UpdatedTime + ", ExitTime=" + ExitTime
+				+ ", parentName=" + parentName + ", date=" + date + ", standard=" + standard + ", modeOfPayment="
+				+ modeOfPayment + ", sportsFee=" + sportsFee + ", tuitionFee=" + tuitionFee + ", idCardFee=" + idCardFee
+				+ ", miscellaneousFee=" + miscellaneousFee + ", transportationFee=" + transportationFee + ", hierarchy="
+				+ hierarchy + ", balanceFee=" + balanceFee + ", paidFee=" + paidFee + ", totalFee=" + totalFee
+				+ ", feeStatus=" + feeStatus + ", reportingManagerId=" + reportingManagerId + ", childFlag=" + childFlag
+				+ ", parentFlag=" + parentFlag + "]";
 	}
 
 	public void setIsActive(String isActive) {
-		IsActive = isActive;
+		this.isActive = isActive;
 	}
 
 	public String getUpdatedTime() {

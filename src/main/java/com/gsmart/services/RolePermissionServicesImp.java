@@ -112,7 +112,7 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	}
 
 	@Override
-	public List<RolePermission> getPermission(String role) throws GSmartServiceException {
+	public Map<String, Object> getPermission(String role) throws GSmartServiceException {
 
 		Loggers.loggerStart();
 		try {
@@ -126,46 +126,52 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	}
 	
 	@Override
-	public List<RolePermission> getSubModuleNames(String role,Hierarchy hierarchy) throws GSmartServiceException {
+	public List<RolePermission> getSubModuleNames(String role) throws GSmartServiceException {
 
 		List<RolePermission> list = null;
 		
 		try{
-			list = rolePermissionDao.getSubModuleNames(role,hierarchy);
+			list = rolePermissionDao.getSubModuleNames(role);
 			
 			for (RolePermission rolePermission : list) {
 				
 				switch(rolePermission.getSubModuleName()){
-				case "Band":
+				case "BAND":
 					rolePermission.setIcon("white fa fa-bitcoin fa-3x");
 					break;
-				case "Holiday":
+				case "HOLIDAY":
 					rolePermission.setIcon("white fa fa-calendar fa-3x");
 					break;
-				case "Hierarchy":
+				case "HIERARCHY":
 					rolePermission.setIcon("white fa fa-gg fa-3x");
 					break;
-				case "Privilege":
+				case "PRIVILEGE":
 					rolePermission.setIcon("white fa fa-bar-chart fa-3x");
 					break;
-				case "Inventory":
+				case "INVENTORY":
 					rolePermission.setIcon("white fa fa-home fa-3x");
 					break;
-				case "LeaveMaster":
+				case "LEAVEMASTER":
 					rolePermission.setIcon("white fa fa-th-list fa-3x");
 					break;
-				case "FeeMaster":
+				case "FEEMASTER":
 					rolePermission.setIcon("white fa fa-cc-visa fa-3x");
 					break;
-				case "RolePermission":
+				case "ROLEPERMISSION":
 					rolePermission.setIcon("white fa fa-unlock-alt fa-3x");
 					break;
 				case "RFID":
 					rolePermission.setIcon("white fa fa-home fa-3x");
 					break;					
-				case "Assign":
+				case "ASSIGN":
 					rolePermission.setIcon("white fa fa-th-list fa-3x");
 					break;	
+				case "GRADES":
+					rolePermission.setIcon("white fa fa-percent fa-3x");
+					break;
+				case "BANNER":
+					rolePermission.setIcon("white fa fa-picture-o fa-3x");
+					break;						  
 				}
 				
 			}

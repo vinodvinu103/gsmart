@@ -1,11 +1,11 @@
 package com.gsmart.services;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.HolidayDao;
 import com.gsmart.model.CompoundHoliday;
@@ -23,26 +23,34 @@ import com.gsmart.util.Loggers;
  * @since 2016-08-01
  */
 @Service
+@Transactional
 public class HolidayServicesImpl implements HolidayServices {
 
 	
 final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
+
+@Autowired
+private HolidayDao holidayDao;
 	
-	@Autowired
-	private HolidayDao holidayDao;
+/*public void setHolidayDaoImpl(HolidayDao holidayDao) {
+	this.holidayDao = holidayDao;
+}*/
 		
 	/**
 	 * @return calls {@link HolidayDao}'s <code>getHolidayList()</code> method
 	 */
 	@Override
-	public Map<String, Object> getHolidayList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+	public Map<String, Object> getHolidayList(Long hid, Integer min, Integer max) throws GSmartServiceException {
 	
 		Loggers.loggerStart();
 	try {
-		return holidayDao.getHolidayList(role,hierarchy, min, max);
+		return holidayDao.getHolidayList(hid,min,max);
+
 	} catch (GSmartDatabaseException exception) {
+		exception.printStackTrace();
 		throw (GSmartServiceException) exception;
 	} catch (Exception e) {
+		e.printStackTrace();
 		throw new GSmartServiceException(e.getMessage());
 	}
 
@@ -55,13 +63,13 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 	 * @throws GSmartServiceException
 	 */
 	@Override
-	public CompoundHoliday addHoliday(Holiday holiday, int min, int max) throws GSmartServiceException {
+	public CompoundHoliday addHoliday(Holiday holiday) throws GSmartServiceException {
 		Loggers.loggerStart();
 		
 		CompoundHoliday ch = null;
 		
 		try {
-			ch = holidayDao.addHoliday(holiday, min, max);
+			ch = holidayDao.addHoliday(holiday);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -111,12 +119,6 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 		}
 		Loggers.loggerEnd();
 
-	}
-	@Override
-	public Map<String, Object> getHolidayList(Hierarchy hierarchy, Integer min, Integer max)
-			throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	

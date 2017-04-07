@@ -5,17 +5,19 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="TOKEN")
 public class Token {
 
 	@Id
 	@Column(name="TOKEN_NUMBER")
+	@Index(name = "tokenNumber")
 	String tokenNumber;
 	
 	@Column(name="SMART_ID")
@@ -54,11 +56,13 @@ public class Token {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
+
 	@Override
 	public String toString() {
-		
-		return "\nToken [\n\tTokenNumber="+tokenNumber+"\n\tSmartID="+smartId+"\n\tRole="+role+" ]";
+		return "Token [\t tokenNumber=" + tokenNumber + ",\t smartId=" + smartId + ",\t role=" + role + ",\t hierarchy="
+				+ hierarchy + "]";
 	}
+	
+	
 	
 }

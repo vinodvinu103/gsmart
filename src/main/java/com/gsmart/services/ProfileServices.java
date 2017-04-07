@@ -7,6 +7,7 @@ import java.util.Map;
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 
@@ -21,11 +22,14 @@ public interface ProfileServices{
 	public String updateProfile(Profile profile)throws GSmartServiceException;
 	
 	public String deleteprofile(Profile profile)throws GSmartServiceException;
-
+	
+	/* for profile image change*/
+	
+	public String changeprofileimage(Profile profile)throws GSmartServiceException;
 
 	/*for profile*/
 
-	public Map<String, Object> getProfiles(String role,String smartId,String role2,Hierarchy hierarchy, int min, int max)throws GSmartServiceException;
+	public Map<String, Object> getProfiles(String role,String smartId,Long hid, int min, int max)throws GSmartServiceException;
 
 	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
 	
@@ -40,14 +44,19 @@ public interface ProfileServices{
 	public void editRole(Profile profile)throws GSmartServiceException;
 	
 	List<Profile> getProfileByHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
-	public List<Profile> getProfilesWithoutRfid()throws GSmartDatabaseException;
+
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	
-	public List<Profile> getProfilesWithRfid()throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	
 	public List<Profile> addRfid(Profile rfid)throws GSmartServiceException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartServiceException;
+	
+	public List<Profile> searchProfilesWithoutRfid(String profileList,String role,Hierarchy hierarchy) throws GSmartServiceException;
 
+	public List<Profile> searchProfilesWithRfid(String profileList,String role,Hierarchy hierarchy) throws GSmartServiceException;
+	
 	public void addBanner(Banners banner) throws GSmartServiceException;
 
 	public List<Banners> getBannerList() throws GSmartServiceException;
@@ -56,7 +65,7 @@ public interface ProfileServices{
 	 * @return nothing 
 	 * @throws GSmartServiceException
 	 */
-	public Banners editBanner(Banners banner) throws GSmartServiceException;
+	/*public Banners editBanner(Banners banner) throws GSmartServiceException;*/
 	
 	/**
 	 * @param banner instanceOf {@link Banners}

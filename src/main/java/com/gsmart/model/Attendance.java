@@ -2,10 +2,16 @@ package com.gsmart.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="Attendance")
 @IdClass(com.gsmart.model.CompoundAttendance.class)
@@ -16,6 +22,7 @@ public class Attendance {
 	private String rfId;
 	
 	@Column(name="smartId")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	@Column(name="inTime")
@@ -29,12 +36,15 @@ public class Attendance {
 	private long inDate;
 	
 	@Column(name="isActive")
+	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="STATUS")
 	private String status;
 	
-	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
 
 	
 	public String getStatus() {
@@ -111,6 +121,16 @@ public class Attendance {
 	public String toString() {
 		return "Attendance \n\t [\n\t rfId=" + rfId + ", \n\t smartId=" + smartId + ", \n\t inTime=" + inTime + ", \n\t outTime=" + outTime
 				+ ", \n\t inDate=" + inDate + ", \n\t isActive=" + isActive + "]";
+	}
+
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
 	}
 
 

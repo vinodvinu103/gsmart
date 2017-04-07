@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.MyTeamLeaveServices;
 import com.gsmart.services.TokenService;
@@ -46,8 +45,8 @@ public class MyTeamLeaveController {
 	@Autowired
 	ProfileDao profileDao;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getLeave(@RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}/{hierarchy}",method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getLeave(@PathVariable ("hierarchy") Long hierarchy,@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -58,24 +57,25 @@ public class MyTeamLeaveController {
 
 		str.length();
 
-		List<Leave> myTeamList = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		Map<String, Object> myTeamList = null;
 
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		Map<String, Object> myteam = new HashMap<>();
-		myteam.put("modulePermission", modulePermission);
 		String smartId=tokenObj.getSmartId();
 		Profile profileInfo=profileDao.getProfileDetails(smartId);
 		
-		if (modulePermission != null) {
-			myTeamList = myteamleaveServices.getLeavelist(profileInfo,tokenObj.getHierarchy());
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		
+			myTeamList = myteamleaveServices.getLeavelist(profileInfo,hid,min,max);
 
 			myteam.put("myTeamList", myTeamList);
 			Loggers.loggerEnd(myTeamList);
 			return new ResponseEntity<Map<String, Object>>(myteam, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(myteam, HttpStatus.OK);
-		}
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
@@ -89,7 +89,6 @@ public class MyTeamLeaveController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("sanction"))
 				myteamleaveServices.sactionleave(leave);
 			else if (task.equals("reject"))
@@ -100,10 +99,6 @@ public class MyTeamLeaveController {
 			myResponse = new IAMResponse("success");
 			Loggers.loggerEnd();
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
 
 	}
 

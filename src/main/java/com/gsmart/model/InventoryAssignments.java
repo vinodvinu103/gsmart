@@ -1,6 +1,5 @@
 package com.gsmart.model;
 
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,30 +11,30 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-@SuppressWarnings("serial")
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table (name="INVENTORY_ASSIGNMENTS")
 @IdClass(com.gsmart.model.InventoryAssignmentsCompoundKey.class)
 
-public class InventoryAssignments implements Serializable
+public class InventoryAssignments
 {
 		
 	@Id
 	@Column (name="CATEGORY")
+	@Index(name = "category")
 	private String category;
 	
 	@Id
 	@Column (name="ITEM_TYPE")
 	private String itemType;
-
-	@Column(name="UPD_SMART_ID")
-	private String updSmartId;
-	
 	
 	@Column(name="TEACHER_NAME")
 	private String teacherName;
 	
 	@Column(name="STANDARD")
+	@Index(name = "standard")
 	private String standard;
 	
 	@Column(name="SECTION")
@@ -43,6 +42,9 @@ public class InventoryAssignments implements Serializable
 	
 	@Column(name="QUANTITY")
 	private int quantity;
+	
+	@Transient
+	private int totalQuantity;
 	
 	@Id
 	@Column(name="ENTRY_TIME")
@@ -64,7 +66,6 @@ public class InventoryAssignments implements Serializable
 	@Column(name="IS_ACTIVE")
 	private String isActive;
 	
-	@Id
 	@Column(name="SMART_ID")
 	private String smartId;
 	
@@ -102,12 +103,7 @@ public class InventoryAssignments implements Serializable
 	public void setItemType(String itemType) {
 		this.itemType = itemType;
 	}
-	public String getUpdSmartId() {
-		return updSmartId;
-	}
-	public void setUpdSmartId(String updSmartId) {
-		this.updSmartId = updSmartId;
-	}
+	
 	public String getSmartId() {
 		return smartId;
 	}
@@ -156,6 +152,14 @@ public class InventoryAssignments implements Serializable
 	}
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
+	}
+
+	public int getTotalQuantity() {
+		return totalQuantity;
+	}
+
+	public void setTotalQuantity(int totalQuantity) {
+		this.totalQuantity = totalQuantity;
 	}
 	
 	

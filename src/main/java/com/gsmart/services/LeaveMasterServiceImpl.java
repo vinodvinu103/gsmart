@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.LeaveMasterDao;
 import com.gsmart.model.CompoundLeaveMaster;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -20,10 +19,10 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 	private LeaveMasterDao leavemasterdao;
 
 	@Override
-	public Map<String, Object> getLeaveMasterList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+	public Map<String, Object> getLeaveMasterList(Long hid, Integer min, Integer max) throws GSmartServiceException {
 
 		try {
-			return leavemasterdao.getLeaveMasterList(role,hierarchy, min, max);
+			return leavemasterdao.getLeaveMasterList(hid, min, max);
 
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;
@@ -82,5 +81,18 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 
 		Loggers.loggerEnd();
 		return ch;
+	}
+
+	@Override
+	public List<LeaveMaster> getLeaveMasterInfo(Long hid) throws GSmartServiceException {
+		try {
+			return leavemasterdao.getLeaveMasterListForApplyLeave(hid);
+
+		} catch (GSmartDatabaseException Exception) {
+			throw (GSmartServiceException) Exception;
+
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
 	}
 }

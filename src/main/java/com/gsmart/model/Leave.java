@@ -10,12 +10,16 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Index;
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name ="APPLY_LEAVE")
 @IdClass(com.gsmart.model.CompoundLeave.class)
 public class Leave {
 	@Id
 	@Column(name="SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	public String getSmartId() {
@@ -44,12 +48,14 @@ public class Leave {
 	private String description;
 	
 	@Column(name="LEAVE_TYPE")
+	@Index(name = "leaveType")
 	private String leaveType;
 	
 	@Column(name="UPDATED_TIME")
 	private String updatedTime;
 	
 	@Column(name="IS_ACTIVE")
+	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="EXIT_TIME")
@@ -60,6 +66,9 @@ public class Leave {
 	
 	@Column(name="NAME")
 	private String fullName;
+	
+	@Column(name="TEACHER_STUDENT_ID")
+	private String teacherOrStudentId;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -146,14 +155,23 @@ public class Leave {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
+	
+	public String getTeacherOrStudentId() {
+		return teacherOrStudentId;
+	}
+	public void setTeacherOrStudentId(String teacherOrStudentId) {
+		this.teacherOrStudentId = teacherOrStudentId;
+	}
 	@Override
 	public String toString() {
 		return "Leave [smartId=" + smartId + ", reportingManagerId=" + reportingManagerId + ", entryTime=" + entryTime
 				+ ", startDate=" + startDate + ", endDate=" + endDate + ", numberOfDays=" + numberOfDays
 				+ ", description=" + description + ", leaveType=" + leaveType + ", updatedTime=" + updatedTime
 				+ ", isActive=" + isActive + ", exitTime=" + exitTime + ", leaveStatus=" + leaveStatus + ", fullName="
-				+ fullName + ", hierarchy=" + hierarchy + "]";
+				+ fullName + ", teacherOrStudentId=" + teacherOrStudentId + ", hierarchy=" + hierarchy + "]";
 	}
+	
+	
 	
 	
 	

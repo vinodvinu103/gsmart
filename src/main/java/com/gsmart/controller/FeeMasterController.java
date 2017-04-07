@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.HierarchyDao;
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.FeeMasterServices;
 import com.gsmart.util.CalendarCalculator;
@@ -47,6 +47,9 @@ public class FeeMasterController {
 
 	@Autowired
 	GetAuthorization getAuthorization;
+	
+	@Autowired
+	HierarchyDao hierarchyDao;
 
 	/**
 	 * to view {@link FeeMaster} details.
@@ -57,8 +60,8 @@ public class FeeMasterController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getFee(@PathVariable("min") int min, @PathVariable("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession ) throws GSmartBaseException {
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getFee(@PathVariable("min") int min, @PathVariable("hierarchy") Long hierarchy,@PathVariable("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession ) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 
@@ -66,18 +69,18 @@ public class FeeMasterController {
 		str.length();
 		Map<String, Object> feeList = null;
 		
-		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		Map<String, Object> permissions=new HashMap<>();
-		permissions.put("modulePermission", modulePermission);
 
-		/*
-		 * if(modulePermission!=null) {
-		 */
+		Long hid=null;
 		
-		if(modulePermission!=null)
-		{
-			feeList = feeMasterServices.getFeeList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		
+			feeList = feeMasterServices.getFeeList(hid, min, max);
 		if (feeList != null) {
 			permissions.put("status", 200);
 			permissions.put("message", "success");
@@ -91,14 +94,10 @@ public class FeeMasterController {
 		Loggers.loggerEnd();
 		
 
-		/*
-		 * }else { return new ResponseEntity<Map<String,Object>>(permissions,
-		 * HttpStatus.OK); }
-		 */
-	}
+	
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
-
+	
 	/**
 	 * provides the access to persist a new feeMaster entity Sets the
 	 * {@code timeStamp} using {@link CalendarCalculator}
@@ -108,8 +107,8 @@ public class FeeMasterController {
 	 * @return persistence status (success/error) in JSON format
 	 * @see IAMResponse
 	 */
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addFee(@RequestBody FeeMaster feeMaster,
+	@RequestMapping(value="/hierarchy/{hierarchy}",method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addFee(@PathVariable("hierarchy") Long hierarchy,@RequestBody FeeMaster feeMaster,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(feeMaster);
 
@@ -118,10 +117,14 @@ public class FeeMasterController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 
-			feeMaster.setHierarchy(tokenObj.getHierarchy());
+			if(tokenObj.getHierarchy()==null){
+				feeMaster.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
+			}else{
+				feeMaster.setHierarchy(tokenObj.getHierarchy());
+			}
+			
 			CompoundFeeMaster cb = feeMasterServices.addFee(feeMaster);
 			if (cb != null) {
 				respMap.put("status", 200);
@@ -134,10 +137,6 @@ public class FeeMasterController {
 
 			}
 
-		} else {
-			respMap.put("status", 403);
-			respMap.put("message", "Permission Denied");
-		}
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
@@ -164,7 +163,6 @@ public class FeeMasterController {
 		str.length();
 		Map<String, Object> respMap = new HashMap<>();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 
 			if (task.equals("edit")) {
 				cb=feeMasterServices.editFee(feeMaster);
@@ -182,10 +180,6 @@ public class FeeMasterController {
 				respMap.put("message", "Deleted Successfully");
 			}
 
-		} else {
-			respMap.put("status", 403);
-			respMap.put("message", "Permission Denied");
-		}
 		Loggers.loggerEnd();
 
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
