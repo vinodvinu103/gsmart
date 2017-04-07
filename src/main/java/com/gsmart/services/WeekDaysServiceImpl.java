@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.WeekDaysDao;
 import com.gsmart.model.WeekDays;
@@ -12,10 +13,11 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 @Service
+@Transactional
 public class WeekDaysServiceImpl implements WeekDaysService{
 	
 	@Autowired
-	WeekDaysDao weekday;
+	private WeekDaysDao weekday;
 	
 	@Override
 	public List<WeekDays> getWeekDaysList(long hid) throws GSmartServiceException {

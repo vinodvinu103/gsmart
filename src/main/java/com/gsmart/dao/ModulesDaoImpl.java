@@ -5,10 +5,10 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.CompoundModules;
 import com.gsmart.model.Hierarchy;
@@ -18,13 +18,11 @@ import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 @Repository
+@Transactional
 public class ModulesDaoImpl implements ModulesDao{
 	@Autowired
-	SessionFactory sessionFactory;
-	
+	private SessionFactory sessionFactory;
 
-	Session session = null;
-	Transaction transaction = null;
 	Query query;
 
 	 
@@ -33,7 +31,6 @@ public class ModulesDaoImpl implements ModulesDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Modules> getModulesList(String role,Hierarchy hierarchy) throws GSmartDatabaseException{
-		getconnection();
 		Loggers.loggerStart();
 		 
 		 List<Modules> moduleslist = null;
@@ -45,16 +42,14 @@ public class ModulesDaoImpl implements ModulesDao{
 				query=session.createQuery("from Modules and hierarchy:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}*/
-			 query=session.createQuery("from Modules WHERE isActive=:isActive");
+			 query=sessionFactory.getCurrentSession().createQuery("from Modules WHERE isActive=:isActive");
 			query.setParameter("isActive", "Y");
 			 moduleslist = (List<Modules>) query.list();
 			
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 		return moduleslist;	
 		}
@@ -63,8 +58,8 @@ public class ModulesDaoImpl implements ModulesDao{
 	
 	@Override
 	public CompoundModules addModule(Modules modules) throws GSmartDatabaseException {
-		 getconnection();
 		CompoundModules cb = null;
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			
 
@@ -83,7 +78,6 @@ public class ModulesDaoImpl implements ModulesDao{
 						modules.setEntryTime(CalendarCalculator.getTimeStamp());
 						modules.setIsActive("Y");
 						cb = (CompoundModules) session.save(modules);
-						transaction.commit();
 						Loggers.loggerEnd(module3);
 					}
 				 else {
@@ -96,7 +90,6 @@ public class ModulesDaoImpl implements ModulesDao{
 				 modules.setEntryTime(CalendarCalculator.getTimeStamp());
 					modules.setIsActive("Y");
 					cb = (CompoundModules) session.save(modules);
-					transaction.commit();
 					Loggers.loggerEnd(module2);
 				 }else {
 					return null;
@@ -113,25 +106,23 @@ public class ModulesDaoImpl implements ModulesDao{
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		return cb;
 	}
 	
-	private void getconnection() {
+	/*private void getconnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 
-	}
+	}*/
 
 
 
 	@Override
 	public Modules editModule(Modules modules) throws GSmartDatabaseException {
 
-		getconnection();
 		Modules cb=null;
+		Session session=this.sessionFactory.getCurrentSession();
 		try{
 			Loggers.loggerStart();
 			
@@ -141,12 +132,9 @@ public class ModulesDaoImpl implements ModulesDao{
 		
 		
 			if (cb!=null) {
-				getconnection();
 				modules.setEntryTime(CalendarCalculator.getTimeStamp());
 				modules.setIsActive("Y");
 				session.save(modules);
-				transaction.commit();
-				session.close();
 				
 				
 			}
@@ -166,6 +154,7 @@ public class ModulesDaoImpl implements ModulesDao{
 	private Modules updatemodule(Modules oldModule,Modules modules)throws GSmartDatabaseException {
 		
 		Modules ch=null;
+		Session session=this.sessionFactory.getCurrentSession();
 		
 		Loggers.loggerStart(modules.getSubModules());
 		
@@ -178,7 +167,6 @@ public class ModulesDaoImpl implements ModulesDao{
 	    			  oldModule.setIsActive("N");
 						oldModule.setUpdateTime(CalendarCalculator.getTimeStamp());
 						session.update(oldModule);
-						transaction.commit();
 						return oldModule;
 					
 				}
@@ -195,7 +183,6 @@ public class ModulesDaoImpl implements ModulesDao{
 					oldModule.setIsActive("N");
 					oldModule.setUpdateTime(CalendarCalculator.getTimeStamp());
 					session.update(oldModule);
-					transaction.commit();
 					return oldModule;
 	    	  }
 			}
@@ -214,7 +201,7 @@ public class ModulesDaoImpl implements ModulesDao{
 		Loggers.loggerStart();
 		Modules moduleslist=null;
 		try {
-		query = session.createQuery(
+		query = sessionFactory.getCurrentSession().createQuery(
 				"FROM Modules WHERE modules=:modules AND isActive=:isActive");
 		query.setParameter("modules", modules.getModules());
 		
@@ -236,7 +223,7 @@ public class ModulesDaoImpl implements ModulesDao{
 		Loggers.loggerStart();
 		Modules moduleslist=null;
 		try {
-		query = session.createQuery(
+		query = sessionFactory.getCurrentSession().createQuery(
 				"FROM Modules WHERE subModules=:subModules and modules=:modules AND isActive=:isActive");
 		query.setParameter("modules", modules.getModules());
 		query.setParameter("subModules", modules.getSubModules());
@@ -258,7 +245,7 @@ public class ModulesDaoImpl implements ModulesDao{
 		 
       try{
     	  
-			query = session.createQuery("FROM Modules WHERE  isActive=:isActive and entryTime=:entryTime ");
+			query = sessionFactory.getCurrentSession().createQuery("FROM Modules WHERE  isActive=:isActive and entryTime=:entryTime ");
             query.setParameter("isActive","Y");
             query.setParameter("entryTime",entryTime);
 			Modules	 moduleslist =  (Modules) query.uniqueResult();
@@ -274,22 +261,19 @@ public class ModulesDaoImpl implements ModulesDao{
 
 	@Override
 	public void deleteModule(Modules modules) throws GSmartDatabaseException {
-		getconnection();
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		
 		try {
 
 			modules.setIsActive("D");
 			modules.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(modules);
-			transaction.commit();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 		
 	}

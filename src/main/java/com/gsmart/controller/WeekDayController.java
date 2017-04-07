@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.HierarchyDao;
-import com.gsmart.dao.ProfileDaoImp;
-import com.gsmart.dao.TokenDaoImpl;
 import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
 import com.gsmart.services.WeekDaysService;
@@ -36,19 +34,14 @@ public class WeekDayController {
 
 	
 	@Autowired
-	WeekDaysService weekDaysService;
+	private WeekDaysService weekDaysService;
 
-	@Autowired
-	TokenDaoImpl tokenDaoImpl;
 	
 	@Autowired
-	ProfileDaoImp profileDaoImp;
+	private GetAuthorization getAuthorization;
 	
 	@Autowired
-	GetAuthorization getAuthorization;
-	
-	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 	
 	@RequestMapping(value="/{hierarchy}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getWeekDaysList(@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {

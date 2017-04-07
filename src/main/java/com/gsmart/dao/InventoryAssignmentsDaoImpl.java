@@ -10,12 +10,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
@@ -26,26 +26,24 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 
 	@Autowired
-	SessionFactory sessionFactory;
-	Session session = null;
+	private SessionFactory sessionFactory;
 	Query query;
-	Transaction tx = null;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getInventoryAssignList(String role, String smartId, Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException 
 	{
-		getConnection();
 		Loggers.loggerStart();
 
 		List<InventoryAssignments> inventoryList=null;
 		Map<String, Object> inventoryassignMap = new HashMap<String, Object>();
 		Criteria criteria = null;
-		criteria = session.createCriteria(InventoryAssignments.class);
-		Criteria criteriaCount = session.createCriteria(InventoryAssignments.class);
+		criteria = sessionFactory.getCurrentSession().createCriteria(InventoryAssignments.class);
+		Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(InventoryAssignments.class);
 		try
 		{
 		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
@@ -76,9 +74,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		catch(Throwable e)
 		{
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 		
 		return inventoryassignMap;
@@ -91,6 +87,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			throws GSmartDatabaseException {
 		
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		
 		InventoryAssignmentsCompoundKey ch = null;
 		try {
@@ -103,10 +100,8 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			int numofQuantity = inventoryAssignments.getQuantity();
 			
 			if (updateInventory(cat, item, numofQuantity, oldInventory) == 200) {
-				getConnection();
 		    	ch=	(InventoryAssignmentsCompoundKey) session.save(inventoryAssignments);
-				tx.commit();
-				session.close();
+				
 			}
 		
 		} catch (Exception e) {
@@ -119,7 +114,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 	@Override
 	public InventoryAssignments editInventoryDetails(InventoryAssignments inventoryAssignments)
 			throws GSmartDatabaseException {
-		getConnection();
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			
 			Loggers.loggerStart(inventoryAssignments);
@@ -128,7 +123,6 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 				oldInventory.setIsActive("N");
 				oldInventory.setUpdatedTime(CalendarCalculator.getTimeStamp());
 				session.update(oldInventory);
-                tx.commit();
                 
 				addInventoryDetails(inventoryAssignments,oldInventory);
 			}
@@ -144,7 +138,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		Loggers.loggerStart();
 
 		try {
-             query = session.createQuery("from InventoryAssignments where isActive='Y' and ENTRY_TIME='" + entryTime
+             query = sessionFactory.getCurrentSession().createQuery("from InventoryAssignments where isActive='Y' and ENTRY_TIME='" + entryTime
 					+ "' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			InventoryAssignments oldInventory = (InventoryAssignments) query.uniqueResult();
@@ -159,8 +153,9 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 
 	private int updateInventory(String cat, String item, int requestQuantity, InventoryAssignments oldInventory) {
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		Inventory inventory = null;
-		query = session.createQuery("from Inventory where category=:category and itemType=:itemType and isActive='Y' ");
+		query = sessionFactory.getCurrentSession().createQuery("from Inventory where category=:category and itemType=:itemType and isActive='Y' ");
 		query.setParameter("category", cat);
 		query.setParameter("itemType", item);
 		inventory = (Inventory) query.uniqueResult();
@@ -186,8 +181,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			}
 			
 			session.update(inventory);
-			if (!tx.wasCommitted())
-			    tx.commit();
+			
 			Loggers.loggerEnd();
 			return 200;
 		}
@@ -195,29 +189,26 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 
 	@Override
 	public void deleteInventoryDetails(InventoryAssignments inventoryAssignments) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
              Logger.getLogger(InventoryAssignmentsDaoImpl.class)
 					.info("trying to delete the record with entry time as : " + inventoryAssignments.getEntryTime());
 			inventoryAssignments.setIsActive("D");
 			inventoryAssignments.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(inventoryAssignments);
-			tx.commit();
 		} catch (Exception e) {
 			Logger.getLogger(InventoryAssignmentsDaoImpl.class).info("trying to delete the record with entry time as : "
 					+ inventoryAssignments.getEntryTime() + " and ended with exception : " + e);
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 
 	}
 
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactory.openSession();
 		tx = session.beginTransaction();
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -226,9 +217,8 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		Loggers.loggerStart();
 		List<InventoryAssignments> inventoryAssignmentList = null;
 		try {
-			getConnection();
 			Loggers.loggerStart("smartIdList : " + smartIdList);
-			query = session
+			query = sessionFactory.getCurrentSession()
 					.createQuery("From InventoryAssignments where isActive=:isActive and hierarchy.hid=:hierarchy and smartId in (:smartIdList)");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameterList("smartIdList", smartIdList);
@@ -236,9 +226,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			inventoryAssignmentList =  query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd(inventoryAssignmentList);
 		return inventoryAssignmentList;
 	}

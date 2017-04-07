@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.HierarchyDao;
 import com.gsmart.model.Hierarchy;
@@ -20,10 +21,11 @@ import com.gsmart.util.Loggers;
  * @since 2016-08-01
  */
 @Service
+@Transactional
 public class HierarchyServicesImpl implements HierarchyServices {
 
 	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 
 	/**
 	 * @return calls {@link HierarchyDao}'s <code>getHierarchyList()</code>

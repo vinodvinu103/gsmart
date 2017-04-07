@@ -24,7 +24,6 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Token;
 import com.gsmart.services.AssignService;
 import com.gsmart.services.ProfileServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -35,19 +34,17 @@ import com.gsmart.util.Loggers;
 public class AssignController {
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
 	@Autowired
-	AssignService assignService;
+	private AssignService assignService;
 
-	@Autowired
-	TokenService tokenServices;
 	
 	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAssigningReportee(@PathVariable ("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
