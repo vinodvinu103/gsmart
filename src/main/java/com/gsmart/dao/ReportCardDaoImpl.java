@@ -282,18 +282,18 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 
 	@Override
-	public ArrayList<ReportCard> reportCardforHOD(Token token, String examName, String academicYear) throws GSmartDatabaseException {
+	public ArrayList<ReportCard> reportCardforHOD(Token token, String examName, String academicYear,String smartId) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
 		ArrayList<ReportCard> list = null;
 		Hierarchy hierarchy = token.getHierarchy();
 		try {
 
-			query = session.createQuery("from ReportCard where academicYear=:academicYear and examName=:examName and reportingManagerId=:smartId and isActive='Y' and hid=hierarchy)");
+			query = session.createQuery("from ReportCard where academicYear=:academicYear and examName=:examName and reportingManagerId=:smartId and isActive='Y' and hid=:hierarchy)");
 			query.setParameter("academicYear", academicYear);
 			query.setParameter("examName", examName);
-			query.setParameter("smartId", token.getSmartId());
-			query.setParameter("hierarchy", hierarchy);	
+			query.setParameter("smartId", smartId);
+			query.setParameter("hierarchy", hierarchy.getHid());	
 			list = (ArrayList<ReportCard>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -434,13 +434,12 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 
 	@Override
-	public ArrayList<ReportCard> examName(Token tokenDetail, String acdemicYear) throws GSmartDatabaseException {
+	public ArrayList<ReportCard> examName(Token tokenDetail, String acdemicYear,String smartId) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		getConnection();
 		ArrayList<ReportCard> examName = new ArrayList<>();
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		String role = tokenDetail.getRole();
-		String smartId = tokenDetail.getSmartId();
 		try {
 			query = session.createQuery(
 					"select distinct examName from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and academicYear=:academicYear and isActive='Y'");
@@ -464,7 +463,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 				for (Iterator iterator = class1.iterator(); iterator.hasNext();) {
 					String string = (String) iterator.next();
 					ex.setStandard(string);
-					ex.setSmartId(tokenDetail.getSmartId());
+					ex.setSmartId(smartId);
 				}
 				examName.add(ex);
 			}
@@ -477,7 +476,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 	
 	@Override
-	public Map<String, Object> reportCardListForTeacher(Token tokenDetail, Integer min, Integer max)
+	public Map<String, Object> reportCardListForTeacher(Token tokenDetail, Integer min, Integer max,String academicYear,String examName)
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Map<String, Object> reportCard=new HashMap();
@@ -487,6 +486,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("reportingManagerId", tokenDetail.getSmartId()));
 			criteria.add(Restrictions.eq("hierarchy.hid", tokenDetail.getHierarchy().getHid()));
+			criteria.add(Restrictions.eq("academicYear",academicYear));
+			criteria.add(Restrictions.eq("examName",examName));
 			criteria.addOrder(Order.asc("smartId"));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
@@ -494,6 +495,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			
 			criteria = session.createCriteria(ReportCard.class).add(Restrictions.eq("isActive", "Y"))
 					.add(Restrictions.eq("reportingManagerId", tokenDetail.getSmartId()))
+					.add(Restrictions.eq("academicYear",academicYear))
+					.add(Restrictions.eq("examName",examName))
 					.add(Restrictions.eq("hierarchy.hid", tokenDetail.getHierarchy().getHid()))
 					.setProjection(Projections.rowCount());
 			Long count = (Long) criteria.uniqueResult();
@@ -508,14 +511,15 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	
 	@Override
 	public ArrayList<Profile> findChildTeacher(Token tokenObj,String acdemicYear) throws GSmartDatabaseException {
-		Loggers.loggerStart();
+		Loggers.loggerStart(acdemicYear);
+		Loggers.loggerStart(tokenObj);
 			getConnection();
-			ArrayList<Profile> childTeacher = new ArrayList<>();
+			ArrayList<Profile> childTeacher = null;
 			Hierarchy hierarchy = tokenObj.getHierarchy();
 			String smartId = tokenObj.getSmartId();
 			try {
 				query = session.createQuery(
-						"from Profile where reportingManagerId=:smartId and hid=:hierarchy and academicYear=:academicYear and isActive='Y' and role='TEACHER'");
+						"from Profile where reportingManagerId=:smartId and hierarchy.hid=:hierarchy and academicYear=:academicYear and isActive='Y' and role='TEACHER'");
 				query.setParameter("smartId", smartId);
 				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("academicYear", acdemicYear);
