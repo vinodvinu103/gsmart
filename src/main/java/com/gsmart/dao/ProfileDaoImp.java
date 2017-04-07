@@ -138,7 +138,29 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 		return "update successfully21";
 	}
-
+    
+	@Override
+	public String changeprofileimage(Profile profile){
+		getConnection();
+		Loggers.loggerStart();
+		try{
+			query = session.createQuery("update Profile set image=:image where smartId=:smartId and isActive=:isActive");
+			query.setParameter("image", profile.getImage());
+			query.setParameter("smartId", profile.getSmartId());
+			query.setParameter("isActive", "Y");
+			query.executeUpdate();
+			transaction.commit();
+			Loggers.loggerEnd();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return "Profile image not successfully updated";
+		}finally {
+			session.close();
+		}
+		return "Profile image updated";
+	}
+	
 	@Override
 	public String deleteprofile(Profile profile) {
 		getConnection();
@@ -199,12 +221,11 @@ public class ProfileDaoImp implements ProfileDao {
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
-			criteria.add(Restrictions.eq("hierarchy.hid", hid));
-			criteria.addOrder(Order.asc("smartId"));
+			criteria.addOrder(Order.asc("firstName"));
 //			criteria.setProjection(Projections.id());
 
 			Criteria criteriaCount = session.createCriteria(Profile.class).add(Restrictions.eq("isActive", "Y"));
-			
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 				if (role.toLowerCase().equals("student")) {
 					criteria.add(Restrictions.eq("role", "student").ignoreCase());
@@ -463,14 +484,20 @@ public class ProfileDaoImp implements ProfileDao {
 		// Loggers.loggerStart(profile);
 		List<Profile> profileListWithoutRfid;
 		Map<String, Object> rfidMap = new HashMap<>();
-		Criteria criteria = session.createCriteria(Profile.class);
+	//	Criteria criteria = session.createCriteria(Profile.class);
 		try {
+			getConnection();
 			/*
 			 * query = session.createQuery(
 			 * "from Profile where rfId is null AND isActive='Y'");
 			 * profileListWithoutRfid = query.list();
 			 */
-			criteria.add(Restrictions.isNull("rfId"));
+			Criteria criteria = session.createCriteria(Profile.class);
+			/*criteria.add(Restrictions.isNull("rfId"));
+			criteria.add(Restrictions.eq("rfId", "''"));*/
+			criteria.add(Restrictions.disjunction().add(
+	                Restrictions.or(Restrictions.isNull("rfId"),
+	                        Restrictions.like("rfId", ""))));
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
 			criteria.setFirstResult(min);
@@ -525,7 +552,10 @@ public class ProfileDaoImp implements ProfileDao {
 			 * profileListWithRfid = query.list();
 			 */
 			Criteria criteria = session.createCriteria(Profile.class);
-			criteria.add(Restrictions.isNotNull("rfId"));
+			criteria.add(Restrictions.neOrIsNotNull("rfId", ""));
+			/*criteria.add(Restrictions.disjunction().add(
+	                Restrictions.or(Restrictions.isNotNull("rfId"),
+	                        Restrictions.neOrIsNotNull("rfId", ""))));*/
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
 			criteria.setFirstResult(min);
@@ -613,30 +643,21 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getBannerList(Integer min, Integer max) {
+	public List<Banners> getBannerList() {
 		Loggers.loggerStart();
 		List<Banners> bannerlist = null;
-		Map<String, Object> bannerMap = new HashMap<>();
 		try {
 			getConnection();
-			Criteria criteria = session.createCriteria(Banners.class);
-			criteria.add(Restrictions.eq("isActive", "Y"));
-			criteria.setFirstResult(min);
-			criteria.setMaxResults(max);
-			bannerlist = criteria.list();
-			bannerMap.put("bannerlist", bannerlist);
-			Criteria criteriaCount = session.createCriteria(Banners.class);
-			criteriaCount.add(Restrictions.eq("isActive", "Y"));
-			criteriaCount.setProjection(Projections.rowCount());
-			Long count = (Long) criteriaCount.uniqueResult();
-			bannerMap.put("totalbanner", count);
+			Query query = session.createQuery("FROM Banners WHERE isActive='Y' order by image desc");
+			bannerlist = query.list();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			session.close();
 		}
 		Loggers.loggerEnd(bannerlist);
-		return bannerMap;
+		return bannerlist;
 	}
 
 	@Override
@@ -721,6 +742,7 @@ public class ProfileDaoImp implements ProfileDao {
 	@Override
 	public void deleteBanner(Banners banner) throws GSmartDatabaseException {
 		try {
+			getConnection();
 			Loggers.loggerStart();
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
@@ -732,8 +754,6 @@ public class ProfileDaoImp implements ProfileDao {
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			session.close();
 		}
 	}
 
@@ -779,9 +799,7 @@ public class ProfileDaoImp implements ProfileDao {
 			
           e.printStackTrace();
           return false;
-          }finally {
-			session.close();
-		}
+          }
 		Loggers.loggerEnd();
 		return true;
 	}
@@ -800,7 +818,5 @@ public class ProfileDaoImp implements ProfileDao {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 	}
-
-
 
 }

@@ -48,6 +48,9 @@ public interface ProfileDao {
 	public String deleteprofile(Profile profile);
 	
 	public boolean deleteProfileIfMailFailed(String smartId);
+	
+	/* for profile image change*/
+	public String changeprofileimage(Profile profile);
 
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
@@ -99,7 +102,7 @@ public interface ProfileDao {
 	
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public Map<String, Object> getBannerList(Integer min, Integer max);
+	public List<Banners> getBannerList();
 	
 	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 

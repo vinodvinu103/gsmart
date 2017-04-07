@@ -29,9 +29,9 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	InventoryDaoImpl inventoryDao;
 
 	@Override
-	public Map<String, Object> getInventoryAssignList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+	public Map<String, Object> getInventoryAssignList(String role, String smartid, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
 		try {
-			return inventoryAssignmentsDao.getInventoryAssignList(role,hierarchy, min, max);
+			return inventoryAssignmentsDao.getInventoryAssignList(role,smartid,hierarchy, min, max);
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;
 

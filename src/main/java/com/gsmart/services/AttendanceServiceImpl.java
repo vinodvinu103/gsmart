@@ -7,10 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.AttendanceDao;
+import com.gsmart.dao.HolidayDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Hierarchy;
@@ -19,11 +22,17 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class AttendanceServiceImpl implements AttendanceService {
 
-	@Autowired
-	AttendanceDao attendancedao;
+	
 
+	@Autowired
+	private AttendanceDao attendancedao;
+	
+	/*public void setAttendanceDaoImpl(AttendanceDao attendancedao) {
+		this.attendancedao = attendancedao;
+	}*/
 	@Autowired
 	ProfileDao profileDao;
 	@Autowired
@@ -114,6 +123,20 @@ public class AttendanceServiceImpl implements AttendanceService {
 			e.printStackTrace();
 		}
 		return responseList;
+	}
+
+	@Override
+	public Map<String, Object> getAttendanceCount(List<String> childList) {
+		try {
+			Loggers.loggerStart();
+			
+			return attendancedao.getAttendanceCount(childList);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 
 }

@@ -46,6 +46,7 @@ public class InventoryDaoImpl implements InventoryDao {
 	 * @return list of inventory entities available in Inventory
 	 */
 
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartDatabaseException {
@@ -56,19 +57,19 @@ public class InventoryDaoImpl implements InventoryDao {
 		Criteria criteria = null;
 		try {
 
-			criteria=session.createCriteria(Inventory.class);
+			criteria = session.createCriteria(Inventory.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			criteria.setFirstResult(min);
-		     criteria.setMaxResults(max);
-		     criteria.add(Restrictions.eq("isActive", "Y"));
-		     criteria.add(Restrictions.eq("hierarchy.hid", hid));
-//		     criteria.setProjection(Projections.id());
-		     inventoryList = criteria.list();
-		     Criteria criteriaCount = session.createCriteria(Inventory.class);
-		     criteriaCount.add(Restrictions.eq("isActive", "Y"));
-		     criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
-		     criteriaCount.setProjection(Projections.rowCount());
-		     Long count = (Long) criteriaCount.uniqueResult();
-		     inventoryMap.put("totalinventory", count);
+			criteria.setMaxResults(max);
+			// criteria.setProjection(Projections.id());
+			inventoryList = criteria.list();
+			Criteria criteriaCount = session.createCriteria(Inventory.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			inventoryMap.put("totalinventory", count);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -307,10 +308,12 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
+
 	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+
 		getconnection();
-		List<Inventory> inventoryList;
+		List<Inventory> inventoryList=null;
 		try {
 			query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());

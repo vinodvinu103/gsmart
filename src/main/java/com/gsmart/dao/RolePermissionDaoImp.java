@@ -70,9 +70,9 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		     criteria.addOrder(Order.asc("role"));
 		     rolePermissions = criteria.list();		     
 		     Criteria criteriaCount = session.createCriteria(RolePermission.class);
+		     criteriaCount.add(Restrictions.eq("isActive", "Y"));
 		     criteriaCount.setProjection(Projections.rowCount());
-		     Long count = (Long) criteriaCount.uniqueResult();
-		     rolePermissionMap.put("totalpermission", count);
+		     rolePermissionMap.put("totalpermission", criteriaCount.uniqueResult());
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} finally {
@@ -97,7 +97,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		RolePermissionCompound cb = null;
 		RolePermission permission1 = null;
 		try {
-			// Hierarchy hierarchy=rolePermission.getHierarchy();
 			if (rolePermission.getSubModuleName() == null) {
 				permission1 = fetch3(rolePermission);
 			} else {
@@ -406,10 +405,10 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		getConnection();
 		try {
 			query = session.createQuery(
-					"from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
+					"from RolePermission where role=:role and lower(moduleName)=:moduleName and isActive=:isActive");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
-			query.setParameter("moduleName", "Maintenance");
+			query.setParameter("moduleName", "maintenance");
 			rolePermissions = (List<RolePermission>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();

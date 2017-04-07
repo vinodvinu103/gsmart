@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
@@ -26,11 +27,15 @@ public interface ReportCardDao {
 	
 	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartDatabaseException;
 	
-	public ArrayList<ReportCard> reportCardBasedOnAcademicYear(String academicYear)throws GSmartDatabaseException;
+	public ArrayList<ReportCard> reportCardforHOD(Token token, String examName, String academicYear,String smartId)throws GSmartDatabaseException;
 	
 	public List<ReportCard> acdemicYearAndExamName(Token tokenDetail)throws GSmartDatabaseException;
 	
-	public ArrayList<ReportCard> examName(Token tokenDetail,String acdemicYear)throws GSmartDatabaseException;
+	public ArrayList<ReportCard> examName(Token tokenDetail,String acdemicYear,String smartId)throws GSmartDatabaseException;
 
-	public Map<String, Object> reportCardListForTeacher(Token tokenDetail,Integer min,Integer max) throws GSmartDatabaseException;
+	public Map<String, Object> reportCardListForTeacher(Token tokenDetail,Integer min,Integer max,String acdemicYear,String examName) throws GSmartDatabaseException;
+
+	public ArrayList<Profile> findChildTeacher(Token tokenObj, String acdemicYear)throws GSmartDatabaseException;
+	
+	public List<Profile> studentList(Token tokenDetail) throws GSmartDatabaseException;
 }

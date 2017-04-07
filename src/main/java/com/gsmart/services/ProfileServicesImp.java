@@ -71,7 +71,11 @@ public class ProfileServicesImp implements ProfileServices {
 
 		return profileDao.updateProfile(profile);
 	}
-
+    @Override
+    public String changeprofileimage(Profile profile){
+    	
+    	return profileDao.changeprofileimage(profile);
+    }
 	@Override
 	public String deleteprofile(Profile profile){
 		return profileDao.deleteprofile(profile);
@@ -229,9 +233,9 @@ public class ProfileServicesImp implements ProfileServices {
 		profileDao.addBanner(banner);
 	}
 	@Override
-	public Map<String, Object> getBannerList(Integer min, Integer max) throws GSmartServiceException {
+	public List<Banners> getBannerList() throws GSmartServiceException {
 		// TODO Auto-generated method stub
-		return profileDao.getBannerList(min, max);
+		return profileDao.getBannerList();
 	}
 
 	/*@Override

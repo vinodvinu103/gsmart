@@ -22,7 +22,10 @@ public interface ProfileServices{
 	public String updateProfile(Profile profile)throws GSmartServiceException;
 	
 	public String deleteprofile(Profile profile)throws GSmartServiceException;
-
+	
+	/* for profile image change*/
+	
+	public String changeprofileimage(Profile profile)throws GSmartServiceException;
 
 	/*for profile*/
 
@@ -56,7 +59,7 @@ public interface ProfileServices{
 	
 	public void addBanner(Banners banner) throws GSmartServiceException;
 
-	public Map<String, Object> getBannerList(Integer min, Integer max) throws GSmartServiceException;
+	public List<Banners> getBannerList() throws GSmartServiceException;
 	/**
 	 * @param banner instanceOf {@link Bannners}
 	 * @return nothing 
