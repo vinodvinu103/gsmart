@@ -35,7 +35,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	Query query;
-	Session session=this.sessionFactory.getCurrentSession();
+	
 
 	@SuppressWarnings("unchecked")
 	
@@ -160,6 +160,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 	public CompoundInventoryAssignmentsStudent addInventoryStudent(InventoryAssignmentsStudent inventoryAssignmentsStudent,
 			InventoryAssignmentsStudent oldInventoryAssignment) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		CompoundInventoryAssignmentsStudent ch1=null;
 		try{
 			Loggers.loggerValue("inside addinventorystudent details : ",inventoryAssignmentsStudent.getQuantity());
@@ -262,6 +263,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
  
 	private int updeteInv(String cat, String item, int reqQunity, InventoryAssignmentsStudent oldInventoryAssignment){
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		InventoryAssignments inv =null;
 		query = sessionFactory.getCurrentSession().createQuery("from InventoryAssignments where category=:category and itemType=:itemType and isActive='Y' ");
 		query.setParameter("category", cat);
@@ -289,7 +291,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			inv.setLeftQuantity(numOfLeftQuntity-reqQunity);
 			inv.setUpdatedTime(CalendarCalculator.getTimeStamp());
 		}
-			sessionFactory.getCurrentSession().update(inv);
+			session.update(inv);
 		Loggers.loggerEnd();
 		return 200;
 	}
@@ -354,11 +356,12 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 	@Override
 	public void deleteInventoryStudentDetails(InventoryAssignmentsStudent inventoryAssignmentsStudent)
 			throws GSmartDatabaseException {
+			Session session=this.sessionFactory.getCurrentSession();
 		Loggers.loggerStart();
 		try{
 			inventoryAssignmentsStudent.setIsActive("D");
 			inventoryAssignmentsStudent.setExitTime(CalendarCalculator.getTimeStamp());
-			sessionFactory.getCurrentSession().update(inventoryAssignmentsStudent);
+			session.update(inventoryAssignmentsStudent);
 	    Loggers.loggerEnd();
 		}catch (Exception e) {
          e.printStackTrace();
