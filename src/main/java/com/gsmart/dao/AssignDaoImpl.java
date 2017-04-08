@@ -37,7 +37,6 @@ public class AssignDaoImpl implements AssignDao {
 	Criteria criteria = null;
 	Criteria criteriaCount=null;
 	Long count=null;
-	Session session=this.sessionFactory.getCurrentSession();
 	
 	/*public void getConnection() {
 		session = sessionFactory.openSession();
