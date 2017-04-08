@@ -116,6 +116,7 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	public Inventory fetch(Inventory inventory) {
 		Inventory inventory2 = null;
+		Inventory inve =null;
 		try {
 			System.out.println("i am going "+ inventory);
 			Hierarchy hierarchy = inventory.getHierarchy();
@@ -124,9 +125,9 @@ public class InventoryDaoImpl implements InventoryDao {
 			query.setParameter("category", inventory.getCategory());
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("itemType", inventory.getItemType());
-/*			query.setParameter("quantity", inventory.getQuantity());
-*/			query.setParameter("isActive", "Y");
+			query.setParameter("isActive", "Y");
 			inventory2 = (Inventory) query.uniqueResult();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -149,13 +150,10 @@ public class InventoryDaoImpl implements InventoryDao {
 			Inventory oldInvertory = getInventory(inventory.getEntryTime(),inventory.getHierarchy());
 			if(inventory.getQuantity()<oldInvertory.getQuantity())
 			{
-				
-				
 				diffQuantity =oldInvertory.getQuantity()-inventory.getQuantity();
 				System.out.println("Difference........"+diffQuantity);
 				inventory.setLeftQuantity(inventory.getLeftQuantity()-diffQuantity);
 			}else{
-				
 				
 				diffQuantity=inventory.getQuantity()- oldInvertory.getQuantity();
 				System.out.println("get difference between them >>>>>>"+diffQuantity);
@@ -178,13 +176,11 @@ public class InventoryDaoImpl implements InventoryDao {
 		return ch;
 	}
 	
-	
 	private Inventory updateInventory(Inventory oldInventory, Inventory inventory) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Session session=this.sessionFactory.getCurrentSession();
 		Inventory ch = null;
-		//getInventory(role, hierarchy);
-		
+
 			try {
 				if(oldInventory.getCategory().equals(inventory.getCategory()) && oldInventory.getItemType().equals(inventory.getItemType())){
 					oldInventory.setUpdateTime(CalendarCalculator.getTimeStamp());
@@ -212,6 +208,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		}
 
 
+
 	/**/
 	/**
 	 * removes the inventory entity from the database.
@@ -226,6 +223,8 @@ public class InventoryDaoImpl implements InventoryDao {
 
 			query = sessionFactory.getCurrentSession().createQuery("from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
+			query.setParameter("entryTime", entryTime);
+		query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("entryTime", entryTime);
 			Inventory inventry = (Inventory) query.uniqueResult();
 
@@ -313,6 +312,7 @@ public class InventoryDaoImpl implements InventoryDao {
 			inventory = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
+
 		}
 		Loggers.loggerEnd("inveList:"+inventory);
 		return inventory;
