@@ -13,34 +13,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.MessageDetails;
 import com.gsmart.model.RolePermission;
-import com.gsmart.services.BeanFactory;
 import com.gsmart.services.ContactServices;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
-import antlr.Token;
 
 @Controller
 @RequestMapping("/contact")
 public class ContactTeacherController {
 
 	@Autowired
-	ContactServices contactServices;
+	private ContactServices contactServices;
 
 	@Autowired
-	BeanFactory employeeBeanFactory;
-	
-	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	
 	@RequestMapping(value="/studentToTeacher", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> studentToTeacher(@RequestBody MessageDetails details,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {

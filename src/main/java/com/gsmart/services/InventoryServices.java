@@ -26,6 +26,7 @@ public interface InventoryServices {
 	
 	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartServiceException;
 	
+	
 	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartServiceException;
 	
 	/**

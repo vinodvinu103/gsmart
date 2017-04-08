@@ -15,8 +15,8 @@ import com.gsmart.util.GSmartDatabaseException;
 
 public interface InventoryAssignmentsDao {
 
-	
-	public Map<String, Object> getInventoryAssignList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
+
+	public Map<String, Object> getInventoryAssignList(String role, String smartId, Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
 
 	public Map<String, Object> getInventoryAssignStudentList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException; 
 	

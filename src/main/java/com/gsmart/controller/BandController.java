@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
 import com.gsmart.services.BandServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -42,13 +41,11 @@ import com.gsmart.util.Loggers;
 public class BandController {
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
 	@Autowired
-	BandServices bandServices;
+	private BandServices bandServices;
 
-	@Autowired
-	TokenService tokenService;
 
 	/**
 	 * to view {@link Band} details.

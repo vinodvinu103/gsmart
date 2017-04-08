@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.SalaryStructureDAO;
 import com.gsmart.model.CompoundSalaryStructure;
@@ -12,6 +13,7 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class SalaryStructureServiceImpl implements SalaryStructureService{
 
 	@Autowired

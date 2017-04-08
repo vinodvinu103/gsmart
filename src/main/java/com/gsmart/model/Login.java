@@ -11,16 +11,20 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-@SuppressWarnings("serial")
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings({ "serial", "deprecation" })
 @Entity
 @Table(name = "LOGIN")
 public class Login implements Serializable {
 
 	@Id
 	@Column(name = "SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 
 	@Column(name = "PASSWORD")
+	@Index(name = "password")	
 	private String password;
 	
 	@Transient

@@ -29,8 +29,6 @@ import com.gsmart.model.Token;
 import com.gsmart.services.AssignService;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.InventoryAssignmentsServices;
-import com.gsmart.services.ProfileServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -40,16 +38,9 @@ import com.gsmart.util.Loggers;
 @Controller
 @RequestMapping(Constants.INVENTORYASSIGN)
 public class InventoryAssignmentsController {
-	@Autowired
-	InventoryAssignmentsServices inventoryAssignmentsServices;
 	
 	@Autowired
-	GetAuthorization getAuthorization;
-
-	@Autowired
 	TokenService tokenService;
-	@Autowired
-	HierarchyServices hierarchyServices;
 
 	@Autowired
 	ProfileServices profileServices;
@@ -59,6 +50,11 @@ public class InventoryAssignmentsController {
 
 	@Autowired
 	AssignService assignServices;
+	private InventoryAssignmentsServices inventoryAssignmentsServices;
+	@Autowired
+	private GetAuthorization getAuthorization;
+	@Autowired
+	private HierarchyServices hierarchyServices;
 	
 	@RequestMapping(value = "/student/{min}/{max}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventoryAssignmentStudent(@PathVariable("min") Integer min, @PathVariable("max") Integer max,
@@ -121,9 +117,9 @@ public class InventoryAssignmentsController {
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			System.out.println("going inside for loop");
 			for (Hierarchy hierarchy : hierarchyList) {
-				inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), hierarchy, min,
-						max);
-				System.out.println("going to the map");
+
+				inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), tokenObj.getSmartId(), hierarchy, min, max);
+                System.out.println("going to the map");
 				dataMap.put("inventoryList", inventoryList);
 				dataMap.put("hierarchy", hierarchy);
 				Loggers.loggerEnd("Inventory List:" + inventoryList);
@@ -133,8 +129,8 @@ public class InventoryAssignmentsController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
-			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(),
-					tokenObj.getHierarchy(), min, max);
+
+			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), tokenObj.getSmartId(), tokenObj.getHierarchy(), min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());

@@ -23,7 +23,6 @@ import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.LeaveMaster;
 import com.gsmart.model.Token;
 import com.gsmart.services.LeaveMasterService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.*;
 
 @Controller
@@ -31,18 +30,16 @@ import com.gsmart.util.*;
 public class LeaveMasterController {
 
 	@Autowired
-	LeaveMasterService leaveMasterService;
+	private LeaveMasterService leaveMasterService;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
-	@Autowired
-	TokenService tokenService;
 	
 	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 	@Autowired
-	LeaveMasterDao leaveMasterDao;
+	private LeaveMasterDao leaveMasterDao;
 
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getleavemaster(@PathVariable("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable("max") Integer max, @RequestHeader HttpHeaders token,

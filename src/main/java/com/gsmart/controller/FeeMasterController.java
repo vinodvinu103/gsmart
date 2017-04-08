@@ -43,13 +43,13 @@ import com.gsmart.util.Loggers;
 @RequestMapping(Constants.FEE_MASTER)
 public class FeeMasterController {
 	@Autowired
-	FeeMasterServices feeMasterServices;
+	private FeeMasterServices feeMasterServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	
 	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 
 	/**
 	 * to view {@link FeeMaster} details.

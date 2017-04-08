@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.BandDao;
 import com.gsmart.dao.ProfileDao;
@@ -24,22 +25,23 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class SearchServiceImp implements SearchService {
 
 	@Autowired
-	ProfileDao profiledao;
+	private ProfileDao profiledao;
 
 	@Autowired
-	FeeServices feeServices;
+	private FeeServices feeServices;
 
 	@Autowired
-	BandDao bandDao;
+	private BandDao bandDao;
 
 	@Autowired
-	FeeMasterServices feeMasterServices;
+	private FeeMasterServices feeMasterServices;
 
 
-	private Map<String, Profile> allProfiles;
+	 Map<String, Profile> allProfiles;
 
 	@Override
 	public Map<String, Profile> getAllProfiles(String academicYear,Long hid) {

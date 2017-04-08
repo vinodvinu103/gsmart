@@ -11,6 +11,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table (name="INVENTORY_ASSIGNMENTS")
 @IdClass(com.gsmart.model.InventoryAssignmentsCompoundKey.class)
@@ -20,6 +23,7 @@ public class InventoryAssignments
 		
 	@Id
 	@Column (name="CATEGORY")
+	@Index(name = "category")
 	private String category;
 	
 	@Id
@@ -30,6 +34,7 @@ public class InventoryAssignments
 	private String teacherName;
 	
 	@Column(name="STANDARD")
+	@Index(name = "standard")
 	private String standard;
 	
 	@Column(name="SECTION")

@@ -32,12 +32,10 @@ import com.gsmart.services.PasswordServices;
 
 import com.gsmart.services.FeeMasterServices;
 import com.gsmart.services.FeeServices;
-import com.gsmart.services.HierarchyServices;
 
 //import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.CommonMail;
 //import com.gsmart.services.SearchService;
@@ -53,32 +51,28 @@ import com.gsmart.util.Loggers;
 public class RegistrationController {
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
+
 
 	@Autowired
-	TokenService tokenService;
+	private PasswordServices passwordServices;
+
 
 	@Autowired
-    PasswordServices passwordServices;
+	private FeeMasterServices feeMasterServices;
 
 	@Autowired
-	HierarchyServices hierarchyServices;
-
+	private FeeServices feeService;
 	@Autowired
-	FeeMasterServices feeMasterServices;
-
+	private HierarchyDao hierarchyDao;
 	@Autowired
-	FeeServices feeService;
-	@Autowired
-	HierarchyDao hierarchyDao;
-	@Autowired
-	ProfileDao profileDao;
+	private ProfileDao profileDao;
 
 	int i = 0;
 
@@ -284,6 +278,23 @@ public class RegistrationController {
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 
 	}
+	
+	@RequestMapping(value="/changeprofileimage",method = RequestMethod.POST)
+	public ResponseEntity<Map<String,Object>> changeprofileimage(@RequestBody Profile profile,@RequestHeader HttpHeaders token, HttpSession httpSession)
+	throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String,Object> jsonResult = new HashMap<String, Object>();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		profile.setSmartId(tokenObj.getSmartId());
+		String result = profileServices.changeprofileimage(profile);
+		jsonResult.put("status", 200);
+		jsonResult.put("result", result);
+		Loggers.loggerEnd(jsonResult);
+		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "/delete/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<Map<String, Object>> deleteProfile(@RequestBody Profile profile,
@@ -294,7 +305,8 @@ public class RegistrationController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		Map<String, Object> jsonResult = new HashMap();
+		
+		Map<String, Object> jsonResult = new HashMap<String, Object>();
 			if (task.equals("delete")) {
 				String result = profileServices.deleteprofile(profile);
 				jsonResult.put("result", result);
@@ -305,7 +317,8 @@ public class RegistrationController {
 		
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 	}
-
+    
+	
 	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> searchRep(@RequestBody Search search, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) {

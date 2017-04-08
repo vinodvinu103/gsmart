@@ -43,13 +43,12 @@ import com.gsmart.util.Loggers;
 public class HierarchyController {
 
 	@Autowired
-	HierarchyServices hierarchyServices;
+	private HierarchyServices hierarchyServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
-	@Autowired
-	LoginController controller;
+	
 
 	/**
 	 * to view {@link Hierarchy} details.

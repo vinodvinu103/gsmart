@@ -14,6 +14,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.CompoundSalaryStructure;
 import com.gsmart.model.SalaryStructure;
@@ -21,6 +22,7 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 
 	@Autowired
@@ -70,6 +72,7 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public CompoundSalaryStructure addSalaryStructure(SalaryStructure salarystructure) throws GSmartDatabaseException {
 		Loggers.loggerStart();
@@ -98,53 +101,46 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	/*@Override
 	public List<SalaryStructure> view() {
 
-		Session session = sessionFactory.openSession();
 		String hql = "from SalaryStructure where isActive='Y'";
-		Query qry =  session.createQuery(hql);
+		Query qry =  sessionFactory.getCurrentSession().createQuery(hql);
 		return qry.list();
 		
 	}
 
 	@Override
 	public void add(SalaryStructure salaryStructure) {
+		Session session=this.sessionFactory.getCurrentSession();
 
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
 		salaryStructure.setIsActive("Y");
 		salaryStructure.setEntryTime(CalendarCalculator.getTimeStamp());
 		salaryStructure.setSalary(salaryStructure.getSalary());
 		salaryStructure.setStatutory(salaryStructure.getStatutory());
 		session.save(salaryStructure);
-		session.getTransaction().commit();
 	}
 
 	@Override
 	public void edit(SalaryStructure salaryStructure) {
+		Session session=this.sessionFactory.getCurrentSession();
 
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
 		String hql = "from SalaryStructure ss where isActive='Y' and ss.compoundSalaryStructure.entryTime='"+salaryStructure.getEntryTime()+"'";
-		Query qry = session.createQuery(hql);
+		Query qry = sessionFactory.getCurrentSession().createQuery(hql);
 		SalaryStructure oldSalaryStructure = (SalaryStructure) qry.uniqueResult();
 		oldSalaryStructure.setIsActive("N");
 		oldSalaryStructure.setUpdatedTime(CalendarCalculator.getTimeStamp());
 		session.update(oldSalaryStructure);
 		add(salaryStructure);
-		session.getTransaction().commit();
 	}
 
 	@Override
 	public void delete(SalaryStructure salaryStructure) {
+		Session session=this.sessionFactory.getCurrentSession();
 
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
 		String hql = "from SalaryStructure ss where isActive='Y' and ss.compoundSalaryStructure.entryTime='"+salaryStructure.getEntryTime()+"'";
-		Query qry = session.createQuery(hql);
+		Query qry = sessionFactory.getCurrentSession().createQuery(hql);
 		SalaryStructure oldSalaryStructure = (SalaryStructure) qry.uniqueResult();
 		oldSalaryStructure.setIsActive("D");
 		oldSalaryStructure.setExitTime(CalendarCalculator.getTimeStamp());
 		session.update(oldSalaryStructure);
-		session.getTransaction().commit();
 	}
 */
 }
