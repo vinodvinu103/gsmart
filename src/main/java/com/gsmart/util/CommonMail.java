@@ -54,15 +54,11 @@ public class CommonMail {
 		return mailSession;
 	}
 
-	private void sendMessage(Transport transport, MimeMessage message, Address[] recipients) {
-		try {
+	private void sendMessage(Transport transport, MimeMessage message, Address[] recipients) throws Exception  {
 			transport.connect();
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
-		} catch (MessagingException e) {
-			e.getMessage();
-			e.printStackTrace();
-		}
+		
 	}
 
 	public void passwordMail(Profile userProfile, String id) throws Exception {
@@ -72,7 +68,7 @@ public class CommonMail {
 				+ "</font><br><br>"
 				+ "Your G-Smart account has been activated."
 				+ "<br><br> Please click on the below link to set password to your account " 
-				+ "<br><br>http://139.162.55.63:8080/gsmart-js/#/setPassword/"+id
+				+ "<br><br>http://172.104.60.94:8080/gsmart-js/#/setPassword/"+id
 				+ "<br><br><br><br><font color=#999999>*** Please do not reply to this message.Replies to this message are undeliverable. *** </font>"
 				+ "<br><br><br>Gowdanar Technologies Team");
 		String subject = "Your Account Details";

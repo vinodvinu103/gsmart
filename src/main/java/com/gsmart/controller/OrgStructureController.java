@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
 import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
@@ -45,23 +44,26 @@ public class OrgStructureController {
 	// private static final Logger logger =
 	// Logger.getLogger(OrgStructureController.class);
 
-	@RequestMapping(value = "/{smartId}")
-	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId,
+	@RequestMapping(value = "/{smartId}/{hierarchy}/{academicYear}")
+	public ResponseEntity<Map<String, Object>> orgStructureController(@PathVariable("smartId") String smartId,@PathVariable("academicYear") String academicYear,@PathVariable("hierarchy") Long hierarchy,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
+		
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 
-		resultmap.put("modulePermisson", modulePermisson);
-		if (modulePermisson != null) {
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018", tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			Map<String, Profile> profiles = searchService.getAllProfiles(academicYear,hid);
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			if (childList.size() != 0) {
 				profile.setChildFlag(true);
@@ -81,9 +83,6 @@ public class OrgStructureController {
 			resultmap.put("selfProfile", profile);
 			resultmap.put("childList", childList);
 			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
-		}
 
 	}
 	
@@ -99,16 +98,14 @@ public class OrgStructureController {
 
 		Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 		try {
-			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-				Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-				Map<String, Profile> map = searchService.getAllProfiles("2017-2018", tokenObj.getRole(),
-						tokenObj.getHierarchy());
+				
+				Token tokenObj = (Token) httpSession.getAttribute("token");
+				
+				Map<String, Profile> map = searchService.getAllProfiles("2017-2018",
+						tokenObj.getHierarchy().getHid());
 				ArrayList<Profile> profiless = searchService.getEmployeeInfo(search.getName(), map);
 				jsonMap.put("result", profiless);
 				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
-			}
 		} catch (Exception e) {
 			jsonMap.put("result", null);
 			return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
@@ -135,8 +132,8 @@ public class OrgStructureController {
 	 * }
 	 */
 
-	@RequestMapping(value = "/search/{smartId}", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@RequestBody Search search,
+	@RequestMapping(value = "/search/{smartId}/{academicYear}/{hierarchy}", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, ArrayList<Profile>>> searchRep(@PathVariable("academicYear") String academicYear,@PathVariable("hierarchy") Long hierarchy,@RequestBody Search search,
 			@PathVariable("smartId") String smartId, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
@@ -146,11 +143,16 @@ public class OrgStructureController {
 		Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 
 		ArrayList<Profile> temp = new ArrayList<Profile>();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
+			Long hid=null;
+			if(tokenObj.getHierarchy()==null){
+				hid=hierarchy;
+			}else{
+				hid=tokenObj.getHierarchy().getHid();
+			}
 
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018", tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			Map<String, Profile> profiles = searchService.getAllProfiles(academicYear,
+					hid);
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 
@@ -201,7 +203,7 @@ public class OrgStructureController {
 			}
 
 			jsonMap.put("childList", list);
-		}
+		
 		return new ResponseEntity<Map<String, ArrayList<Profile>>>(jsonMap, HttpStatus.OK);
 	}
 }

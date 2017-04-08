@@ -27,6 +27,7 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.PaySlipDAO;
 import com.gsmart.model.GenerateSalaryStatement;
@@ -47,6 +48,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
+@Service
 public class PaySlipServiceImpl implements PaySlipService {
 
 	@Autowired
@@ -65,7 +67,7 @@ public class PaySlipServiceImpl implements PaySlipService {
 		logger.info("Generating PDF File");
 		try {
 			document.open();
-			
+
 			startMonth.setTime(
 					new SimpleDateFormat("MMMM/yyyy").parse(paySlip.getFromMonth() + "/" + paySlip.getFromYear()));
 			endMonth.setTime(new SimpleDateFormat("MMMM/yyyy").parse(paySlip.getToMonth() + "/" + paySlip.getToYear()));
@@ -78,11 +80,10 @@ public class PaySlipServiceImpl implements PaySlipService {
 				paySlip.setFromYear(year);
 
 				GenerateSalaryStatement salStmt = paySlipDAO.download(paySlip);
-logger.info(paySlip);
+				logger.info(paySlip);
 				try {
 					PdfWriter.getInstance(document,
-							new FileOutputStream(salStmt.getSmartId() + " "
-									+ month + " " + year + ".pdf"));
+							new FileOutputStream(salStmt.getSmartId() + " " + month + " " + year + ".pdf"));
 					logger.info("before catch");
 				} catch (FileNotFoundException | DocumentException e) {
 					e.printStackTrace();
@@ -91,9 +92,9 @@ logger.info(paySlip);
 				logger.info(month);
 				logger.info(year);
 				generatePDF(salStmt, month, year);
-logger.info("pdfgenerated");
+				logger.info("pdfgenerated");
 				startMonth.add(Calendar.MONTH, 1);
-logger.info(startMonth);
+				logger.info(startMonth);
 			}
 			document.close();
 		} catch (ParseException e) {
@@ -104,16 +105,16 @@ logger.info(startMonth);
 
 	public void generatePDF(GenerateSalaryStatement salStmt, String month, String year) {
 
-		//Image image = null;
+		// Image image = null;
 
 		try {
 
-			/*try {
-				image = Image.getInstance("/home/gtpl/Desktop/gowdanar.png");
-				image.scaleAbsolute(70f, 70f);
-			} catch (BadElementException | IOException e1) {
-				e1.printStackTrace();
-			}*/
+			/*
+			 * try { image =
+			 * Image.getInstance("/home/gtpl/Desktop/gowdanar.png");
+			 * image.scaleAbsolute(70f, 70f); } catch (BadElementException |
+			 * IOException e1) { e1.printStackTrace(); }
+			 */
 
 			Rectangle rect = new Rectangle(575, 825, 20, 20);
 
@@ -142,10 +143,11 @@ logger.info(startMonth);
 			table.setWidthPercentage(100);
 			table.setWidths(new int[] { 10, 50 });
 			logger.info("table");
-			/*PdfPCell imgCell = new PdfPCell(image, false);
-			imgCell.setPadding(5f);
-			imgCell.setBorder(Rectangle.LEFT | Rectangle.TOP | Rectangle.BOTTOM);
-			table.addCell(imgCell);*/
+			/*
+			 * PdfPCell imgCell = new PdfPCell(image, false);
+			 * imgCell.setPadding(5f); imgCell.setBorder(Rectangle.LEFT |
+			 * Rectangle.TOP | Rectangle.BOTTOM); table.addCell(imgCell);
+			 */
 
 			PdfPCell textCell = new PdfPCell();
 			textCell.addElement(company);
@@ -168,8 +170,7 @@ logger.info(startMonth);
 			PdfPTable empDetails = new PdfPTable(4);
 
 			PdfPCell cell1 = new PdfPCell(new Paragraph("Employee Code", labels));
-			PdfPCell cell2 = new PdfPCell(
-					new Paragraph(salStmt.getSmartId().toString(), contents));
+			PdfPCell cell2 = new PdfPCell(new Paragraph(salStmt.getSmartId().toString(), contents));
 			PdfPCell cell3 = new PdfPCell(new Paragraph("Employee Name", labels));
 			PdfPCell cell4 = new PdfPCell(new Paragraph(salStmt.getEmpName(), contents));
 			PdfPCell cell5 = new PdfPCell(new Paragraph("Designation", labels));

@@ -20,6 +20,7 @@ import com.gsmart.model.SalaryStructure;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
+@Repository
 public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 
 	@Autowired
@@ -75,8 +76,9 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 		getConnection();
 		CompoundSalaryStructure css=null;
 		try{
-			query=session.createQuery("from SalaryStructure where isActive=:isActive and smartId=:smartId and year=:year ");
+			query=session.createQuery("from SalaryStructure where isActive=:isActive and smartId=:smartId and year=:year hierarchy.hid=:hierarchy");
 			query.setParameter("smartId",salarystructure.getSmartId());
+			query.setParameter("hierarchy", salarystructure.getHierarchy().getHid());
 			query.setParameter("year", salarystructure.getYear());
 			css = (CompoundSalaryStructure) query.list();
 		}catch (Exception e) {

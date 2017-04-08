@@ -23,14 +23,11 @@ import javax.persistence.Table;
 @IdClass(com.gsmart.model.CompoundInventory.class)
 public class Inventory {
 
-
 	@Id
 	@Column(name="CATEGORY")
 	private String category;
 
-
-
-	@Id
+    @Id
 	@Column(name="ITEM_Type")
 	private String itemType;
 
@@ -38,11 +35,8 @@ public class Inventory {
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
 	
-	
-	
 	@Column(name="QUANTITY")
 	private Integer quantity;
-	
 	
 	@Column(name="LEFT_QUANTITY")
 	private Integer leftQuantity;

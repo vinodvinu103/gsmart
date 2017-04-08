@@ -19,6 +19,8 @@ import javax.persistence.ManyToMany;*/
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.springframework.web.multipart.MultipartFile;
+
 @Entity
 @Table(name="REPORT_CARD")
 @IdClass(com.gsmart.model.CompoundReportCard.class)
@@ -31,6 +33,10 @@ public class ReportCard {
 	@Id
 	@Column(name="ENTRYTIME")
 	private String entryTime;
+	
+	@Id
+	@Column(name="EXAM_NAME")
+	private String examName;
 	
 	@Column(name="STUDENT_NAME")
 	private String studentName;
@@ -63,7 +69,7 @@ public class ReportCard {
 	@Column(name="SUBJECT_GRADE")
 	private String subjectGrade;
 	
-	@Column(name="TOTAL_GRADE")
+	@Transient
 	private String totalGrade;
 	
 	@Column(name="RESULT")
@@ -83,6 +89,9 @@ public class ReportCard {
 	
 	@Transient
 	private int childReportFlag;
+	
+	@Transient
+	private MultipartFile multiPartFile;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -110,6 +119,14 @@ public class ReportCard {
 
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
+	}
+	
+	public String getExamName() {
+		return examName;
+	}
+
+	public void setExamName(String examName) {
+		this.examName = examName;
 	}
 
 	public String getStudentName() {
@@ -251,15 +268,25 @@ public class ReportCard {
 		this.childReportFlag = childReportFlag;
 	}
 
+	public MultipartFile getMultiPartFile() {
+		return multiPartFile;
+	}
+
+	public void setMultiPartFile(MultipartFile multiPartFile) {
+		this.multiPartFile = multiPartFile;
+	}
+
 	@Override
 	public String toString() {
-		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", studentName=" + studentName
-				+ ", standard=" + standard + ", section=" + section + ", reportingManagerId=" + reportingManagerId
-				+ ", teacherName=" + teacherName + ", subject=" + subject + ", maxMarks=" + maxMarks + ", minMarks="
-				+ minMarks + ", marksObtained=" + marksObtained + ", subjectGrade=" + subjectGrade + ", totalGrade="
-				+ totalGrade + ", result=" + result + ", academicYear=" + academicYear + ", isActive=" + isActive
-				+ ", updateTime=" + updateTime + ", exitTime=" + exitTime + "]";
+		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", examName=" + examName
+				+ ", studentName=" + studentName + ", standard=" + standard + ", section=" + section
+				+ ", reportingManagerId=" + reportingManagerId + ", teacherName=" + teacherName + ", subject=" + subject
+				+ ", maxMarks=" + maxMarks + ", minMarks=" + minMarks + ", marksObtained=" + marksObtained
+				+ ", subjectGrade=" + subjectGrade + ", totalGrade=" + totalGrade + ", result=" + result
+				+ ", academicYear=" + academicYear + ", isActive=" + isActive + ", updateTime=" + updateTime
+				+ ", exitTime=" + exitTime + ", childReportFlag=" + childReportFlag + ", hierarchy=" + hierarchy + "]";
 	}
+
 	
 
 	

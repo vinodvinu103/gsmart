@@ -52,6 +52,8 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			attendanceList = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+
 		} finally {
 			session.close();
 		}
@@ -76,13 +78,16 @@ public class AttendanceDaoImpl implements AttendanceDao {
 					rfidList.add(attendance.getRfId());
 				}
 			}
+			System.out.println("atttenfdenceListjj"+attendanceList);
 			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
 
 		} finally {
 			session.close();
 		}
+		Loggers.loggerEnd(rfidList);
 		return rfidList;
 	}
 
@@ -123,6 +128,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
+			throw new GSmartDatabaseException(e.getMessage());
 
 		} finally {
 			session.close();
@@ -130,9 +136,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	}
 
 	public Attendance getAttendance(long inDate, String smartId) {
-		Loggers.loggerStart();
 		Loggers.loggerStart(inDate);
-		getconnection();
 		try {
 			query = session.createQuery("from Attendance where  inDate=:inDate and smartId=:smartId");
 			query.setParameter("smartId", smartId);
@@ -176,6 +180,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	@Override
 	public List<Attendance> getAttendanceByhierarchy(Long date, Hierarchy hierarchy) {
 		Loggers.loggerStart();
+		System.out.println("intime >>>>>>>>>>>>>>>>>>>>>>>>>> "+date);
 		getconnection();
 		try {
 			query = session.createQuery("from Attendance where inDate=:inDate and hierarchy.hid=:hId");

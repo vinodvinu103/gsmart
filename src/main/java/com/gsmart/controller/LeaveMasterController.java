@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.HierarchyDao;
+import com.gsmart.dao.LeaveMasterDao;
 import com.gsmart.model.CompoundLeaveMaster;
 import com.gsmart.model.LeaveMaster;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.LeaveMasterService;
 import com.gsmart.services.TokenService;
@@ -37,9 +38,14 @@ public class LeaveMasterController {
 
 	@Autowired
 	TokenService tokenService;
+	
+	@Autowired
+	HierarchyDao hierarchyDao;
+	@Autowired
+	LeaveMasterDao leaveMasterDao;
 
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getleavemaster(@PathVariable("min") Integer min, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token,
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getleavemaster(@PathVariable("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable("max") Integer max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
@@ -50,15 +56,18 @@ public class LeaveMasterController {
 
 		Map<String, Object> leaveMasterList = null;
 
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		System.out.println("hierarchy" + tokenObj.getHierarchy());
 		Map<String, Object> permissions = new HashMap<>();
 
-		permissions.put("modulePermission", modulePermission);
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 
-		/* if (modulePermission != null) { */
-		leaveMasterList = leaveMasterService.getLeaveMasterList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
+		leaveMasterList = leaveMasterService.getLeaveMasterList(hid, min, max);
 		if (leaveMasterList != null) {
 			permissions.put("status", 200);
 			permissions.put("message", "success");
@@ -71,15 +80,11 @@ public class LeaveMasterController {
 		permissions.put("leaveMasterList", leaveMasterList);
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		/*
-		 * } else { return new ResponseEntity<Map<String, Object>>(leavemaster,
-		 * HttpStatus.OK); }
-		 */
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addLeaveMaster(@RequestBody LeaveMaster leaveMaster,
+	@RequestMapping(value="/hierarchy/{hierarchy}",method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addLeaveMaster(@PathVariable("hierarchy") Long hierarchy,@RequestBody LeaveMaster leaveMaster,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
@@ -89,11 +94,15 @@ public class LeaveMasterController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
+			if(tokenObj.getHierarchy()==null){
+				leaveMaster.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
+			}else{
+				leaveMaster.setHierarchy(tokenObj.getHierarchy());
+			}
 
-			leaveMaster.setHierarchy(tokenObj.getHierarchy());
+			
 			CompoundLeaveMaster cb = leaveMasterService.addLeaveMaster(leaveMaster);
 
 			if (cb != null) {
@@ -107,10 +116,6 @@ public class LeaveMasterController {
 
 			}
 
-		} else {
-			respMap.put("status", 403);
-			respMap.put("message", "Permission Denied");
-		}
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
@@ -130,7 +135,6 @@ public class LeaveMasterController {
 		str.length();
 		Map<String, Object> respMap = new HashMap<>();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				ch = leaveMasterService.editLeaveMaster(leaveMaster);
 				if (ch != null) {
@@ -147,15 +151,40 @@ public class LeaveMasterController {
 			respMap.put("message", "Deleted Succesfully");
 			}
 
-		}
+		
 
-		else {
-			respMap.put("status", 200);
-			respMap.put("message", "Permission Denied");
-
-		}
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getleavemasterForApplyLeave(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		List<LeaveMaster> leaveMasterList =null;
+
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		System.out.println("hierarchy" + tokenObj.getHierarchy());
+		Map<String, Object> permissions = new HashMap<>();
+		leaveMasterList =leaveMasterDao.getLeaveMasterListForApplyLeave(tokenObj.getHierarchy().getHid());
+		if (leaveMasterList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("leaveMasterList", leaveMasterList);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+		}
+		permissions.put("leaveMasterList", leaveMasterList);
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
 }

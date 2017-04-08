@@ -1,8 +1,12 @@
 package com.gsmart.controller;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
+
+import java.util.ArrayList;
+
 import java.util.List;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -17,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+
+import com.gsmart.model.Token;
+
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
-import com.gsmart.model.Token;
+
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
@@ -31,11 +37,13 @@ import com.gsmart.services.InventoryServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
+
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
 @Controller
+
 @RequestMapping(Constants.DASHBOARD)
 public class DashboardController {
 	
@@ -61,20 +69,19 @@ public class DashboardController {
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart();
-		String tokenNumber = token.get("Authorization").get(0);
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> responseMap = new HashMap<>();
 		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
 		Map<String, Object> finalResponse = new HashMap<>();
-		Map<String, Object> dataMap = new HashMap<>();
+		
 		List<InventoryAssignments> inventoryAssignmentList = null;
 		List<Inventory> inventoryList = null;
 		if (tokenObj.getHierarchy() == null) {
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
-				Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getRole(),
-						hierarchy);
+				Map<String, Object> dataMap = new HashMap<>();
+				Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear,
+						hierarchy.getHid());
 				ArrayList<String> childsList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 				childsList.add(tokenObj.getSmartId());
 				inventoryAssignmentList = inventoryAssignmentServices.getInventoryDashboardData(childsList, hierarchy);
@@ -85,13 +92,12 @@ public class DashboardController {
 				inventoryByHierarchy.add(dataMap);
 			}
 			finalResponse.put("inventoryList", inventoryByHierarchy);
-			finalResponse.put("modulePermissions", modulePermission);
 			responseMap.put("data", finalResponse);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
-			Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			Map<String, Object> dataMap = new HashMap<>();
+			Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getHierarchy().getHid());
 			ArrayList<String> childsList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 			childsList.add(tokenObj.getSmartId());
 			inventoryAssignmentList = inventoryAssignmentServices.getInventoryDashboardData(childsList, tokenObj.getHierarchy());
@@ -101,12 +107,11 @@ public class DashboardController {
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
 			inventoryByHierarchy.add(dataMap);
 			finalResponse.put("inventoryList", inventoryByHierarchy);
-			finalResponse.put("modulePermissions", modulePermission);
 			responseMap.put("data", finalResponse);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		}
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(responseMap);
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 
@@ -116,22 +121,23 @@ public class DashboardController {
 
 		Loggers.loggerStart();
 		Loggers.loggerStart("Given date is : " + date);
-		Loggers.loggerStart();
-		String tokenNumber = token.get("Authorization").get(0);
-		// String str = getAuthorization.getAuthentication(tokenNumber,
-		// httpSession);
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Hierarchy> hierarchyList = new ArrayList<>();
 		Map<String, Object> responseMap = new HashMap<>();
+		List<Map<String,  Object>> attendanceList=null;
 		if (tokenObj.getHierarchy() == null) {
+			System.out.println("in side if");
 			hierarchyList = hierarchyServices.getAllHierarchy();
+			System.out.println("hid for admiin <><><>   "+hierarchyList.size());
 		} else {
+			System.out.println("in side else");
 			hierarchyList.add(tokenObj.getHierarchy());
 		}
+		attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
 		responseMap.put("message", "success");
 		responseMap.put("status", 200);
-		responseMap.put("data", attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList));
+		responseMap.put("data", attendanceList);
+		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 	
@@ -141,23 +147,29 @@ public class DashboardController {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		str.length();
-		int totalPaidFees;
-		int totalFees;
+
+		int totalPaidFees=0;
+		int totalFees=0;
 		List<Map<String, Object>> responseList = new ArrayList<>();
+
 		Map<String, Object> responseMap = new HashMap<>();
-		Map<String, Object> dataMap = new HashMap<>();
-		if (tokenObj.getHierarchy() == null && modulePermission != null) {
+		
+		if (tokenObj.getHierarchy() == null) {
+			System.out.println("in side if condition for fees");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
-				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
-						hierarchy);
+
+				Map<String, Object> dataMap = new HashMap<>();
+
+				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
+						hierarchy.getHid());
+
 				List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 				childList.add(tokenObj.getSmartId());
-				totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
-				totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
+				totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, hierarchy.getHid(), childList);
+				totalFees = feeServices.getPaidFeeDashboard(academincYear, hierarchy.getHid(), childList);
 				dataMap.put("totalPaidFees", totalPaidFees);
 				dataMap.put("hierarchy", hierarchy);
 				dataMap.put("totalFees", totalFees);
@@ -166,13 +178,17 @@ public class DashboardController {
 			responseMap.put("data", responseList);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
-		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
-			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+		} else if (tokenObj.getHierarchy() != null) {
+
+			Map<String, Object> dataMap = new HashMap<>();
+
+			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
+					tokenObj.getHierarchy().getHid());
+
 			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
 			childList.add(tokenObj.getSmartId());
-			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
-			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy(), childList);
+			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
+			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
 			dataMap.put("totalPaidFees", totalPaidFees);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
 			dataMap.put("totalFees", totalFees);
@@ -181,11 +197,13 @@ public class DashboardController {
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 		} else {
+			System.out.println("in side else condition for fees");
 			responseMap.put("data", null);
 			responseMap.put("status", 404);
 			responseMap.put("message", "Data not found");
 		}
-
+		System.out.println("The paid fees passed here is: "+totalPaidFees);
+		System.out.println("The total fees passed here is"+totalFees);
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}

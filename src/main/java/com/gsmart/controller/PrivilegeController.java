@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
@@ -72,19 +71,13 @@ public class PrivilegeController {
 
 		str.length();
 		List<Profile> profileList = null;
-        RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
         
 		
 		Map<String, Object> privilege = new HashMap<>();
-		privilege.put("modulePermission", modulePermission);
-		if (modulePermission!= null) {			
 			profileList = profileServices.search(profile);
 			privilege.put("profileList", profileList);
 			Loggers.loggerEnd(profileList);
 		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
-	} else {
-		return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
-	}
 	}
 	
 
@@ -105,7 +98,6 @@ public class PrivilegeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit"))
 		
 		     profileServices.editRole(profile);
@@ -114,11 +106,7 @@ public class PrivilegeController {
 		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse> (myResponse, HttpStatus.OK);
 	}
-		 else {
-				myResponse = new IAMResponse("Permission Denied");
-				return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-			}
 
 
-}
+
 }

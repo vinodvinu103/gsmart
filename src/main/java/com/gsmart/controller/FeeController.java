@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
@@ -57,26 +56,27 @@ public class FeeController {
 	@Autowired
 	HierarchyServices hierarchyServices;
 
-	@RequestMapping(value = "/viewFee", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, ArrayList<Fee>>> getFeeList(@RequestBody Fee fee,
+	@RequestMapping(value = "/viewFee/{smartId}/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, ArrayList<Fee>>> getFeeList(@PathVariable("smartId") String smartId,@PathVariable("academicYear") String academicYear,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
 		str.length();
 		Map<String, ArrayList<Fee>> jsonMap = new HashMap<String, ArrayList<Fee>>();
-		// Map<String, ArrayList<Fee>> responseMap = new HashMap<String,
-		// ArrayList<Fee>>();
+		
+		Fee fee =new Fee();
+		fee.setAcademicYear(academicYear);
+		fee.setSmartId(smartId);
 		Map<String, Object> responseMap = new HashMap<>();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+		
 
-			ArrayList<Fee> feeList = (ArrayList<Fee>) feeServices.getFeeList(fee, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			ArrayList<Fee> feeList = (ArrayList<Fee>) feeServices.getFeeList(fee,tokenObj.getHierarchy().getHid());
 
 			if (feeList.size() != 0) {
 				jsonMap.put("result", feeList);
@@ -84,14 +84,12 @@ public class FeeController {
 				responseMap.put("status", 200);
 				responseMap.put("message", "success");
 				Loggers.loggerEnd();
-				return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap, HttpStatus.OK);
 			} else {
 				jsonMap.put("result", null);
 				Loggers.loggerEnd();
-				return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap, HttpStatus.OK);
 			}
 
-		}
+		
 		return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap, HttpStatus.OK);
 
 	}
@@ -107,9 +105,9 @@ public class FeeController {
 		IAMResponse myResponse;
 		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
+			
 			try {
-				Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+				Token tokenObj = (Token) httpSession.getAttribute("token");
 				fee.setHierarchy(tokenObj.getHierarchy());
 				feeServices.addFee(fee);
 				myResponse = new IAMResponse("Success");
@@ -125,23 +123,15 @@ public class FeeController {
 			responseMap.put("status", 404);
 			responseMap.put("message", "data not found");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
-			myResponse = new IAMResponse("permission denied");
-			response.put("message", myResponse);
-			responseMap.put("data", response);
-			responseMap.put("status", 403);
-			responseMap.put("message", "Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
 	}
 
-	@RequestMapping(value = "/{smartId}/{academicYear}", method = RequestMethod.GET)
+	@RequestMapping(value = "/feeOrg/{smartId}/{academicYear}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> feeStructureController(@PathVariable("smartId") String smartId,
-			@PathVariable("academicYear") String academicYear, @RequestHeader HttpHeaders token,
+			@PathVariable("academicYear") String academicYear,@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
-		Loggers.loggerStart();
-		Loggers.loggerValue("token", token);
+		Loggers.loggerStart(smartId);
+		Profile profile=null;
 		Map<String, Profile> profileMap = new HashMap<String, Profile>();
 		Map<String, Object> permissions = new HashMap<String, Object>();
 		String tokenNumber = token.get("Authorization").get(0);
@@ -149,10 +139,10 @@ public class FeeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		RolePermission modulePermissions = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
-		permissions.put("modulePermissions", modulePermissions);
+		Long hid=null;
+		
 
 		ArrayList<Profile> fees = new ArrayList<Profile>();
 
@@ -160,21 +150,30 @@ public class FeeController {
 
 		ArrayList<Profile> self = new ArrayList<Profile>();
 		Profile selfProfile = new Profile();
+		
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 
-		if (modulePermissions != null) {
+
 			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear,
-					tokenObj.getRole(), tokenObj.getHierarchy());
+					hid);
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
-			Loggers.loggerValue("childlist", childList);
 
-			fees = searchService.sumUpFee(childList, profiles, academicYear, tokenObj.getRole(),
-					tokenObj.getHierarchy());
+			fees = searchService.sumUpFee(childList, profiles, academicYear,hid);
 
 			profileMap.put(smartId, profiles.get(smartId));
+			if(tokenObj.getHierarchy()==null){
+				 profile=profileSevices.getProfileDetails(smartId);
+			}else{
+				profile = profiles.get(smartId);
+			}
 
-			Profile profile = profiles.get(smartId);
-
+			
+			
 			System.out.println("self profile" + profile);
 
 			selfProfile = searchService.totalFessToAdmin(profile, fees);
@@ -206,9 +205,6 @@ public class FeeController {
 
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
 	}
 
 	@RequestMapping(value = "/totalfee", method = RequestMethod.GET)
@@ -217,20 +213,21 @@ public class FeeController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+//		Long hid=null;
+		/*if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}*/
 		Loggers.loggerStart();
 		Map<String, Object> responseMap = new HashMap<>();
 		int fees;
-		if (modulePermission != null) {
-			fees = feeServices.gettotalfee(tokenObj.getRole(), tokenObj.getHierarchy());
+			fees = feeServices.gettotalfee(tokenObj.getRole(),tokenObj.getHierarchy());
 			responseMap.put("data", fees);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
-		}
-		responseMap.put("data", null);
-		responseMap.put("status", 404);
-		responseMap.put("message", "data not found");
+		
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
@@ -241,15 +238,14 @@ public class FeeController {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		str.length();
 		int totalPaidFees;
 		int totalFees;
 		List<Map<String, Object>> responseList = new ArrayList<>();
 		Map<String, Object> responseMap = new HashMap<>();
 		Map<String, Object> dataMap = new HashMap<>();
-		if (tokenObj.getHierarchy() == null && modulePermission != null) {
+		if (tokenObj.getHierarchy() == null ) {
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
 			for (Hierarchy hierarchy : hierarchyList) {
 				totalPaidFees = feeServices.gettotalpaidfee(tokenObj.getRole(), hierarchy);
@@ -262,7 +258,7 @@ public class FeeController {
 			responseMap.put("data", responseList);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
-		} else if (tokenObj.getHierarchy() != null && modulePermission != null) {
+		} else if (tokenObj.getHierarchy() != null) {
 			totalPaidFees = feeServices.gettotalpaidfee(tokenObj.getRole(), tokenObj.getHierarchy());
 			totalFees = feeServices.gettotalfee(tokenObj.getRole(), tokenObj.getHierarchy());
 			dataMap.put("totalPaidFees", totalPaidFees);
@@ -282,36 +278,43 @@ public class FeeController {
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/paidfee/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getPaidStudentsList(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
 
-		Loggers.loggerStart();
+	@RequestMapping(value = "/paidfee/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getPaidStudentsList(@PathVariable ("hierarchy") Long hierarchy,@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(min);
+
+		Loggers.loggerStart(max);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
 		Map<String, Object> PaidStudentsList = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 		Map<String, Object> permission = new HashMap<>();
 		Map<String, Object> responseMap = new HashMap<>();
-		permission.put("modulePermission", modulePermission);
-		if (modulePermission != null) {
-			PaidStudentsList = feeServices.getPaidStudentsList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
+			PaidStudentsList = feeServices.getPaidStudentsList(hid, min, max);
+			if(PaidStudentsList!=null){
 			permission.put("PaidStudentsList", PaidStudentsList);
 			responseMap.put("data", permission);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
 
-			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 		} else {
 			responseMap.put("data", permission);
 			responseMap.put("status", 404);
 			responseMap.put("message", "data not found");
 			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+		
 		}
+			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 
 	}
 	/*
@@ -361,8 +364,8 @@ public class FeeController {
 	 * 
 	 */
 
-	@RequestMapping(value = "/unpaidfee/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getUnPaidStudentsList(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
+	@RequestMapping(value = "/unpaidfee/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getUnPaidStudentsList(@PathVariable ("hierarchy") Long hierarchy,@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -371,26 +374,29 @@ public class FeeController {
 		str.length();
 
 		Map<String, Object> unPaidStudentsList = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		Map<String, Object> permission = new HashMap<>();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 		Map<String, Object> responseMap = new HashMap<>();
-		permission.put("modulePermission", modulePermission);
-		if (modulePermission != null) {
-			unPaidStudentsList = feeServices.getUnpaidStudentsList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
-			permission.put("unPaidStudentsList", unPaidStudentsList);
-			responseMap.put("data", permission);
+		
+			unPaidStudentsList = feeServices.getUnpaidStudentsList(hid, min, max);
+			if (unPaidStudentsList != null) {
+			responseMap.put("unpaidList", unPaidStudentsList);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
-
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+		
 		} else {
-			responseMap.put("data", permission);
 			responseMap.put("status", 404);
 			responseMap.put("message", "data not found");
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 		}
+		
 
 	}
 
@@ -408,7 +414,6 @@ public class FeeController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 	if (task.equals("edit"))
 				feeServices.editFee(fee);
 			else if (task.equals("delete"))
@@ -422,15 +427,6 @@ public class FeeController {
 			Loggers.loggerEnd();
 
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-
-		} else {
-			myResponse = new IAMResponse("Permissions denied");
-			response.put("message", myResponse);
-			responseMap.put("data", response);
-			responseMap.put("status", 403);
-			responseMap.put("message", "Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
 
 	}
 }

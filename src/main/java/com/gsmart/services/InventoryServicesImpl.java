@@ -1,6 +1,5 @@
 package com.gsmart.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,16 +35,15 @@ public class InventoryServicesImpl implements InventoryServices {
 	 */
 
 	@Override
-	public Map<String, Object> getInventoryList(String role, Hierarchy hierarchy, int min, int max)
-			throws GSmartServiceException {
+	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
 			Loggers.loggerEnd();
-			return inventoryDao.getInventoryList(role, hierarchy, min, max);
-		} catch (GSmartDatabaseException Exception) {
-			throw (GSmartServiceException) Exception;
-
-		} catch (Exception e) {
+			return inventoryDao.getInventoryList(hid, min, max);
+		} catch (GSmartDatabaseException Exception ) {
+			throw(GSmartServiceException) Exception;
+			
+		}catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
 
@@ -86,11 +84,12 @@ public class InventoryServicesImpl implements InventoryServices {
 	 */
 
 	@Override
-	public void editInventory(Inventory inventory) throws GSmartServiceException {
+	public Inventory editInventory(Inventory inventory) throws GSmartServiceException {
 		Loggers.loggerStart();
+		Inventory ch=null;
 		try {
-			inventoryDao.editInventory(inventory);
-
+		ch=	inventoryDao.editInventory(inventory);
+			
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -100,6 +99,7 @@ public class InventoryServicesImpl implements InventoryServices {
 		}
 
 		Loggers.loggerEnd();
+		return ch;
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class InventoryServicesImpl implements InventoryServices {
 
 	@Override
 	public List<Inventory> getInventoryList(String role, Hierarchy hierarchy) throws GSmartServiceException {
-		return inventoryDao.getInventoryList(role, hierarchy);
+		return inventoryDao.getInventoryList( role, hierarchy);
 	}
 
 }

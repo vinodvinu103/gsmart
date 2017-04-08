@@ -70,7 +70,7 @@ public class SalaryStructureController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value="/salary",method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> addSalaryStructure(@RequestBody SalaryStructure salaryStructure,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();

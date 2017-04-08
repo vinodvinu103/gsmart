@@ -1,6 +1,5 @@
 package com.gsmart.controller;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -8,7 +7,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,16 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.CompoundLeave;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.LeaveServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
-import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
@@ -58,30 +53,23 @@ public class LeaveController {
 		str.length();
 		
 		Map<String, Object> leaveList = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 
 		Map<String, Object> leave = new HashMap<>();
-		leave.put("modulePermission", modulePermission);
 		
-		//	CronJob.cronJob();	
 			
-		if (modulePermission!= null) {
-			leaveList = leaveServices.getLeaveList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
+			leaveList = leaveServices.getLeaveList(tokenObj,tokenObj.getHierarchy(), min, max);
 			leave.put("leaveList", leaveList);
 			Loggers.loggerEnd(leaveList);
 			return new ResponseEntity<Map<String,Object>>(leave, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String,Object>>(leave, HttpStatus.OK);
-		}	
 
 	}
 		
 		
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addLeave(@PathVariable ("min") int min, @PathVariable ("max") int max, String role, Hierarchy hierarchy, @RequestBody Leave leave, Integer noOfdays, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<IAMResponse> addLeave(@RequestBody Leave leave, Integer noOfdays, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		
 		IAMResponse resp=new IAMResponse();
@@ -90,29 +78,29 @@ public class LeaveController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 	
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj=(Token) httpSession.getAttribute("token");
 			Profile profileInfo=profileDao.getProfileDetails(tokenObj.getSmartId());
 			leave.setSmartId(profileInfo.getSmartId());
 			leave.setReportingManagerId(profileInfo.getReportingManagerId());
 			leave.setFullName(profileInfo.getFirstName()+" "+profileInfo.getLastName());
 			leave.setHierarchy(tokenObj.getHierarchy());
-			System.out.println("leave details>>>>>>>>>>>>>."+leave);
-			CompoundLeave cl=leaveServices.addLeave(leave, noOfdays, role, hierarchy, min, max);
+			if(tokenObj.getRole().equalsIgnoreCase("student")){
+				leave.setTeacherOrStudentId(profileInfo.getStudentId());
+			}
+			else{
+				leave.setTeacherOrStudentId(profileInfo.getTeacherId());
+			}
+			CompoundLeave cl=leaveServices.addLeave(leave, noOfdays, tokenObj.getSmartId(),tokenObj.getRole(),tokenObj.getHierarchy());
 			if(cl!=null)
 			resp.setMessage("success");
 		else
-			resp.setMessage("Already exists");
+			resp.setMessage("You already applied a same/wrong DATE ,please choose another DATE");
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse> (resp, HttpStatus.OK);
-		} else {
-			resp.setMessage("Permission Denied");
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		}
 	}
-	@RequestMapping(value = "/{task}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 	public  ResponseEntity<IAMResponse> editLeave(@RequestBody Leave leave, @PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		IAMResponse myResponse;
@@ -122,7 +110,6 @@ public class LeaveController {
 
 		str.length();
 		
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit"))
 				leaveServices.editLeave(leave);
 			else if (task.equals("delete"))
@@ -131,10 +118,6 @@ public class LeaveController {
 			myResponse = new IAMResponse("success");
 			Loggers.loggerEnd();
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
 	}
 	@RequestMapping(value="/leftleaves/{smartId}/{leaveType}",method=RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getLeftLeaves(@RequestHeader HttpHeaders token,HttpSession httpSession,@PathVariable ("smartId") String smartId,@PathVariable("leaveType") String leaveType){
@@ -145,12 +128,10 @@ public class LeaveController {
 		Map<String, Object>leftLeaves=null;
 		str.length();
 		try {
-			getAuthorization.authorizationForGet(tokenNumber, httpSession);
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj=(Token) httpSession.getAttribute("token");
 			leftLeaves=leaveServices.getLeftLeaves(tokenObj.getRole(),tokenObj.getHierarchy(),smartId, leaveType);
 			
-		} catch (GSmartServiceException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		

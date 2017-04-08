@@ -20,7 +20,7 @@ public class PaySlip {
 	@Column(name="FROM_YEAR")
 	private String fromYear;
 	
-	@Column(name="TO_YEAR")
+	@Column(name="TO_MONTH")
 	private String toMonth;
 	
 	@Column(name="TO_YEAR")

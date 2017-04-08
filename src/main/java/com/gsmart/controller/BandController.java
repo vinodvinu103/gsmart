@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
-import com.gsmart.model.RolePermission;
 import com.gsmart.services.BandServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
@@ -62,23 +61,20 @@ public class BandController {
 	 */
 	// String module=getAuthorization.getModuleName();
 
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
-		Loggers.loggerStart();
+
+
+	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("hierarchy") Integer hierarchy, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+	throws GSmartBaseException {
+		Loggers.loggerStart(hierarchy);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	    str.length();
 	    Map<String, Object> bandList = null;
-		Map<String, Object> bandResponseMap = null;
        
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> permissions = new HashMap<>();
         
-		permissions.put("modulePermission",modulePermission);
-		/*if (modulePermission != null) {
-			System.out.println("success");*/
 			bandList = bandServices.getBandList(min, max);
 			if(bandList!=null){
 				permissions.put("status", 200);
@@ -92,9 +88,6 @@ public class BandController {
 			}
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		/*} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}*/
 		
 		}
 	
@@ -105,20 +98,16 @@ public class BandController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	    str.length();
-	    Map<String, Object> bandList1 = null;
-		Map<String, Object> bandResponseMap1 = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+
+	    List<Band>bandList=null;
 
 		Map<String, Object> permissions = new HashMap<>();
         
-		permissions.put("modulePermission",modulePermission);
-		/*if (modulePermission != null) {
-			System.out.println("success");*/
-			bandList1 = bandServices.getBandList1();
-			if(bandList1!=null){
+		bandList = bandServices.getBandList1();
+			if(bandList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");
-				permissions.put("bandList1",bandList1);
+				permissions.put("bandList",bandList);
 				
 			}else{
 				permissions.put("status", 404);
@@ -127,9 +116,6 @@ public class BandController {
 			}
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		/*} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}*/
 		
 		}
 
@@ -153,7 +139,6 @@ public class BandController {
 
 		str.length();
 
-        if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
 		CompoundBand cb=bandServices.addBand(band);
 		
 	        if(cb!=null)
@@ -169,12 +154,8 @@ public class BandController {
 		    }
 		    
 	    	
-        }else{
-        	respMap.put("status", 403);
-        	respMap.put("message", "Permission Denied");
-               }
         Loggers.loggerEnd();
-    	return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+        return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 	     
 	}
 
@@ -191,12 +172,12 @@ public class BandController {
 		Loggers.loggerStart(band);
 		Band cb=null;
 		Map<String, Object> respMap=new HashMap<>();
+
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-		 if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){
 		    	cb=bandServices.editBand(band);
 		    	if(cb!=null){
@@ -213,14 +194,10 @@ public class BandController {
 	        	respMap.put("message", "Deleted Successfully");
 		    }
 		    
-		}
-		 
-		 else {
-			 respMap.put("status", 403);
-	        	respMap.put("message", "Permission Denied");;
-		     }
 		 Loggers.loggerEnd();
 	        
 	     return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 
-}}
+}
+	}
+

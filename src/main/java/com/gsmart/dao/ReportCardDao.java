@@ -7,13 +7,14 @@ import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
 
 public interface ReportCardDao {
 
-	public List<ReportCard> reportCardList() throws GSmartDatabaseException;
+	public List<ReportCard> reportCardList(Token tokenDetail) throws GSmartDatabaseException;
 	
 	public CompoundReportCard addReportCard(ReportCard card)throws GSmartDatabaseException;
 	
@@ -21,10 +22,15 @@ public interface ReportCardDao {
 	
 	public void deleteReportCard(ReportCard card)throws GSmartDatabaseException;
 	
-	public void excelToDB(String smartId,MultipartFile fileUpload) throws Exception;
+	public void excelToDB(String smartId,MultipartFile fileUpload,Hierarchy hid) throws Exception;
 	
-	public List<ReportCard> search(Token tokenDetail)throws GSmartDatabaseException;
+	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName)throws GSmartDatabaseException;
 	
 	public ArrayList<ReportCard> reportCardBasedOnAcademicYear(String academicYear)throws GSmartDatabaseException;
 	
+	public List<ReportCard> acdemicYearAndExamName(Token tokenDetail)throws GSmartDatabaseException;
+	
+	public ArrayList<ReportCard> examName(Token tokenDetail,String acdemicYear)throws GSmartDatabaseException;
+
+	public Map<String, Object> reportCardListForTeacher(Token tokenDetail,Integer min,Integer max) throws GSmartDatabaseException;
 }

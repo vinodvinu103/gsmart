@@ -45,7 +45,7 @@ public interface HierarchyDao {
 	 */
 	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
 	
-	public Map<String, Object> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<Hierarchy> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException;
 	/**
 	 * @param hierarchy
 	 *            instanceOf {@link Hierarchy}

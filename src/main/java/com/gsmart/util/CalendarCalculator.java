@@ -6,14 +6,33 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gsmart.services.LoginServices;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scripting.jruby.JRubyScriptUtils.JRubyExecutionException;
+import org.springframework.stereotype.Repository;
 
-public class CalendarCalculator implements Job {
+import com.google.gson.JsonSerializationContext;
+
+@Repository
+public class CalendarCalculator {
+	
+	@Autowired
+	SessionFactory sessionFactroy;
+
+	Session session = null;
+	Query query;
+	Transaction tranction = null;
+
+	public void getConnection() {
+		session = sessionFactroy.openSession();
+		tranction = session.beginTransaction();
+	}
 
 
 	
@@ -36,9 +55,10 @@ public class CalendarCalculator implements Job {
 		}
 	}
 
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	/*public void execute(JobExecutionContext context) throws JobExecutionException {
+>>>>>>> 9414e452c71ca0becbdf7170c286e7ac273c0d1f
 		System.out.println("Hello Quartz!");
-	}
+	}*/
 	
 	private Long getUnixtime(String timestamp) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");

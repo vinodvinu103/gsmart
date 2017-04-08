@@ -11,6 +11,7 @@ import com.gsmart.model.SalaryStructure;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
+@Service
 public class SalaryStructureServiceImpl implements SalaryStructureService{
 
 	@Autowired

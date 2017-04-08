@@ -6,11 +6,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.gsmart.model.GenerateSalaryStatement;
 import com.gsmart.model.PaySlip;
 import com.gsmart.model.Profile;
 
+@Repository
 public class PaySlipDAOImpl implements PaySlipDAO{
 
 	@Autowired
