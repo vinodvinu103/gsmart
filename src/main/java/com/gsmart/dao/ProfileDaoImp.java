@@ -407,14 +407,20 @@ public class ProfileDaoImp implements ProfileDao {
 	 */
 
 	@SuppressWarnings("unchecked")
-	public List<Profile> search(Profile profile) throws GSmartDatabaseException {
+	public List<Profile> search(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException {
 		getConnection();
 		Loggers.loggerStart();
 
 		List<Profile> profileList;
 		try {
+			if (hierarchy == null) {
 
-			query = session.createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%'");
+				query = session.createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%'");
+			}
+			else{
+				query = session.createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			profileList = query.list();
 
 		} catch (Exception e) {
@@ -427,7 +433,6 @@ public class ProfileDaoImp implements ProfileDao {
 
 		return profileList;
 	}
-
 	/**
 	 * persists the updated profile instance
 	 * 

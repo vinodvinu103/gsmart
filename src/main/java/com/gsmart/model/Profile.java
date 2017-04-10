@@ -136,6 +136,14 @@ public class Profile {
 	@Lob @Column(name = "PARENTS_IMAGE", length = 400000)
 	private byte[] parentImage;
 
+	public byte[] getParentImage() {
+		return parentImage;
+	}
+
+	public void setParentImage(byte[] parentImage) {
+		this.parentImage = parentImage;
+	}
+	
 	// CONTACT DETAILS
 
 	@Column(name = "EMAIL_ID")

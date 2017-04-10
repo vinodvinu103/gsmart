@@ -51,7 +51,7 @@ public interface ProfileDao {
 	
 	/* for profile image change*/
 	public String changeprofileimage(Profile profile);
-
+	
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
@@ -71,8 +71,8 @@ public interface ProfileDao {
 	 * @return list of Profile entities available in the {@link Profile} Table
 	 * @throws GSmartDatabaseException
 	 */
-	public List<Profile> search(Profile profile) throws GSmartDatabaseException;
-
+	public List<Profile> search(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException;
+	
 	/**
 	 * @param profile
 	 *            instanceOf {@link Profile}

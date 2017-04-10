@@ -289,11 +289,11 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Hierarchy hierarchy = token.getHierarchy();
 		try {
 
-			query = session.createQuery("from ReportCard where academicYear=:academicYear and examName=:examName and reportingManagerId=:smartId and isActive='Y' and hid=hierarchy)");
+			query = session.createQuery("from ReportCard where academicYear=:academicYear and examName=:examName and (reportingManagerId=:smartId or smartId=:smartId) and isActive='Y' and hid=:hierarchy)");
 			query.setParameter("academicYear", academicYear);
 			query.setParameter("examName", examName);
 			query.setParameter("smartId", token.getSmartId());
-			query.setParameter("hierarchy", hierarchy);	
+			query.setParameter("hierarchy", hierarchy.getHid());	
 			list = (ArrayList<ReportCard>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -407,7 +407,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		String role = tokenDetail.getRole();
 		String smartId = tokenDetail.getSmartId();
 		try {
-			if(!role.equals("HOD")){
+			if(role.equals("TEACHER")||role.equals("STUDENT")){
 			query = session.createQuery(
 					"select distinct academicYear from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId ) and hid=:hierarchy and isActive='Y'");
 			query.setParameter("reportingManagerId", smartId);
