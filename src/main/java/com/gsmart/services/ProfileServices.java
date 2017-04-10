@@ -44,6 +44,8 @@ public interface ProfileServices{
 	public void editRole(Profile profile)throws GSmartServiceException;
 	
 	List<Profile> getProfileByHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
+	
+	List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	

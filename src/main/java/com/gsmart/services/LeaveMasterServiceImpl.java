@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.LeaveMasterDao;
 import com.gsmart.model.CompoundLeaveMaster;
@@ -14,6 +15,7 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class LeaveMasterServiceImpl implements LeaveMasterService {
 	@Autowired
 	private LeaveMasterDao leavemasterdao;

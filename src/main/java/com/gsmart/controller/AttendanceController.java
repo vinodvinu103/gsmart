@@ -45,19 +45,19 @@ import com.gsmart.util.Loggers;
 public class AttendanceController {
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
 	@Autowired
-	AttendanceService attendanceService;
+	private AttendanceService attendanceService;
 
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	HolidayDao holidayDao;
+	private HolidayDao holidayDao;
 
 	@RequestMapping(value = "/calendar/{month}/{year}/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
@@ -147,18 +147,23 @@ public class AttendanceController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		
+		int year = Calendar.getInstance().get(Calendar.YEAR);  // Gets the current date and time
+		String academicYear=year+"-"+(year+1);
 
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
 
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",
-					tokenObj.getHierarchy().getHid());
+			Map<String, Profile> profiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
 			Loggers.loggerValue("profile is ", profile);
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("child is", childList);
+			
+			List<String> childListForAttendance = searchService.getAllChildSmartId(tokenObj.getSmartId(), profiles);
 
+			resultmap.put("attendanceCount", attendanceService.getAttendanceCount(childListForAttendance));
 			if (childList.size() != 0) {
 				profile.setChildFlag(true);
 			}
@@ -183,4 +188,6 @@ public class AttendanceController {
 			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
 
 	}
+	
+	
 }

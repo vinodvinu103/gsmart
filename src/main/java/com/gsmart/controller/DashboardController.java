@@ -13,7 +13,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,19 +34,16 @@ import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Inventory;
-import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.RolePermission;
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
-import com.gsmart.services.InventoryAssignmentsServices;
 import com.gsmart.services.InventoryServices;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.ReportCardService;
 import com.gsmart.services.SearchService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 
 import com.gsmart.util.GSmartBaseException;
@@ -60,19 +56,15 @@ import com.gsmart.util.Loggers;
 public class DashboardController {
 	
 	@Autowired
-	InventoryAssignmentsServices inventoryAssignmentServices;
+	private InventoryServices inventoryServices;
 	@Autowired
-	InventoryServices inventoryServices;
+	private GetAuthorization getAuthorization;
 	@Autowired
-	GetAuthorization getAuthorization;
+	private HierarchyServices hierarchyServices;
 	@Autowired
-	TokenService tokenService;
+	private AttendanceService attendanceService;
 	@Autowired
-	HierarchyServices hierarchyServices;
-	@Autowired
-	AttendanceService attendanceService;
-	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 	@Autowired
 	FeeServices feeServices;
 	@Autowired
@@ -83,6 +75,7 @@ public class DashboardController {
 	DashboardDao dashboardDao;
 	@Autowired
 	HolidayDao holidayDao;
+
 	
 	@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventory1(@PathVariable("academicYear") String academicYear,@RequestHeader HttpHeaders token,
