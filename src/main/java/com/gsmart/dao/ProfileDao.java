@@ -90,7 +90,7 @@ public interface ProfileDao {
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
 	
-	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
 
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	

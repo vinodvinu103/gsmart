@@ -28,43 +28,39 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	@Autowired
 	SessionFactory sessionFactory;
 
-	Session session = null;;
 	Query query;
-	Transaction transaction = null;
 	Criteria criteria = null;
 	Criteria criteriaCount=null;
 	Long count=null;
 	
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
-	}
+	}*/
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getSalaryStructure(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart();
 		List<SalaryStructure> salaryStructureList = null;
 		
 		Map<String, Object> salaryStructureMap = new HashMap<>();
 		
 		try {
-            criteria = session.createCriteria(SalaryStructure.class);
+            criteria = sessionFactory.getCurrentSession().createCriteria(SalaryStructure.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
 			criteria.addOrder(Order.asc("standard"));
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			salaryStructureList = criteria.list();
-			criteriaCount= session.createCriteria(SalaryStructure.class);
+			criteriaCount= sessionFactory.getCurrentSession().createCriteria(SalaryStructure.class);
 			criteriaCount.setProjection(Projections.rowCount());
 			 count= (Long) criteriaCount.uniqueResult();
 			 salaryStructureMap.put("totalSalaryStructure", count);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			session.close();
 		}
 		salaryStructureMap.put("assignList", salaryStructureMap);
 		Loggers.loggerEnd();
@@ -72,14 +68,12 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public CompoundSalaryStructure addSalaryStructure(SalaryStructure salarystructure) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		CompoundSalaryStructure css=null;
 		try{
-			query=session.createQuery("from SalaryStructure where isActive=:isActive and smartId=:smartId and year=:year hierarchy.hid=:hierarchy");
+			query=sessionFactory.getCurrentSession().createQuery("from SalaryStructure where isActive=:isActive and smartId=:smartId and year=:year hierarchy.hid=:hierarchy");
 			query.setParameter("smartId",salarystructure.getSmartId());
 			query.setParameter("hierarchy", salarystructure.getHierarchy().getHid());
 			query.setParameter("year", salarystructure.getYear());
