@@ -45,7 +45,7 @@ public interface ProfileServices{
 	
 	List<Profile> getProfileByHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
 	
-	List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+	List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
 
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	

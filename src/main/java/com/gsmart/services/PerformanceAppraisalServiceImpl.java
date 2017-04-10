@@ -1,9 +1,9 @@
 package com.gsmart.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.PerformanceAppraisalDao;
 import com.gsmart.model.CompoundPerformanceAppraisal;
@@ -13,10 +13,11 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalService {
 
 	@Autowired
-	PerformanceAppraisalDao appraisalDao;
+	private PerformanceAppraisalDao appraisalDao;
 
 	@Override
 	public List<PerformanceAppraisal> getAppraisalList(String smartId, String year) throws GSmartServiceException {

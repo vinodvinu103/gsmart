@@ -5,10 +5,10 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
@@ -18,12 +18,11 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	@Autowired
 	SessionFactory sessionFactory;
-	Session session;
 	Query query;
-	Transaction transaction;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -31,10 +30,9 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		List<PerformanceRecord> performancerecordList=null; 
 		Loggers.loggerStart();
 		try {
-			getConnection();
 			System.out.println();
 			Loggers.loggerStart();
-			query = session.createQuery("from PerformanceRecord where smartId=:smartId AND year=:year AND isActive=:isActive");
+			query = sessionFactory.getCurrentSession().createQuery("from PerformanceRecord where smartId=:smartId AND year=:year AND isActive=:isActive");
 			query.setParameter("smartId",smartId);
 			query.setParameter("year", appraisal.getYear());
 			query.setParameter("isActive", "y");
@@ -43,32 +41,29 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 			
 			} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
-		}
+			}
 		Loggers.loggerEnd();
 		return performancerecordList;
 	}
 	
 	
 	
-		public void getConnection() {
+	/*	public void getConnection() {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-		}
+		}*/
 
 
 
 		@Override
 		public void addAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
 			Loggers.loggerStart();
+			Session session=this.sessionFactory.getCurrentSession();
 			try {
-				getConnection();
 				appraisal.setEntryTime(CalendarCalculator.currentEpoch);
 				 session.save(appraisal);
 				
 				 Loggers.loggerEnd(appraisal);
-				 transaction.commit();
 			}
 			 catch (ConstraintViolationException e) {
 					e.printStackTrace();
@@ -86,8 +81,8 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		@Override
 		public void editAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
 			Loggers.loggerStart();
+			Session session=this.sessionFactory.getCurrentSession();
 			try {
-				getConnection();
 				PerformanceRecord	 oldAppraisalrecord = getAppraisalRecord(appraisal.getEntryTime());
 				oldAppraisalrecord.setIsActive("N");
 				oldAppraisalrecord.setUpdateTime(CalendarCalculator.currentEpoch);
@@ -95,8 +90,6 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 				appraisal.setEntryTime(CalendarCalculator.currentEpoch);
 				appraisal.setIsActive("Y");
 				session.save(appraisal);
-				transaction.commit();
-				session.close();
 
 			} catch (ConstraintViolationException e) {
 				throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -109,7 +102,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		public PerformanceRecord getAppraisalRecord(Long entryTime) {
 			try {
 
-				query = session.createQuery("from PerformanceRecord where isActive=:isActive and entryTime=:entryTime");
+				query = sessionFactory.getCurrentSession().createQuery("from PerformanceRecord where isActive=:isActive and entryTime=:entryTime");
 				query.setParameter("entryTime", entryTime);
 				query.setParameter("isActive", "Y");
 				PerformanceRecord appraisalrecord = (PerformanceRecord) query.uniqueResult();
@@ -126,21 +119,17 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 
 		@Override
 		public void deletAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
-			
+			Session session=this.sessionFactory.getCurrentSession();
 			Loggers.loggerStart();
 			try {
-				getConnection();
 
 				appraisal.setExitTime(CalendarCalculator.currentEpoch);
 				appraisal.setIsActive("D");
 				session.update(appraisal);
-				transaction.commit();
 
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
-				session.close();
-			}
+			} 
 			Loggers.loggerEnd();
 		}
 		

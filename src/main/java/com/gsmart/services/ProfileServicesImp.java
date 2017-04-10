@@ -261,7 +261,7 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 
 	@Override
-	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
-		return profileDao.getProfileByStuentHierarchy(hierarchy);
+	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException {
+		return profileDao.getProfileByStuentHierarchy(hierarchy,reportingManagerId);
 	}
 }

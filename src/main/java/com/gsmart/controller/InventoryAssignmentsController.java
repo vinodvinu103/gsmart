@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.hql.internal.ast.InvalidWithClauseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,14 +20,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.dao.InventoryAssignmentsDao;
 import com.gsmart.model.CompoundInventoryAssignmentsStudent;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.model.InventoryAssignmentsStudent;
 import com.gsmart.model.Token;
-import com.gsmart.services.AssignService;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.InventoryAssignmentsServices;
+import com.gsmart.services.ProfileServices;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -38,18 +36,13 @@ import com.gsmart.util.Loggers;
 @Controller
 @RequestMapping(Constants.INVENTORYASSIGN)
 public class InventoryAssignmentsController {
-	
-	@Autowired
-	TokenService tokenService;
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	InventoryAssignmentsDao inventoryassignmentdao;
-
+	private InventoryAssignmentsDao inventoryassignmentdao;
 	@Autowired
-	AssignService assignServices;
 	private InventoryAssignmentsServices inventoryAssignmentsServices;
 	@Autowired
 	private GetAuthorization getAuthorization;
@@ -130,7 +123,7 @@ public class InventoryAssignmentsController {
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
 
-			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), tokenObj.getSmartId(), tokenObj.getHierarchy(), min, max);
+			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), profileServices.getProfileDetails(tokenObj.getSmartId()).getTeacherId(), tokenObj.getHierarchy(), min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
@@ -142,7 +135,6 @@ public class InventoryAssignmentsController {
 			responseMap.put("status", 404);
 			responseMap.put("message", "Data not found");
 		}
-
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 
@@ -154,7 +146,6 @@ public class InventoryAssignmentsController {
 			@RequestBody InventoryAssignmentsStudent inventoryAssignmentStudent, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(inventoryAssignmentStudent);
-		InventoryAssignmentsStudent invStudent = null;
 		InventoryAssignmentsStudent oldInventoryAssignment = null;
 		Loggers.loggerValue("InventoryAssignments quantity", inventoryAssignmentStudent.getQuantity());
 
@@ -165,9 +156,10 @@ public class InventoryAssignmentsController {
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		inventoryAssignmentStudent.setHierarchy(tokenObj.getHierarchy());
+		
 
 		CompoundInventoryAssignmentsStudent ch1 = inventoryassignmentdao.addInventoryStudent(inventoryAssignmentStudent,
-				oldInventoryAssignment);
+				oldInventoryAssignment,tokenObj.getSmartId());
 		if (ch1 != null) {
 			resp.setMessage("succes");
 		} else {
@@ -195,6 +187,7 @@ public class InventoryAssignmentsController {
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		inventoryAssignments.setHierarchy(tokenObj.getHierarchy());
+		System.out.println("before add");
 
 		InventoryAssignmentsCompoundKey ch = inventoryAssignmentsServices.addInventoryDetails(inventoryAssignments,
 				old);
@@ -273,7 +266,8 @@ public class InventoryAssignmentsController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		response.put("studentList", profileServices.getProfileByStuentHierarchy(hierarchy));
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		response.put("studentList", profileServices.getProfileByStuentHierarchy(hierarchy,tokenObj.getSmartId()));
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}

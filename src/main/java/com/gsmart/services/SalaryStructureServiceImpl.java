@@ -17,7 +17,7 @@ import com.gsmart.util.Loggers;
 public class SalaryStructureServiceImpl implements SalaryStructureService{
 
 	@Autowired
-	SalaryStructureDAO salarystructuredao;
+	private SalaryStructureDAO salarystructuredao;
 	
 	@Override
 	public Map<String, Object> getSalaryStructure(Long hid, Integer min, Integer max) throws GSmartServiceException {

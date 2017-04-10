@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.xmlbeans.impl.xb.ltgfmt.FileDesc.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.CompoundPerformanceAppraisal;
-import com.gsmart.model.Inventory;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
@@ -36,11 +34,11 @@ import com.gsmart.util.Loggers;
 public class PerformanceController {
 
 	@Autowired
-	PerformanceAppraisalService appraisalservice;
+	private PerformanceAppraisalService appraisalservice;
 	@Autowired
-	GetAuthorization getauthorization;
+	private GetAuthorization getauthorization;
 	@Autowired
-	TokenService tokenService;
+	private TokenService tokenService;
 
 	@RequestMapping(value = "/{year}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAppraisalList(@PathVariable("year") String year,
@@ -53,7 +51,6 @@ public class PerformanceController {
 		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
 		Map<String, Object> permissions = new HashMap<>();
 		permissions.put("modulePermission", modulePermission);
-		IAMResponse rsp = new IAMResponse();
 		Token token1 = tokenService.getToken(tokenNumber);
 		String smartId = token1.getSmartId();
 		if (modulePermission != null) {
@@ -72,7 +69,6 @@ public class PerformanceController {
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart(appraisal);
-		IAMResponse myResponse;
 		IAMResponse resp = new IAMResponse();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);

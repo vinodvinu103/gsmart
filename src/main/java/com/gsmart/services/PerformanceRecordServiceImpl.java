@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.PerformanceRecordDao;
 import com.gsmart.model.PerformanceAppraisal;
@@ -13,9 +14,10 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 	@Autowired
-	PerformanceRecordDao performancerecordao;
+	private PerformanceRecordDao performancerecordao;
 	@Override
 	public List<PerformanceRecord> getPerformanceRecord(PerformanceAppraisal appraisal,String smartId) throws GSmartServiceException {
 		Loggers.loggerStart();
