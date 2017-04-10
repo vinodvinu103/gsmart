@@ -16,13 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.CompoundSalaryStructure;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.SalaryStructure;
 import com.gsmart.model.Token;
 import com.gsmart.services.SalaryStructureService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.GSmartBaseException;
-import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
@@ -32,13 +29,11 @@ import com.gsmart.util.Loggers;
 public class SalaryStructureController {
 
 	@Autowired
-	SalaryStructureService salaryStructureService;
+	private SalaryStructureService salaryStructureService;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
-	@Autowired
-	TokenService tokenServices;
 
 	@RequestMapping(value = "/min/max/hierarchy", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getSalaryStructure(@PathVariable("min") Integer min,
@@ -50,11 +45,8 @@ public class SalaryStructureController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		permissions.put("modulePermission", modulePermission);
+//		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Long hid = null;
-		if (modulePermission != null) {
 			salaryStructureList = salaryStructureService.getSalaryStructure(hid, min, max);
 			if (salaryStructureList != null) {
 				permissions.put("status", 200);
@@ -65,7 +57,7 @@ public class SalaryStructureController {
 				permissions.put("message", "success");
 				permissions.put("salaryStructureList", salaryStructureList);
 			}
-		}
+		
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 
 	}
@@ -80,8 +72,7 @@ public class SalaryStructureController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			salaryStructure.setHierarchy(tokenObj.getHierarchy());
 
 			CompoundSalaryStructure css = salaryStructureService.addSalaryStructure(salaryStructure);
@@ -95,10 +86,6 @@ public class SalaryStructureController {
 				respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
 
-		} else {
-			respMap.put("status", 403);
-			respMap.put("message", "Permission Denied");
-		}
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
