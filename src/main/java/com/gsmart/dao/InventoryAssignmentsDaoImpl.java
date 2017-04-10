@@ -93,7 +93,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(InventoryAssignments.class);
 		try
 		{
-		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director"))
+		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("finance") || role.equalsIgnoreCase("director"))
 		{
 		criteria.add(Restrictions.eq("isActive", "Y"));
 		}else{
