@@ -14,6 +14,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
+import org.postgresql.largeobject.LargeObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -42,7 +43,7 @@ public class FeeDaoImpl implements FeeDao {
 	public ArrayList<Fee> getFeeList(Fee fee, Long hid) throws GSmartDatabaseException {
 		getconnection();
 		Loggers.loggerStart(fee.getAcademicYear());
-		
+		Loggers.loggerStart(hid);
 		ArrayList<Fee> feeList;
 		try {
 			

@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,10 @@ public class FeeServicesImpl implements FeeServices {
 	public void editFee(Fee fee) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
+		String invioce	=myinvoice();
+			fee.setInVoice(invioce);
+			Loggers.loggerStart(fee);
+	
 			feeDao.editFee(fee);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
@@ -102,6 +107,17 @@ public class FeeServicesImpl implements FeeServices {
 		}
 		Loggers.loggerEnd();
 
+	}
+	int i=0;
+String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
+
+	private String myinvoice() {
+		
+		String a="gwr";
+		++i;
+		String b=a+"-"+year+"-"+i;
+		Loggers.loggerValue("b value is ", b);
+		return b;
 	}
 
 	@Override

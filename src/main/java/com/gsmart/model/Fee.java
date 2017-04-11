@@ -30,8 +30,17 @@ public class Fee {
 	@Column(name="ISACTIVE")
 	private String isActive;
 	
+	@Column(name="IN_VOICE")
+	private String inVoice;
 	
-	
+	public String getInVoice() {
+		return inVoice;
+	}
+
+	public void setInVoice(String inVoice) {
+		this.inVoice = inVoice;
+	}
+
 	public String getIsActive() {
 		return isActive;
 	}
