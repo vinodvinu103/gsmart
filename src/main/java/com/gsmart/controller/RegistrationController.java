@@ -295,6 +295,7 @@ public class RegistrationController {
 		Loggers.loggerEnd(jsonResult);
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 	}
+	
 
 	@RequestMapping(value = "/delete/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<Map<String, Object>> deleteProfile(@RequestBody Profile profile,

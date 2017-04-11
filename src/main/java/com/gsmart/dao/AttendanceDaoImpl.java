@@ -61,6 +61,34 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		Loggers.loggerEnd();
 		return constructAttendanceList((List<Attendance>) attendanceList);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Map<String, Object>> getPresentAttendance(Long startDate, Long endDate, String smartId)
+			throws GSmartDatabaseException {
+	
+		Loggers.loggerStart();
+
+		List<Attendance> attendanceList = null;
+		try {
+			query =sessionFactory.getCurrentSession().createQuery(
+					"from Attendance where isActive=:isActive and smartId=:smartId and status=:status and inDate between :startDate and :endDate");
+			query.setParameter("isActive", "Y");
+			query.setParameter("smartId", smartId);
+			query.setParameter("startDate", startDate);
+			query.setParameter("endDate", endDate);
+			query.setParameter("status", "PRESENT");
+			attendanceList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+
+		}
+
+		Loggers.loggerEnd();
+		return constructAttendanceList((List<Attendance>) attendanceList);
+	}
+
 
 	@Override
 	public List<String> addAttendance(List<Attendance> attendanceList) throws GSmartDatabaseException {

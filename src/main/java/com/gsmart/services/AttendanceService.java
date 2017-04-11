@@ -11,6 +11,8 @@ public interface AttendanceService {
  
 	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId) throws GSmartServiceException;
 	
+	public List<Map<String, Object>> getPresentAttendance(Long startDate, Long endDate, String smartId) throws GSmartServiceException;
+	
 	public List<String> addAttedance(List<Attendance> attendance) throws GSmartServiceException;
 	
 	public void editAttedance(Attendance attendance) throws GSmartServiceException;
