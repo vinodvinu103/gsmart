@@ -426,10 +426,9 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	@SuppressWarnings("unchecked")
-
-
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
 		// Loggers.loggerStart(profile);
+
 		List<Profile> profileListWithoutRfid;
 		Map<String, Object> rfidMap = new HashMap<>();
 	//	Criteria criteria = session.createCriteria(Profile.class);
@@ -446,7 +445,7 @@ public class ProfileDaoImp implements ProfileDao {
 	                Restrictions.or(Restrictions.isNull("rfId"),
 	                        Restrictions.like("rfId", ""))));
 			criteria.add(Restrictions.eq("isActive", "Y"));
-			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
 			profileListWithoutRfid = criteria.list();
@@ -484,7 +483,10 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 
-	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
+
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
+		//getConnection();
+
 		List<Profile> profileListWithRfid;
 		Map<String, Object> rfidWithMap = new HashMap<>();
 		try {
@@ -493,13 +495,16 @@ public class ProfileDaoImp implements ProfileDao {
 			 * "from Profile where rfId is not null AND isActive='Y'");
 			 * profileListWithRfid = query.list();
 			 */
+
+
 			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Profile.class);
+
 			criteria.add(Restrictions.neOrIsNotNull("rfId", ""));
 			/*criteria.add(Restrictions.disjunction().add(
 	                Restrictions.or(Restrictions.isNotNull("rfId"),
 	                        Restrictions.neOrIsNotNull("rfId", ""))));*/
 			criteria.add(Restrictions.eq("isActive", "Y"));
-			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy));
 			criteria.setFirstResult(min);
 			criteria.setMaxResults(max);
 			profileListWithRfid = criteria.list();
