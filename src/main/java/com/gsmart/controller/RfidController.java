@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -33,13 +32,11 @@ import com.gsmart.util.Loggers;
 @RequestMapping(Constants.RFID)
 public class RfidController {
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 	
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	
-	@Autowired
-	TokenService tokenService;
 
 	@RequestMapping(value = "/ProfilesWithRfid/{min}/{max}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getProfilesWithRfid(@PathVariable("min") Integer min,

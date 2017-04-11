@@ -7,12 +7,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.InventoryAssignmentsDao;
-import com.gsmart.dao.InventoryDaoImpl;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.util.GSmartDatabaseException;
@@ -20,13 +19,13 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsServices {
 
 	@Autowired
-	InventoryAssignmentsDao inventoryAssignmentsDao;
+	private InventoryAssignmentsDao inventoryAssignmentsDao;
 
-	@Autowired
-	InventoryDaoImpl inventoryDao;
+	
 
 	@Override
 	public Map<String, Object> getInventoryAssignList(String role, String smartid, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {

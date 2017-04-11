@@ -3,44 +3,40 @@ package com.gsmart.dao;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Attendance;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class DashboardDaoImpl implements DashboardDao {
 
 	@Autowired
-	SessionFactory sessionfactory;
+	private SessionFactory sessionFactory;
 
-	Session session = null;
-
-	Transaction tx = null;
+	
 
 	Query query;
 
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionfactory.openSession();
 		tx = session.beginTransaction();
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Attendance> getAttendance() {
-		getConnection();
 
 		Loggers.loggerStart();
 		List<Attendance> attendancelist = null;
 
-		query = session.createQuery("FROM Attendance where inDate=:date and isActive='Y'");
+		query = sessionFactory.getCurrentSession().createQuery("FROM Attendance where inDate=:date and isActive='Y'");
 		attendancelist = query.list();
-		tx.commit();
-		session.close();
+		
 
 		Loggers.loggerEnd();
 

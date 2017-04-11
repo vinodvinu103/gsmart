@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
@@ -40,6 +42,7 @@ public interface ProfileDao {
 	/* for registration */
 
 	public String getMaxSmartId();
+	
 
 	public boolean userProfileInsert(Profile profile);
 
@@ -86,6 +89,8 @@ public interface ProfileDao {
 
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+	
+	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
 
 
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;

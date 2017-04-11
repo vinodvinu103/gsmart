@@ -1,6 +1,5 @@
 package com.gsmart.dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,17 +7,14 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
-import com.gsmart.model.LeaveDetails;
-import com.gsmart.model.LeaveMaster;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.util.CalendarCalculator;
@@ -26,44 +22,39 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
-	Session session = null;
-	Transaction transaction = null;
 	Query query;
 	Criteria criteria=null;
 
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
-	}
+	}*/
 
-	@SuppressWarnings("unchecked")
 	@Override
-
-
-	public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy,Integer min,Integer max) throws GSmartDatabaseException {
+public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy,Integer min,Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Map<String, Object> leavelist =new HashMap<>();
-		getConnection();
 		try {
 			String role = profileInfo.getRole();
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")||role.equalsIgnoreCase("hr")) {
-				criteria = session.createCriteria(Leave.class);
+				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class);
 				criteria.add(Restrictions.eq("isActive", "Y"));
 				criteria.addOrder(Order.asc("fullName"));
 				criteria.setFirstResult(min);
 				criteria.setMaxResults(max);
 				leavelist.put("myTeamLeaveList", criteria.list());
 				
-				criteria = session.createCriteria(ReportCard.class).add(Restrictions.eq("isActive", "Y"))
+				criteria = sessionFactory.getCurrentSession().createCriteria(ReportCard.class).add(Restrictions.eq("isActive", "Y"))
 						.setProjection(Projections.rowCount());
 				Long count = (Long) criteria.uniqueResult();
 				leavelist.put("totalListCount", count);
 			} else {
-				criteria = session.createCriteria(Leave.class);
+				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class);
 				criteria.add(Restrictions.eq("isActive", "Y"));
 				criteria.add(Restrictions.ne("leaveStatus", "Rejected*").ignoreCase());
 				criteria.add(Restrictions.eq("reportingManagerId", profileInfo.getSmartId()));
@@ -73,7 +64,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 				criteria.setMaxResults(max);
 				leavelist.put("myTeamLeaveList", criteria.list());
 				
-				criteria = session.createCriteria(Leave.class).add(Restrictions.eq("isActive", "Y"))
+				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class).add(Restrictions.eq("isActive", "Y"))
 						.add(Restrictions.eq("reportingManagerId", profileInfo.getSmartId()))
 						.add(Restrictions.ne("leaveStatus", "Rejected*").ignoreCase())
 						.add(Restrictions.eq("hierarchy.hid", hierarchy))
@@ -85,9 +76,6 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
-		} finally {
-
-			session.close();
 		}
 		Loggers.loggerEnd(leavelist);
 		return leavelist;
@@ -96,17 +84,14 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@Override
 	public void rejectleave(Leave leave) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			leave.setExitTime(CalendarCalculator.getTimeStamp());
 			leave.setLeaveStatus("Rejected*");
 			session.update(leave);
-			transaction.commit();
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			session.close();
 		}
 
 	}
@@ -114,7 +99,6 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@Override
 	public void sactionleave(Leave leave) throws GSmartDatabaseException {
 		Loggers.loggerStart(leave);
-		getConnection();
 
 		try {
 			Loggers.loggerStart();
@@ -124,18 +108,16 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		} catch (org.hibernate.exception.ConstraintViolationException e) {
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		}finally {
-			session.close();
 		}
 	}
 
 	private void updateLeave(Leave applyLeave) throws GSmartDatabaseException {
 		Loggers.loggerStart(applyLeave);
+		Session session=this.sessionFactory.getCurrentSession();
 
 		applyLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
 		applyLeave.setLeaveStatus("Sanctioned");
 		session.update(applyLeave);
-		transaction.commit();
 		
 		Loggers.loggerEnd();
 	}
@@ -144,7 +126,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		try {
 			Loggers.loggerStart();
 			
-			query = session.createQuery("from Leave where entryTime=:entryTime and isActive='Y'");
+			query = sessionFactory.getCurrentSession().createQuery("from Leave where entryTime=:entryTime and isActive='Y'");
 			query.setParameter("entryTime", leave.getEntryTime());
 			Leave leaveList = (Leave) query.uniqueResult();
 			
@@ -162,7 +144,6 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		Loggers.loggerStart(leave);
 
 		try {
-			getConnection();
 			// getting data from Apply_Leave & Leave_Details table
 			Leave applyLeave = getLeave(leave);
 			
@@ -171,27 +152,23 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		} catch (org.hibernate.exception.ConstraintViolationException e) {
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		}finally {
-			session.close();
 		}
 
 	}
 
 	private void updateSanctionLeave(Leave applyLeave) throws GSmartDatabaseException {
 		try {
+			Session session=this.sessionFactory.getCurrentSession();
 			Loggers.loggerStart(applyLeave);
-			getConnection();
 			
 			applyLeave.setUpdatedTime(CalendarCalculator.getTimeStamp());
 			applyLeave.setLeaveStatus("Rejected*");
 
 			
 			session.update(applyLeave);
-			transaction.commit();
 
 		} catch (org.hibernate.exception.ConstraintViolationException e) {
 		} catch (Throwable e) {
-			transaction.rollback();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 	}

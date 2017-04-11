@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -19,6 +17,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.gsmart.model.MessageDetails;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartDatabaseException;
@@ -27,9 +27,11 @@ import com.gsmart.util.Loggers;
 
 @SuppressWarnings("unchecked")
 @Repository
+@Transactional
 public class ContactDaoImp implements ContactDao {
 	@Autowired
-	SessionFactory factory;
+	private SessionFactory sessionFactory;
+	
 	Session session = null;
 	Transaction transaction = null;
 	Query query = null;
@@ -37,10 +39,10 @@ public class ContactDaoImp implements ContactDao {
 	@Override
 	public boolean studentToTeacher(MessageDetails details, String role) throws Exception {
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			getConnection();
-			details.setEntryTime(CalendarCalculator.getTimeStamp())
-			;
+			details.setEntryTime(CalendarCalculator.getTimeStamp());
 			
 			details.setPostedBy(role);
 			details.setReadByTeacher("Y");
@@ -75,40 +77,16 @@ public class ContactDaoImp implements ContactDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
-		} finally {
-			session.close();
-		}
+		} 
 	}
 	
-	/*@Override
-	public boolean teacherToStudent(MessageDetails details) {
-
-		Loggers.loggerStart();
-		try {
-			getConnection();
-			details.setEntryTime(CalendarCalculator.getTimeStamp());
-			
-//			details.setPostedBy(role);
-			details.setReadByTeacher("Y");
-			session.save(details);
-			transaction.commit();
-			Loggers.loggerEnd();
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			session.close();
-		}
-	}*/
 
 	@Override
 	public List<MessageDetails> msgList(MessageDetails details) throws Exception {
 		try {
-			getConnection();
 
 			String reportingManagerId = details.getReportingManagerId();
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"from MessageDetails where readByTeacher='Y' and reportingManagerId=:rId ORDER BY entryTime DESC");
 			query.setParameter("rId", reportingManagerId);
 
@@ -125,6 +103,7 @@ public class ContactDaoImp implements ContactDao {
 	@Override
 	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
 		Loggers.loggerStart();
+
 		List<MessageDetails> messages = null;
 		Map<String, Object> messageMap = new HashMap<>();
 		getConnection();
@@ -133,13 +112,9 @@ public class ContactDaoImp implements ContactDao {
 			String reportingManagerId = details.getReportingManagerId();
 			System.out.println("before reporting manager id :"+reportingManagerId);
 
-//			query = session.createQuery(
-//					"from MessageDetails where smartId=:rId ORDER BY entryTime DESC");
-//			query.setParameter("rId", reportingManagerId);
-//			messages = (List<MessageDetails>) query.list();
-			
 			Criteria criteria1 = session.createCriteria(MessageDetails.class);
 			criteria1.add(Restrictions.eq("postedBy", "STUDENT"));
+			criteria1.add(Restrictions.eq("reportingManagerId", reportingManagerId));
 			criteria1.addOrder(Order.desc("entryTime"));
 			
 			System.out.println("reporting manager id :"+reportingManagerId);
@@ -178,6 +153,7 @@ public class ContactDaoImp implements ContactDao {
 	@Override
 	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
 		Loggers.loggerStart();
+
 		List<MessageDetails> messages = null;
 		Map<String, Object> msgMap = new HashMap<>();
 		getConnection();
@@ -187,10 +163,7 @@ public class ContactDaoImp implements ContactDao {
        		String smartId = details.getSmartId();
 			System.out.println("before reporting manager id :"+reportingManagerId);
 
-//			query = session.createQuery(
-//					"from MessageDetails where smartId=:rId ORDER BY entryTime DESC");
-//			query.setParameter("rId", reportingManagerId);
-//			messages = (List<MessageDetails>) query.list();
+//			
 			
 			Criteria criteria = session.createCriteria(MessageDetails.class);
 			criteria.add(Restrictions.eq("postedBy", "TEACHER"));
@@ -198,8 +171,7 @@ public class ContactDaoImp implements ContactDao {
 			criteria.addOrder(Order.desc("entryTime"));
 			
 			System.out.println("reporting manager id :"+reportingManagerId);
-			
-//			criteria.setProjection(Projections.projectionList().add(Projections.groupProperty("entryTime"),"entryTime").add(Projections.rowCount(),"max")).addOrder(Order.desc("entryTime"));
+
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
 			messages = criteria.list();
@@ -232,17 +204,14 @@ public class ContactDaoImp implements ContactDao {
 		Loggers.loggerStart();
 		ArrayList<MessageDetails> messages = new ArrayList<>();
 		try {
-			getConnection();
-			Query query = session.createQuery("from MessageDetails ");
+			Query query = sessionFactory.getCurrentSession().createQuery("from MessageDetails ");
 			messages = (ArrayList<MessageDetails>) query.list();
 			Loggers.loggerEnd();
 			return messages;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		} finally {
-			session.close();
-		}
+		} 
 
 	}
 
@@ -251,14 +220,11 @@ public class ContactDaoImp implements ContactDao {
 		Loggers.loggerStart();
 		List<MessageDetails> list = null;
 		try {
-			getConnection();
-			query = session.createQuery("from MessageDetails");
+			query = sessionFactory.getCurrentSession().createQuery("from MessageDetails");
 			list = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 		return list;
 
@@ -267,6 +233,7 @@ public class ContactDaoImp implements ContactDao {
 	@Override
 	public Map<String, Object> teacherChat(MessageDetails details) throws Exception {
 		Loggers.loggerStart();
+
 		List<MessageDetails> messages = null;
 		Map<String, Object> messageMap = new HashMap<>();
 		getConnection();
@@ -281,26 +248,9 @@ public class ContactDaoImp implements ContactDao {
 	//		query.setParameter("rId", reportingManagerId);
 			messages = (List<MessageDetails>) query.list();
 			
-			/*Criteria criteria1 = session.createCriteria(MessageDetails.class);
-			criteria1.add(Restrictions.eq("postedBy", "STUDENT"));
-			criteria1.addOrder(Order.desc("entryTime"));*/
 			
 			System.out.println("reporting manager id :"+reportingManagerId);
 			
-//			criteria1.setProjection(Projections.projectionList().add(Projections.groupProperty("entryTime"),"entryTime").add(Projections.rowCount(),"max")).addOrder(Order.desc("entryTime"));
-//			criteria1.setProjection(Projections.rowCount());
-			/*criteria1.setMaxResults(max);
-			criteria1.setFirstResult(min);
-			messages = criteria1.list();
-			Criteria criteriaCount1 = session.createCriteria(MessageDetails.class);
-			criteriaCount1.add(Restrictions.eq("postedBy", "STUDENT"));
-			criteriaCount1.setProjection(Projections.rowCount());*/
-//			Long count = criteriaCount.uniqueResult();
-//			messageMap.put("totalmessage", criteriaCount1.uniqueResult());
-			
-//			Long count = (Long) criteria1.uniqueResult();
-//			messageMap.put("messages", count);
-
 			/*transaction.commit();*/
 			Loggers.loggerEnd(messages);
 		}
@@ -320,6 +270,7 @@ public class ContactDaoImp implements ContactDao {
 	@Override
 	public Map<String, Object> studentChat(MessageDetails details) throws Exception {
 		Loggers.loggerStart();
+
 		List<MessageDetails> messages = null;
 		Map<String, Object> msgMap = new HashMap<>();
 		getConnection();
@@ -338,21 +289,10 @@ public class ContactDaoImp implements ContactDao {
 			query.setParameter("rId", smartId);
 			messages = (List<MessageDetails>) query.list();
 	
-			/*Criteria criteria = session.createCriteria(MessageDetails.class);
-			criteria.add(Restrictions.eq("postedTo", PostedTo));
-			criteria.add(Restrictions.and(Restrictions.eq("smartId", smartId), Restrictions.eq("reportingManagerId", reportingManagerId)));
-			criteria.addOrder(Order.desc("entryTime"));
-	
-			System.out.println("reporting manager id :"+reportingManagerId);*/
-	
-//			criteria.setProjection(Projections.projectionList().add(Projections.groupProperty("entryTime"),"entryTime").add(Projections.rowCount(),"max")).addOrder(Order.desc("entryTime"));
-	
-//			messages = criteria.list();
 			Criteria criteriaCount = session.createCriteria(MessageDetails.class);
 			criteriaCount.add(Restrictions.eq("postedTo", PostedTo));
 			criteriaCount.setProjection(Projections.rowCount());
 			criteriaCount.add(Restrictions.and(Restrictions.eq("smartId", PostedTo), Restrictions.eq("reportingManagerId", smartId)));
-//			Long count = criteriaCount.uniqueResult();
 			msgMap.put("totalmessage", criteriaCount.uniqueResult());
 	
 			System.out.println("reporting manager id :"+reportingManagerId);
@@ -374,8 +314,8 @@ public class ContactDaoImp implements ContactDao {
 	}
 	
 	public void getConnection() {
-		session = factory.openSession();
+
+		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 	}
-
 }

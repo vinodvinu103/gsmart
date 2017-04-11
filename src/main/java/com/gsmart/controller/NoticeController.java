@@ -29,9 +29,7 @@ import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.NoticeService;
-import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
@@ -40,19 +38,15 @@ import com.gsmart.util.Loggers;
 @RequestMapping("/notice")
 public class NoticeController {
 	@Autowired
-	NoticeService noticeService;
+	private NoticeService noticeService;
+
 
 	@Autowired
-	TokenService tokenService;
+	private SearchService searchService;
+
 
 	@Autowired
-	SearchService searchService;
-
-	@Autowired
-	ProfileServices profileServices;
-
-	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	
 	@Autowired
 	NoticeDao noticeDao;

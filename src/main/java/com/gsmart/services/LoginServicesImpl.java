@@ -3,36 +3,35 @@ package com.gsmart.services;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.LoginDao;
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class LoginServicesImpl implements LoginServices{
 
 	@Autowired
-	LoginDao loginDao;
+	private LoginDao loginDao;
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	RolePermissionServices permissionServices;
+	private RolePermissionServices permissionServices;
 
 	@Autowired
-	TokenService tokenService;
+	private TokenService tokenService;
 
 	@Override
 	public Map<String, Object> authenticate(Login login, String tokenNumber) throws GSmartServiceException {

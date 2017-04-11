@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Banners;
-import com.gsmart.model.RolePermission;
 import com.gsmart.services.ProfileServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
@@ -32,13 +30,11 @@ import com.gsmart.util.Loggers;
 public class BannerController {
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
+
 
 	@Autowired
-	TokenService tokenService;
-
-	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 	
 	/*@RequestMapping(value="/product/show",method= RequestMethod.GET)
     public String listProducts(@ModelAttribute("product") ProductBasic productBasic,Model model)   {
@@ -109,7 +105,6 @@ public class BannerController {
 	public ResponseEntity<IAMResponse> editDeleteBanner(@RequestBody Banners banner, @PathVariable("task") String task,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(banner);
-		Banners banners = null;
 		IAMResponse myResponse = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);

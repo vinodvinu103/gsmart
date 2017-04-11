@@ -21,7 +21,6 @@ import com.gsmart.model.CompoundModules;
 import com.gsmart.model.Modules;
 import com.gsmart.model.Token;
 import com.gsmart.services.ModulesServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -30,13 +29,11 @@ import com.gsmart.util.Loggers;
 @RequestMapping(Constants.MODULES)
 public class ModulesController {
 	@Autowired
-	ModulesServices modulesServices;
+	private ModulesServices modulesServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
-	@Autowired
-	TokenService tokenService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getmodules(@RequestHeader HttpHeaders token,

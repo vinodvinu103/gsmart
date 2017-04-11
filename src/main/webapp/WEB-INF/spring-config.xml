@@ -33,9 +33,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<list>
-			
-		
-				<value>com.gsmart.model.RolePermission</value>
+			    <value>com.gsmart.model.RolePermission</value>
 				<value>com.gsmart.model.Login</value>
 				<value>com.gsmart.model.Profile</value>
 				<value>com.gsmart.model.Token</value>
@@ -48,6 +46,7 @@
 				<value>com.gsmart.model.ReportCard</value>
 				<value>com.gsmart.model.InventoryAssignments</value>
 				<value>com.gsmart.model.Fee</value>
+				<value>com.gsmart.model.PerformanceAppraisal</value>
 				<value>com.gsmart.model.PaySlip</value>
 				<value>com.gsmart.model.Modules</value>
 				<value>com.gsmart.model.SalaryStructure</value>
@@ -61,14 +60,12 @@
                 <value>com.gsmart.model.Attendance</value>
 				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.Banners</value>
-
 				<value>com.gsmart.model.Grades</value>
-
 				<value>com.gsmart.model.MessageDetails</value>
-
 				<value>com.gsmart.model.Attendance</value>
-
-           </list>
+				<value>com.gsmart.model.PayRoll</value>
+				<value>com.gsmart.model.InventoryAssignmentsStudent</value>
+			</list>
 
 		</property>
 		<property name="hibernateProperties">

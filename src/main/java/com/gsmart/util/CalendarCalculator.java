@@ -5,6 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gsmart.services.LoginServices;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,6 +31,13 @@ public class CalendarCalculator {
 		session = sessionFactroy.openSession();
 		tranction = session.beginTransaction();
 	}
+
+
+	
+
+	public static Long currentEpoch;
+	@Autowired
+	LoginServices loginservices;
 
 	public static String getTimeStamp() {
 		try {
