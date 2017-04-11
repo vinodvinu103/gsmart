@@ -387,13 +387,13 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		try {
 			if(!role.equals("HOD")){
 			query = sessionFactory.getCurrentSession().createQuery(
-					"select distinct academicYear from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId ) and hid=:hierarchy and isActive='Y'");
+					"select distinct academicYear from Fee where (reportingManagerId=:reportingManagerId or smartId=:smartId ) and hid=:hierarchy and isActive='Y'");
 			query.setParameter("reportingManagerId", smartId);
 			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			else{
-				query=sessionFactory.getCurrentSession().createQuery("select distinct academicYear from ReportCard where hid=:hierarchy and isActive='Y' ");
+				query=sessionFactory.getCurrentSession().createQuery("select distinct academicYear from Fee where hid=:hierarchy and isActive='Y' ");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			List<String> year = query.list();
