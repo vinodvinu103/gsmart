@@ -30,13 +30,11 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Autowired
 	private AttendanceDao attendancedao;
 	
-	/*public void setAttendanceDaoImpl(AttendanceDao attendancedao) {
-		this.attendancedao = attendancedao;
-	}*/
+	
 	@Autowired
-	ProfileDao profileDao;
+	private ProfileDao profileDao;
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 
 	@Override
 	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId)

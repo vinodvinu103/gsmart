@@ -43,6 +43,17 @@ public class InventoryAssignments
 	@Column(name="QUANTITY")
 	private int quantity;
 	
+	@Column(name="LEFT_QUANTITY")
+	private Integer leftQuantity;
+
+	
+	public Integer getLeftQuantity() {
+		return leftQuantity;
+	}
+
+	public void setLeftQuantity(Integer leftQuantity) {
+		this.leftQuantity = leftQuantity;
+	}
 	@Transient
 	private int totalQuantity;
 	
@@ -65,6 +76,7 @@ public class InventoryAssignments
 	
 	@Column(name="IS_ACTIVE")
 	private String isActive;
+	
 	
 	@Column(name="SMART_ID")
 	private String smartId;
