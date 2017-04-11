@@ -74,17 +74,12 @@ public class DashboardDaoImpl implements DashboardDao {
 		String role = tokenDetail.getRole();
 
 		try {
-			if (role.equals("ADMIN")) {
-				query = sessionFactory.getCurrentSession()
-						.createQuery("select distinct academicYear from Fee where isActive='Y' and smartId=:smartId");
-				query.setParameter("smartId", smartId);
-				year = query.list();}
-			/*} else if (role.equals("DIRECTOR")) {
+			if (role.equals("ADMIN") || role.equals("DIRECTOR")) {
 				query = sessionFactory.getCurrentSession()
 						.createQuery("select distinct academicYear from Fee where isActive='Y' and smartId=:smartId");
 				query.setParameter("smartId", smartId);
 				year = query.list();
-			} */else {
+				}else {
 				query = sessionFactory.getCurrentSession().createQuery(
 						"select distinct academicYear from Fee where hid=:hierarchy and isActive='Y' and smartId=:smartId");
 				query.setParameter("hierarchy", hierarchy.getHid());
