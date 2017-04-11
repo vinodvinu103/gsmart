@@ -401,7 +401,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		String role = tokenDetail.getRole();
 		String smartId = tokenDetail.getSmartId();
 		try {
-
 			if (role.equals("TEACHER") || role.equals("STUDENT")) {
 				query = sessionFactory.getCurrentSession().createQuery(
 						"select distinct academicYear from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId ) and hid=:hierarchy and isActive='Y'");
