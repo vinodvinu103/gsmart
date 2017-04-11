@@ -27,6 +27,4 @@ public interface ContactDao {
 
 	public Map<String, Object> studentChat(MessageDetails details) throws Exception;
 
-//	public boolean teacherToStudent(MessageDetails details);	
-
 }

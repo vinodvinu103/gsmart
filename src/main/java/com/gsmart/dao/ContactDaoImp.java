@@ -39,14 +39,14 @@ public class ContactDaoImp implements ContactDao {
 	@Override
 	public boolean studentToTeacher(MessageDetails details, String role) throws Exception {
 		Loggers.loggerStart();
-		Session session=this.sessionFactory.getCurrentSession();
+//		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			getConnection();
 			details.setEntryTime(CalendarCalculator.getTimeStamp());
 			
 			details.setPostedBy(role);
 			details.setReadByTeacher("Y");
-			details.setPostedTo(details.getPostedTo());
+			//details.setPostedTo(details.getPostedTo());
 			session.save(details);
 		//	session.update(details);
 			transaction.commit();
@@ -55,8 +55,6 @@ public class ContactDaoImp implements ContactDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
-		} finally {
-			session.close();
 		}
 	}
 	
@@ -110,29 +108,34 @@ public class ContactDaoImp implements ContactDao {
 		try {
 			
 			String reportingManagerId = details.getReportingManagerId();
+			String smartId = details.getSmartId();
 			System.out.println("before reporting manager id :"+reportingManagerId);
+			
+			query = session.createQuery(
+					"from MessageDetails where reportingManagerId=:smartId and postedBy=:STUDENT ORDER BY entryTime DESC");
+			query.setParameter("smartId", smartId);
+			query.setParameter("STUDENT", "STUDENT");
+			
+			messages = (List<MessageDetails>) query.list();
 
-			Criteria criteria1 = session.createCriteria(MessageDetails.class);
-			criteria1.add(Restrictions.eq("postedBy", "STUDENT"));
-			criteria1.add(Restrictions.eq("reportingManagerId", reportingManagerId));
-			criteria1.addOrder(Order.desc("entryTime"));
+			/*Criteria criteria1 = session.createCriteria(MessageDetails.class);
+			criteria1.add(Restrictions.and(Restrictions.eq("reportingManagerId", reportingManagerId), Restrictions.eq("reportingManagerId", smartId)));
+			criteria1.add(Restrictions.eq("postedBy", "STUDENT"));*/
+		//	criteria1.add(Restrictions.eq("reportingManagerId", reportingManagerId));
+		//	criteria1.add(Restrictions.eq("reportingManagerId", smartId));
+	//		criteria1.addOrder(Order.desc("entryTime"));
 			
 			System.out.println("reporting manager id :"+reportingManagerId);
 			
-//			criteria1.setProjection(Projections.projectionList().add(Projections.groupProperty("entryTime"),"entryTime").add(Projections.rowCount(),"max")).addOrder(Order.desc("entryTime"));
-//			criteria1.setProjection(Projections.rowCount());
-			criteria1.setMaxResults(max);
+			/*criteria1.setMaxResults(max);
 			criteria1.setFirstResult(min);
-			messages = criteria1.list();
+			messages = criteria1.list();*/
 			Criteria criteriaCount1 = session.createCriteria(MessageDetails.class);
 			criteriaCount1.add(Restrictions.eq("postedBy", "STUDENT"));
 			criteriaCount1.setProjection(Projections.rowCount());
 //			Long count = criteriaCount.uniqueResult();
 			messageMap.put("totalmessage", criteriaCount1.uniqueResult());
 			
-//			Long count = (Long) criteria1.uniqueResult();
-//			messageMap.put("messages", count);
-
 			/*transaction.commit();*/
 			Loggers.loggerEnd(messageMap);
 			

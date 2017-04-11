@@ -60,15 +60,12 @@ public class ContactTeacherController {
 		str.length();
 
 		try {
-			
-			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-				Token tk = (Token) httpSession.getAttribute("hierarchy");
+				Token tk = (Token) httpSession.getAttribute("token");
 
 				if (contactServices.studentToTeacher(details,tk.getRole())) {
 					result.put("result", "MSG Posted");
 					return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 				}
-			}
 			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,15 +86,12 @@ public class ContactTeacherController {
 		str.length();
 
 		try {
-			
-			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-				Token tk = (Token) httpSession.getAttribute("hierarchy");
+				Token tk1 = (Token) httpSession.getAttribute("token");
 
-				if (contactServices.teacherToStudent(details,tk.getRole())) {
+				if (contactServices.teacherToStudent(details,tk1.getRole())) {
 					result.put("result", "MSG Posted");
 					return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 				}
-			}
 			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -117,15 +111,12 @@ public class ContactTeacherController {
 		str.length();
 		Map<String, ArrayList<MessageDetails>> jsonMap = new HashMap<>();
 
-		getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		try {
-			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 				messages = contactServices.msgList(details);
 				if (messages.size() != 0) {
 					jsonMap.put("result", (ArrayList<MessageDetails>) messages);
 					return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap, HttpStatus.OK);
 				}
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -140,20 +131,16 @@ public class ContactTeacherController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-
-		// getAuthorization.authorizationForGet(tokenNumber, httpSession);
+		
 		// List<MessageDetails> messages=new ArrayList<>();
 		Map<String, Object> messages = null;
 		Map<String, Object> jsonMap = new HashMap<>();
 		try {
-			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-				/*messages = contactServices.teacherView(details, Integer.parseInt(min), Integer.parseInt(max));*/
 				messages = contactServices.teacherView(details, min, max);
 				if (messages.size() != 0) {
 					jsonMap.put("result", messages);
 					return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 				}
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -170,17 +157,14 @@ public class ContactTeacherController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		// getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		// List<MessageDetails> messages=new ArrayList<>();
 		Map<String, Object> messages = null;
 		Map<String, Object> jsonMap = new HashMap<>();
 		try {
-			if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 				messages = contactServices.teacherChat(details);
 				if (messages.size() != 0) {
 					jsonMap.put("result", messages);
 					return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -198,21 +182,14 @@ public class ContactTeacherController {
 		Loggers.loggerStart(details);
 		System.out.println("getting token : " + token);
 
-		// List<MessageDetails> messages=new ArrayList<>();
 		Map<String, Object> messages = null;
 		Map<String, Object> jsonMap = new HashMap<>();
 		try {
-			/*
-			 * if(getAuthorization.authorizationForPost(tokenNumber,
-			 * httpSession))
-			 */
-			{
 				messages = contactServices.studentChat(details);
 				if (messages.size() != 0) {
 					jsonMap.put("result", messages);
 					return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 				}
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -229,23 +206,17 @@ public class ContactTeacherController {
 			String tokenNumber=token.get("Authorization").get(0); String
 		    str=getAuthorization.getAuthentication(tokenNumber, httpSession);
 		    str.length();
-		  
-		  getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		 
 
 		// List<MessageDetails> messages=new ArrayList<>();
 		Map<String, Object> messages = null;
 		Map<String, Object> jsonMap = new HashMap<>();
 		try {
-			  if(getAuthorization.authorizationForPost(tokenNumber,  httpSession))
-			{
 				/*messages = contactServices.studentView(details, Integer.parseInt(min), Integer.parseInt(max));*/
 				  messages = contactServices.studentView(details, min, max);
 				if (messages.size() != 0) {
 					jsonMap.put("result", messages);
 					return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 				}
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -32,7 +32,6 @@ public class ContactServicesImp implements ContactServices {
 		return dao.teacherView(details, min, max);
 	}
 
-	
 	@Override
 	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
 		
@@ -73,16 +72,10 @@ public class ContactServicesImp implements ContactServices {
 		return dao.teacherChat(details);
 	}
 
-	
 	@Override
 	public Map<String, Object> studentChat(MessageDetails details) throws Exception {
 		
 		return dao.studentChat(details);
 	}
-
-	/*@Override
-	public boolean teacherToStudent(MessageDetails details) throws Exception {
-		return dao.teacherToStudent(details);
-	}*/
 	
 }
