@@ -22,7 +22,6 @@ import com.gsmart.model.CompoundHoliday;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Token;
 import com.gsmart.services.HolidayServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -45,16 +44,13 @@ import com.gsmart.util.Loggers;
 public class HolidayController {
 
 	@Autowired
-	HolidayServices holidayServices;
+	private HolidayServices holidayServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
 	@Autowired
-	TokenService tokenService;
-	
-	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 	
 
 	/**

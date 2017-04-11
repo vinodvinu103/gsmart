@@ -2,13 +2,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
-
+    xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/util 
 		http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/context 
 		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
@@ -31,9 +33,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<list>
-			
-		
-				<value>com.gsmart.model.RolePermission</value>
+			    <value>com.gsmart.model.RolePermission</value>
 				<value>com.gsmart.model.Login</value>
 				<value>com.gsmart.model.Profile</value>
 				<value>com.gsmart.model.Token</value>
@@ -46,6 +46,7 @@
 				<value>com.gsmart.model.ReportCard</value>
 				<value>com.gsmart.model.InventoryAssignments</value>
 				<value>com.gsmart.model.Fee</value>
+				<value>com.gsmart.model.PerformanceAppraisal</value>
 				<value>com.gsmart.model.PaySlip</value>
 				<value>com.gsmart.model.Modules</value>
 				<value>com.gsmart.model.SalaryStructure</value>
@@ -60,14 +61,12 @@
                 <value>com.gsmart.model.Attendance</value>
 				<value>com.gsmart.model.Assign</value>
 				<value>com.gsmart.model.Banners</value>
-
 				<value>com.gsmart.model.Grades</value>
-
 				<value>com.gsmart.model.MessageDetails</value>
-
 				<value>com.gsmart.model.Attendance</value>
-
-           </list>
+				<value>com.gsmart.model.PayRoll</value>
+				<value>com.gsmart.model.InventoryAssignmentsStudent</value>
+			</list>
 
 		</property>
 		<property name="hibernateProperties">
@@ -77,6 +76,12 @@
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
 	<!-- Configure to plugin JSON as request and response in method handler -->

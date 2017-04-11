@@ -9,12 +9,12 @@ import javax.validation.ConstraintViolationException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Assign;
 import com.gsmart.model.CompoundAssign;
@@ -26,27 +26,26 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class AssignDaoImpl implements AssignDao {
 
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
-	Session session = null;;
+
 	Query query;
-	Transaction transaction = null;
 	Criteria criteria = null;
 	Criteria criteriaCount=null;
 	Long count=null;
 	
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getAssignReportee(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart();
 		List<Assign> assignList = null;
 		
@@ -54,22 +53,20 @@ public class AssignDaoImpl implements AssignDao {
 		
 		try {
 
-			criteria = session.createCriteria(Assign.class);
+			criteria = sessionFactory.getCurrentSession().createCriteria(Assign.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
 			criteria.addOrder(Order.asc("standard"));
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			assignList = criteria.list();
-			criteriaCount= session.createCriteria(Assign.class);
+			criteriaCount= sessionFactory.getCurrentSession().createCriteria(Assign.class);
 			criteriaCount.setProjection(Projections.rowCount());
 			 count= (Long) criteriaCount.uniqueResult();
 			assignMap.put("totalassign", count);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		}finally {
-			session.close();
 		}
 		assignMap.put("assignList", assignList);
 		Loggers.loggerEnd();
@@ -78,8 +75,8 @@ public class AssignDaoImpl implements AssignDao {
 	
 	@Override
 	public CompoundAssign addAssigningReportee(Assign assign) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		
 		CompoundAssign compoundAssign = null;
 		Assign assign2=null;
@@ -91,14 +88,11 @@ public class AssignDaoImpl implements AssignDao {
 				assign.setEntryTime(CalendarCalculator.getTimeStamp());
 				assign.setIsActive("Y");
 				compoundAssign = (CompoundAssign) session.save(assign);
-				transaction.commit();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		finally {
-			session.close();
-		}
+		
 		return compoundAssign;
 	}
 	
@@ -107,7 +101,7 @@ public class AssignDaoImpl implements AssignDao {
 		Assign assignList = null;
 		try {
 			
-			query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy and teacherSmartId=:teacherSmartId");
+			query = sessionFactory.getCurrentSession().createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy and teacherSmartId=:teacherSmartId");
 			query.setParameter("teacherSmartId", assign.getTeacherSmartId());
 			query.setParameter("standard", assign.getStandard());
 			query.setParameter("isActive", "Y");
@@ -124,7 +118,6 @@ public class AssignDaoImpl implements AssignDao {
 
 	@Override
 	public Assign editAssigningReportee(Assign assign) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart();
 		Assign asgn = null;
 		try {
@@ -133,9 +126,8 @@ public class AssignDaoImpl implements AssignDao {
 			asgn = updateAssign(oldAssign, assign);
 			CompoundAssign ch =	addAssigningReportee(assign);
 			if(ch!=null){
-				getConnection();
 				
-				query = session.createQuery("UPDATE Profile SET reportingManagerName=:teacherName, reportingManagerId=:reportingManagerId, counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
+				query = sessionFactory.getCurrentSession().createQuery("UPDATE Profile SET reportingManagerName=:teacherName, reportingManagerId=:reportingManagerId, counterSigningManagerId=:counterSigningManagerId WHERE hierarchy.hid=:hierarchy and standard=:standard and section=:section");
 				query.setParameter("reportingManagerId", assign.getTeacherSmartId());
 				query.setParameter("counterSigningManagerId", assign.getHodSmartId());
 				query.setParameter("standard", assign.getStandard());
@@ -143,8 +135,6 @@ public class AssignDaoImpl implements AssignDao {
 				query.setParameter("teacherName", assign.getTeacherName());
 				query.setParameter("hierarchy", assign.getHierarchy().getHid());
 				query.executeUpdate();
-				transaction.commit();
-				session.close();
 			}			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,13 +146,13 @@ public class AssignDaoImpl implements AssignDao {
 	private Assign updateAssign(Assign oldAssign, Assign assign) throws GSmartDatabaseException {
 		Assign asg = null;
 		try {
+			Session session=this.sessionFactory.getCurrentSession();
 			if(assign.getStandard().equals(oldAssign.getStandard()) && assign.getSection().equals(oldAssign.getSection())){
 				Assign assign1 = fetch(assign);
 				if (assign1 == null) {
 					oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
 					oldAssign.setIsActive("N");
 					session.update(oldAssign);
-					transaction.commit();
 					return oldAssign;
 				}
 			}else{
@@ -171,7 +161,6 @@ public class AssignDaoImpl implements AssignDao {
 					oldAssign.setUpdatedTime(CalendarCalculator.getTimeStamp());
 					oldAssign.setIsActive("N");
 					session.update(oldAssign);
-					transaction.commit();
 					return oldAssign;
 				}
 			}
@@ -188,7 +177,7 @@ public class AssignDaoImpl implements AssignDao {
 
 	private Assign fetch2(Assign assign) {
 		Assign assignList=null;
-		query = session.createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy");
+		query = sessionFactory.getCurrentSession().createQuery("FROM Assign WHERE standard=:standard and section=:section AND isActive=:isActive and hierarchy.hid=:hierarchy");
 		query.setParameter("standard", assign.getStandard());
 		query.setParameter("isActive", "Y");
 		query.setParameter("hierarchy", assign.getHierarchy().getHid());
@@ -201,7 +190,7 @@ public class AssignDaoImpl implements AssignDao {
 	public Assign getAssigns(String entryTime,Hierarchy hierarchy) {
 		Loggers.loggerStart();
 		try {
-			query = session.createQuery("from Assign where isActive='Y' and entryTime='" + entryTime + "' and hierarchy.hid=:hierarchy");
+			query = sessionFactory.getCurrentSession().createQuery("from Assign where isActive='Y' and entryTime='" + entryTime + "' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			Assign assign = (Assign) query.uniqueResult();
 			return assign;
@@ -215,11 +204,11 @@ public class AssignDaoImpl implements AssignDao {
 
 	@Override
 	public void deleteAssigningReportee(Assign assign) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart();
 		try {
+			Session session=this.sessionFactory.getCurrentSession();
 			
-			query = session.createQuery("UPDATE Profile SET reportingManagerId='null', standard='null', section='null' WHERE standard=:standard and section=:section");
+			query = sessionFactory.getCurrentSession().createQuery("UPDATE Profile SET reportingManagerId='null', standard='null', section='null' WHERE standard=:standard and section=:section");
 			query.setParameter("standard", assign.getStandard());
 			query.setParameter("section", assign.getSection());
 			query.executeUpdate();			
@@ -227,23 +216,19 @@ public class AssignDaoImpl implements AssignDao {
 			assign.setIsActive("D");
 			assign.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(assign);
-			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 			
 			Loggers.loggerException(e.getMessage());
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 	}
 
 	@Override
 	public Assign getStaffByClassAndSection(String standard, String section, Hierarchy hierarchy) {
-		getConnection();
 		try {
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"from Assign where hierarchy.hid=:hierarchy and standard=:standard and section=:section");
 			query.setParameter("standard", standard);
 			query.setParameter("section", section);
@@ -252,18 +237,15 @@ public class AssignDaoImpl implements AssignDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		}finally {
-			session.close();
 		}
 	}
 	
 	@Override
 	public boolean searchStandardFeeDao(String standard,Long hid){
-		getConnection();
 		Loggers.loggerStart();
 		boolean status = false;
 		try{
-			query = session.createQuery("from FeeMaster where standard =:standard and isActive=:isActive and hierarchy.hid=:hierarchy");
+			query = sessionFactory.getCurrentSession().createQuery("from FeeMaster where standard =:standard and isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("standard", standard);
 			query.setParameter("isActive", "Y");
 			query.setParameter("hierarchy", hid);
@@ -278,9 +260,7 @@ public class AssignDaoImpl implements AssignDao {
 		catch(Exception e){
 			e.printStackTrace();
 		}
-		finally{
-			session.close();
-		}
+		
 		Loggers.loggerEnd();
 		return status;
 	}
@@ -289,10 +269,9 @@ public class AssignDaoImpl implements AssignDao {
 	@Override
 	public List<Assign> getAssignList(Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		List<Assign> assignList=null;
 		try {
-			query = session.createQuery("FROM Assign WHERE isActive=:isActive and hierarchy.hid=:hierarchy");
+			query = sessionFactory.getCurrentSession().createQuery("FROM Assign WHERE isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hid);
 			query.setParameter("isActive", "Y");
 			assignList=query.list();
@@ -300,8 +279,6 @@ public class AssignDaoImpl implements AssignDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		}finally {
-			session.close();
 		}
 		Loggers.loggerEnd(assignList);
 		return assignList;

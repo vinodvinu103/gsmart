@@ -3,15 +3,14 @@ package com.gsmart.services;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.dao.GradesDao;
-import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Grades;
@@ -34,25 +33,16 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 @Service
+@Transactional
 public class ReportCardServiceImpl implements ReportCardService {
 
 	@Autowired
-	ReportCardDao reportCardDao;
+	private ReportCardDao reportCardDao;
+
+	
 
 	@Autowired
-	ProfileDao profiledao;
-
-	@Autowired
-	FeeServices feeServices;
-
-	@Autowired
-	FeeMasterServices feeMasterServices;
-
-	@Autowired
-	SearchService searchService;
-
-	@Autowired
-	GradesDao gradeDao;
+	private GradesDao gradeDao;
 
 	Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 

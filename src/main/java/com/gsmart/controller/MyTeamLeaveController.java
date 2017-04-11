@@ -2,7 +2,6 @@
 package com.gsmart.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -23,7 +22,6 @@ import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.MyTeamLeaveServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -34,16 +32,14 @@ import com.gsmart.util.Loggers;
 @RequestMapping(Constants.MYTEAMLEAVE)
 public class MyTeamLeaveController {
 	@Autowired
-	MyTeamLeaveServices myteamleaveServices;
+	private MyTeamLeaveServices myteamleaveServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
-	@Autowired
-	TokenService tokenService;
 	
 	@Autowired
-	ProfileDao profileDao;
+	private ProfileDao profileDao;
 
 	@RequestMapping(value="/{min}/{max}/{hierarchy}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getLeave(@PathVariable ("hierarchy") Long hierarchy,@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession)

@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.HolidayDao;
 import com.gsmart.model.CompoundHoliday;
@@ -22,13 +23,18 @@ import com.gsmart.util.Loggers;
  * @since 2016-08-01
  */
 @Service
+@Transactional
 public class HolidayServicesImpl implements HolidayServices {
 
 	
 final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
+
+@Autowired
+private HolidayDao holidayDao;
 	
-	@Autowired
-	private HolidayDao holidayDao;
+/*public void setHolidayDaoImpl(HolidayDao holidayDao) {
+	this.holidayDao = holidayDao;
+}*/
 		
 	/**
 	 * @return calls {@link HolidayDao}'s <code>getHolidayList()</code> method
@@ -41,8 +47,10 @@ final Logger logger = Logger.getLogger(HolidayServicesImpl.class);
 		return holidayDao.getHolidayList(hid,min,max);
 
 	} catch (GSmartDatabaseException exception) {
+		exception.printStackTrace();
 		throw (GSmartServiceException) exception;
 	} catch (Exception e) {
+		e.printStackTrace();
 		throw new GSmartServiceException(e.getMessage());
 	}
 

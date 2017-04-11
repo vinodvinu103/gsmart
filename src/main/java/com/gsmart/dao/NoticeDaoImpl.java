@@ -2,23 +2,18 @@ package com.gsmart.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import javax.validation.OverridesAttribute;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.gsmart.model.Band;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
-import com.gsmart.model.Search;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartBaseException;
@@ -26,25 +21,24 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class NoticeDaoImpl implements NoticeDao {
 
 	@Autowired
-	SessionFactory sessionFactory;
-	Session session;
-	Transaction transaction;
+	private SessionFactory sessionFactory;
 	Query query=null;
 	
 	final Logger logger = Logger.getLogger(NoticeDao.class);
 	
-	public void getConnection(){
+	/*public void getConnection(){
 		session=sessionFactory.openSession();
 		transaction=session.beginTransaction();
-	}
+	}*/
 	
 	@Override
 	public void addNotice(Notice notice,Token token){
-		getConnection();
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 	
 		try{
 			notice.setSmartId(token.getSmartId());
@@ -52,24 +46,19 @@ public class NoticeDaoImpl implements NoticeDao {
 			notice.setIsActive("Y");
 			notice.setEntryTime(CalendarCalculator.getTimeStamp()); 
 			session.save(notice);
-			transaction.commit();
 			Loggers.loggerEnd();
 		}catch(Exception e){
 			e.printStackTrace();
-		}
-		finally {
-			session.close();
 		}
 
 	}
 
 	@Override
 	public List<Notice> viewNotice(ArrayList<String> smartIdList,Long hid) {
-		getConnection();
 		Loggers.loggerStart();
 		
 		try{
-			query=session.createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) and hid=:hid and type='Specific' ORDER BY entryTime desc");
+			query=sessionFactory.getCurrentSession().createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) and hid=:hid and type='Specific' ORDER BY entryTime desc");
 			query.setParameterList("smartIdList", smartIdList);
 			query.setParameter("hid", hid);
 		Loggers.loggerValue("smartIdList", smartIdList);
@@ -79,69 +68,58 @@ public class NoticeDaoImpl implements NoticeDao {
 			//query.setMaxResults(6);
 			@SuppressWarnings("unchecked")
 			List<Notice> notices=query.list();
-			transaction.commit();
 			Loggers.loggerEnd(notices);
 			return notices;
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
 		}
-		finally {
-			session.close();
-		}
+		
 		
 	}
 	@Override
 public List<Notice> viewMyNotice(String smartId, Long hid) {
 		Loggers.loggerStart();
-		getConnection();
 		Loggers.loggerStart();
 		
 
 		try{
 			Loggers.loggerStart(smartId);
-			query=session.createQuery("from Notice where is_active='Y' and smartId=(:smartId) and hid=:hid ORDER BY entryTime desc");
+			query=sessionFactory.getCurrentSession().createQuery("from Notice where is_active='Y' and smartId=(:smartId) and hid=:hid ORDER BY entryTime desc");
 			query.setParameter("smartId", smartId);
 			query.setParameter("hid", hid);
 			//query.setMaxResults(6);
 			@SuppressWarnings("unchecked")
 			List<Notice> list=query.list();
-			transaction.commit();
 			Loggers.loggerEnd(list);
 			return list;
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
 		}
-		finally {
-			session.close();
-		}
 	}
 
 	@Override
 	public void deleteNotice(Notice notice) {
 		Loggers.loggerStart();
-		getConnection();
+		Session session=this.sessionFactory.getCurrentSession();
 		try{
 		
 //			notice= (Notice) session.get("com.gsmart.model.Notice",notice.getEntry_time());
 			notice.setIsActive("D");
 			notice.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(notice);
-			transaction.commit();
 			Loggers.loggerEnd();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		finally {
-			session.close();
-		}
+		
 	}
 
 	@Override
 	public Notice editNotice(Notice notice)throws GSmartBaseException{
 	
-		getConnection();
+		Session session=this.sessionFactory.getCurrentSession();
 		try{
 			Loggers.loggerStart();
 			
@@ -154,7 +132,6 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 			notice.setEntryTime(CalendarCalculator.getTimeStamp());
 			session.save(notice);
 			
-			transaction.commit();
 /*			
 			Loggers.loggerEnd();
 			addNotice(notice,"smartId");*/
@@ -164,9 +141,6 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 			throw new GSmartBaseException(e.getMessage());
 		}
 		
-		finally {
-			session.close();
-		}
 	
 	return notice;
 	
@@ -175,7 +149,7 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 	public Notice getNotice(String entryTime){
       try{
     	  
-			query = session.createQuery("from Notice where isActive='Y' and entryTime='" + entryTime + "' ORDER BY entryTime desc");
+			query = sessionFactory.getCurrentSession().createQuery("from Notice where isActive='Y' and entryTime='" + entryTime + "' ORDER BY entryTime desc");
 			@SuppressWarnings("unchecked")
 			ArrayList<Notice> viewNotice = (ArrayList<Notice>) query.list();
 			
@@ -189,41 +163,32 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 	@Override
 	public List<Notice> viewGenericNotice(String type) {
 		Loggers.loggerStart();
-		getConnection();
 		Loggers.loggerStart();
 		
 		try{
 			
-			query=session.createQuery("from Notice where is_active='Y' and type='Generic' ORDER BY entryTime desc");
+			query=sessionFactory.getCurrentSession().createQuery("from Notice where is_active='Y' and type='Generic' ORDER BY entryTime desc");
 		//	query.setParameter("type", type);
 			//query.setMaxResults(6);
 			@SuppressWarnings("unchecked")
 			List<Notice> list=query.list();
-			transaction.commit();
 			Loggers.loggerEnd(list);
 			return list;
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
 		}
-		finally {
-			session.close();
-		}
 	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> getAllProfiles() {
-		getConnection();
 		try {
 			
-			query = session.createQuery("from Profile where isActive='Y'");
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y'");
 			return (ArrayList<Profile>) query.list();
 		} catch(Exception e){
 			e.printStackTrace();
 			return null;
-		}
-		finally {
-			session.close();
 		}
 	}
 		
@@ -232,15 +197,14 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 	@SuppressWarnings("unchecked") 
 	@Override
 	public ArrayList<Profile> getProfiles(String role,String smartId) {
-		getConnection();
 		try {
 	
 			Loggers.loggerStart("current smartId"+smartId);
 			
 			if (role.toLowerCase().equals("student")) {
-				query = session.createQuery("from Profile where isActive='Y'and role='student' and smartId like '"+smartId.substring(0,2)+"%'");
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y'and role='student' and smartId like '"+smartId.substring(0,2)+"%'");
 			} else {
-				query = session.createQuery("from Profile where isActive='Y'and role!='student' and smartId like '"+smartId.substring(0,2)+"%'");
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y'and role!='student' and smartId like '"+smartId.substring(0,2)+"%'");
 			}
 
 			return (ArrayList<Profile>) query.list();
@@ -248,18 +212,14 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 			e.printStackTrace();
 			return null;
 		}
-		finally {
-			session.close();
-	}
 	
 }
 
 	@Override
 	public Profile getParentInfo(String smartId) {
-		    getConnection();
 		try {
 			
-			Profile currentProfile = (Profile) session.createQuery("from Profile where smartId=" + smartId).list()
+			Profile currentProfile = (Profile) sessionFactory.getCurrentSession().createQuery("from Profile where smartId=" + smartId).list()
 					.get(0);
 			if (currentProfile.getReportingManagerId() != smartId)
 				return getProfileDetails(currentProfile.getReportingManagerId());
@@ -269,9 +229,7 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 			e.printStackTrace();
 			return null;
 		}
-		finally {
-			session.close();
-	}
+		
 	
 	
 }
@@ -279,13 +237,12 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 
 
 public Profile getProfileDetails(String smartId) {
-	getConnection();
 	Loggers.loggerStart(smartId);
 	Profile profilelist = null;
 	   
 	try {
 		
-		query = session.createQuery("from Profile where isActive='Y' AND smartId= :smartId");
+		query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y' AND smartId= :smartId");
 		query.setParameter("smartId", smartId);
 		profilelist = (Profile) query.list().get(0);
 		profilelist.setChildFlag(true);
@@ -294,9 +251,6 @@ public Profile getProfileDetails(String smartId) {
 		e.printStackTrace();
 	}
     
-   finally {
-	    session.close();
-   }
 	
 	Loggers.loggerEnd(profilelist);
 	return profilelist;
@@ -308,23 +262,20 @@ public Profile getProfileDetails(String smartId) {
      @SuppressWarnings("unchecked")
      @Override
           public List<Profile> getAllRecord() {
-    		getConnection();   
     	 Loggers.loggerStart();
 	
 	     List<Profile> profile = null;
 	
 	       try {
 	       
-	        	query = session.createQuery("from Profile where isActive like('Y')");
+	        	query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive like('Y')");
 	 	
      		profile = (List<Profile>) query.list();
         	} catch (Exception e) {
 	    	e.printStackTrace();
 	     	return null;
 	} 
-	       finally {
-			session.close();
-		}
+	       
 	
 	   Loggers.loggerEnd("profile fetched from DB");
      	return profile;
@@ -332,13 +283,13 @@ public Profile getProfileDetails(String smartId) {
      	
     }
      
-     @Override
+     @SuppressWarnings("unchecked")
+	@Override
     public List<Notice> viewNoticeForAdmin(Long hid) throws GSmartServiceException {
     	Loggers.loggerStart(hid);
     	List<Notice> list=new ArrayList<>();
     	try {
-			getConnection();
-			query=session.createQuery("from Notice where hierarchy.hid=:hid and isActive='Y'");
+			query=sessionFactory.getCurrentSession().createQuery("from Notice where hierarchy.hid=:hid and isActive='Y'");
 			query.setParameter("hid",hid);
 			list=query.list();
 		} catch (Exception e) {

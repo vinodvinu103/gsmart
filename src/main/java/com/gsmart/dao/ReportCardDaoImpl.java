@@ -1,7 +1,5 @@
 package com.gsmart.dao;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -17,23 +15,20 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 
 
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 
 
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gsmart.model.Band;
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
@@ -45,29 +40,28 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Autowired
-	SessionFactory sessionFactroy;
+	private SessionFactory sessionFactory;
 
-	Session session = null;
 	Query query;
-	Transaction tranction = null;
 	Criteria criteria=null;
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactroy.openSession();
 		tranction = session.beginTransaction();
-	}
+	}*/
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ReportCard> reportCardList(Token tokenDetail) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		List<ReportCard> list = null;
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		try {
 			String smartId = tokenDetail.getSmartId();
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) "
 					+ "and hid=:hierarchy and isActive='Y'");
 			query.setParameter("reportingManagerId", smartId);
@@ -110,8 +104,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public CompoundReportCard addReportCard(ReportCard card) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart(card);
+		Session session=this.sessionFactory.getCurrentSession();
 		CompoundReportCard card2 = null;
 		try {
 
@@ -120,7 +114,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 				card.setEntryTime(CalendarCalculator.getTimeStamp());
 				card.setIsActive("Y");
 				card2 = (CompoundReportCard) session.save(card);
-				tranction.commit();
 			} else
 				card2 = null;
 			Loggers.loggerEnd(card2);
@@ -128,9 +121,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		return card2;
 	}
 
@@ -154,8 +145,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	public ReportCard updateReportCard(ReportCard oldCard, ReportCard card) {
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		ReportCard card2 = null;
-		getConnection();
 		try {
 			ReportCard card3 = fetch(card);
 			if (card3 == null) {
@@ -163,7 +154,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 				oldCard.setIsActive("N");
 				session.update(oldCard);
 
-				tranction.commit();
 				return oldCard;
 			}
 		} catch (Exception e) {
@@ -175,7 +165,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	public ReportCard fetch1(ReportCard card) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		try {
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"from ReportCard where smartId=:smartId and isActive=:isActive and subject=:subject and examName=:examName and standard=:standard");
 			query.setParameter("smartId", card.getSmartId());
 			query.setParameter("isActive", "Y");
@@ -193,7 +183,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Loggers.loggerStart();
 
 		try {
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"from ReportCard where smartId=:smartId and isActive=:isActive and subject=:subject and "
 							+ "maxMarks=:maxMarks and minMarks=:minMarks and marksObtained=:marksObtained and "
 							+ "subjectGrade=:subjectGrade and academicYear=:academicYear "
@@ -218,52 +208,44 @@ public class ReportCardDaoImpl implements ReportCardDao {
 
 	@Override
 	public void deleteReportCard(ReportCard card) throws GSmartDatabaseException {
-		getConnection();
 		try {
+			Session session=this.sessionFactory.getCurrentSession();
 			Loggers.loggerStart();
 
 			card.setExitTime(CalendarCalculator.getTimeStamp());
 			card.setIsActive("D");
 			session.update(card);
-			tranction.commit();
-			session.close();
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 	}
 
 	public ReportCard getCard(String entryTime) {
-		getConnection();
 		Loggers.loggerStart();
 		ReportCard reportCard = null;
 		try {
 
-			query = session.createQuery("from ReportCard where entryTime=:entryTime and isActive=:isActive");
+			query = sessionFactory.getCurrentSession().createQuery("from ReportCard where entryTime=:entryTime and isActive=:isActive");
 			query.setParameter("entryTime", entryTime);
 			query.setParameter("isActive", "Y");
 			reportCard = (ReportCard) query.uniqueResult();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 		return reportCard;
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ReportCard> search(Token tokenDetail,String academicYear,String examName) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		List<ReportCard> list = null;
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		try {
-			String role = tokenDetail.getRole();
 			String smartId = tokenDetail.getSmartId();
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) "
 					+ "and hid=:hierarchy and isActive='Y' and academicYear=:academicYear and "
 					+ "examName=:examName");
@@ -281,15 +263,15 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<ReportCard> reportCardforHOD(Token token, String examName, String academicYear,String smartId) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart();
 		ArrayList<ReportCard> list = null;
 		Hierarchy hierarchy = token.getHierarchy();
 		try {
 
-			query = session.createQuery("from ReportCard where academicYear=:academicYear and examName=:examName and reportingManagerId=:smartId and isActive='Y' and hid=:hierarchy)");
+			query = sessionFactory.getCurrentSession().createQuery("from ReportCard where academicYear=:academicYear and examName=:examName and reportingManagerId=:smartId and isActive='Y' and hid=:hierarchy)");
 			query.setParameter("academicYear", academicYear);
 			query.setParameter("examName", examName);
 			query.setParameter("smartId", smartId);
@@ -297,9 +279,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			list = (ArrayList<ReportCard>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd(list);
 		return list;
 	}
@@ -307,9 +287,9 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	@Override
 	public void excelToDB(String smartId, MultipartFile fileUpload,Hierarchy hid) throws Exception {
 		InputStream in = null;
+		Session session=this.sessionFactory.getCurrentSession();
 		XSSFWorkbook workBook = null;
 		XSSFSheet sheet = null; // org.apache.poi.xssf.usermodel.XSSFSheet
-		FileInputStream file = null;
 		Loggers.loggerStart();
 		Hierarchy hierarchy=hid;
 		try {
@@ -318,7 +298,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			workBook = new XSSFWorkbook(in);
 			sheet = workBook.getSheetAt(0);
 			XSSFRow row = null;
-			getConnection();
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				System.out.println("in side for loop");
 
@@ -387,7 +366,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			 * System.out.println(cell.getStringCellValue()+"\t\t"); break; } }
 			 * }
 			 */
-			tranction.commit();
 			Loggers.loggerEnd();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -398,24 +376,24 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ReportCard> acdemicYearAndExamName(Token tokenDetail) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		List<ReportCard> yearAndExamName = new ArrayList<>();
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		String role = tokenDetail.getRole();
 		String smartId = tokenDetail.getSmartId();
 		try {
 			if(!role.equals("HOD")){
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"select distinct academicYear from Fee where (reportingManagerId=:reportingManagerId or smartId=:smartId ) and hid=:hierarchy and isActive='Y'");
 			query.setParameter("reportingManagerId", smartId);
 			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			else{
-				query=session.createQuery("select distinct academicYear from Fee where hid=:hierarchy and isActive='Y' ");
+				query=sessionFactory.getCurrentSession().createQuery("select distinct academicYear from Fee where hid=:hierarchy and isActive='Y' ");
 				query.setParameter("hierarchy", hierarchy.getHid());
 			}
 			List<String> year = query.list();
@@ -433,22 +411,21 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		return yearAndExamName;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<ReportCard> examName(Token tokenDetail, String acdemicYear,String smartId) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		ArrayList<ReportCard> examName = new ArrayList<>();
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
-		String role = tokenDetail.getRole();
 		try {
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"select distinct examName from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and academicYear=:academicYear and isActive='Y'");
 			query.setParameter("reportingManagerId", smartId);
 			query.setParameter("smartId", smartId);
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("academicYear", acdemicYear);
 			List<String> exam1 = query.list();
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"select standard from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and academicYear=:academicYear and isActive='Y'");
 			query.setParameter("reportingManagerId", smartId);
 			query.setParameter("smartId", smartId);
@@ -460,14 +437,14 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			for (String examName1 : exam1) {
 				ReportCard ex = new ReportCard();
 				ex.setExamName(examName1);
-				for (Iterator iterator = class1.iterator(); iterator.hasNext();) {
+				for (@SuppressWarnings("rawtypes")
+				Iterator iterator = class1.iterator(); iterator.hasNext();) {
 					String string = (String) iterator.next();
 					ex.setStandard(string);
 					ex.setSmartId(smartId);
 				}
 				examName.add(ex);
 			}
-			session.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -481,8 +458,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Loggers.loggerStart();
 		Map<String, Object> reportCard=new HashMap();
 		try {
-			getConnection();
-			criteria = session.createCriteria(ReportCard.class);
+			criteria = sessionFactory.getCurrentSession().createCriteria(ReportCard.class);
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("reportingManagerId", tokenDetail.getSmartId()));
 			criteria.add(Restrictions.eq("hierarchy.hid", tokenDetail.getHierarchy().getHid()));
@@ -493,7 +469,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			criteria.setMaxResults(max);
 			reportCard.put("reportCardList", criteria.list());
 			
-			criteria = session.createCriteria(ReportCard.class).add(Restrictions.eq("isActive", "Y"))
+			criteria = sessionFactory.getCurrentSession().createCriteria(ReportCard.class).add(Restrictions.eq("isActive", "Y"))
 					.add(Restrictions.eq("reportingManagerId", tokenDetail.getSmartId()))
 					.add(Restrictions.eq("academicYear",academicYear))
 					.add(Restrictions.eq("examName",examName))
@@ -509,22 +485,22 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Profile> findChildTeacher(Token tokenObj,String acdemicYear) throws GSmartDatabaseException {
 		Loggers.loggerStart(acdemicYear);
 		Loggers.loggerStart(tokenObj);
-			getConnection();
 			ArrayList<Profile> childTeacher = null;
 			Hierarchy hierarchy = tokenObj.getHierarchy();
 			String smartId = tokenObj.getSmartId();
 			try {
-				query = session.createQuery(
+				query = sessionFactory.getCurrentSession().createQuery(
 						"from Profile where reportingManagerId=:smartId and hierarchy.hid=:hierarchy and academicYear=:academicYear and isActive='Y' and role='TEACHER'");
 				query.setParameter("smartId", smartId);
 				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("academicYear", acdemicYear);
 				childTeacher = (ArrayList<Profile>) query.list();
-				session.close();
+				sessionFactory.getCurrentSession().close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -532,13 +508,13 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			return childTeacher;
 		}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> studentList(Token tokenDetail) throws GSmartDatabaseException {
 		List<Profile> list=new ArrayList<>();
 		Loggers.loggerStart();
 		try {
-			getConnection();
-			query=session.createQuery("from Profile where isActive='Y' and hid=:hierarchy and reportingManagerId=:smartId");
+			query=sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y' and hid=:hierarchy and reportingManagerId=:smartId");
 			query.setParameter("hierarchy", tokenDetail.getHierarchy().getHid());
 			query.setParameter("smartId", tokenDetail.getSmartId());
 			list=query.list();
