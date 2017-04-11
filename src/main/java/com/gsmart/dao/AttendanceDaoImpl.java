@@ -66,12 +66,12 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	@Override
 	public List<Map<String, Object>> getPresentAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException {
-		getconnection();
+	
 		Loggers.loggerStart();
 
 		List<Attendance> attendanceList = null;
 		try {
-			query = session.createQuery(
+			query =sessionFactory.getCurrentSession().createQuery(
 					"from Attendance where isActive=:isActive and smartId=:smartId and status=:status and inDate between :startDate and :endDate");
 			query.setParameter("isActive", "Y");
 			query.setParameter("smartId", smartId);
@@ -83,8 +83,6 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 
-		} finally {
-			session.close();
 		}
 
 		Loggers.loggerEnd();

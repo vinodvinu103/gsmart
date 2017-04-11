@@ -266,13 +266,32 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Loggers.loggerStart();
 		ArrayList<ReportCard> list = null;
 		Hierarchy hierarchy = token.getHierarchy();
+		String role = token.getRole();
 		try {
-			query = sessionFactory.getCurrentSession().createQuery(
-					"from ReportCard where academicYear=:academicYear and examName=:examName and (reportingManagerId=:smartId or smartId=:smartId) and isActive='Y' and hid=:hierarchy)");
-			query.setParameter("academicYear", academicYear);
-			query.setParameter("examName", examName);
-			query.setParameter("smartId", smartId);
-			query.setParameter("hierarchy", hierarchy.getHid());
+			if (role.equals("ADMIN")) {
+				query = sessionFactory.getCurrentSession().createQuery(
+						"from ReportCard where academicYear=:academicYear and examName=:examName and (reportingManagerId=:smartId or smartId=:smartId) and isActive='Y'");
+				query.setParameter("academicYear", academicYear);
+				query.setParameter("examName", examName);
+				query.setParameter("smartId", smartId);
+
+			}
+			/*else if (role.equals("DIRECTOR")) {
+				query = sessionFactory.getCurrentSession().createQuery(
+						"from ReportCard where academicYear=:academicYear and examName=:examName and (reportingManagerId=:smartId or smartId=:smartId) and isActive='Y'");
+				query.setParameter("academicYear", academicYear);
+				query.setParameter("examName", examName);
+				query.setParameter("smartId", smartId);
+
+			}*/
+			else {
+				query = sessionFactory.getCurrentSession().createQuery(
+						"from ReportCard where academicYear=:academicYear and examName=:examName and (reportingManagerId=:smartId or smartId=:smartId) and isActive='Y' and hid=:hierarchy");
+				query.setParameter("academicYear", academicYear);
+				query.setParameter("examName", examName);
+				query.setParameter("smartId", smartId);
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
 			list = (ArrayList<ReportCard>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();

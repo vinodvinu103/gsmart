@@ -281,7 +281,7 @@ public class DashboardController {
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		
 		List<Profile> profileList = null;
-		
+		Loggers.loggerStart(tokenObj);
 		
 		
 		Calendar cal=Calendar.getInstance();
