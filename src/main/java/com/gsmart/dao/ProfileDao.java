@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
@@ -40,6 +42,7 @@ public interface ProfileDao {
 	/* for registration */
 
 	public String getMaxSmartId();
+	
 
 	public boolean userProfileInsert(Profile profile);
 
@@ -48,7 +51,10 @@ public interface ProfileDao {
 	public String deleteprofile(Profile profile);
 	
 	public boolean deleteProfileIfMailFailed(String smartId);
-
+	
+	/* for profile image change*/
+	public String changeprofileimage(Profile profile);
+	
 	/* for profile */
 	public ArrayList<Profile> getAllProfiles();
 
@@ -68,8 +74,8 @@ public interface ProfileDao {
 	 * @return list of Profile entities available in the {@link Profile} Table
 	 * @throws GSmartDatabaseException
 	 */
-	public List<Profile> search(Profile profile) throws GSmartDatabaseException;
-
+	public List<Profile> search(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException;
+	
 	/**
 	 * @param profile
 	 *            instanceOf {@link Profile}
@@ -83,12 +89,14 @@ public interface ProfileDao {
 
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
+	
+	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
 
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
 	
 	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 	

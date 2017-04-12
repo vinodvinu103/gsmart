@@ -12,6 +12,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "PROFILE_MASTER")
 public class Profile {
@@ -25,11 +28,13 @@ public class Profile {
 
 	@Id
     @Column(name = "SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	
 
 	@Column(name="RFID")
+	@Index(name = "rfId")
 	private String rfId;
 
 	@Column(name = "FIRST_NAME")
@@ -78,9 +83,11 @@ public class Profile {
 	private String languageKnown;
 
 	@Column(name = "INSTITUTION")
+	@Index(name = "institution")
 	private String institution;
 
 	@Column(name = "SCHOOL")
+	@Index(name = "school")
 	private String school;
 
 	@Column(name = "BAND")
@@ -90,6 +97,7 @@ public class Profile {
 	private String designation;
 
 	@Column(name = "ROLE")
+	@Index(name = "role")
 	private String role;
 
 	@Column(name = "DEPT_NAME")
@@ -122,9 +130,20 @@ public class Profile {
 	@Column(name = "UPD_SMARTID")
 	private String updSmartId;
 
-	@Lob @Column(name = "IMAGE", length = 400000)
+	@Lob @Column(name = "STUDENT_IMAGE", length = 400000)
 	private byte[] image;
+	
+	@Lob @Column(name = "PARENTS_IMAGE", length = 400000)
+	private byte[] parentImage;
 
+	public byte[] getParentImage() {
+		return parentImage;
+	}
+
+	public void setParentImage(byte[] parentImage) {
+		this.parentImage = parentImage;
+	}
+	
 	// CONTACT DETAILS
 
 	@Column(name = "EMAIL_ID")
@@ -267,6 +286,7 @@ public class Profile {
 	private String studentId;
 
 	@Column(name = "CLASS")
+	@Index(name = "standard")
 	private String standard;
 
 	@Column(name = "SECTION")
@@ -294,6 +314,7 @@ public class Profile {
 	private String exitTime;
 
 	@Column(name = "IS_ACTIVE")
+	@Index(name ="isActive")
 	private String isActive;
 
 	@Transient
@@ -313,6 +334,7 @@ public class Profile {
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
+	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	// -----------------------------------------------------------/

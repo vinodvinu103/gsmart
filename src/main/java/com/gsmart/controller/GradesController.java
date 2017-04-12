@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.gsmart.dao.ProfileDaoImp;
-import com.gsmart.dao.TokenDaoImpl;
+import com.gsmart.dao.ProfileDao;
+import com.gsmart.dao.TokenDao;
 import com.gsmart.model.Grades;
 import com.gsmart.model.Profile;
 import com.gsmart.model.RolePermission;
@@ -42,16 +42,16 @@ import com.gsmart.util.Loggers;
     public class GradesController {
 	
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	
 	@Autowired
-	GradesService gradesService;
+	private GradesService gradesService;
 	
 	@Autowired
-	ProfileDaoImp profileDaoImp;
+	private ProfileDao profileDao;
 	
 	@Autowired
-	TokenDaoImpl tokenDaoImpl;
+	private TokenDao tokenDao;
 	
 	
 	
@@ -66,7 +66,7 @@ import com.gsmart.util.Loggers;
 	    str.length(); 
 	    
 	    List<Grades> list = null;
-	    Token tokenObj= tokenDaoImpl.getToken(tokenNumber);
+	    Token tokenObj= tokenDao.getToken(tokenNumber);
 	    RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 	    
 		Map<String, Object> resultMap = new HashMap<>();
@@ -89,11 +89,11 @@ import com.gsmart.util.Loggers;
 		boolean flag=false;
 		String tokenNumber = token.get("Authorization").get(0);
 		
-		Token tokenObj= tokenDaoImpl.getToken(tokenNumber);
+		Token tokenObj= tokenDao.getToken(tokenNumber);
 		String smartid=tokenObj.getSmartId();
 		 grades.setHierarchy(tokenObj.getHierarchy());
 		
-		 Profile profileinfo = profileDaoImp.getProfileDetails(smartid);
+		 Profile profileinfo = profileDao.getProfileDetails(smartid);
 		 
 		grades.setInstitution(profileinfo.getInstitution());
 		grades.setSchool(profileinfo.getSchool());

@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
+import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -43,13 +43,11 @@ import com.gsmart.util.Loggers;
 public class PrivilegeController {
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	
-	@Autowired
-	TokenService tokenService;
 	
 	
 	/**
@@ -70,11 +68,12 @@ public class PrivilegeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Profile> profileList = null;
         
 		
 		Map<String, Object> privilege = new HashMap<>();
-			profileList = profileServices.search(profile);
+			profileList = profileServices.search(profile, tokenObj.getHierarchy());
 			privilege.put("profileList", profileList);
 			Loggers.loggerEnd(profileList);
 		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);

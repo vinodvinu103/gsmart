@@ -19,6 +19,8 @@
 package com.gsmart.model;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Index;
 /**
  * class-name: Hierarchy.java
  * Assigning hierarchy for everyone 
@@ -30,6 +32,7 @@ import javax.persistence.*;
  *
  */
 
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="HIERARCHY_MASTER")
 public class Hierarchy {
@@ -39,6 +42,7 @@ public class Hierarchy {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
+	@Index(name = "hid")
     private Long hid;
 	
 	@Column(name="SCHOOL")
@@ -48,6 +52,7 @@ public class Hierarchy {
 	 * Institution of a person
 	 */
 	@Column(name="INSTITUTION")
+	@Index(name = "institution")
 	private String institution;
 
 	/**

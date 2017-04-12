@@ -8,9 +8,9 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
@@ -20,25 +20,23 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class LoginDaoImpl implements LoginDao {
 
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 	Login login;
-	Session session;
-	Transaction tx;
 	Query query;
 
 	@Override
 	public Map<String, Object> authenticate(Login loginDetails) throws GSmartDatabaseException {
-		getConnection();
 		Map<String, Object> authMap = new HashMap<>();
 		Loggers.loggerStart();
 		
 		try {
 			
 			int attempt = 0;
-			Query query = session.createQuery("from Login where smartId = :smartId");
+			Query query = sessionFactory.getCurrentSession().createQuery("from Login where smartId = :smartId");
 			query.setParameter("smartId", loginDetails.getSmartId());
 			@SuppressWarnings("unchecked")
 			ArrayList<Login> loginarray = (ArrayList<Login>) query.list();
@@ -87,46 +85,41 @@ public class LoginDaoImpl implements LoginDao {
 			authMap.put("status", 1);
 			return authMap;
 		}
-		finally {
-			session.close();
-		}
+		
 	}
 
 	public void resetAttempt(Login login) {
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			login.setAttempt(0);
 			session.update(login);
-			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 	}
 
 	public void update(Login login) {
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			session.update(login);
-			tx.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactory.openSession();
 		tx = session.beginTransaction();
-	}
+	}*/
 	
 	@Override
 	public List<Profile> getAllRecord(){
-		getConnection();
 		List<Profile> list=null;
 		try {
-			query=session.createQuery("from Profile where isActive='Y'");
+			query=sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y'");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			session.close();
 		}
 		return list;
 	}

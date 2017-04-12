@@ -19,7 +19,6 @@ import com.gsmart.model.Login;
 import com.gsmart.services.LoginServices;
 import com.gsmart.services.TokenService;
 import com.gsmart.util.GSmartBaseException;
-import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
 @Controller
@@ -28,13 +27,11 @@ public class LoginController {
 
 	
 	@Autowired
-	LoginServices loginServices;
+	private LoginServices loginServices;
 
-	@Autowired
-	GetAuthorization getAuthorization;
 	
 	@Autowired
-	TokenService tokenService;
+	private TokenService tokenService;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody Login login, @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {

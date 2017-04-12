@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 /**
  * class-name: Inventory.java Assigning inventory for everyone who enrolled in
  * the school from the principal to the students
@@ -18,31 +20,28 @@ import javax.persistence.Table;
  * @since 2016-08-01
  *
  */
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "INVENTORY")
 @IdClass(com.gsmart.model.CompoundInventory.class)
 public class Inventory {
 
-
 	@Id
 	@Column(name="CATEGORY")
+	@Index(name = "category")
 	private String category;
 
-
-
-	@Id
+    @Id
 	@Column(name="ITEM_Type")
+	@Index(name = "itemType")
 	private String itemType;
 
 	@Id
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
 	
-	
-	
 	@Column(name="QUANTITY")
 	private Integer quantity;
-	
 	
 	@Column(name="LEFT_QUANTITY")
 	private Integer leftQuantity;
@@ -79,6 +78,7 @@ public class Inventory {
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
+	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {

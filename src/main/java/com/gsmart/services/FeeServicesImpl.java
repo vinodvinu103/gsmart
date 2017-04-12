@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.FeeDao;
 import com.gsmart.model.Fee;
@@ -15,10 +16,11 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class FeeServicesImpl implements FeeServices {
 
 	@Autowired
-	FeeDao feeDao;
+	private FeeDao feeDao;
 
 	@Override
 	public ArrayList<Fee> getFeeList(Fee fee, Long hid) throws GSmartServiceException {
@@ -86,6 +88,7 @@ public class FeeServicesImpl implements FeeServices {
 
 	@Override
 	public ArrayList<Fee> getFeeLists(String academicYear,Long hid) throws GSmartServiceException {
+		Loggers.loggerStart(hid);
 		return feeDao.getFeeLists(academicYear,hid);
 	}
 

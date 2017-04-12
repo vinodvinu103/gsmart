@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -33,17 +32,15 @@ import com.gsmart.util.Loggers;
 @RequestMapping(Constants.RFID)
 public class RfidController {
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 	
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	
-	@Autowired
-	TokenService tokenService;
 
-	@RequestMapping(value = "/ProfilesWithRfid/{min}/{max}", method = RequestMethod.GET)
+	@RequestMapping(value = "/ProfilesWithRfid/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getProfilesWithRfid(@PathVariable("min") Integer min,
-			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			@PathVariable("max") Integer max,@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 
@@ -58,10 +55,17 @@ public class RfidController {
 
 
 		Map<String, Object> profile = new HashMap<>();
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+			
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 
 
 
-			profileListWithRfid = profileServices.getProfilesWithRfid(min, max,tokenObj.getHierarchy());
+			profileListWithRfid = profileServices.getProfilesWithRfid(min, max,hid);
 			profile.put("profileListWithRfid", profileListWithRfid);
 			Loggers.loggerEnd(profileListWithRfid);
 
@@ -69,9 +73,9 @@ public class RfidController {
 
 	}
 	
-	@RequestMapping(value = "/ProfilesWithoutRfid/{min}/{max}", method = RequestMethod.GET)
+	@RequestMapping(value = "/ProfilesWithoutRfid/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getProfilesWithoutRfid(@PathVariable("min") Integer min,
-			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			@PathVariable("max") Integer max,@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 
@@ -86,9 +90,16 @@ public class RfidController {
 
 
 		Map<String, Object> profile = new HashMap<>();
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+			
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
 
 
-			profileListWithoutRfid = profileServices.getProfilesWithoutRfid(min, max,tokenObj.getHierarchy());
+			profileListWithoutRfid = profileServices.getProfilesWithoutRfid(min, max,hid);
 			profile.put("profileListWithoutRfid", profileListWithoutRfid);
 
 			Loggers.loggerEnd(profileListWithoutRfid);

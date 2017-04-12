@@ -7,10 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.AttendanceDao;
+import com.gsmart.dao.HolidayDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Hierarchy;
@@ -19,15 +22,19 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class AttendanceServiceImpl implements AttendanceService {
 
-	@Autowired
-	AttendanceDao attendancedao;
+	
 
 	@Autowired
-	ProfileDao profileDao;
+	private AttendanceDao attendancedao;
+	
+	
 	@Autowired
-	SearchService searchService;
+	private ProfileDao profileDao;
+	@Autowired
+	private SearchService searchService;
 
 	@Override
 	public List<Map<String, Object>> getAttendance(Long startDate, Long endDate, String smartId)
@@ -39,6 +46,20 @@ public class AttendanceServiceImpl implements AttendanceService {
 			e.printStackTrace();
 
 		}
+		System.out.println("attendance service"+attendenanceList);
+		return attendenanceList;
+	}
+	@Override
+	public List<Map<String, Object>> getPresentAttendance(Long startDate, Long endDate, String smartId)
+			throws GSmartServiceException {
+		List<Map<String, Object>> attendenanceList = null;
+		try {
+			attendenanceList = attendancedao.getPresentAttendance(startDate, endDate, smartId);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		System.out.println("attendance service"+attendenanceList);
 		return attendenanceList;
 	}
 
@@ -114,6 +135,20 @@ public class AttendanceServiceImpl implements AttendanceService {
 			e.printStackTrace();
 		}
 		return responseList;
+	}
+
+	@Override
+	public Map<String, Object> getAttendanceCount(List<String> childList) {
+		try {
+			Loggers.loggerStart();
+			
+			return attendancedao.getAttendanceCount(childList);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 
 }

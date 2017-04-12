@@ -19,8 +19,10 @@ import javax.persistence.ManyToMany;*/
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
 import org.springframework.web.multipart.MultipartFile;
 
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="REPORT_CARD")
 @IdClass(com.gsmart.model.CompoundReportCard.class)
@@ -28,6 +30,7 @@ public class ReportCard {
 
 	@Id
 	@Column(name="SMARTID")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -41,7 +44,11 @@ public class ReportCard {
 	@Column(name="STUDENT_NAME")
 	private String studentName;
 	
+	@Column(name="STUDENT_ID")
+	private String studentId;
+	
 	@Column(name="STANDARD")
+	@Index(name = "standard")
 	private String standard;
 	
 	@Column(name="SECTION")
@@ -76,6 +83,7 @@ public class ReportCard {
 	private String result;
 	
 	@Column(name="ACADEMIC_YEAR")
+	@Index(name = "academicYear")
 	private String academicYear;
 	
 	@Column(name="IS_ACTIVE")
@@ -90,8 +98,8 @@ public class ReportCard {
 	@Transient
 	private int childReportFlag;
 	
-	@Transient
-	private MultipartFile multiPartFile;
+	@Column(name="REMARK")
+	private String remark;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -267,31 +275,33 @@ public class ReportCard {
 	public void setChildReportFlag(int childReportFlag) {
 		this.childReportFlag = childReportFlag;
 	}
+	
 
-	public MultipartFile getMultiPartFile() {
-		return multiPartFile;
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setMultiPartFile(MultipartFile multiPartFile) {
-		this.multiPartFile = multiPartFile;
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(String studentId) {
+		this.studentId = studentId;
 	}
 
 	@Override
 	public String toString() {
 		return "ReportCard [smartId=" + smartId + ", entryTime=" + entryTime + ", examName=" + examName
-				+ ", studentName=" + studentName + ", standard=" + standard + ", section=" + section
-				+ ", reportingManagerId=" + reportingManagerId + ", teacherName=" + teacherName + ", subject=" + subject
-				+ ", maxMarks=" + maxMarks + ", minMarks=" + minMarks + ", marksObtained=" + marksObtained
-				+ ", subjectGrade=" + subjectGrade + ", totalGrade=" + totalGrade + ", result=" + result
-				+ ", academicYear=" + academicYear + ", isActive=" + isActive + ", updateTime=" + updateTime
-				+ ", exitTime=" + exitTime + ", childReportFlag=" + childReportFlag + ", hierarchy=" + hierarchy + "]";
+				+ ", studentName=" + studentName + ", studentId=" + studentId + ", standard=" + standard + ", section="
+				+ section + ", reportingManagerId=" + reportingManagerId + ", teacherName=" + teacherName + ", subject="
+				+ subject + ", maxMarks=" + maxMarks + ", minMarks=" + minMarks + ", marksObtained=" + marksObtained
+				+ ", subjectGrade=" + subjectGrade + ", academicYear=" + academicYear + ", isActive=" + isActive
+				+ ", hierarchy=" + hierarchy + "]";
 	}
-
-	
-
-	
-
-	
 	
 	
 	

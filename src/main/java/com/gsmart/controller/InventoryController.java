@@ -25,7 +25,6 @@ import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.Token;
 import com.gsmart.services.InventoryServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -48,17 +47,15 @@ import com.gsmart.util.Loggers;
 public class InventoryController {
 
 	@Autowired
-	InventoryServices inventoryServices;
+	private InventoryServices inventoryServices;
 	@Autowired
-	GetAuthorization getauthorization;
-	@Autowired
-	TokenService tokenService;
+	private GetAuthorization getauthorization;
 	
 	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 	
 	@Autowired
-	InventoryDao inventorydao;
+	private InventoryDao inventorydao;
 	
 
 	/**
