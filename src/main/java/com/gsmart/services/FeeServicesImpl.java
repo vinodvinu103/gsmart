@@ -88,6 +88,7 @@ public class FeeServicesImpl implements FeeServices {
 
 	@Override
 	public ArrayList<Fee> getFeeLists(String academicYear,Long hid) throws GSmartServiceException {
+		Loggers.loggerStart(hid);
 		return feeDao.getFeeLists(academicYear,hid);
 	}
 

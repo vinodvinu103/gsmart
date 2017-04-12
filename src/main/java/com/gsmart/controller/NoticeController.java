@@ -76,7 +76,9 @@ public class NoticeController {
 		List<Notice> list = new ArrayList<Notice>();
 
 		try {
+
 			Map<String, Profile> allprofiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
+
 			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
 			System.out.println("parent list  :"+parentSmartIdList);
 
@@ -334,5 +336,4 @@ public class NoticeController {
 			return null;
 		}
 	}
-	
 }
