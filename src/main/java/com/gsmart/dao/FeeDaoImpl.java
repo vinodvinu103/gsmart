@@ -128,7 +128,7 @@ public class FeeDaoImpl implements FeeDao {
 			
 		query.setParameter("academicYear", academicYear);
 		feeList=(ArrayList<Fee>) query.list();
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(feeList);
 		
 		}
 		catch (Exception e) {

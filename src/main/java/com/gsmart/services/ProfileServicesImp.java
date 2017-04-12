@@ -77,6 +77,8 @@ public class ProfileServicesImp implements ProfileServices {
     	
     	return profileDao.changeprofileimage(profile);
     }
+    
+    
 	@Override
 	public String deleteprofile(Profile profile){
 		return profileDao.deleteprofile(profile);
@@ -131,9 +133,9 @@ public class ProfileServicesImp implements ProfileServices {
 	 */	
 
 	@Override
-	public List<Profile> search(Profile profileList) throws GSmartServiceException {
+	public List<Profile> search(Profile profileList, Hierarchy hierarchy) throws GSmartServiceException {
 		try {
-			return profileDao.search(profileList);
+			return profileDao.search(profileList, hierarchy);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -141,7 +143,7 @@ public class ProfileServicesImp implements ProfileServices {
 		}
 
 	}
-	
+
 	/**
 	 * calls {@link ProfileDao}'s <code>editRole(...)</code> method
 	 * 
@@ -253,9 +255,4 @@ public class ProfileServicesImp implements ProfileServices {
 		Loggers.loggerEnd();
 	}
 
-
-	@Override
-	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException {
-		return profileDao.getProfileByStuentHierarchy(hierarchy,reportingManagerId);
-	}
 }

@@ -130,9 +130,20 @@ public class Profile {
 	@Column(name = "UPD_SMARTID")
 	private String updSmartId;
 
-	@Lob @Column(name = "IMAGE", length = 400000)
+	@Lob @Column(name = "STUDENT_IMAGE", length = 400000)
 	private byte[] image;
+	
+	@Lob @Column(name = "PARENTS_IMAGE", length = 400000)
+	private byte[] parentImage;
 
+	public byte[] getParentImage() {
+		return parentImage;
+	}
+
+	public void setParentImage(byte[] parentImage) {
+		this.parentImage = parentImage;
+	}
+	
 	// CONTACT DETAILS
 
 	@Column(name = "EMAIL_ID")

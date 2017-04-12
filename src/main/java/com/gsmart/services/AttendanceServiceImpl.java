@@ -46,6 +46,20 @@ public class AttendanceServiceImpl implements AttendanceService {
 			e.printStackTrace();
 
 		}
+		System.out.println("attendance service"+attendenanceList);
+		return attendenanceList;
+	}
+	@Override
+	public List<Map<String, Object>> getPresentAttendance(Long startDate, Long endDate, String smartId)
+			throws GSmartServiceException {
+		List<Map<String, Object>> attendenanceList = null;
+		try {
+			attendenanceList = attendancedao.getPresentAttendance(startDate, endDate, smartId);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		System.out.println("attendance service"+attendenanceList);
 		return attendenanceList;
 	}
 

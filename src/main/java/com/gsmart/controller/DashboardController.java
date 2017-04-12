@@ -4,7 +4,9 @@ package com.gsmart.controller;
 import java.util.HashMap;
 
 import java.util.ArrayList;
-
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import java.util.Map;
@@ -17,20 +19,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
 import com.gsmart.model.Token;
-
+import com.gsmart.dao.DashboardDao;
+import com.gsmart.dao.HolidayDao;
+import com.gsmart.dao.ReportCardDao;
+import com.gsmart.model.Attendance;
+import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Holiday;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.Profile;
+import com.gsmart.model.ReportCard;
+import com.gsmart.model.RolePermission;
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.InventoryServices;
+import com.gsmart.services.ProfileServices;
+import com.gsmart.services.ReportCardService;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
 
@@ -54,7 +66,16 @@ public class DashboardController {
 	@Autowired
 	private SearchService searchService;
 	@Autowired
-	private FeeServices feeServices;
+	FeeServices feeServices;
+	@Autowired
+	ProfileServices profileServices;
+	@Autowired
+	ReportCardDao reportDao;
+	@Autowired
+	DashboardDao dashboardDao;
+	@Autowired
+	HolidayDao holidayDao;
+
 	
 	@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventory1(@PathVariable("academicYear") String academicYear,@RequestHeader HttpHeaders token,
@@ -225,6 +246,7 @@ public class DashboardController {
 					tokenObj.getHierarchy().getHid());
 
 			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
+
 			childList.add(tokenObj.getSmartId());
 			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
 			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
@@ -246,5 +268,115 @@ public class DashboardController {
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value="/view/{academicYear}", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> search(@RequestBody Profile profile,@RequestHeader HttpHeaders token,
+			HttpSession httpSession,@PathVariable("academicYear") String academicYear) throws GSmartBaseException {
 
+		Loggers.loggerStart(academicYear);
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		
+		List<Profile> profileList = null;
+		Loggers.loggerStart(tokenObj);
+		
+		
+		Calendar cal=Calendar.getInstance();
+		
+		
+		Calendar cal2= new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 0);
+		Date date = cal2.getTime();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) - 1, 1);
+		Long startDate = calendar.getTimeInMillis() / 1000;
+		Long endDate = date.getTime() / 1000;
+		System.out.println(" start date >>>>>>>>>>>>>>>>>>>"+startDate);
+		System.out.println(" nd date >>>>>>>>>>>>>>>>>>>"+endDate);
+		
+		List<Fee> feeList = null;
+		List<ReportCard> examName = null;
+        
+		Map<String, Object> detailMap = new HashMap<>();
+		String smartId=profile.getSmartId();
+		
+		Fee fee=new Fee();
+		fee.setAcademicYear(academicYear);
+		fee.setSmartId(smartId);
+		
+		feeList = feeServices.getFeeList(fee, profile.getHierarchy().getHid());
+			profileList = profileServices.search(profile, tokenObj.getHierarchy());
+			List<Map<String, Object>> attendanceList=attendanceService.getPresentAttendance(startDate, endDate, smartId);
+			System.out.println("attendenceList"+attendanceList);
+			System.out.println("smartId"+smartId);
+			System.out.println("hid of select user"+profile.getHierarchy().getHid());
+		
+			
+			
+			examName = dashboardDao.examName(tokenObj, smartId, academicYear);
+			
+			detailMap.put("profileList", profileList);
+			detailMap.put("attendanceList", attendanceList);
+			detailMap.put("feeList", feeList);
+			detailMap.put("examName", examName);
+			
+			System.out.println("profileList>>>>>>>>>>>>>>>>>>>>>>>>"+profileList);
+			System.out.println("attendanceList>>>>>>>>>>>>>>>>>>>>>>>>"+attendanceList);
+			System.out.println("feeList>>>>>>>>>>>>>>>>>>>>>>>>"+feeList);
+			System.out.println("report examName>>>>>>>>>>>>>>>>>>>>>>>>"+examName);
+			
+			Loggers.loggerEnd(detailMap);
+		 return new ResponseEntity<Map<String, Object>>(detailMap, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="academicYear/{smartId}",method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> academicYear(@PathVariable("smartId") String smartId,@RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		Token tokenObj=(Token) httpSession.getAttribute("token");
+		List<Fee> academicYear=null;
+		Map<String, Object> permission = new HashMap<>();
+				academicYear=dashboardDao.academicYear(tokenObj,smartId);
+				permission.put("academicYear", academicYear);
+			
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/calendar/{month}/{year}/{smartId}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
+			@PathVariable("month") Integer month, @PathVariable("year") Integer year, 
+			@PathVariable("smartId") String smartId, Holiday holiday) throws GSmartBaseException {
+
+		Loggers.loggerStart();
+
+		Map<String, Object> permissions = new HashMap<>();
+
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+
+		List<Map<String, Object>> attendanceList = null;
+		List<Holiday> holidayList = null;
+		Calendar cal = new GregorianCalendar(year, month, 0);
+		Date date = cal.getTime();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(year, month - 1, 1);
+		Long startDate = calendar.getTimeInMillis() / 1000;
+		Long endDate = date.getTime() / 1000;
+		attendanceList = attendanceService.getPresentAttendance(startDate, endDate, smartId);
+
+		holidayList = holidayDao.holidayList(tokenObj.getHierarchy().getHid());
+
+
+		permissions.put("attendanceList", attendanceList);
+		System.out.println("attendanceList:" + attendanceList);
+		permissions.put("holidayList", holidayList);
+
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+	}
 }

@@ -26,7 +26,7 @@ public interface ProfileServices{
 	/* for profile image change*/
 	
 	public String changeprofileimage(Profile profile)throws GSmartServiceException;
-
+	
 	/*for profile*/
 
 	public Map<String, Object> getProfiles(String role,String smartId,Long hid, int min, int max)throws GSmartServiceException;
@@ -39,15 +39,15 @@ public interface ProfileServices{
 	
 	Profile getProfileDetails(String smartId)throws GSmartServiceException;
 	
-	List<Profile> search( Profile profileList)throws GSmartServiceException;
+	List<Profile> search( Profile profileList, Hierarchy hierarchy)throws GSmartServiceException;
 
 	public void editRole(Profile profile)throws GSmartServiceException;
 	
 	List<Profile> getProfileByHierarchy(Hierarchy hierarchy)throws GSmartServiceException;
 	
-	List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
+//	List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
 
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
+//	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
 	
 	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
 	
