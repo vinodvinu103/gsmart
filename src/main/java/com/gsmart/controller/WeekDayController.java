@@ -1,5 +1,6 @@
 package com.gsmart.controller;
 
+import java.time.DayOfWeek;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class WeekDayController {
 	@RequestMapping(value="/{hierarchy}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getWeekDaysList(@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
-		List<WeekDays> list = null;
+		List<WeekDays> weekofflist=null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -65,11 +66,48 @@ public class WeekDayController {
 				hid=tokenObj.getHierarchy().getHid();
 			}
 			
-				list = weekDaysService.getWeekDaysList(hid);
-				resultMap.put("data", list);
+			weekofflist = weekDaysService.getWeekDaysList(hid);
+			for (WeekDays weekDays : weekofflist) {
+			String wk=weekDays.getWeekDay();
+			String day=null;
+				switch(wk) {
+				case "1":
+					day="SUNDAY";
+					break;
+
+				case "2":
+					day="MONDAY";
+					break;
+					
+				case "3":
+					day="TUESDAY";
+					break;
+				case "4":
+					day="WEDNESDAY";
+					break;
+				case "5":
+					day="THURSDAY";
+					break;
+				case "6":
+					day="FRIDAY";
+					break;
+				case "7":
+					day="SATURDAY";
+					break;
+				}
+			
+			weekDays.setWeekDay(day);
+			System.out.println("weekdays +++++"+weekDays.getWeekDay());
+			}
+				/* for (WeekDays weekDays : weekofflist) {
+					 int num=Integer.parseInt(weekDays.getWeekDay());
+					 String day=DayOfWeek.of(num).toString();
+					 System.out.println("-----days----- "+DayOfWeek.of(num).toString());
+					 weekDays.setWeekDay(day);
+				}*/
+				resultMap.put("data", weekofflist);
 				resultMap.put("status", 200);
 				resultMap.put("message", "success");
-			
 			
          Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
