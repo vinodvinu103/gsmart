@@ -63,8 +63,8 @@ public class Hierarchy {
 	private String entryTime;
 	
 	
-	@Column(name="SCHOOL_LOGO")
-	private String schoolLogo;
+	@Lob @Column(name = "SCHOOL_LOGO", length = 400000)
+	private byte[] schoolLogo;
 	
 	
 	@Column(name="SCHOOL_ADDRESS1")
@@ -94,11 +94,11 @@ public class Hierarchy {
 	@Column(name="SCHOOL_PHONE_NUMBER")
 	private String schoolPhoneNumber;
 
-	public String getSchoolLogo() {
+	public byte[] getSchoolLogo() {
 		return schoolLogo;
 	}
 
-	public void setSchoolLogo(String schoolLogo) {
+	public void setSchoolLogo(byte[] schoolLogo) {
 		this.schoolLogo = schoolLogo;
 	}
 

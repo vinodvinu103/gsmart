@@ -179,8 +179,8 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		Hierarchy ch = null;
 
 		try {
-			Hierarchy oldHierarchy = getHierarchy(hierarchy.getEntryTime());
-			ch = updateHierarchy(oldHierarchy, hierarchy);
+//			Hierarchy oldHierarchy = getHierarchy(hierarchy.getEntryTime());
+			ch = updateHierarchy( hierarchy);
 			
 			return ch;
 		} catch (ConstraintViolationException e) {
@@ -193,15 +193,16 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	}
 
-	private Hierarchy updateHierarchy(Hierarchy oldHierarchy, Hierarchy hierarchy) throws GSmartDatabaseException {
-		Session session=this.sessionFactory.getCurrentSession();
+	private Hierarchy updateHierarchy( Hierarchy hierarchy) throws GSmartDatabaseException {
+		
 		Hierarchy ch = null;
 		try {
 			Hierarchy hierarchy1 = fetch(hierarchy);
 			if (hierarchy1 == null) {
+//				Session session=this.sessionFactory.getCurrentSession();
 				hierarchy.setUpdateTime(CalendarCalculator.getTimeStamp());
 				hierarchy.setIsActive("Y");
-				session.update(hierarchy);
+				sessionFactory.getCurrentSession().update(hierarchy);
 
 				return hierarchy;
 
