@@ -74,17 +74,12 @@ public class DashboardDaoImpl implements DashboardDao {
 		String role = tokenDetail.getRole();
 
 		try {
-			if (role.equals("ADMIN")) {
+			if (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR")) {
 				query = sessionFactory.getCurrentSession()
 						.createQuery("select distinct academicYear from Fee where isActive='Y' and smartId=:smartId");
 				query.setParameter("smartId", smartId);
 				year = query.list();}
-			/*} else if (role.equals("DIRECTOR")) {
-				query = sessionFactory.getCurrentSession()
-						.createQuery("select distinct academicYear from Fee where isActive='Y' and smartId=:smartId");
-				query.setParameter("smartId", smartId);
-				year = query.list();
-			} */else {
+			else {
 				query = sessionFactory.getCurrentSession().createQuery(
 						"select distinct academicYear from Fee where hid=:hierarchy and isActive='Y' and smartId=:smartId");
 				query.setParameter("hierarchy", hierarchy.getHid());
@@ -119,22 +114,22 @@ public class DashboardDaoImpl implements DashboardDao {
 		System.out.println(!role.equals("ADMIN"));
 		System.out.println(!role.equals("DIRECTOR"));
 		try {
-			if (!role.equals("ADMIN")) {
+			if (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR")) {
 				System.out.println(" in side if its for principal>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
 				query = sessionFactory.getCurrentSession().createQuery(
-						"select distinct examName from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and academicYear=:academicYear and isActive='Y'");
+						"select distinct examName from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and academicYear=:academicYear and isActive='Y'");
 				query.setParameter("reportingManagerId", smartId);
 				query.setParameter("smartId", smartId);
-				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("academicYear", academicYear);
 				exam1 = query.list();
 				query = sessionFactory.getCurrentSession().createQuery(
-						"select standard from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and academicYear=:academicYear and isActive='Y'");
+						"select standard from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and academicYear=:academicYear and isActive='Y'");
 				query.setParameter("reportingManagerId", smartId);
 				query.setParameter("smartId", smartId);
-				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("academicYear", academicYear);
 				class1 = query.list();
+				
 			} /*else if (!role.equals("DIRECTOR")) {
 				System.out.println(" in side ELSE-IF its for DIRECTOR>>>>>>>>>>>>>>>>>>>>>>>>>>");
 				query = sessionFactory.getCurrentSession().createQuery(
@@ -155,17 +150,20 @@ public class DashboardDaoImpl implements DashboardDao {
 			} */else {
 				System.out.println(" in side else its for admin >>>>>>>>>>>>>>>>>>>>>>>>>>");
 				query = sessionFactory.getCurrentSession().createQuery(
-						"select distinct examName from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and academicYear=:academicYear and isActive='Y'");
+						"select distinct examName from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and academicYear=:academicYear and isActive='Y'");
 				query.setParameter("reportingManagerId", smartId);
 				query.setParameter("smartId", smartId);
+				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("academicYear", academicYear);
 				exam1 = query.list();
 				query = sessionFactory.getCurrentSession().createQuery(
-						"select standard from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and academicYear=:academicYear and isActive='Y'");
+						"select standard from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId) and hid=:hierarchy and academicYear=:academicYear and isActive='Y'");
 				query.setParameter("reportingManagerId", smartId);
 				query.setParameter("smartId", smartId);
+				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("academicYear", academicYear);
 				class1 = query.list();
+				
 			}
 
 			for (String examName1 : exam1) {
