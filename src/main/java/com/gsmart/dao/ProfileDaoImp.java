@@ -506,11 +506,8 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	@SuppressWarnings("unchecked")
-
 	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
 		//getConnection();
-
-
 		List<Profile> profileListWithRfid;
 		Map<String, Object> rfidWithMap = new HashMap<>();
 		try {

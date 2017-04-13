@@ -78,8 +78,10 @@ public class DashboardDaoImpl implements DashboardDao {
 				query = sessionFactory.getCurrentSession()
 						.createQuery("select distinct academicYear from Fee where isActive='Y' and smartId=:smartId");
 				query.setParameter("smartId", smartId);
-				year = query.list();}
+				year = query.list();
+				}
 			else {
+
 				query = sessionFactory.getCurrentSession().createQuery(
 						"select distinct academicYear from Fee where hid=:hierarchy and isActive='Y' and smartId=:smartId");
 				query.setParameter("hierarchy", hierarchy.getHid());
