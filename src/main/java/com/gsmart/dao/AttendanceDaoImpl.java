@@ -281,6 +281,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		String date = CalendarCalculator.getTimeStamp();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 		Date date1;
+		int year = Calendar.getInstance().get(Calendar.YEAR);   // Gets the current date and time
+		
+		String academicYear=year+"-"+(year+1);
 		try {
 			date1 = df.parse(date);
 			calendar.setTime(date1);
@@ -292,7 +295,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			long epoch1 = date2.getTime() / 1000;
 			System.out.println("today epoch date" + epoch1);
 			System.out.println("attendance insert data using cron job");
-			ArrayList<Profile> allProfiles = profileDao.getAllProfiles();
+			ArrayList<Profile> allProfiles = profileDao.getAllProfiles(academicYear);
 			
 			
 			for (Profile profile : allProfiles) {

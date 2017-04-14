@@ -56,7 +56,7 @@ public interface ProfileDao {
 	public String changeprofileimage(Profile profile);
 	
 	/* for profile */
-	public ArrayList<Profile> getAllProfiles();
+	public ArrayList<Profile> getAllProfiles(String AcademicYear);
 
 	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
 			int max);

@@ -85,12 +85,12 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 	/* for profile */
 
-	@Override
+	/*@Override
 	public ArrayList<Profile> getAllProfiles() {
 		ArrayList<Profile> profileList = profileDao.getAllProfiles();
 		return profileList;
 	}
-	
+	*/
 	@Override
 	public Map<String, Object> getProfiles(String role,String smartId,Long hid, int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
