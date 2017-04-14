@@ -22,6 +22,8 @@ public interface AttendanceDao  {
 			throws GSmartDatabaseException;
 
 	public Map<String, Object> getAttendanceCount(List<String> childList);
+	
+	public void insertAttendanceData() ;
 
 
 }

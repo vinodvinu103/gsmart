@@ -16,6 +16,11 @@ public class CompoundAttendance implements Serializable {
 		return rfId;
 	}
 
+	@Override
+	public String toString() {
+		return "CompoundAttendance [rfId=" + rfId + ", inDate=" + inDate + "]";
+	}
+
 	public void setRfId(String rfId) {
 		this.rfId = rfId;
 	}
