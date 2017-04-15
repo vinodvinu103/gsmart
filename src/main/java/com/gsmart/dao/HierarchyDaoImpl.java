@@ -202,7 +202,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 				hierarchy.setIsActive("Y");
 				session.update(hierarchy);
 
-				//return oldHierarchy;
+				return hierarchy;
 
 			}
 		} catch (ConstraintViolationException e) {
@@ -212,7 +212,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		return hierarchy;
+		return ch;
 
 	}
 
