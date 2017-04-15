@@ -168,14 +168,13 @@ public class ProfileServicesImp implements ProfileServices {
 		return profileDao.getProfileByHierarchy(hierarchy);
 	}
 	
-	
-
 
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
-	
+
 		return profileDao.getProfilesWithoutRfid(min, max,hierarchy);
 	}
 
+	
 	@Override
 	public List<Profile> addRfid(Profile profile)throws GSmartServiceException {
 		
@@ -218,9 +217,7 @@ public class ProfileServicesImp implements ProfileServices {
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
-
 	}
-
 	
 	@Override
 	public List<Profile> searchProfilesWithRfid(String profileListWithRfid,String role,Hierarchy hierarchy) throws GSmartServiceException {
@@ -244,7 +241,6 @@ public class ProfileServicesImp implements ProfileServices {
 		return profileDao.getBannerList();
 	}
 
-	
 	@Override
 	public void deleteBanner(Banners banner) throws GSmartServiceException {
 		
@@ -257,11 +253,12 @@ public class ProfileServicesImp implements ProfileServices {
 			throw new GSmartServiceException(e.getMessage());
 		}
 		Loggers.loggerEnd();
-		
 	}
 
 	@Override
-	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException {
-		return profileDao.getProfileByStuentHierarchy(hierarchy,reportingManagerId);
+	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy, String reportingManagerId)
+			throws GSmartDatabaseException {
+		return profileDao.getProfileByStuentHierarchy(hierarchy, reportingManagerId);
 	}
+
 }

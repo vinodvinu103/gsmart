@@ -80,6 +80,7 @@ public class NoticeController {
 			Map<String, Profile> allprofiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
 
 			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
+
 			System.out.println("parent list  :"+parentSmartIdList);
 
 			parentSmartIdList.remove(smartId);
@@ -310,6 +311,8 @@ public class NoticeController {
 		}
 
 	}
+	
+	
 	@RequestMapping(value = "/adminNotice/{hid}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewNoticeForAdmin(@PathVariable("hid") Long hid,
 			@RequestHeader HttpHeaders token, HttpSession httpSession)

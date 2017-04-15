@@ -210,6 +210,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			throws GSmartDatabaseException {
 		Session session=this.sessionFactory.getCurrentSession();
 		try {
+
 			Loggers.loggerStart(inventoryAssignments);
 			InventoryAssignments oldInventory = getInventory(inventoryAssignments.getEntryTime(),inventoryAssignments.getHierarchy());
 			if (oldInventory != null) {
