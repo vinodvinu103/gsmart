@@ -17,4 +17,6 @@ public interface AttendanceDao  {
 	
 	public List<Attendance> getAttendanceByhierarchy(Long date, Hierarchy hierarchy);
 
+	public Map<String, Object> getAttendanceCount(List<String> childList);
+
 }
