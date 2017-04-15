@@ -14,8 +14,6 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
-import com.gsmart.util.GSmartServiceException;
-import com.gsmart.util.Loggers;
 
 @Service
 @Transactional
@@ -63,11 +61,11 @@ public class NoticeServiceImpl implements NoticeService
 	}
 
 	
-	@Override
+	/*@Override
 	public ArrayList<Profile> getAllProfiles() {
 		ArrayList<Profile> profileList = profileDao.getAllProfiles();
 		return profileList;
-	}
+	}*/
 	
 //	@Override
 //	public ArrayList<Profile> getProfiles(String role,String smartId) throws GSmartServiceException {

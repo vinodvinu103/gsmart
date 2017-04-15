@@ -38,6 +38,8 @@ public class Constants {
 	public static final	String CONTACT="/contact";
 
 	public static final String DASHBOARD="/dashboard";
+	
+	public static final String TRANSPORTATION="/transportation";
 
 }
 

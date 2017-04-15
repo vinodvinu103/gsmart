@@ -1,13 +1,11 @@
 package com.gsmart.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
-import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 
@@ -31,7 +29,7 @@ public interface ProfileServices{
 
 	public Map<String, Object> getProfiles(String role,String smartId,Long hid, int min, int max)throws GSmartServiceException;
 
-	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
+/*	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;*/
 	
 	public Map<String, Object> getParentInfo(String empSmartId)throws GSmartServiceException;
 

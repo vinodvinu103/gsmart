@@ -170,12 +170,13 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getAllProfiles() {
+	public ArrayList<Profile> getAllProfiles(String academicYear) {
 		Loggers.loggerStart();
 
 		try {
 
-			query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y'");
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y' and academicYear=:academicYear");
+			query.setParameter("academicYear", academicYear);
 			Loggers.loggerEnd();
 			return (ArrayList<Profile>) query.list();
 		} catch (Exception e) {
