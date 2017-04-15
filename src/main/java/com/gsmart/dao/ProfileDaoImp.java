@@ -440,7 +440,7 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
 		// Loggers.loggerStart(profile);
 
 		 Loggers.loggerStart(hierarchy);
@@ -771,5 +771,6 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 		return profileByStudent;
 	}
+
 
 }
