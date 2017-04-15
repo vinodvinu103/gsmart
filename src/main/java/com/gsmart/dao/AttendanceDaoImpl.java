@@ -107,7 +107,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 				if (profile.getSmartId() != null) {
 					attendance.setSmartId(profile.getSmartId());
 					attendance.setHierarchy(profile.getHierarchy());
-					session.saveOrUpdate(attendance);
+					session.update(attendance);
 					rfidList.add(attendance.getRfId());
 				}
 			}
