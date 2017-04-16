@@ -405,10 +405,10 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		getConnection();
 		try {
 			query = session.createQuery(
-					"from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
+					"from RolePermission where role=:role and lower(moduleName)=:moduleName and isActive=:isActive");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
-			query.setParameter("moduleName", "Maintenance");
+			query.setParameter("moduleName", "maintenance");
 			rolePermissions = (List<RolePermission>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
