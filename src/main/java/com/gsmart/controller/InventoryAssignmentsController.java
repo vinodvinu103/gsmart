@@ -23,7 +23,6 @@ import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.model.Token;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.InventoryAssignmentsServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -34,13 +33,11 @@ import com.gsmart.util.Loggers;
 @RequestMapping(Constants.INVENTORYASSIGN)
 public class InventoryAssignmentsController {
 	@Autowired
-	InventoryAssignmentsServices inventoryAssignmentsServices;
+	private InventoryAssignmentsServices inventoryAssignmentsServices;
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	@Autowired
-	TokenService tokenService;
-	@Autowired
-	HierarchyServices hierarchyServices;
+	private HierarchyServices hierarchyServices;
 	
 	@RequestMapping(value="/assign/{min}/{max}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventoryAssign(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)

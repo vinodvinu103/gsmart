@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.BandDao;
 import com.gsmart.model.Band;
@@ -22,6 +23,7 @@ import com.gsmart.util.Loggers;
  * @since 2016-02-23
  */
 @Service
+@Transactional
 public class BandServicesImpl implements BandServices {
 
 	

@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.SalaryStructureDAO;
 import com.gsmart.model.SalaryStructure;
 
 @Service
+@Transactional
 public class SalaryStructureServiceImpl implements SalaryStructureService{
 
 	@Autowired

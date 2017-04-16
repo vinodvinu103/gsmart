@@ -45,19 +45,19 @@ import com.gsmart.util.Loggers;
 public class AttendanceController {
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
 	@Autowired
-	AttendanceService attendanceService;
+	private AttendanceService attendanceService;
 
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	HolidayDao holidayDao;
+	private HolidayDao holidayDao;
 
 	@RequestMapping(value = "/calendar/{month}/{year}/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,

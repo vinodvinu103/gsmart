@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.gsmart.dao.RolePermissionDao;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
@@ -21,10 +23,11 @@ import com.gsmart.util.Loggers;
  * @since 2016-08-01
  */
 @Service
+@Transactional
 public class RolePermissionServicesImp implements RolePermissionServices {
 	
 	@Autowired
-	RolePermissionDao rolePermissionDao;
+	private RolePermissionDao rolePermissionDao;
 	
 	/**
 	 * @return calls {@link PermissionDao}'s <code>getPermissionList()</code> method

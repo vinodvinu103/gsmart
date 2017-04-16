@@ -27,7 +27,6 @@ import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -39,22 +38,20 @@ import com.gsmart.util.Loggers;
 public class FeeController {
 
 	@Autowired
-	FeeServices feeServices;
+	private FeeServices feeServices;
 
 	@Autowired
-	ProfileServices profileSevices;
+	private ProfileServices profileSevices;
 
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
+
 
 	@Autowired
-	TokenService tokenService;
-
-	@Autowired
-	HierarchyServices hierarchyServices;
+	private HierarchyServices hierarchyServices;
 
 	@RequestMapping(value = "/viewFee/{smartId}/{academicYear}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, ArrayList<Fee>>> getFeeList(@PathVariable("smartId") String smartId,@PathVariable("academicYear") String academicYear,

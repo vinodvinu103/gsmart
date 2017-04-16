@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.NoticeDao;
 import com.gsmart.dao.ProfileDao;
@@ -17,12 +18,13 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class NoticeServiceImpl implements NoticeService
 {
 	@Autowired
-	NoticeDao noticeDao;
+	private NoticeDao noticeDao;
 	@Autowired
-	ProfileDao profileDao;
+	private ProfileDao profileDao;
 
 	@Override
 	public void addNotice(Notice notice,Token token) throws Exception {

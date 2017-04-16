@@ -27,12 +27,10 @@ import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.ReportCardService;
 import com.gsmart.services.SearchService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -48,25 +46,20 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class ReportCardController {
 
 	@Autowired
-	ReportCardService reportCardService;
+	private ReportCardService reportCardService;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
+
 
 	@Autowired
-	LoginController loginController;
+	private ProfileServices profileServices;
 
 	@Autowired
-	TokenService tokenService;
+	private SearchService searchService;
 
 	@Autowired
-	ProfileServices profileServices;
-
-	@Autowired
-	SearchService searchService;
-
-	@Autowired
-	ReportCardDao reportCardDao;
+	private ReportCardDao reportCardDao;
 
 	@RequestMapping(value="/{academicYear}/{examName}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getListForStudent(@RequestHeader HttpHeaders token, HttpSession httpSession,@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName)

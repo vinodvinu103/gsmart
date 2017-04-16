@@ -40,6 +40,7 @@ public interface ProfileDao {
 	/* for registration */
 
 	public String getMaxSmartId();
+	
 
 	public boolean userProfileInsert(Profile profile);
 

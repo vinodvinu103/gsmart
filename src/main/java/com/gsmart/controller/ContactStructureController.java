@@ -24,16 +24,16 @@ import com.gsmart.util.Loggers;
 @RequestMapping(value = "/contactSearch")
 public class ContactStructureController {
 	@Autowired
-	BeanFactory beanFactory;
+	private BeanFactory beanFactory;
 
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	ContactServices contactServices;
+	private ContactServices contactServices;
 
 	
 
