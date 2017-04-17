@@ -7,7 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-@SuppressWarnings("serial")
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings({ "serial", "deprecation" })
 @Entity
 @Table(name = "EMP_DETAILS")
 @IdClass(com.gsmart.model.EmpDetailsCompoundKey.class)
@@ -15,6 +17,7 @@ public class EmpDetails implements Serializable {
 
 	@Id
 	@Column(name = "SMART_ID")
+	@Index(name = "smartId")
 	private Integer smartId;
 	
 	@Id

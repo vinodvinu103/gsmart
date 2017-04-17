@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 /**
  * class-name: FeeMaster.java Assigning fee for students who enrolled in the
  * school
@@ -18,6 +20,7 @@ import javax.persistence.Table;
  * @since 2016-08-01
  *
  */
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "FEE_MASTER")
 @IdClass(com.gsmart.model.CompoundFeeMaster.class)
@@ -27,6 +30,7 @@ public class FeeMaster {
 	 */
 	@Id
 	@Column(name = "STANDARD")
+	@Index(name = "standard")
 	private String standard;
 	/**
 	 * Sports fee is a fee of each student
@@ -42,6 +46,7 @@ public class FeeMaster {
 	private Integer tuitionFee;
 	
 	@Column(name = "INSTITUTION")
+	@Index(name = "institution")
 	private String institution;
 	
 	
@@ -68,7 +73,7 @@ public class FeeMaster {
 	 */
 	
 	@Column(name = "TRANSPORTATION_FEE")
-	private Integer transportationFee;
+	private String transportationFee;
 	/**
 	 * Miscellaneous fee is a fee of each student
 	 */
@@ -176,11 +181,11 @@ public class FeeMaster {
 		this.tuitionFee = tuitionFee;
 	}
 
-	public Integer getTransportationFee() {
+	public String getTransportationFee() {
 		return transportationFee;
 	}
 
-	public void setTransportationFee(Integer transportationFee) {
+	public void setTransportationFee(String transportationFee) {
 		this.transportationFee = transportationFee;
 	}
 

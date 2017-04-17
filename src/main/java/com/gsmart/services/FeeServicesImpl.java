@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.FeeDao;
 import com.gsmart.model.Fee;
@@ -16,10 +17,11 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class FeeServicesImpl implements FeeServices {
 
 	@Autowired
-	FeeDao feeDao;
+	private FeeDao feeDao;
 
 	@Override
 	public ArrayList<Fee> getFeeList(Fee fee, Long hid) throws GSmartServiceException {
@@ -35,6 +37,21 @@ public class FeeServicesImpl implements FeeServices {
 		}
 		Loggers.loggerEnd();
 		return feeList;
+	}
+	@Override
+	public ArrayList<Fee> getStudentUnpaidFeeList(Fee fee, Long hid) throws GSmartServiceException {
+		Loggers.loggerStart();
+		ArrayList<Fee>   StudentUnpaidfeeList = null;
+		try {
+			StudentUnpaidfeeList = (ArrayList<Fee>) feeDao.getStudentUnpaidFeeList(fee,hid);
+		
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		return StudentUnpaidfeeList;
 	}
 
 	@Override
@@ -87,18 +104,24 @@ public class FeeServicesImpl implements FeeServices {
 
 	@Override
 	public ArrayList<Fee> getFeeLists(String academicYear,Long hid) throws GSmartServiceException {
+		Loggers.loggerStart(hid);
 		return feeDao.getFeeLists(academicYear,hid);
 	}
 
 	@Override
 	public void editFee(Fee fee) throws GSmartServiceException {
-		Loggers.loggerStart();
+		Loggers.loggerStart(fee);
 		try {
-		String invioce	=myinvoice();
-			fee.setInVoice(invioce);
-			Loggers.loggerStart(fee);
+		String school=fee.getHierarchy().getSchool();
+		String[] str=school.split(" ");
+		String schoolname="Fee-";
+		for (int i = 0; i < str.length; i++) {
+			schoolname=schoolname+str[i].substring(0,1);
+		   Loggers.loggerStart(schoolname); 
 	
-			feeDao.editFee(fee);
+		}
+	
+			feeDao.editFee(fee,schoolname);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -108,17 +131,27 @@ public class FeeServicesImpl implements FeeServices {
 		Loggers.loggerEnd();
 
 	}
-	int i=0;
-String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
+	
+	
+	
+/*	int i=0;
+    String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
 
-	private String myinvoice() {
-		
+	private String myinvoice(String inst) {
+		if (inst=="KAVE") {
+			System.out.println("hi suni");
+			
+		}
+		else if(inst.equals("VELL")){
+			System.out.println("hi machi");
+		}
+	Loggers.loggerStart(inst);
 		String a="gwr";
 		++i;
 		String b=a+"-"+year+"-"+i;
 		Loggers.loggerValue("b value is ", b);
 		return b;
-	}
+	}*/
 
 	@Override
 	public void deleteFee(Fee fee) throws GSmartServiceException {
@@ -187,6 +220,8 @@ String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
 		Loggers.loggerEnd();
 		return totalFees;
 	}
+
+	
 
 }
 /*------

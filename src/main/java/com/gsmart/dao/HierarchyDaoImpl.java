@@ -30,13 +30,13 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
@@ -53,13 +53,13 @@ import com.gsmart.util.Loggers;
  * @since 2016-08-01
  */
 @Repository
+@Transactional
 public class HierarchyDaoImpl implements HierarchyDao {
 
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
-	Session session = null;
-	Transaction transaction = null;
+	
 	Query query;
 
 	// final Logger logger = Logger.getLogger(HierarchyDaoImpl.class);
@@ -73,20 +73,19 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public Map<String, Object> getHierarchyList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 
 		List<Hierarchy> hierarchyList;
 		Map<String, Object> hierarchyMap = new HashMap<String, Object>();
 		Criteria criteria = null;
 		try {
 			
-			criteria = session.createCriteria(Hierarchy.class);
+			criteria = sessionFactory.getCurrentSession().createCriteria(Hierarchy.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.addOrder(Order.asc("school"));
 			hierarchyList = criteria.list();
-			Criteria criteriaCount = session.createCriteria(Hierarchy.class);
+			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(Hierarchy.class);
 			criteriaCount.setProjection(Projections.rowCount());
 			Long count = (Long) criteriaCount.uniqueResult();
 			hierarchyMap.put("totalhierarchy", count);
@@ -94,10 +93,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd(hierarchyList);
 		hierarchyMap.put("hierarchyList", hierarchyList);
 		return hierarchyMap;
@@ -108,26 +104,22 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public List<Hierarchy> getHierarchyList1(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 
 		List<Hierarchy> hierarchyList1;
 		Criteria criteria = null;
 		try {
 			if (hierarchy==null) {
-				query = session.createQuery("from Hierarchy where isActive='Y'");
+				query = sessionFactory.getCurrentSession().createQuery("from Hierarchy where isActive='Y'");
 			} else {
-				query = session.createQuery("from Hierarchy where isActive='Y' and hid=:hid");
+				query = sessionFactory.getCurrentSession().createQuery("from Hierarchy where isActive='Y' and hid=:hid");
 				query.setParameter("hid", hierarchy.getHid());
 			}
-			criteria = session.createCriteria(Hierarchy.class);
+			criteria = sessionFactory.getCurrentSession().createCriteria(Hierarchy.class);
 			hierarchyList1 = criteria.list();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd(hierarchyList1);
 		return hierarchyList1;
 	}
@@ -143,12 +135,12 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public boolean addHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 
+		Session session=this.sessionFactory.getCurrentSession();
 		Loggers.loggerStart(hierarchy);
 		System.out.println("hiearrachy:::::::::::" + hierarchy.getEntryTime() + hierarchy.getInstitution()
 				+ hierarchy.getSchool());
 		boolean status;
 		try {
-			getConnection();
 			Hierarchy hierarchy1 = fetch(hierarchy);
 			if (hierarchy1 != null) {
 				return false;
@@ -157,7 +149,6 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			hierarchy.setIsActive("Y");
 			System.out.println(hierarchy);
 			session.save(hierarchy);
-			transaction.commit();
 			status = true;
 		} catch (ConstraintViolationException e) {
 
@@ -169,9 +160,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			status = false;
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 		return status;
 	}
@@ -186,7 +175,6 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	@Override
 	public Hierarchy editHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart(hierarchy);
 		Hierarchy ch = null;
 
@@ -206,18 +194,15 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	}
 
 	private Hierarchy updateHierarchy(Hierarchy oldHierarchy, Hierarchy hierarchy) throws GSmartDatabaseException {
-
+		Session session=this.sessionFactory.getCurrentSession();
 		Hierarchy ch = null;
 		try {
 			Hierarchy hierarchy1 = fetch(hierarchy);
 			if (hierarchy1 == null) {
-				getConnection();
 				hierarchy.setUpdateTime(CalendarCalculator.getTimeStamp());
 				hierarchy.setIsActive("Y");
 				session.update(hierarchy);
 
-				transaction.commit();
-				session.close();
 				return hierarchy;
 
 			}
@@ -235,9 +220,8 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	public Hierarchy getHierarchy(String entryTime) {
 		try {
 
-			query = session.createQuery("from Hierarchy where IS_ACTIVE='Y' and ENTRY_TIME='" + entryTime + "'");
+			query = sessionFactory.getCurrentSession().createQuery("from Hierarchy where IS_ACTIVE='Y' and ENTRY_TIME='" + entryTime + "'");
 			 Hierarchy hierarchyList =  (Hierarchy) query.uniqueResult();
-			transaction.commit();
 
 			return hierarchyList;
 		} catch (Exception e) {
@@ -250,7 +234,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public void deleteHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 
-		getConnection();
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			Loggers.loggerStart();
 
@@ -258,31 +242,28 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			/*hierarchy.setIsActive("D");
 			session.update(hierarchy);*/
 			session.delete(hierarchy);
-			transaction.commit();
 
 			Loggers.loggerEnd();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 
 	}
 
 	/**
 	 * create instance for session and begins transaction
 	 */
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
-	}
+	}*/
 
 	public Hierarchy fetch(Hierarchy hierarchy) {
 
 		Loggers.loggerStart(hierarchy);
 		Hierarchy hierarchyList = null;
 		try {
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"FROM Hierarchy WHERE institution=:institution AND school=:school AND isActive=:isActive");
 			query.setParameter("school", hierarchy.getSchool());
 			query.setParameter("isActive", "Y");
@@ -300,18 +281,15 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@Override
 	public Hierarchy getHierarchyByHid(Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart(hid);
-		getConnection();
 		Hierarchy hierarchyList = null;
 		try {
-			query = session.createQuery("FROM Hierarchy WHERE hid=:hid");
+			query = sessionFactory.getCurrentSession().createQuery("FROM Hierarchy WHERE hid=:hid");
 			query.setParameter("hid", hid);
 			hierarchyList = (Hierarchy) query.uniqueResult();
 		} catch (Exception e) {
 
 			e.printStackTrace();
 
-		}finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
 		return hierarchyList;
@@ -320,8 +298,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Hierarchy> getAllHierarchy() {
-		getConnection();
-		query = session.createQuery("from Hierarchy where isActive='Y'");
+		query = sessionFactory.getCurrentSession().createQuery("from Hierarchy where isActive='Y'");
 		return query.list();
 
 	}

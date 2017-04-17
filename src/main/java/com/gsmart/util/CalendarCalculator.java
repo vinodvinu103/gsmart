@@ -5,15 +5,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gsmart.services.LoginServices;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scripting.jruby.JRubyScriptUtils.JRubyExecutionException;
-import org.springframework.stereotype.Repository;
 
-import com.google.gson.JsonSerializationContext;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class CalendarCalculator {
@@ -30,6 +32,13 @@ public class CalendarCalculator {
 		tranction = session.beginTransaction();
 	}
 
+
+	
+
+	public static Long currentEpoch;
+	@Autowired
+	LoginServices loginservices;
+
 	public static String getTimeStamp() {
 		try {
 			Date a = new Date();
@@ -45,7 +54,7 @@ public class CalendarCalculator {
 	}
 
 	/*public void execute(JobExecutionContext context) throws JobExecutionException {
->>>>>>> 9414e452c71ca0becbdf7170c286e7ac273c0d1f
+	public void execute(JsonSerializationContext context) throws JRubyExecutionException {
 		System.out.println("Hello Quartz!");
 	}*/
 	

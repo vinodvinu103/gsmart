@@ -8,12 +8,13 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
@@ -31,13 +32,12 @@ import com.gsmart.util.Loggers;
  * @since 2016-08-01
  */
 @Repository
+@Transactional
 public class InventoryDaoImpl implements InventoryDao {
 
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
-	Session session = null;
-	Transaction transaction = null;
 	Query query;
 
 	/**
@@ -46,38 +46,36 @@ public class InventoryDaoImpl implements InventoryDao {
 	 * @return list of inventory entities available in Inventory
 	 */
 
+	
 	@SuppressWarnings("unchecked")
 	@Override
 
 	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getconnection();
 		Map<String, Object> inventoryMap = new HashMap<String, Object>();
 		List<Inventory> inventoryList;
 		Criteria criteria = null;
 		try {
 
-			criteria=session.createCriteria(Inventory.class);
+			criteria = sessionFactory.getCurrentSession().createCriteria(Inventory.class);
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			criteria.setFirstResult(min);
-		     criteria.setMaxResults(max);
-		     criteria.add(Restrictions.eq("isActive", "Y"));
-		     criteria.add(Restrictions.eq("hierarchy.hid", hid));
-//		     criteria.setProjection(Projections.id());
-		     inventoryList = criteria.list();
-		     Criteria criteriaCount = session.createCriteria(Inventory.class);
-		     criteriaCount.add(Restrictions.eq("isActive", "Y"));
-		     criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
-		     criteriaCount.setProjection(Projections.rowCount());
-		     Long count = (Long) criteriaCount.uniqueResult();
-		     inventoryMap.put("totalinventory", count);
+			criteria.setMaxResults(max);
+			// criteria.setProjection(Projections.id());
+			inventoryList = criteria.list();
+			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(Inventory.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
+			criteriaCount.setProjection(Projections.rowCount());
+			Long count = (Long) criteriaCount.uniqueResult();
+			inventoryMap.put("totalinventory", count);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd(inventoryList);
 		inventoryMap.put("inventoryList", inventoryList);
 		return inventoryMap;
@@ -94,8 +92,8 @@ public class InventoryDaoImpl implements InventoryDao {
 	@Override
 	public CompoundInventory addInventory(Inventory inventory) throws GSmartDatabaseException {
 
-		getconnection();
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 
 		CompoundInventory cb = null;
 
@@ -107,13 +105,10 @@ public class InventoryDaoImpl implements InventoryDao {
 				cb = (CompoundInventory) session.save(inventory);
 			}
 
-			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		}finally {
-			session.close();
 		}
 		Loggers.loggerEnd(inventory);
 		return cb;
@@ -121,18 +116,18 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	public Inventory fetch(Inventory inventory) {
 		Inventory inventory2 = null;
+		Inventory inve =null;
 		try {
 			System.out.println("i am going "+ inventory);
 			Hierarchy hierarchy = inventory.getHierarchy();
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"from Inventory WHERE category=:category and itemType=:itemType and isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("category", inventory.getCategory());
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("itemType", inventory.getItemType());
-/*			query.setParameter("quantity", inventory.getQuantity());
-*/			query.setParameter("isActive", "Y");
+			query.setParameter("isActive", "Y");
 			inventory2 = (Inventory) query.uniqueResult();
-			System.out.println(">>>>>>>>>>>>>>><<<<<<<" + inventory2);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -148,7 +143,6 @@ public class InventoryDaoImpl implements InventoryDao {
 	 */
 	@Override
 	public Inventory editInventory(Inventory inventory) throws GSmartDatabaseException {
-		getconnection();
 		Loggers.loggerStart();
 		Inventory ch = null;
 		int diffQuantity =0;
@@ -156,13 +150,10 @@ public class InventoryDaoImpl implements InventoryDao {
 			Inventory oldInvertory = getInventory(inventory.getEntryTime(),inventory.getHierarchy());
 			if(inventory.getQuantity()<oldInvertory.getQuantity())
 			{
-				
-				
 				diffQuantity =oldInvertory.getQuantity()-inventory.getQuantity();
 				System.out.println("Difference........"+diffQuantity);
 				inventory.setLeftQuantity(inventory.getLeftQuantity()-diffQuantity);
 			}else{
-				
 				
 				diffQuantity=inventory.getQuantity()- oldInvertory.getQuantity();
 				System.out.println("get difference between them >>>>>>"+diffQuantity);
@@ -185,18 +176,16 @@ public class InventoryDaoImpl implements InventoryDao {
 		return ch;
 	}
 	
-	
 	private Inventory updateInventory(Inventory oldInventory, Inventory inventory) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		Inventory ch = null;
-		//getInventory(role, hierarchy);
-		
+
 			try {
 				if(oldInventory.getCategory().equals(inventory.getCategory()) && oldInventory.getItemType().equals(inventory.getItemType())){
 					oldInventory.setUpdateTime(CalendarCalculator.getTimeStamp());
 					oldInventory.setIsActive("N");
 					session.update(oldInventory);
-					transaction.commit();
 					return oldInventory;
 				}else{
 					Inventory inventory2=fetch(inventory);
@@ -204,7 +193,6 @@ public class InventoryDaoImpl implements InventoryDao {
 						oldInventory.setUpdateTime(CalendarCalculator.getTimeStamp());
 						oldInventory.setIsActive("N");
 						session.update(oldInventory);
-						transaction.commit();
 						return oldInventory;
 						}
 					}
@@ -220,6 +208,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		}
 
 
+
 	/**/
 	/**
 	 * removes the inventory entity from the database.
@@ -232,8 +221,10 @@ public class InventoryDaoImpl implements InventoryDao {
 	public Inventory getInventory(String entryTime, Hierarchy hierarchy) {
 		try {
 
-			query = session.createQuery("from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
+			query = sessionFactory.getCurrentSession().createQuery("from Inventory where isactive='Y' and entryTime=:entryTime and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
+			query.setParameter("entryTime", entryTime);
+		query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("entryTime", entryTime);
 			Inventory inventry = (Inventory) query.uniqueResult();
 
@@ -247,21 +238,18 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	@Override
 	public void deleteInventory(Inventory inventory) throws GSmartDatabaseException {
-		getconnection();
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 
 		try {
 
 			inventory.setExitTime(CalendarCalculator.getTimeStamp());
 			inventory.setIsActive("D");
 			session.update(inventory);
-			transaction.commit();
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 	}
 
@@ -269,17 +257,17 @@ public class InventoryDaoImpl implements InventoryDao {
 	 * create instance for session and begins transaction
 	 */
 
-	private void getconnection() {
+	/*private void getconnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 
-	}
+	}*/
 
 	@SuppressWarnings("unused")
 	private String InventoryCount() {
 		Loggers.loggerStart();
 		try {
-			query = session.createQuery("from Inventory where isactive='Y' and quantity=quantity");
+			query = sessionFactory.getCurrentSession().createQuery("from Inventory where isactive='Y' and quantity=quantity");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -289,20 +277,19 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
+
 	public List<Inventory> getInventoryList(String role,Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getconnection();
-		List<Inventory> inventoryList;
+
+		List<Inventory> inventoryList=null;
 		try {
-			query = session.createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy");
+			query = sessionFactory.getCurrentSession().createQuery("from Inventory where isActive='Y' and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 			inventoryList = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd(inventoryList);
 		return inventoryList;
 	}
@@ -312,22 +299,20 @@ public class InventoryDaoImpl implements InventoryDao {
 	public List<Inventory> getInventory(Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Inventory> inventory = null;
-		getconnection();
 		try {
 			if(hid != null){
-			query = session.createQuery("from Inventory where isActive='Y' and hid=:hierarchy");
+			query = sessionFactory.getCurrentSession().createQuery("from Inventory where isActive='Y' and hid=:hierarchy");
 			query.setParameter("hierarchy",hid);
 			}
 			else
 			{
-				query = session.createQuery("from Inventory where isActive='Y' ");
+				query = sessionFactory.getCurrentSession().createQuery("from Inventory where isActive='Y' ");
 			}
 			
 			inventory = query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			session.close();
+
 		}
 		Loggers.loggerEnd("inveList:"+inventory);
 		return inventory;

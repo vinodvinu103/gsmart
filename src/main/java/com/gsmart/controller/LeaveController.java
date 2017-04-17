@@ -21,7 +21,6 @@ import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.LeaveServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -32,13 +31,11 @@ import com.gsmart.util.Loggers;
 @RequestMapping(Constants.LEAVE)
 public class LeaveController {
 	@Autowired
-	LeaveServices leaveServices;
+	private LeaveServices leaveServices;
 	
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 	
-	@Autowired
-	TokenService tokenService;
 	
 	@Autowired
 	ProfileDao profileDao;

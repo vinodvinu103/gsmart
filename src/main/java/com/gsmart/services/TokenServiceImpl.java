@@ -2,6 +2,7 @@ package com.gsmart.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.TokenDao;
 import com.gsmart.model.Login;
@@ -11,10 +12,11 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class TokenServiceImpl implements TokenService {
 
 	@Autowired
-	TokenDao tokenDAO;
+	private TokenDao tokenDAO;
 
 	public void saveToken(Token token, Login loginObj) throws GSmartServiceException {
 		try {

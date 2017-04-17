@@ -2,11 +2,17 @@ package com.gsmart.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "notice")
 public class Notice {
@@ -14,6 +20,7 @@ public class Notice {
 	@Column(name = "ENTRY_TIME")
 	private String entryTime;
 	@Column(name = "SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 	@Lob
 	@Column(name = "MESSAGE")
@@ -23,10 +30,21 @@ public class Notice {
 	@Column(name = "UPDATE_TIME")
 	private String update_time;
 	
-	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
 	
 	@Lob
 	@Column(name = "Image")
+	@Index(name = "image")
 	private byte[] image;
 	
 	

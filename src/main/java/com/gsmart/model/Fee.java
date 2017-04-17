@@ -9,12 +9,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="FEE")
 public class Fee {
 	
 	
 	@Column(name="SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -22,6 +26,7 @@ public class Fee {
 	private String entryTime;
 	
 	@Column(name="ACADEMIC_YEAR")
+	@Index(name = "academicYear")
 	private String academicYear;
 	
 	@Column(name="NAME")
@@ -124,6 +129,9 @@ public class Fee {
 		this.hierarchy = hierarchy;
 	}
 	
+
+	
+
 	public Integer getTransportationFee() {
 		return transportationFee;
 	}
@@ -131,8 +139,6 @@ public class Fee {
 	public void setTransportationFee(Integer transportationFee) {
 		this.transportationFee = transportationFee;
 	}
-
-	
 
 	@Column(name="BALANCE_FEE")
 	private Integer balanceFee;

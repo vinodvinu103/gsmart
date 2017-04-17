@@ -20,7 +20,6 @@ import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
 import com.gsmart.model.Token;
 import com.gsmart.services.RolePermissionServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -44,13 +43,11 @@ import com.gsmart.util.Loggers;
 public class RolePermissionController {
 
 	@Autowired
-	RolePermissionServices rolePermissionServices;
+	private RolePermissionServices rolePermissionServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
-	@Autowired
-	TokenService tokenService;
 
 	/**
 	 * to view {@link Permission} details.

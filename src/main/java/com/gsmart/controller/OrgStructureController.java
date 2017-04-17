@@ -33,13 +33,13 @@ import com.gsmart.util.GetAuthorization;
 public class OrgStructureController {
 
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
 	// private static final Logger logger =
 	// Logger.getLogger(OrgStructureController.class);

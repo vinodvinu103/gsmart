@@ -7,17 +7,18 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
-import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class ProfileServicesImp implements ProfileServices {
 
 	
@@ -71,7 +72,13 @@ public class ProfileServicesImp implements ProfileServices {
 
 		return profileDao.updateProfile(profile);
 	}
-
+    @Override
+    public String changeprofileimage(Profile profile){
+    	
+    	return profileDao.changeprofileimage(profile);
+    }
+    
+    
 	@Override
 	public String deleteprofile(Profile profile){
 		return profileDao.deleteprofile(profile);
@@ -126,9 +133,9 @@ public class ProfileServicesImp implements ProfileServices {
 	 */	
 
 	@Override
-	public List<Profile> search(Profile profileList) throws GSmartServiceException {
+	public List<Profile> search(Profile profileList, Hierarchy hierarchy) throws GSmartServiceException {
 		try {
-			return profileDao.search(profileList);
+			return profileDao.search(profileList, hierarchy);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -136,7 +143,7 @@ public class ProfileServicesImp implements ProfileServices {
 		}
 
 	}
-	
+
 	/**
 	 * calls {@link ProfileDao}'s <code>editRole(...)</code> method
 	 * 
@@ -160,9 +167,11 @@ public class ProfileServicesImp implements ProfileServices {
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartServiceException {
 		return profileDao.getProfileByHierarchy(hierarchy);
 	}
+	
+	
 
 
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
 	
 		return profileDao.getProfilesWithoutRfid(min, max,hierarchy);
 	}
@@ -195,7 +204,7 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 
 	@Override
-	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy) throws GSmartDatabaseException {
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
 		
 		return profileDao.getProfilesWithRfid(min, max,hierarchy);
 	}
@@ -230,26 +239,12 @@ public class ProfileServicesImp implements ProfileServices {
 		profileDao.addBanner(banner);
 	}
 	@Override
-	public Map<String, Object> getBannerList(Integer min, Integer max) throws GSmartServiceException {
+	public List<Banners> getBannerList() throws GSmartServiceException {
 		// TODO Auto-generated method stub
-		return profileDao.getBannerList(min, max);
+		return profileDao.getBannerList();
 	}
 
-	/*@Override
->>>>>>> 5a605812816b13c3ad7139025cd14377f05faa9e
-	public Banners editBanner(Banners banner) throws GSmartServiceException {
-		Loggers.loggerStart();
-		Banners banners=null;
-		try {
-			banners=profileDao.editBanner(banner);
-		} catch (GSmartDatabaseException exception) {
-			throw (GSmartServiceException) exception;
-		} catch (Exception e) {
-			throw new GSmartServiceException(e.getMessage());
-		}
-		Loggers.loggerEnd();
-		return banners;
-	}*/
+	
 	@Override
 	public void deleteBanner(Banners banner) throws GSmartServiceException {
 		
@@ -263,5 +258,10 @@ public class ProfileServicesImp implements ProfileServices {
 		}
 		Loggers.loggerEnd();
 		
+	}
+
+	@Override
+	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException {
+		return profileDao.getProfileByStuentHierarchy(hierarchy,reportingManagerId);
 	}
 }

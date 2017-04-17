@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.ContactDao;
 import com.gsmart.model.MessageDetails;
@@ -11,11 +12,12 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class ContactServicesImp implements ContactServices {
 
 	
 	@Autowired
-	ContactDao dao;
+	private ContactDao dao;
 
 	public boolean studentToTeacher(MessageDetails details) throws Exception {
 		return dao.studentToTeacher(details);	

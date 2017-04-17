@@ -10,12 +10,16 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Index;
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name ="APPLY_LEAVE")
 @IdClass(com.gsmart.model.CompoundLeave.class)
 public class Leave {
 	@Id
 	@Column(name="SMART_ID")
+	@Index(name = "smartId")
 	private String smartId;
 	
 	public String getSmartId() {
@@ -44,12 +48,14 @@ public class Leave {
 	private String description;
 	
 	@Column(name="LEAVE_TYPE")
+	@Index(name = "leaveType")
 	private String leaveType;
 	
 	@Column(name="UPDATED_TIME")
 	private String updatedTime;
 	
 	@Column(name="IS_ACTIVE")
+	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="EXIT_TIME")
