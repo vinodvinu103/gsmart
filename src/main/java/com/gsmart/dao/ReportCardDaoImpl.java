@@ -268,7 +268,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Hierarchy hierarchy = token.getHierarchy();
 		String role = token.getRole();
 		try {
-			if (role.equals("ADMIN") || role.equals("DIRECTOR") ) {
+			if (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR")) {
+
 				query = sessionFactory.getCurrentSession().createQuery(
 						"from ReportCard where academicYear=:academicYear and examName=:examName and (reportingManagerId=:smartId or smartId=:smartId) and isActive='Y'");
 				query.setParameter("academicYear", academicYear);

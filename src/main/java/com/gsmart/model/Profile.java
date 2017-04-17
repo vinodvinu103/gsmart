@@ -340,16 +340,19 @@ public class Profile {
 	// -----------------------------------------------------------/
 	
 
+	
+	
+	public String getUpdSmartId() {
+		return updSmartId;
+	}
+
+
 	public Hierarchy getHierarchy() {
 		return hierarchy;
 	}
 
 	public void setHierarchy(Hierarchy hierarchy) {
 		this.hierarchy = hierarchy;
-	}
-	
-	public String getUpdSmartId() {
-		return updSmartId;
 	}
 
 	public boolean isChildFlag() {

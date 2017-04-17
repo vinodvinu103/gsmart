@@ -56,7 +56,7 @@ public interface ProfileDao {
 	public String changeprofileimage(Profile profile);
 	
 	/* for profile */
-	public ArrayList<Profile> getAllProfiles();
+	public ArrayList<Profile> getAllProfiles(String AcademicYear);
 
 	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
 			int max);
@@ -93,7 +93,7 @@ public interface ProfileDao {
 	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
 
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
-	
+
 	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
 	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;

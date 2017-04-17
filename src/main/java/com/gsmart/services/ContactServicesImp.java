@@ -1,6 +1,8 @@
 package com.gsmart.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,6 @@ public class ContactServicesImp implements ContactServices {
 	@Autowired
 	private ContactDao dao;
 
-	public boolean studentToTeacher(MessageDetails details) throws Exception {
-		return dao.studentToTeacher(details);	
-	}
-	
 	@Override
 	public List<MessageDetails> msgList(MessageDetails details) throws Exception {
 		
@@ -30,20 +28,14 @@ public class ContactServicesImp implements ContactServices {
 	}
 	
 	@Override
-	public List<MessageDetails> teacherView(MessageDetails details) throws Exception {
-		return dao.teacherView(details);
+	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
+		return dao.teacherView(details, min, max);
 	}
 
 	@Override
-	public boolean teacherToStudent(MessageDetails details) throws Exception {
+	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
 		
-		return dao.teacherToStudent(details);
-	}
-
-	@Override
-	public List<MessageDetails> studentView(MessageDetails details) throws Exception {
-		
-		return dao.studentView(details);
+		return dao.studentView(details, min, max);
 	}
 
 	@Override
@@ -67,6 +59,23 @@ public class ContactServicesImp implements ContactServices {
 	public boolean studentToTeacher(MessageDetails details, String role) throws Exception {
 		
 		return dao.studentToTeacher(details,role);
+	}
+	
+	@Override
+	public boolean teacherToStudent(MessageDetails details, String role) throws Exception {
+		
+		return dao.teacherToStudent(details,role);
+	}
+	
+	@Override
+	public Map<String, Object> teacherChat(MessageDetails details) throws Exception {
+		return dao.teacherChat(details);
+	}
+
+	@Override
+	public Map<String, Object> studentChat(MessageDetails details) throws Exception {
+		
+		return dao.studentChat(details);
 	}
 	
 }

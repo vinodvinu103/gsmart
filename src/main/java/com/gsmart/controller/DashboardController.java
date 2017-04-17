@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 
 import com.gsmart.model.Token;
+import com.gsmart.dao.AttendanceDao;
 import com.gsmart.dao.DashboardDao;
 import com.gsmart.dao.HolidayDao;
 import com.gsmart.dao.ReportCardDao;
@@ -75,6 +76,8 @@ public class DashboardController {
 	DashboardDao dashboardDao;
 	@Autowired
 	HolidayDao holidayDao;
+	@Autowired
+	private AttendanceDao attendancedao;
 
 	
 	@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
@@ -306,9 +309,10 @@ public class DashboardController {
 		fee.setAcademicYear(academicYear);
 		fee.setSmartId(smartId);
 		
-		feeList = feeServices.getFeeList(fee, profile.getHierarchy().getHid());
+		feeList = feeServices.getDashboardFeeList(fee, profile.getHierarchy().getHid());
 			profileList = profileServices.search(profile, tokenObj.getHierarchy());
 			List<Map<String, Object>> attendanceList=attendanceService.getPresentAttendance(startDate, endDate, smartId);
+			List<Map<String, Object>> absentList=attendancedao.getAbsentAttendance(startDate, endDate, smartId);
 			System.out.println("attendenceList"+attendanceList);
 			System.out.println("smartId"+smartId);
 			System.out.println("hid of select user"+profile.getHierarchy().getHid());
@@ -319,6 +323,7 @@ public class DashboardController {
 			
 			detailMap.put("profileList", profileList);
 			detailMap.put("attendanceList", attendanceList);
+			detailMap.put("absentList", absentList);
 			detailMap.put("feeList", feeList);
 			detailMap.put("examName", examName);
 			
@@ -360,6 +365,7 @@ public class DashboardController {
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 
 		List<Map<String, Object>> attendanceList = null;
+		List<Map<String, Object>> absentList = null;
 		List<Holiday> holidayList = null;
 		Calendar cal = new GregorianCalendar(year, month, 0);
 		Date date = cal.getTime();
@@ -368,11 +374,12 @@ public class DashboardController {
 		Long startDate = calendar.getTimeInMillis() / 1000;
 		Long endDate = date.getTime() / 1000;
 		attendanceList = attendanceService.getPresentAttendance(startDate, endDate, smartId);
-
+		absentList=attendancedao.getAbsentAttendance(startDate, endDate, smartId);
 		holidayList = holidayDao.holidayList(tokenObj.getHierarchy().getHid());
 
 
 		permissions.put("attendanceList", attendanceList);
+		permissions.put("absentList", absentList);
 		System.out.println("attendanceList:" + attendanceList);
 		permissions.put("holidayList", holidayList);
 

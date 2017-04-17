@@ -27,7 +27,7 @@ public interface NoticeService {
 	
 //	public ArrayList<Profile> getProfiles(String role,String smartId)throws GSmartServiceException;
 
-	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
+//	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
 	
 	public Map<String, Object> getParentInfo(String empSmartId)throws GSmartServiceException;
 	
