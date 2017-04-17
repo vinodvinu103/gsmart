@@ -193,7 +193,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	private Hierarchy updateHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		
-	//	Hierarchy ch = null;
+		Hierarchy ch = null;
 		try {
 			Hierarchy hierarchy1 = fetch(hierarchy);
 			if (hierarchy1 == null) {
