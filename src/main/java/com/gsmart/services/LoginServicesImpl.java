@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gsmart.dao.HierarchyDao;
 import com.gsmart.dao.LoginDao;
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
@@ -32,6 +33,9 @@ public class LoginServicesImpl implements LoginServices{
 
 	@Autowired
 	private TokenService tokenService;
+	
+	@Autowired
+	private HierarchyDao hierarchyDao;
 
 	@Override
 	public Map<String, Object> authenticate(Login login, String tokenNumber) throws GSmartServiceException {
@@ -49,6 +53,12 @@ public class LoginServicesImpl implements LoginServices{
 				
 				Map<String, Object> rolePermissions = permissionServices.getPermission(tokenDetails.getRole());
 				Profile profile = profileServices.getProfileDetails(tokenDetails.getSmartId());
+				
+				if(tokenDetails.getHierarchy()!=null){
+					jsonMap.put("hierarchy", hierarchyDao.getHierarchyByHid(tokenDetails.getHierarchy().getHid()));
+				}else{
+					jsonMap.put("hierarchy", null);
+				}
 				jsonMap.put("permissions", rolePermissions);
 				jsonMap.put("profile", profile);
 				jsonMap.put("token", tokenDetails.getTokenNumber());
@@ -66,6 +76,12 @@ public class LoginServicesImpl implements LoginServices{
 					String role = profile.getRole();
 					Map<String, Object> rolePermissions = permissionServices.getPermission(role);
 					Token token = issueToken(smartId, role, loginObj);
+					
+					if(loginObj.getHierarchy()!=null){
+						jsonMap.put("hierarchy", hierarchyDao.getHierarchyByHid(loginObj.getHierarchy().getHid()));
+					}else{
+						jsonMap.put("hierarchy", null);
+					}
 					jsonMap.put("permissions", rolePermissions);
 					jsonMap.put("profile", profile);
 					jsonMap.put("token", token.getTokenNumber());

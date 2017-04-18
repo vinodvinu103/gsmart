@@ -195,10 +195,10 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	private Hierarchy updateHierarchy( Hierarchy hierarchy) throws GSmartDatabaseException {
 		
-		Hierarchy ch = null;
+//		Hierarchy ch = null;
 		try {
-			Hierarchy hierarchy1 = fetch(hierarchy);
-			if (hierarchy1 == null) {
+			/*Hierarchy hierarchy1 = fetch(hierarchy);
+			if (hierarchy1 == null) {*/
 //				Session session=this.sessionFactory.getCurrentSession();
 				hierarchy.setUpdateTime(CalendarCalculator.getTimeStamp());
 				hierarchy.setIsActive("Y");
@@ -206,7 +206,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 				return hierarchy;
 
-			}
+		/*	}*/
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -214,7 +214,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		return ch;
+//		return ch;
 
 	}
 
