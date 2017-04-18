@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
@@ -48,6 +49,9 @@ public class PrivilegeController {
 	@Autowired
 	private GetAuthorization getAuthorization;
 	
+	@Autowired
+	private ProfileDao profileDao;
+	
 	
 	
 	/**
@@ -70,11 +74,16 @@ public class PrivilegeController {
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Profile> profileList = null;
+		List<Profile> studentList = null;
         
 		
 		Map<String, Object> privilege = new HashMap<>();
 			profileList = profileServices.search(profile, tokenObj.getHierarchy());
+			studentList = profileDao.searchStudent(profile, tokenObj.getHierarchy());
+			
+			System.out.println("studentList>>>>>>>>>>>>>>>>>>>>>>>>>>>>::"+studentList);
 			privilege.put("profileList", profileList);
+			privilege.put("studentList", studentList);
 			Loggers.loggerEnd(profileList);
 		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
 	}
