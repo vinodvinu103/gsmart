@@ -29,6 +29,7 @@ import com.gsmart.model.Token;
 import com.gsmart.dao.AttendanceDao;
 import com.gsmart.dao.DashboardDao;
 import com.gsmart.dao.HolidayDao;
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Fee;
@@ -78,6 +79,8 @@ public class DashboardController {
 	HolidayDao holidayDao;
 	@Autowired
 	private AttendanceDao attendancedao;
+	@Autowired
+	private ProfileDao profileDao;
 
 	
 	@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
@@ -310,7 +313,7 @@ public class DashboardController {
 		fee.setSmartId(smartId);
 		
 		feeList = feeServices.getDashboardFeeList(fee, profile.getHierarchy().getHid());
-			profileList = profileServices.search(profile, tokenObj.getHierarchy());
+			profileList = profileDao.searchStudent(profile, tokenObj.getHierarchy());
 			List<Map<String, Object>> attendanceList=attendanceService.getPresentAttendance(startDate, endDate, smartId);
 			List<Map<String, Object>> absentList=attendancedao.getAbsentAttendance(startDate, endDate, smartId);
 			System.out.println("attendenceList"+attendanceList);

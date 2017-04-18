@@ -114,4 +114,7 @@ public interface ProfileDao {
 
 	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year);
 
+
+	public List<Profile> searchStudent(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException;
+
 }
