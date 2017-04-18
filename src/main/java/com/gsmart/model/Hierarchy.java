@@ -41,10 +41,11 @@ public class Hierarchy {
 	 */
 	
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Index(name = "hid")
     private Long hid;
 	
+
 	@Column(name="SCHOOL")
 	private String school;
 

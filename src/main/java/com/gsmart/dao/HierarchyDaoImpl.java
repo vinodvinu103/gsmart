@@ -177,11 +177,11 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	public Hierarchy editHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart(hierarchy);
 		Hierarchy ch = null;
-
 		try {
 //			Hierarchy oldHierarchy = getHierarchy(hierarchy.getEntryTime());
 			ch = updateHierarchy( hierarchy);
 			
+
 			return ch;
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -195,11 +195,9 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	private Hierarchy updateHierarchy( Hierarchy hierarchy) throws GSmartDatabaseException {
 		
-//		Hierarchy ch = null;
 		try {
-			/*Hierarchy hierarchy1 = fetch(hierarchy);
-			if (hierarchy1 == null) {*/
-//				Session session=this.sessionFactory.getCurrentSession();
+
+
 				hierarchy.setUpdateTime(CalendarCalculator.getTimeStamp());
 				hierarchy.setIsActive("Y");
 				sessionFactory.getCurrentSession().update(hierarchy);
@@ -214,7 +212,6 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-//		return ch;
 
 	}
 
@@ -261,7 +258,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	public Hierarchy fetch(Hierarchy hierarchy) {
 
-		Loggers.loggerStart(hierarchy);
+		Loggers.loggerStart("entering into fetch");
 		Hierarchy hierarchyList = null;
 		try {
 			query = sessionFactory.getCurrentSession().createQuery(
@@ -270,9 +267,9 @@ public class HierarchyDaoImpl implements HierarchyDao {
 			query.setParameter("isActive", "Y");
 			query.setParameter("institution", hierarchy.getInstitution());
 			hierarchyList = (Hierarchy) query.uniqueResult();
+			//Loggers.loggerStart("hierarchylist is:", hierarchyList);
 			Loggers.loggerEnd(hierarchyList);
 		} catch (Exception e) {
-
 			e.printStackTrace();
 		}
 		return hierarchyList;

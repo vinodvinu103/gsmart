@@ -13,6 +13,8 @@ public interface FeeDao {
 	
 	public ArrayList<Fee> getFeeList(Fee fee,Long hid) throws GSmartDatabaseException;
 	
+	public ArrayList<Fee> getDashboardFeeList(Fee fee,Long hid) throws GSmartDatabaseException;
+	
 	public void addFee(Fee fee) throws GSmartDatabaseException;
 	
 	public ArrayList<Fee> getFeeLists(String acadamicyear,Long hid) throws GSmartDatabaseException;

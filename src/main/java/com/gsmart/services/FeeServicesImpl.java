@@ -22,6 +22,23 @@ public class FeeServicesImpl implements FeeServices {
 	@Autowired
 	private FeeDao feeDao;
 
+	
+	@Override
+	public ArrayList<Fee> getDashboardFeeList(Fee fee, Long hid) throws GSmartServiceException {
+		Loggers.loggerStart();
+		ArrayList<Fee> feeList = null;
+		try {
+			feeList = (ArrayList<Fee>) feeDao.getDashboardFeeList(fee,hid);
+			Loggers.loggerStart(feeList);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		return feeList;
+	}
+	
 	@Override
 	public ArrayList<Fee> getFeeList(Fee fee, Long hid) throws GSmartServiceException {
 		Loggers.loggerStart();

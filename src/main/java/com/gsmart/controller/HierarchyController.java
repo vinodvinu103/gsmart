@@ -179,7 +179,6 @@ public class HierarchyController {
 				if (ch != null) {
 					respMap.put("status", 200);
 		        	respMap.put("message", "Saved Succesfully");
-
 				} else {
 					respMap.put("status", 400);
 		        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
