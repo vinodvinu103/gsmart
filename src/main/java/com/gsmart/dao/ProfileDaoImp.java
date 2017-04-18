@@ -170,12 +170,13 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getAllProfiles() {
+	public ArrayList<Profile> getAllProfiles(String academicYear) {
 		Loggers.loggerStart();
 
 		try {
 
-			query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y'");
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y' and academicYear=:academicYear");
+			query.setParameter("academicYear", academicYear);
 			Loggers.loggerEnd();
 			return (ArrayList<Profile>) query.list();
 		} catch (Exception e) {
@@ -306,10 +307,6 @@ public class ProfileDaoImp implements ProfileDao {
 		return profilelist;
 	}
 
-	/*
-	 * public void getConnection() { session = sessionFactory.openSession();
-	 * transaction = session.beginTransaction(); }
-	 */
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -472,10 +469,9 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	@SuppressWarnings("unchecked")
-
-
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
-		    //getConnection();
+		// Loggers.loggerStart(profile);
+
 		 Loggers.loggerStart(hierarchy);
 
 		List<Profile> profileListWithoutRfid;
@@ -510,7 +506,6 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 
 		Loggers.loggerEnd(profileListWithoutRfid);
-
 		return rfidMap;
 		// return null;
 	}
@@ -539,7 +534,6 @@ public class ProfileDaoImp implements ProfileDao {
 		List<Profile> profileListWithRfid;
 		Map<String, Object> rfidWithMap = new HashMap<>();
 		try {
-
 			/*
 			 * query = session.createQuery(
 			 * "from Profile where rfId is not null AND isActive='Y'");
@@ -571,7 +565,6 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 		Loggers.loggerEnd(profileListWithRfid);
 		return rfidWithMap;
-
 	}
 
 	@Override
@@ -610,9 +603,7 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-
-		Loggers.loggerEnd();
-
+		Loggers.loggerEnd(profileListWithoutRfid);
 		return profileListWithoutRfid;
 	}
 
@@ -784,6 +775,10 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 
 	}
+	/*public void getConnection() {
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+	}*/
 
 	@Override
 	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException {
@@ -801,5 +796,6 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 		return profileByStudent;
 	}
+
 
 }

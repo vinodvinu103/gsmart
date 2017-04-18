@@ -73,6 +73,7 @@ public class RfidController {
 
 	}
 	
+
 	@RequestMapping(value = "/ProfilesWithoutRfid/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getProfilesWithoutRfid(@PathVariable("min") Integer min,
 			@PathVariable("max") Integer max,@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)

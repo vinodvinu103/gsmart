@@ -49,7 +49,6 @@ public class InventoryDaoImpl implements InventoryDao {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-
 	public Map<String, Object> getInventoryList(Long hid, int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Map<String, Object> inventoryMap = new HashMap<String, Object>();
@@ -93,11 +92,24 @@ public class InventoryDaoImpl implements InventoryDao {
 	public CompoundInventory addInventory(Inventory inventory) throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
+		Inventory inventoryassign = null;
 		Session session=this.sessionFactory.getCurrentSession();
 
 		CompoundInventory cb = null;
 
 		try {
+			inventoryassign= fetch(inventory);
+			if (inventoryassign == null) {
+				inventory.setEntryTime((CalendarCalculator.getTimeStamp()));
+				inventory.setIsActive("Y");
+				cb = (CompoundInventory) session.save(inventory);
+				session.close();
+			}
+
+		/*CompoundInventory cb = null;*/
+
+		try {
+
 			Inventory inventory2=fetch(inventory);
 			if (inventory2 ==null) {
 				inventory.setEntryTime((CalendarCalculator.getTimeStamp()));
@@ -107,11 +119,12 @@ public class InventoryDaoImpl implements InventoryDao {
 
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
-		} catch (Exception e) {
+		} 
+		}catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		Loggers.loggerEnd(inventory);
-		return cb;
+		return cb;	
+		
 	}
 
 	public Inventory fetch(Inventory inventory) {
@@ -169,7 +182,6 @@ public class InventoryDaoImpl implements InventoryDao {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-
 		}
 		
 		Loggers.loggerEnd();
@@ -229,6 +241,7 @@ public class InventoryDaoImpl implements InventoryDao {
 			Inventory inventry = (Inventory) query.uniqueResult();
 
 			return inventry;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
