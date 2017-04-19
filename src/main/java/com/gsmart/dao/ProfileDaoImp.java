@@ -156,6 +156,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		try {
 			profile.setIsActive("D");
+			profile.setEmailId("");
 			profile.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(profile);
 
