@@ -19,11 +19,13 @@ import org.hibernate.annotations.Index;
 @Table(name = "PROFILE_MASTER")
 public class Profile {
 
+	
+
 	@Override
 	public String toString() {
-		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", role=" + role + ", reportingManagerName="
-				+ reportingManagerName + ", reportingManagerId=" + reportingManagerId + ", totalAmount=" + totalAmount
-				+ ", paidAmount=" + paidAmount + ", balanceAmount=" + balanceAmount + "]";
+		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", institution=" + institution + ", school="
+				+ school + ", band=" + band + ", role=" + role + ", academicYear=" + academicYear + ", hierarchy="
+				+ hierarchy + "]";
 	}
 
 	@Id
