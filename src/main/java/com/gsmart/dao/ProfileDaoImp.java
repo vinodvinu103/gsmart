@@ -48,7 +48,7 @@ public class ProfileDaoImp implements ProfileDao {
 		try {
 
 			query = sessionFactory.getCurrentSession()
-					.createQuery("select smartId from Profile where entryTime in (select max(entryTime) from Profile)");
+					.createQuery("select smartId from Profile where entryTime in (select max(entryTime) from Profile where isActive='Y')");
 			ArrayList<String> maxId = (ArrayList<String>) query.list();
 
 			if (!maxId.isEmpty()) {
@@ -70,7 +70,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		boolean flag = false;
 		try {
-			query = sessionFactory.getCurrentSession().createQuery("from Profile where emailId=:emailId");
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where emailId=:emailId and isActive='Y'");
 			query.setParameter("emailId", profile.getEmailId());
 			Profile profile2 = (Profile) query.uniqueResult();
 			if (profile2 != null) {
