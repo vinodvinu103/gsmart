@@ -119,6 +119,8 @@ public class Hierarchy {
 		this.schoolAddress2 = schoolAddress2;
 	}
 
+
+
 	public int getPincode() {
 		return pincode;
 	}
