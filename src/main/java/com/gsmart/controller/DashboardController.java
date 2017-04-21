@@ -10,7 +10,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -438,5 +440,25 @@ public class DashboardController {
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/studentprofile", method=RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> studentProfile(@RequestHeader HttpHeaders token, HttpSession httpSession){
+		
+		Loggers.loggerStart();
+		String tokenNumber=token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		Token tokenObj=(Token) httpSession.getAttribute("token");
+		
+		Map<String,Object> profileMap=new HashMap<>();
+		List<Profile> profileList=null;
+		profileList=profileDao.studentProfile(tokenObj,tokenObj.getHierarchy());
+		System.out.println("STUDENT>>>>>>>>"+profileList);
+		profileMap.put("profileList", profileList);
+		
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String,Object>>(profileMap, HttpStatus.OK);
 	}
 }
