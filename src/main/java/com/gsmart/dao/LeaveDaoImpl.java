@@ -57,9 +57,10 @@ public class LeaveDaoImpl implements LeaveDao {
 			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(Leave.class);
 			criteriaCount.add(Restrictions.eq("isActive", "Y")).setProjection(Projections.rowCount());
 			criteriaCount.add(Restrictions.eq("hierarchy.hid",hierarchy.getHid()));
+			criteriaCount.add(Restrictions.eq("smartId",tokenObj.getSmartId() ));
 			criteriaCount.setProjection(Projections.rowCount());
 			leaveMap.put("totalleavelist",criteriaCount.uniqueResult());
-		} catch (Exception e) {
+		}catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
 		} 
 		Loggers.loggerEnd(leave);
