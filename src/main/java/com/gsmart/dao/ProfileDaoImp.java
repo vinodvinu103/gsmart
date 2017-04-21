@@ -22,6 +22,7 @@ import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
+import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -796,6 +797,22 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 		Loggers.loggerEnd();
 		return profileByStudent;
+	}
+
+	@Override
+	public List<Profile> studentProfile(Token token, Hierarchy hierarchy) {
+		List<Profile> studentProfile = null;
+		String role = token.getRole();
+		Loggers.loggerStart();
+		if(role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR"))
+		{
+			query=sessionFactory.getCurrentSession().createQuery("from Profile where role='STUDENT' and isActive='Y'");
+		}
+		else{
+			query=sessionFactory.getCurrentSession().createQuery("from Profile where hierarchy="+hierarchy.getHid()+" and role='STUDENT' and isActive='Y'");
+		}
+		studentProfile=query.list();
+		return studentProfile;
 	}
 
 
