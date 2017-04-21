@@ -10,7 +10,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,6 +277,56 @@ public class DashboardController {
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/assign/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getInventoryAssign(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		str.length();
+		System.out.println("coming");
+		Map<String, Object> responseMap = new HashMap<>();
+		Map<String, Object> dataMap = new HashMap<>();
+		Map<String, Object> inventoryList = null;
+		System.out.println("inside the if condition");
+		if (tokenObj.getHierarchy() == null) {
+			System.out.println("hierarchy is null");
+			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
+			System.out.println("going inside for loop");
+			for (Hierarchy hierarchy : hierarchyList) {
+
+				inventoryList = dashboardDao.getInventoryAssignList(tokenObj.getRole(), tokenObj.getSmartId(), hierarchy, min, max);
+                System.out.println("going to the map");
+				dataMap.put("inventoryList", inventoryList);
+				dataMap.put("hierarchy", hierarchy);
+				Loggers.loggerEnd("Inventory List:" + inventoryList);
+
+			}
+			responseMap.put("data", dataMap);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		} else if (tokenObj.getHierarchy() != null) {
+
+			inventoryList = dashboardDao.getInventoryAssignList(tokenObj.getRole(), tokenObj.getSmartId(), tokenObj.getHierarchy(), min, max);
+
+			dataMap.put("inventoryList", inventoryList);
+			dataMap.put("hierarchy", tokenObj.getHierarchy());
+			responseMap.put("data", dataMap);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		} else {
+			responseMap.put("data", null);
+			responseMap.put("status", 404);
+			responseMap.put("message", "Data not found");
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+
+	}
+	
 	@RequestMapping(value="/view/{academicYear}", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> search(@RequestBody Profile profile,@RequestHeader HttpHeaders token,
 			HttpSession httpSession,@PathVariable("academicYear") String academicYear) throws GSmartBaseException {
@@ -388,5 +440,25 @@ public class DashboardController {
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/studentprofile", method=RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> studentProfile(@RequestHeader HttpHeaders token, HttpSession httpSession){
+		
+		Loggers.loggerStart();
+		String tokenNumber=token.get("Authorization").get(0);
+		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		
+		Token tokenObj=(Token) httpSession.getAttribute("token");
+		
+		Map<String,Object> profileMap=new HashMap<>();
+		List<Profile> profileList=null;
+		profileList=profileDao.studentProfile(tokenObj,tokenObj.getHierarchy());
+		System.out.println("STUDENT>>>>>>>>"+profileList);
+		profileMap.put("profileList", profileList);
+		
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String,Object>>(profileMap, HttpStatus.OK);
 	}
 }

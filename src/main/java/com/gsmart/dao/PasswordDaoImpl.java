@@ -105,7 +105,7 @@ public class PasswordDaoImpl implements PasswordDao {
 		try {
 
 		    System.out.println(email);
-			query = sessionFactory.getCurrentSession().createQuery("from Profile where emailId=:emailId ");
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where emailId=:emailId and isActive='Y' ");
 			query.setParameter("emailId", email);
 			emailId = (Profile) query.uniqueResult();
 		} catch (Exception e) {

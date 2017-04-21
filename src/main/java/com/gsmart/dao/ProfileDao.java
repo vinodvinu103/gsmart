@@ -28,6 +28,7 @@ import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
+import com.gsmart.model.Token;
 //import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 
@@ -116,5 +117,8 @@ public interface ProfileDao {
 
 
 	public List<Profile> searchStudent(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException;
+
+
+	public List<Profile> studentProfile(Token tokenObj, Hierarchy hierarchy);
 
 }
