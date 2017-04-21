@@ -1,11 +1,17 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
@@ -184,6 +191,49 @@ public class DashboardDaoImpl implements DashboardDao {
 		}
 		Loggers.loggerEnd();
 		return examName;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, Object> getInventoryAssignList(String role, String smartId, Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException 
+	{
+		Loggers.loggerStart();
+
+		List<InventoryAssignments> inventoryList=null;
+		Map<String, Object> inventoryassignMap = new HashMap<String, Object>();
+		Criteria criteria = null;
+		criteria = sessionFactory.getCurrentSession().createCriteria(InventoryAssignments.class);
+		Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(InventoryAssignments.class);
+		try
+		{
+		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("finance") || role.equalsIgnoreCase("director"))
+		{
+		criteria.add(Restrictions.eq("isActive", "Y"));
+		}else{
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+			criteria.add(Restrictions.eq("smartId",smartId));
+		}
+		
+		criteria.setMaxResults(max);
+		criteria.setFirstResult(min);
+		criteria.addOrder(Order.asc("standard"));
+		inventoryList = criteria.list();
+		
+		criteriaCount.setProjection(Projections.rowCount());
+		inventoryassignMap.put("totalinventoryassign", criteriaCount.uniqueResult());
+	    inventoryassignMap.put("inventoryList", inventoryList);
+		 Loggers.loggerEnd();
+		}
+		catch(Throwable e)
+		{
+			throw new GSmartDatabaseException(e.getMessage());
+		} 
+		Loggers.loggerEnd();
+		
+		return inventoryassignMap;
+
+		
 	}
 
 }

@@ -270,7 +270,7 @@ public class RegistrationController {
 		Loggers.loggerValue("Updated by: ", updEmpSmartId);
 		Map<String, Object> jsonResult = new HashMap<>();
 			Token tokenObj = (Token) httpSession.getAttribute("token");
-			profile.setHierarchy(tokenObj.getHierarchy());
+//			profile.setHierarchy(tokenObj.getHierarchy());
 			String result = profileServices.updateProfile(profile);
 			jsonResult.put("status", 200);
 			jsonResult.put("result", result);
