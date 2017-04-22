@@ -104,7 +104,6 @@ public class InventoryDaoImpl implements InventoryDao {
 				inventory.setIsActive("Y");
 				cb = (CompoundInventory) session.save(inventory);
 
-				//session.close();
 
 			}
 
