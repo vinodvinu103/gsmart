@@ -125,7 +125,6 @@ import com.gsmart.util.Loggers;
 
 		str.length();
 
-		if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){
 		    	System.out.println("in side edit method>>>>>>>>>>>>>>>>>");
 		    	cb=gradesService.updateGrades(grades);
@@ -143,12 +142,7 @@ import com.gsmart.util.Loggers;
 		    	respMap.put("status", 200);
 	        	respMap.put("message", "Deleted Successfully");
 		    }
-		    
-		}
-		else {
-			 respMap.put("status", 403);
-	        	respMap.put("message", "Permission Denied");;
-		     }
+		   
 			Loggers.loggerEnd();
 
 			return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
