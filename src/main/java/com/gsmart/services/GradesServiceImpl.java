@@ -31,11 +31,32 @@ public class GradesServiceImpl implements GradesService {
 			throw new GSmartServiceException(e.getMessage());
 		}
 	}//end of get method public List<Grades> getGradesList()throws GSmartServiceException;
-	   @Override
+	   @SuppressWarnings("null")
+	@Override
 	   public boolean addGrades(Grades grades) throws GSmartServiceException {
 		   Loggers.loggerStart();
 		   
 			try{
+				List<Grades> list = null;
+				
+				list= gradesDao.getGradesList(grades.getHierarchy().getHid()); 
+				
+				for (Grades grades2 : list) {
+				 
+					if( (grades2.getEndPercentage()>=grades.getEndPercentage() || grades2.getStartPercentage()<=grades.getEndPercentage())
+							&&(grades2.getStartPercentage()<=grades.getEndPercentage()||grades2.getStartPercentage()<=grades.getStartPercentage()))
+					{
+						
+						System.out.println(" inn side if condtion <<<<<<<<<>>>>>>>");
+						return false;
+				    }
+					else
+				    {
+						System.out.println(" in side >M><>>?<>><>>>>");
+						return gradesDao.addGrades(grades);
+				    }
+					
+				}//foreach 
 				return gradesDao.addGrades(grades);
 			}catch (GSmartDatabaseException exception) {
 				throw (GSmartServiceException) exception;

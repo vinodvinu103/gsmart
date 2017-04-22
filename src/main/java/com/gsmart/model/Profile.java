@@ -19,6 +19,8 @@ import org.hibernate.annotations.Index;
 @Table(name = "PROFILE_MASTER")
 public class Profile {
 
+	
+
 	@Override
 	public String toString() {
 		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", institution=" + institution + ", school="
