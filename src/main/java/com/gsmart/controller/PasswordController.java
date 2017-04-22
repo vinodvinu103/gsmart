@@ -91,9 +91,9 @@ public class PasswordController {
 			responseMap.put("message", "valid user");
 			CommonMail commonMail = new CommonMail();
 	
-			String smartId=Encrypt.md5(profile.getSmartId());
+//			String smartId=Encrypt.md5(profile.getSmartId());
 				try {
-					commonMail.passwordMail(profile,smartId);
+					commonMail.passwordMail(profile,profile.getSmartId());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

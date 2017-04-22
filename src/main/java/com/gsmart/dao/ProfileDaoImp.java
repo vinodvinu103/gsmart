@@ -344,17 +344,18 @@ public class ProfileDaoImp implements ProfileDao {
 		try {
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
 				query = sessionFactory.getCurrentSession()
-						.createQuery("from Profile where isActive like('Y') and band<:band and school =:school");
+						.createQuery("from Profile where isActive like('Y') and band<:band ");
 			} else {
 				query = sessionFactory.getCurrentSession().createQuery(
 						"from Profile where isActive like('Y') and band<:band and school=:school and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("school", search.getSchool());
 			}
 			query.setParameter("band", search.getBand());
-			query.setParameter("school", search.getSchool());
+			
 			List<Profile> profileList = (List<Profile>) query.list();
 			query = sessionFactory.getCurrentSession()
-					.createQuery("from Profile where isActive like('Y') and role='ADMIN'");
+					.createQuery("from Profile where isActive like('Y') and role='ADMIN' ");
 			profileList.addAll((List<Profile>) query.list());
 			Loggers.loggerEnd();
 			return profileList;
