@@ -106,7 +106,7 @@ public class Fee {
 	private Integer miscellaneousFee;
 	
 	@Column(name = "TRANSPORTATION_FEE")
-	private String transportationFee;
+	private Integer transportationFee;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -120,11 +120,11 @@ public class Fee {
 		this.hierarchy = hierarchy;
 	}
 	
-	public String getTransportationFee() {
+	public Integer getTransportationFee() {
 		return transportationFee;
 	}
 
-	public void setTransportationFee(String transportationFee) {
+	public void setTransportationFee(Integer transportationFee) {
 		this.transportationFee = transportationFee;
 	}
 

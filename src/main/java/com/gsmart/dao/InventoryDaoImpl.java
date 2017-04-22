@@ -103,7 +103,8 @@ public class InventoryDaoImpl implements InventoryDao {
 				inventory.setEntryTime((CalendarCalculator.getTimeStamp()));
 				inventory.setIsActive("Y");
 				cb = (CompoundInventory) session.save(inventory);
-			
+
+
 			}
 
 		/*CompoundInventory cb = null;*/
