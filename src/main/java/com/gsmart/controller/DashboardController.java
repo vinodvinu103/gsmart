@@ -201,7 +201,16 @@ public class DashboardController {
 			System.out.println("in side else");
 			hierarchyList.add(tokenObj.getHierarchy());
 		}
-		attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
+		if(tokenObj.getRole().equalsIgnoreCase("FINANCE")){
+			attendanceList=attendanceService.getAttendanceByhierarchyForFinance(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		else if(tokenObj.getRole().equalsIgnoreCase("HR")){
+			attendanceList=attendanceService.getAttendanceByhierarchyForHr(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		else{
+			attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		
 		responseMap.put("message", "success");
 		responseMap.put("status", 200);
 		responseMap.put("data", attendanceList);
@@ -252,9 +261,16 @@ public class DashboardController {
 
 			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
 					tokenObj.getHierarchy().getHid());
-
-			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
-
+			List<String> childList=null;
+			if(tokenObj.getRole().equalsIgnoreCase("FINANCE")){
+				childList = searchService.getAllChildSmartIdForFinance(tokenObj.getSmartId(), allProfiles);
+			}
+			else if(tokenObj.getRole().equalsIgnoreCase("HR")){
+				childList = searchService.getAllChildSmartIdForHr(tokenObj.getSmartId(), allProfiles);
+			}
+			else{
+				childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
+			}
 			childList.add(tokenObj.getSmartId());
 			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
 			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
