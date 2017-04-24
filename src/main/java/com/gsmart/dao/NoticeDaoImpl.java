@@ -44,6 +44,7 @@ public class NoticeDaoImpl implements NoticeDao {
 			notice.setSmartId(token.getSmartId());
 			notice.setRole(token.getRole());
 			notice.setIsActive("Y");
+
 			notice.setEntryTime(CalendarCalculator.getTimeStamp()); 
 			session.save(notice);
 			Loggers.loggerEnd();

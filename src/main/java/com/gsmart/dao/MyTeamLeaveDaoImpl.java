@@ -44,13 +44,13 @@ public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy,Inte
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")||role.equalsIgnoreCase("hr")) {
 				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class);
 				criteria.add(Restrictions.eq("isActive", "Y"));
-				criteria.addOrder(Order.asc("fullName"));
 				criteria.add(Restrictions.eq("hierarchy.hid", hierarchy));
 				criteria.setFirstResult(min);
 				criteria.setMaxResults(max);
+				criteria.addOrder(Order.desc("entryTime"));
 				leavelist.put("myTeamLeaveList", criteria.list());
 				
-				criteria = sessionFactory.getCurrentSession().createCriteria(ReportCard.class).add(Restrictions.eq("isActive", "Y"))
+				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class).add(Restrictions.eq("isActive", "Y"))
 						.setProjection(Projections.rowCount());
 				Long count = (Long) criteria.uniqueResult();
 				leavelist.put("totalListCount", count);

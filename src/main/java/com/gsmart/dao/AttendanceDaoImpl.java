@@ -327,6 +327,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			
 			for (Profile profile : allProfiles) {
 				String smartId=profile.getSmartId();
+
 				String rfid=profile.getRfId();
 				if (profile.getSmartId() != null && profile.getRfId()!=null) {
 					Attendance attendance = new Attendance();
