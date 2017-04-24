@@ -136,6 +136,104 @@ public class AttendanceServiceImpl implements AttendanceService {
 		}
 		return responseList;
 	}
+	
+	@Override
+	public List<Map<String, Object>> getAttendanceByhierarchyForFinance(String smartId, Long date, List<Hierarchy> hidList) {
+		List<Map<String, Object>> responseList = new ArrayList<>();
+		try {
+			
+			for (Hierarchy hierarchy : hidList) {
+				Map<String, Object> schoolData = new HashMap<>();
+				List<Attendance> attendanceList = attendancedao.getAttendanceByhierarchy(date, hierarchy);
+				Loggers.loggerStart(attendanceList);
+				int totalCount = 0;
+				int totalPresent = 0;
+				// Date dateObj = new Date(date * 1000);
+				int year = Calendar.getInstance().get(Calendar.YEAR);
+				Map<String, Profile> profileMap = new HashMap<>();
+				List<Profile> profileList = profileDao.getProfileByHierarchyAndYear(hierarchy, year + "-" + (year + 1));
+				Loggers.loggerStart(profileList);
+				for(Profile profile : profileList) {
+					profileMap.put(profile.getSmartId(), profile);
+				}
+				ArrayList<String> childsList = searchService.getAllChildSmartIdForFinance(smartId, profileMap);
+				Loggers.loggerStart(childsList);
+				totalCount = childsList.size();
+				System.out.println("total child count"+totalCount);
+				for (Attendance attendance : attendanceList) {
+					System.out.println("in side 1st for loop attendance>>>>>>>>>>>>>>>>>>>>>>>>>>");
+					for (String childSmartId : childsList) {
+						System.out.println("in side 2nd  for loop child list >>  >  >>>>   >>>>>>");
+						if (childSmartId.equalsIgnoreCase(attendance.getSmartId())) {
+							System.out.println("if condition to clculate");
+							++totalPresent;
+							System.out.println("total child present ><><><><  "+totalPresent);
+							// childsList.remove(childSmartId);
+						// 	attendanceList.remove(attendance);
+						}
+					}
+				}
+				schoolData.put("totalCount", totalCount);
+				schoolData.put("totalPresent", totalPresent);
+				schoolData.put("hierarchy", hierarchy);
+				responseList.add(schoolData);
+			}
+			Loggers.loggerEnd(responseList);
+			return responseList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return responseList;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getAttendanceByhierarchyForHr(String smartId, Long date, List<Hierarchy> hidList) {
+		List<Map<String, Object>> responseList = new ArrayList<>();
+		try {
+			
+			for (Hierarchy hierarchy : hidList) {
+				Map<String, Object> schoolData = new HashMap<>();
+				List<Attendance> attendanceList = attendancedao.getAttendanceByhierarchy(date, hierarchy);
+				Loggers.loggerStart(attendanceList);
+				int totalCount = 0;
+				int totalPresent = 0;
+				// Date dateObj = new Date(date * 1000);
+				int year = Calendar.getInstance().get(Calendar.YEAR);
+				Map<String, Profile> profileMap = new HashMap<>();
+				List<Profile> profileList = profileDao.getProfileByHierarchyAndYear(hierarchy, year + "-" + (year + 1));
+				Loggers.loggerStart(profileList);
+				for(Profile profile : profileList) {
+					profileMap.put(profile.getSmartId(), profile);
+				}
+				ArrayList<String> childsList = searchService.getAllChildSmartIdForHr(smartId, profileMap);
+				Loggers.loggerStart(childsList);
+				totalCount = childsList.size();
+				System.out.println("total child count"+totalCount);
+				for (Attendance attendance : attendanceList) {
+					System.out.println("in side 1st for loop attendance>>>>>>>>>>>>>>>>>>>>>>>>>>");
+					for (String childSmartId : childsList) {
+						System.out.println("in side 2nd  for loop child list >>  >  >>>>   >>>>>>");
+						if (childSmartId.equalsIgnoreCase(attendance.getSmartId())) {
+							System.out.println("if condition to clculate");
+							++totalPresent;
+							System.out.println("total child present ><><><><  "+totalPresent);
+							// childsList.remove(childSmartId);
+						// 	attendanceList.remove(attendance);
+						}
+					}
+				}
+				schoolData.put("totalCount", totalCount);
+				schoolData.put("totalPresent", totalPresent);
+				schoolData.put("hierarchy", hierarchy);
+				responseList.add(schoolData);
+			}
+			Loggers.loggerEnd(responseList);
+			return responseList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return responseList;
+	}
 
 	@Override
 	public Map<String, Object> getAttendanceCount(List<String> childList) {

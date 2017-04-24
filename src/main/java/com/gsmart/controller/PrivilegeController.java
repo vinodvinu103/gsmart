@@ -62,7 +62,7 @@ public class PrivilegeController {
 	 * @see IMResponse
 	 */
 	
-	@RequestMapping( method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> search(@RequestBody Profile profile,@RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
@@ -74,16 +74,11 @@ public class PrivilegeController {
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Profile> profileList = null;
-		List<Profile> studentList = null;
-        
 		
 		Map<String, Object> privilege = new HashMap<>();
 			profileList = profileServices.search(profile, tokenObj.getHierarchy());
-			studentList = profileDao.searchStudent(profile, tokenObj.getHierarchy());
-			
-			System.out.println("studentList>>>>>>>>>>>>>>>>>>>>>>>>>>>>::"+studentList);
 			privilege.put("profileList", profileList);
-			privilege.put("studentList", studentList);
+			
 			Loggers.loggerEnd(profileList);
 		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
 	}

@@ -20,6 +20,7 @@ import com.gsmart.model.Attendance;
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.InventoryAssignments;
+import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
@@ -234,6 +235,80 @@ public class DashboardDaoImpl implements DashboardDao {
 		return inventoryassignMap;
 
 		
+	}
+	
+	@Override
+	public List<Profile> studentProfile(Token token, Hierarchy hierarchy) {
+		List<Profile> studentProfile = null;
+		String role = token.getRole();
+		Loggers.loggerStart();
+		if(role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR"))
+		{
+			query=sessionFactory.getCurrentSession().createQuery("from Profile where role='STUDENT' and isActive='Y'");
+		}
+		else{
+			query=sessionFactory.getCurrentSession().createQuery("from Profile where hierarchy="+hierarchy.getHid()+" and role='STUDENT' and isActive='Y'");
+		}
+		studentProfile=query.list();
+		return studentProfile;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Profile> searchStudentByName(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+
+		List<Profile> profileList;
+		try {
+			if (hierarchy == null) {
+
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%' and role=:role");
+				query.setParameter("role", "STUDENT");
+				
+			} else {
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%' and hierarchy.hid=:hierarchy and role=:role");
+				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("role", "STUDENT");
+				
+			}
+
+			profileList = query.list();
+
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		Loggers.loggerEnd();
+
+		return profileList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Profile> searchStudentById(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+
+		List<Profile> profileList;
+		try {
+			if (hierarchy == null) {
+
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where smartId like '%" + profile.getSmartId() + "%' and role=:role");
+				query.setParameter("role", "STUDENT");
+				
+			} else {
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where smartId like '%" + profile.getSmartId() + "%' and hierarchy.hid=:hierarchy and role=:role");
+				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("role", "STUDENT");
+				
+			}
+
+			profileList = query.list();
+
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		Loggers.loggerEnd();
+
+		return profileList;
 	}
 
 }

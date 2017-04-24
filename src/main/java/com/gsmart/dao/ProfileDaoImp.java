@@ -397,34 +397,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		return profileList;
 	}
-	@SuppressWarnings("unchecked")
-	public List<Profile> searchStudent(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException {
-		Loggers.loggerStart();
-
-		List<Profile> profileList;
-		try {
-			if (hierarchy == null) {
-
-				query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%' and role=:role");
-				query.setParameter("role", "STUDENT");
-				/*query.setParameter("firstName", profile.getFirstName());*/
-			} else {
-				query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%' and hierarchy.hid=:hierarchy and role=:role");
-				query.setParameter("hierarchy", hierarchy.getHid());
-				query.setParameter("role", "STUDENT");
-				/*query.setParameter("firstName", profile.getFirstName());*/
-			}
-
-			profileList = query.list();
-
-		} catch (Exception e) {
-			throw new GSmartDatabaseException(e.getMessage());
-		}
-
-		Loggers.loggerEnd();
-
-		return profileList;
-	}
+	
 
 	/**
 	 * persists the updated profile instance
@@ -808,22 +781,5 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd();
 		return profileByStudent;
 	}
-
-	@Override
-	public List<Profile> studentProfile(Token token, Hierarchy hierarchy) {
-		List<Profile> studentProfile = null;
-		String role = token.getRole();
-		Loggers.loggerStart();
-		if(role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR"))
-		{
-			query=sessionFactory.getCurrentSession().createQuery("from Profile where role='STUDENT' and isActive='Y'");
-		}
-		else{
-			query=sessionFactory.getCurrentSession().createQuery("from Profile where hierarchy="+hierarchy.getHid()+" and role='STUDENT' and isActive='Y'");
-		}
-		studentProfile=query.list();
-		return studentProfile;
-	}
-
 
 }
