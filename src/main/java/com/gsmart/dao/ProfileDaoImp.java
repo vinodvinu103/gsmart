@@ -500,8 +500,14 @@ public class ProfileDaoImp implements ProfileDao {
 			profileListWithoutRfid = criteria.list();
 			System.out.println("withoutjhfvdbjdfhvjhdfbvjdh" + profileListWithoutRfid);
 			rfidMap.put("profileListWithoutRfid", profileListWithoutRfid);
-			criteria.setProjection(Projections.rowCount());
-			rfidMap.put("totalrfid", criteria.uniqueResult());
+			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(Profile.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			criteriaCount.add(Restrictions.disjunction()
+					.add(Restrictions.or(Restrictions.isNull("rfId"), Restrictions.like("rfId", ""))));
+
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hierarchy));
+			rfidMap.put("totalrfid", criteriaCount.uniqueResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -558,8 +564,12 @@ public class ProfileDaoImp implements ProfileDao {
 			profileListWithRfid = criteria.list();
 			System.out.println("dfcsdgcysyhfvgyhfgv" + profileListWithRfid);
 			rfidWithMap.put("profileListWithRfid", profileListWithRfid);
-			criteria.setProjection(Projections.rowCount());
-			rfidWithMap.put("totalwithrfid", criteria.uniqueResult());
+			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(Profile.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			criteriaCount.add(Restrictions.neOrIsNotNull("rfId", ""));
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hierarchy));
+			rfidWithMap.put("totalwithrfid", criteriaCount.uniqueResult());
 
 		} catch (Exception e) {
 			e.printStackTrace();
