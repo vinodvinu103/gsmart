@@ -36,7 +36,7 @@ public class Modules {
 	}
 	@Id
 	@Column(name = "MODULE")
-	@Index(name = "modules")
+//	@Index(name = "modules")
 	private String modules;
 	
 	@Id
@@ -44,7 +44,7 @@ public class Modules {
 	private String entryTime;
 	
 	@Column(name = "IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name = "UPDATE_TIME")

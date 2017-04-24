@@ -28,11 +28,11 @@ public class Assign {
 	private String teacherName;
 
 	@Column(name = "TEACHER_SMART_ID")
-	@Index(name = "teacherSmartId")
+//	@Index(name = "teacherSmartId")
 	private String teacherSmartId;
 
 	@Column(name = "HOD_SMART_ID")
-	@Index(name = "hodSmartId")
+//	@Index(name = "hodSmartId")
 	private String hodSmartId;
 
 	@Column(name = "PRINCIPAL_SMART_ID")
@@ -49,7 +49,7 @@ public class Assign {
 	private String updatedTime;
 	
 	@Column(name = "IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 
 	@Override

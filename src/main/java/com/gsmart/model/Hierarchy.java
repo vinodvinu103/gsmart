@@ -42,7 +42,7 @@ public class Hierarchy {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Index(name = "hid")
+//	@Index(name = "hid")
     private Long hid;
 	
 
@@ -53,7 +53,7 @@ public class Hierarchy {
 	 * Institution of a person
 	 */
 	@Column(name="INSTITUTION")
-	@Index(name = "institution")
+//	@Index(name = "institution")
 	private String institution;
 
 	/**

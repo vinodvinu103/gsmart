@@ -29,7 +29,7 @@ public class Band {
 	 */
 	@Id
 	@Column(name = "BAND_ID")
-	@Index(name= "bandId")
+//	@Index(name= "bandId")
 	private int bandId;
 	/**
 	 * Designation of the particular person 
@@ -42,7 +42,7 @@ public class Band {
 	 */
 	@Id
 	@Column(name = "ROLE")
-	@Index(name = "role")
+//	@Index(name = "role")
 	private String role;
 	/**
 	 * timeStamp is the Time when the band entity is added

@@ -17,7 +17,7 @@ public class EmpDetails implements Serializable {
 
 	@Id
 	@Column(name = "SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private Integer smartId;
 	
 	@Id

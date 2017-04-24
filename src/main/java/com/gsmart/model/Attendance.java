@@ -22,7 +22,7 @@ public class Attendance {
 	private String rfId;
 	
 	@Column(name="smartId")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Column(name="inTime")
@@ -36,7 +36,7 @@ public class Attendance {
 	private long inDate;
 	
 	@Column(name="isActive")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="STATUS")

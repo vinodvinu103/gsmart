@@ -18,7 +18,7 @@ public class Fee {
 	
 	
 	@Column(name="SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -26,7 +26,7 @@ public class Fee {
 	private String entryTime;
 	
 	@Column(name="ACADEMIC_YEAR")
-	@Index(name = "academicYear")
+//	@Index(name = "academicYear")
 	private String academicYear;
 	
 	@Column(name="NAME")

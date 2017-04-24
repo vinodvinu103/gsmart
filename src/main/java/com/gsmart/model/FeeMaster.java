@@ -30,7 +30,7 @@ public class FeeMaster {
 	 */
 	@Id
 	@Column(name = "STANDARD")
-	@Index(name = "standard")
+//	@Index(name = "standard")
 	private String standard;
 	/**
 	 * Sports fee is a fee of each student
@@ -46,7 +46,7 @@ public class FeeMaster {
 	private Integer tuitionFee;
 	
 	@Column(name = "INSTITUTION")
-	@Index(name = "institution")
+//	@Index(name = "institution")
 	private String institution;
 	
 	
