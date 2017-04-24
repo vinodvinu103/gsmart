@@ -73,7 +73,7 @@ public class FeeMaster {
 	 */
 	
 	@Column(name = "TRANSPORTATION_FEE")
-	private String transportationFee;
+	private Integer transportationFee;
 	/**
 	 * Miscellaneous fee is a fee of each student
 	 */
@@ -181,11 +181,11 @@ public class FeeMaster {
 		this.tuitionFee = tuitionFee;
 	}
 
-	public String getTransportationFee() {
+	public Integer getTransportationFee() {
 		return transportationFee;
 	}
 
-	public void setTransportationFee(String transportationFee) {
+	public void setTransportationFee(Integer transportationFee) {
 		this.transportationFee = transportationFee;
 	}
 
