@@ -23,12 +23,12 @@ public class WeekDays {
 	private String weekDay;
 
 	@Column(name = "ISACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "hid")
-	@Index(name = "hierarchy")
+//	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	@Id

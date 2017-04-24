@@ -19,12 +19,12 @@ public class LeaveDetails {
 
 	@Id
 	@Column(name = "SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 
 	@Id
 	@Column(name = "LEAVE_TYPE")
-	@Index(name = "leaveType")
+//	@Index(name = "leaveType")
 	private String leaveType;
 	
 	@Column(name = "APPLIED_LEAVES")

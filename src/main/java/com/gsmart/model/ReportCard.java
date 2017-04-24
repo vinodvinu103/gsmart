@@ -30,7 +30,7 @@ public class ReportCard {
 
 	@Id
 	@Column(name="SMARTID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -48,7 +48,7 @@ public class ReportCard {
 	private String studentId;
 	
 	@Column(name="STANDARD")
-	@Index(name = "standard")
+//	@Index(name = "standard")
 	private String standard;
 	
 	@Column(name="SECTION")
@@ -83,7 +83,7 @@ public class ReportCard {
 	private String result;
 	
 	@Column(name="ACADEMIC_YEAR")
-	@Index(name = "academicYear")
+//	@Index(name = "academicYear")
 	private String academicYear;
 	
 	@Column(name="IS_ACTIVE")
