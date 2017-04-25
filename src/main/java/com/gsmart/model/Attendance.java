@@ -9,9 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Index;
 
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name="Attendance")
 @IdClass(com.gsmart.model.CompoundAttendance.class)
@@ -45,6 +43,50 @@ public class Attendance {
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
+	
+	@Column(name = "FIRST_NAME")
+	private String firstName;
+
+	@Column(name = "MIDDLE_NAME")
+	private String middleName;
+
+	@Column(name = "LAST_NAME")
+	private String lastName;
+	
+	@Column(name="DEVICE_TOKEN")
+	private String finalToken;
+
+	public String getFinalToken() {
+		return finalToken;
+	}
+
+	public void setFinalToken(String finalToken) {
+		this.finalToken = finalToken;
+	}
+	
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
 	
 	public String getStatus() {

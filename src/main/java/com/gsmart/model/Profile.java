@@ -333,6 +333,18 @@ public class Profile {
 	@Column(name = "IS_ACTIVE")
 //	@Index(name ="isActive")
 	private String isActive;
+	
+	@Column(name="DEVICE_TOKEN")
+	private String finalToken;
+
+	public String getFinalToken() {
+		return finalToken;
+	}
+
+	public void setFinalToken(String finalToken) {
+		this.finalToken = finalToken;
+	}
+
 
 	@Transient
 	private boolean childFlag;
