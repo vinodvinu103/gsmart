@@ -95,6 +95,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		return constructAttendanceList((List<Attendance>) attendanceList);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Map<String, Object>> getAbsentAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException {
@@ -338,6 +339,10 @@ public class AttendanceDaoImpl implements AttendanceDao {
 					attendance.setIsActive("N");
 					attendance.setInDate(epoch1);
 					attendance.setHierarchy(profile.getHierarchy());
+					attendance.setFinalToken(profile.getFinalToken());
+					attendance.setFirstName(profile.getFirstName());
+					attendance.setMiddleName(profile.getMiddleName());
+					attendance.setLastName(profile.getLastName());
 					session.save(attendance);
 					System.out.println("data saved in attendance table" + attendance);
 				}
@@ -347,4 +352,8 @@ public class AttendanceDaoImpl implements AttendanceDao {
 
 		}
 	}
+	
+	
+	
+		
 }
