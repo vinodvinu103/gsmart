@@ -20,7 +20,7 @@ public class SalaryStructure {
 	
 	@Id
 	@Column(name="SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -43,11 +43,11 @@ public class SalaryStructure {
 	private String empDesignation;
 	
 	@Column(name="EMP_ROLE")
-	@Index(name = "empRole")
+//	@Index(name = "empRole")
 	private String empRole;
 	
 	@Column(name="IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="EXIT_TIME")

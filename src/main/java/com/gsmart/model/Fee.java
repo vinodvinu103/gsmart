@@ -18,7 +18,7 @@ public class Fee {
 	
 	
 	@Column(name="SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -26,7 +26,7 @@ public class Fee {
 	private String entryTime;
 	
 	@Column(name="ACADEMIC_YEAR")
-	@Index(name = "academicYear")
+//	@Index(name = "academicYear")
 	private String academicYear;
 	
 	@Column(name="NAME")
@@ -106,7 +106,7 @@ public class Fee {
 	private Integer miscellaneousFee;
 	
 	@Column(name = "TRANSPORTATION_FEE")
-	private String transportationFee;
+	private Integer transportationFee;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -120,11 +120,11 @@ public class Fee {
 		this.hierarchy = hierarchy;
 	}
 	
-	public String getTransportationFee() {
+	public Integer getTransportationFee() {
 		return transportationFee;
 	}
 
-	public void setTransportationFee(String transportationFee) {
+	public void setTransportationFee(Integer transportationFee) {
 		this.transportationFee = transportationFee;
 	}
 

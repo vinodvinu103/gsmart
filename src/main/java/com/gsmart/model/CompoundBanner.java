@@ -9,7 +9,13 @@ public class CompoundBanner implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
-
+	private int imageId;
+	public int getImageId() {
+		return imageId;
+	}
+	public void setImageId(int imageId) {
+		this.imageId = imageId;
+	}
 	private String entryTime;
 	
 	public String getEntryTime() {

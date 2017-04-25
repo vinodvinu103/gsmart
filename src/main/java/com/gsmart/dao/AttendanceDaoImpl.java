@@ -131,9 +131,10 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			for (Attendance attendance : attendanceList) {
 				Profile profile = getSmartId(attendance.getRfId());
 				if (profile.getSmartId() != null) {
+					System.out.println("Updating Attendance: "+profile.getSmartId());
 					attendance.setSmartId(profile.getSmartId());
 					attendance.setHierarchy(profile.getHierarchy());
-					session.update(attendance);
+					session.saveOrUpdate(attendance);
 					rfidList.add(attendance.getRfId());
 				}
 			}
@@ -326,12 +327,13 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			
 			for (Profile profile : allProfiles) {
 				String smartId=profile.getSmartId();
-//				String rfid=profile.getRfId();
-				if (profile.getSmartId() != null ) {
+
+				String rfid=profile.getRfId();
+				if (profile.getSmartId() != null && profile.getRfId()!=null) {
 					Attendance attendance = new Attendance();
 					Session session = this.sessionFactory.getCurrentSession();
 					attendance.setSmartId(smartId);
-					attendance.setRfId(smartId);
+					attendance.setRfId(rfid);
 					attendance.setStatus("ABSENT");
 					attendance.setIsActive("N");
 					attendance.setInDate(epoch1);

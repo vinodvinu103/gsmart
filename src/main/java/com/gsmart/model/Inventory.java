@@ -28,12 +28,12 @@ public class Inventory {
 
 	@Id
 	@Column(name="CATEGORY")
-	@Index(name = "category")
+//	@Index(name = "category")
 	private String category;
 
     @Id
 	@Column(name="ITEM_Type")
-	@Index(name = "itemType")
+//	@Index(name = "itemType")
 	private String itemType;
 
 	@Id
@@ -78,7 +78,7 @@ public class Inventory {
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
-	@Index(name = "hierarchy")
+//	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {

@@ -201,7 +201,16 @@ public class DashboardController {
 			System.out.println("in side else");
 			hierarchyList.add(tokenObj.getHierarchy());
 		}
-		attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
+		if(tokenObj.getRole().equalsIgnoreCase("FINANCE")){
+			attendanceList=attendanceService.getAttendanceByhierarchyForFinance(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		else if(tokenObj.getRole().equalsIgnoreCase("HR")){
+			attendanceList=attendanceService.getAttendanceByhierarchyForHr(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		else{
+			attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		
 		responseMap.put("message", "success");
 		responseMap.put("status", 200);
 		responseMap.put("data", attendanceList);
@@ -252,9 +261,16 @@ public class DashboardController {
 
 			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
 					tokenObj.getHierarchy().getHid());
-
-			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
-
+			List<String> childList=null;
+			if(tokenObj.getRole().equalsIgnoreCase("FINANCE")){
+				childList = searchService.getAllChildSmartIdForFinance(tokenObj.getSmartId(), allProfiles);
+			}
+			else if(tokenObj.getRole().equalsIgnoreCase("HR")){
+				childList = searchService.getAllChildSmartIdForHr(tokenObj.getSmartId(), allProfiles);
+			}
+			else{
+				childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
+			}
 			childList.add(tokenObj.getSmartId());
 			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
 			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
@@ -365,7 +381,7 @@ public class DashboardController {
 		fee.setSmartId(smartId);
 		
 		feeList = feeServices.getDashboardFeeList(fee, profile.getHierarchy().getHid());
-			profileList = profileDao.searchStudent(profile, tokenObj.getHierarchy());
+			profileList = dashboardDao.searchStudentByName(profile, tokenObj.getHierarchy());
 			List<Map<String, Object>> attendanceList=attendanceService.getPresentAttendance(startDate, endDate, smartId);
 			List<Map<String, Object>> absentList=attendancedao.getAbsentAttendance(startDate, endDate, smartId);
 			System.out.println("attendenceList"+attendanceList);
@@ -454,11 +470,57 @@ public class DashboardController {
 		
 		Map<String,Object> profileMap=new HashMap<>();
 		List<Profile> profileList=null;
-		profileList=profileDao.studentProfile(tokenObj,tokenObj.getHierarchy());
+		profileList=dashboardDao.studentProfile(tokenObj,tokenObj.getHierarchy());
 		System.out.println("STUDENT>>>>>>>>"+profileList);
 		profileMap.put("profileList", profileList);
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String,Object>>(profileMap, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/searchbyname", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchByName(@RequestBody Profile profile,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<Profile> studentList = null;
+        
+		
+		Map<String, Object> privilege = new HashMap<>();
+			studentList = dashboardDao.searchStudentByName(profile, tokenObj.getHierarchy());
+			
+			System.out.println("studentList>>>>>>>>>>>>>>>>>>>>>>>>>>>>::"+studentList);
+			
+			privilege.put("studentList", studentList);
+			Loggers.loggerEnd(studentList);
+		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
+	}
+	@RequestMapping(value="/searchbyId", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchById(@RequestBody Profile profile,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<Profile> studentList = null;
+        
+		
+		Map<String, Object> privilege = new HashMap<>();
+			studentList = dashboardDao.searchStudentById(profile, tokenObj.getHierarchy());
+			
+			System.out.println("studentList>>>>>>>>>>>>>>>>>>>>>>>>>>>>::"+studentList);
+			privilege.put("studentList", studentList);
+			Loggers.loggerEnd(studentList);
+		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
 	}
 }

@@ -42,14 +42,14 @@ public class RolePermission implements Serializable {
 	 */
 	@Id
 	@Column(name = "ROLE")
-	@Index(name = "role")
+//	@Index(name = "role")
 	private String role;
 	/**
 	 * Permission allowed module name
 	 */
 	@Id
 	@Column(name = "MODULE_NAME")
-	@Index(name = "moduleName")
+//	@Index(name = "moduleName")
 	private String moduleName;
 	/**
 	 * Role of the person to access the add permission
@@ -103,7 +103,7 @@ public class RolePermission implements Serializable {
 	private String exitTime;
 
 	@Column(name = "IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 
 	@Transient

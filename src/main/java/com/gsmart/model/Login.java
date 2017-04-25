@@ -20,11 +20,11 @@ public class Login implements Serializable {
 
 	@Id
 	@Column(name = "SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 
 	@Column(name = "PASSWORD")
-	@Index(name = "password")	
+//	@Index(name = "password")	
 	private String password;
 	
 	@Transient

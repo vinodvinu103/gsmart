@@ -86,6 +86,7 @@ public class PasswordDaoImpl implements PasswordDao {
 			currentPassword = (Login) query.uniqueResult();
 
 			if (currentPassword != null) {
+				currentPassword.setAttempt(0);
 				currentPassword.setPassword(Encrypt.md5(login.getConfirmPassword()));
 				session.update(currentPassword);
 				pwd = true;
