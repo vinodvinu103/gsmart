@@ -45,7 +45,7 @@ public class PushNotificationDaoImpl implements PushNotificationDao{
 //  final static private String tokenId =  "fuaR1H72DCs:APA91bG3pDU_2v1U4ikUtpBoGo_Xt3xCRj5FN0chKR5tkR2CX05nw1NcbHaiqCfqpzGtEsmmXCQIamdYjlOfhAUrSa8zQ9nlRMrnxKjcEqc-PH6pzWuEFV-c8XduiT1jZ1VAAKoFPjgb";
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Scheduled(cron = "0 24 13 * * ?")
+	@Scheduled(cron = "0 00 11 * * ?")
 	public void sendNotificationpresent() {
 		List<Attendance> token = null;
 	query=sessionFactory.getCurrentSession().createQuery("select firstName, finalToken, inDate from Attendance where status='PRESENT'");
@@ -119,7 +119,7 @@ public class PushNotificationDaoImpl implements PushNotificationDao{
     }
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Scheduled(cron = "0 24 13 * * ?")
+	@Scheduled(cron = "0 01 11 * * ?")
 	public void sendNotificationabsent() {
 		
 		
