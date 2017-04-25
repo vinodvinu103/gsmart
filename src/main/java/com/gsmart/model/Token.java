@@ -17,7 +17,7 @@ public class Token {
 
 	@Id
 	@Column(name="TOKEN_NUMBER")
-	@Index(name = "tokenNumber")
+//	@Index(name = "tokenNumber")
 	String tokenNumber;
 	
 	@Column(name="SMART_ID")

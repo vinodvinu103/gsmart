@@ -19,22 +19,22 @@ import org.hibernate.annotations.Index;
 @Table(name = "PROFILE_MASTER")
 public class Profile {
 
+	
+
 	@Override
 	public String toString() {
-		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", role=" + role + ", reportingManagerName="
-				+ reportingManagerName + ", reportingManagerId=" + reportingManagerId + ", totalAmount=" + totalAmount
-				+ ", paidAmount=" + paidAmount + ", balanceAmount=" + balanceAmount + "]";
+		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", institution=" + institution + ", school="
+				+ school + ", band=" + band + ", role=" + role + ", academicYear=" + academicYear + ", hierarchy="
+				+ hierarchy + "]";
 	}
 
 	@Id
     @Column(name = "SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
-	
-	
 
 	@Column(name="RFID")
-	@Index(name = "rfId")
+//	@Index(name = "rfId")
 	private String rfId;
 
 	@Column(name = "FIRST_NAME")
@@ -83,11 +83,11 @@ public class Profile {
 	private String languageKnown;
 
 	@Column(name = "INSTITUTION")
-	@Index(name = "institution")
+//	@Index(name = "institution")
 	private String institution;
 
 	@Column(name = "SCHOOL")
-	@Index(name = "school")
+//	@Index(name = "school")
 	private String school;
 
 	@Column(name = "BAND")
@@ -97,7 +97,7 @@ public class Profile {
 	private String designation;
 
 	@Column(name = "ROLE")
-	@Index(name = "role")
+//	@Index(name = "role")
 	private String role;
 
 	@Column(name = "DEPT_NAME")
@@ -130,8 +130,21 @@ public class Profile {
 	@Column(name = "UPD_SMARTID")
 	private String updSmartId;
 
-	@Lob @Column(name = "IMAGE", length = 400000)
+	@Lob
+	@Column(name = "STUDENT_IMAGE", length = 400000)
 	private byte[] image;
+
+	@Lob
+	@Column(name = "PARENTS_IMAGE", length = 400000)
+	private byte[] parentImage;
+
+	public byte[] getParentImage() {
+		return parentImage;
+	}
+
+	public void setParentImage(byte[] parentImage) {
+		this.parentImage = parentImage;
+	}
 
 	// CONTACT DETAILS
 
@@ -197,6 +210,21 @@ public class Profile {
 
 	@Column(name = "REPORTING_MANAGER_ID")
 	private String reportingManagerId;
+
+	// FINANCE REPORTING DETAILS
+	@Column(name = "FINANCE_MANAGER_NAME")
+	private String financeManagerName;
+
+	@Column(name = "FINANCE_MANAGER_ID")
+	private String financeManagerId;
+
+	// HR REPORTING DETAILS
+	@Column(name = "HR_MANAGER_NAME")
+	private String hrManagerName;
+
+	@Column(name = "HR_MANAGER_ID")
+	private String hrManagerId;
+	
 
 	@Column(name = "COUNTER_SIGNING_MANAGER_NAME")
 	private String counterSigningManagerName;
@@ -275,7 +303,7 @@ public class Profile {
 	private String studentId;
 
 	@Column(name = "CLASS")
-	@Index(name = "standard")
+//	@Index(name = "standard")
 	private String standard;
 
 	@Column(name = "SECTION")
@@ -303,7 +331,7 @@ public class Profile {
 	private String exitTime;
 
 	@Column(name = "IS_ACTIVE")
-	@Index(name ="isActive")
+//	@Index(name ="isActive")
 	private String isActive;
 
 	@Transient
@@ -323,11 +351,15 @@ public class Profile {
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
-	@Index(name = "hierarchy")
+//	@Index(name = "hierarchy")
+
 	private Hierarchy hierarchy;
 
 	// -----------------------------------------------------------/
-	
+
+	public String getUpdSmartId() {
+		return updSmartId;
+	}
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;
@@ -335,10 +367,6 @@ public class Profile {
 
 	public void setHierarchy(Hierarchy hierarchy) {
 		this.hierarchy = hierarchy;
-	}
-	
-	public String getUpdSmartId() {
-		return updSmartId;
 	}
 
 	public boolean isChildFlag() {
@@ -783,6 +811,38 @@ public class Profile {
 
 	public void setReportingManagerId(String reportingManagerId) {
 		this.reportingManagerId = reportingManagerId;
+	}
+	
+	public String getFinanceManagerName() {
+		return financeManagerName;
+	}
+
+	public void setFinanceManagerName(String financeManagerName) {
+		this.financeManagerName = financeManagerName;
+	}
+
+	public String getFinanceManagerId() {
+		return financeManagerId;
+	}
+
+	public void setFinanceManagerId(String financeManagerId) {
+		this.financeManagerId = financeManagerId;
+	}
+
+	public String getHrManagerName() {
+		return hrManagerName;
+	}
+
+	public void setHrManagerName(String hrManagerName) {
+		this.hrManagerName = hrManagerName;
+	}
+
+	public String getHrManagerId() {
+		return hrManagerId;
+	}
+
+	public void setHrManagerId(String hrManagerId) {
+		this.hrManagerId = hrManagerId;
 	}
 
 	public String getCounterSigningManagerName() {

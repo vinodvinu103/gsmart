@@ -34,7 +34,7 @@ public class Holiday {
 	 */
 	@Id
 	@Column(name="HOLIDAY_DATE")
-	@Index(name = "holidayDate")
+//	@Index(name = "holidayDate")
 	private Date holidayDate;
 	
 	public Date getHolidayDate() {
@@ -63,7 +63,7 @@ public class Holiday {
 	private String updatedTime;
 	
 	@Column(name="IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@OneToOne(fetch=FetchType.EAGER)

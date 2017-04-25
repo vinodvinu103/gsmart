@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Profile;
+import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -47,6 +49,9 @@ public class PrivilegeController {
 	@Autowired
 	private GetAuthorization getAuthorization;
 	
+	@Autowired
+	private ProfileDao profileDao;
+	
 	
 	
 	/**
@@ -57,7 +62,7 @@ public class PrivilegeController {
 	 * @see IMResponse
 	 */
 	
-	@RequestMapping( method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> search(@RequestBody Profile profile,@RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
@@ -67,12 +72,13 @@ public class PrivilegeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Profile> profileList = null;
-        
 		
 		Map<String, Object> privilege = new HashMap<>();
-			profileList = profileServices.search(profile);
+			profileList = profileServices.search(profile, tokenObj.getHierarchy());
 			privilege.put("profileList", profileList);
+			
 			Loggers.loggerEnd(profileList);
 		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
 	}

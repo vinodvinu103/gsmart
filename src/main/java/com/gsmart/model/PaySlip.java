@@ -15,7 +15,7 @@ public class PaySlip {
 	
 	@Id
 	@Column(name="SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Column(name="FROM_MONTH")
@@ -28,7 +28,7 @@ public class PaySlip {
 	private String toMonth;
 	
 	@Column(name="TO_YEAR")
-	@Index(name = "toYear")
+//	@Index(name = "toYear")
 	private String toYear;
 	
 	

@@ -23,12 +23,12 @@ public class Grades {
 	
 	@Id
 	@Column(name="SCHOOL")
-	@Index(name = "school")
+//	@Index(name = "school")
     private String school;
 	
 	@Id
 	@Column(name="INSTITUTION")
-	@Index(name = "institution")
+//	@Index(name = "institution")
 	private String institution;
 	
 	@Column(name="START_PERCENTAGE")
@@ -42,7 +42,7 @@ public class Grades {
 	private String grade;
 	
 	@Column(name="ISACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 
 	@Column(name="ENTRY_TIME")

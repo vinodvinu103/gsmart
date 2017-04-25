@@ -12,6 +12,8 @@ public interface FeeServices {
 	
 	public List<Fee> getFeeList(Fee fee,Long hid) throws GSmartServiceException;
 	
+	public List<Fee> getDashboardFeeList(Fee fee,Long hid) throws GSmartServiceException;
+	
 	public void addFee(Fee fee) throws GSmartServiceException;
 	
 	public ArrayList<Fee> getFeeLists(String academicYear,Long hid) throws GSmartServiceException;

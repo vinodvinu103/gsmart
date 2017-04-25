@@ -37,6 +37,29 @@ public class FeeDaoImpl implements FeeDao {
 	
 	Query query;
 	Criteria criteria = null;
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<Fee> getDashboardFeeList(Fee fee, Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart(fee.getAcademicYear());
+
+		ArrayList<Fee> feeList;
+		try {
+
+			query = sessionFactory.getCurrentSession().createQuery(
+					"from Fee where smartId =:smartId and isActive=:isActive and academicYear =:academicYear and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hid);
+			query.setParameter("isActive", "Y");
+			query.setParameter("smartId", fee.getSmartId());
+			query.setParameter("academicYear", fee.getAcademicYear());
+			feeList = (ArrayList<Fee>) query.list();
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		Loggers.loggerEnd();
+		return feeList;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -128,7 +151,7 @@ public class FeeDaoImpl implements FeeDao {
 			
 		query.setParameter("academicYear", academicYear);
 		feeList=(ArrayList<Fee>) query.list();
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(feeList);
 		
 		}
 		catch (Exception e) {

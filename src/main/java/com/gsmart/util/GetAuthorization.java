@@ -158,8 +158,10 @@ public class GetAuthorization {
 		
 		Loggers.loggerStart(tokenNumber);
 		System.out.println("session object"+httpSession.getAttribute("tokenNumber"));
-		if(tokenNumber.equals(httpSession.getAttribute("tokenNumber")))
+		if(tokenNumber.equals(httpSession.getAttribute("tokenNumber"))){
+			Loggers.loggerStart();
 			return "Success";
+		}
 		else
 			return null;
 	}

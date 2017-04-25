@@ -16,6 +16,10 @@ public interface SearchService {
 	ArrayList<Profile> getEmployeeInfo(String emp, Map<String, Profile> map);
 
 	ArrayList<Profile> searchEmployeeInfo(String smartId, Map<String, Profile> beanFactory1);
+	
+	ArrayList<Profile> searchEmployeeInfoForFinance(String smartId, Map<String, Profile> beanFactory1);
+	
+	ArrayList<Profile> searchEmployeeInfoForHr(String smartId, Map<String, Profile> beanFactory1);
 
 	Map<String, Profile> searchRep(Search search,String role,Hierarchy hierarchy);
 
@@ -35,6 +39,10 @@ public interface SearchService {
 	
 
 	public ArrayList<String> getAllChildSmartId(String mySmartId, Map<String, Profile> allProfiles);
+	
+	public ArrayList<String> getAllChildSmartIdForFinance(String mySmartId, Map<String, Profile> allProfiles);
+	
+	public ArrayList<String> getAllChildSmartIdForHr(String mySmartId, Map<String, Profile> allProfiles);
 	
 	
 

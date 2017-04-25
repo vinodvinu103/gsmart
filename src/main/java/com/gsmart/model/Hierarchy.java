@@ -41,10 +41,11 @@ public class Hierarchy {
 	 */
 	
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-	@Index(name = "hid")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@Index(name = "hid")
     private Long hid;
 	
+
 	@Column(name="SCHOOL")
 	private String school;
 
@@ -52,7 +53,7 @@ public class Hierarchy {
 	 * Institution of a person
 	 */
 	@Column(name="INSTITUTION")
-	@Index(name = "institution")
+//	@Index(name = "institution")
 	private String institution;
 
 	/**
@@ -61,6 +62,80 @@ public class Hierarchy {
 	
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
+	
+	
+	@Lob @Column(name = "SCHOOL_LOGO", length = 400000)
+	private byte[] schoolLogo;
+	
+	
+	@Column(name="SCHOOL_ADDRESS1")
+	private String schoolAddress1;
+	
+	
+	@Column(name="SCHOOL_ADDRESS2")
+	private String schoolAddress2;
+	
+	
+	@Column(name="PINCODE")
+	private String pincode;
+	
+	
+	@Column(name="LANDLINE_NUMBER")
+	private String landLineNumber;
+	
+	
+	public String getLandLineNumber() {
+		return landLineNumber;
+	}
+
+	public void setLandLineNumber(String landLineNumber) {
+		this.landLineNumber = landLineNumber;
+	}
+
+	@Column(name="SCHOOL_PHONE_NUMBER")
+	private String schoolPhoneNumber;
+
+	public byte[] getSchoolLogo() {
+		return schoolLogo;
+	}
+
+	public void setSchoolLogo(byte[] schoolLogo) {
+		this.schoolLogo = schoolLogo;
+	}
+
+	public String getSchoolAddress1() {
+		return schoolAddress1;
+	}
+
+	public void setSchoolAddress1(String schoolAddress1) {
+		this.schoolAddress1 = schoolAddress1;
+	}
+
+	public String getSchoolAddress2() {
+		return schoolAddress2;
+	}
+
+	public void setSchoolAddress2(String schoolAddress2) {
+		this.schoolAddress2 = schoolAddress2;
+	}
+
+
+
+	public String getPincode() {
+		return pincode;
+	}
+
+	public void setPincode(String pincode) {
+		this.pincode = pincode;
+	}
+
+	public String getSchoolPhoneNumber() {
+		return schoolPhoneNumber;
+	}
+
+	public void setSchoolPhoneNumber(String schoolPhoneNumber) {
+		this.schoolPhoneNumber = schoolPhoneNumber;
+	}
 
 	/**
 	 * Gets the current time  of the person

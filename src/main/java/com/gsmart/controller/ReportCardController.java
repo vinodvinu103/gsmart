@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
 import com.gsmart.model.Profile;
@@ -60,6 +61,9 @@ public class ReportCardController {
 
 	@Autowired
 	private ReportCardDao reportCardDao;
+	
+	@Autowired
+	ProfileDao profileDao;
 
 	@RequestMapping(value="/{academicYear}/{examName}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getListForStudent(@RequestHeader HttpHeaders token, HttpSession httpSession,@PathVariable("academicYear") String academicYear,@PathVariable("examName") String examName)
@@ -347,10 +351,12 @@ public class ReportCardController {
 	
 				childTeacherAndStandard=reportCardDao.findChildTeacher(tokenObj, academicYear);
 				permission.put("childTeacherAndStandard", childTeacherAndStandard);
-			
+
+				/*return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);*/	
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
+
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String,Object>>(permission, HttpStatus.OK);
 	}
@@ -370,12 +376,16 @@ public class ReportCardController {
 		
 				examName=reportCardDao.examName(tokenObj,academicYear,smartId);
 				permission.put("examName", examName);
+				/*return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);*/
+
 			
 		} catch (Exception e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
+
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String,Object>>(permission, HttpStatus.OK);
+
 	}
 	
 	@RequestMapping(value="/reportCardForHOD/{academicYear}/{examName}/{smartId}",method=RequestMethod.GET)
@@ -391,14 +401,29 @@ public class ReportCardController {
 		Token tokenObj=(Token) httpSession.getAttribute("token");
 		Loggers.loggerStart(tokenObj);
 		Map<String, Object> permission = new HashMap<>();
+		String percentage=null;
 		try {
 				reportForHod=reportCardDao.reportCardforHOD(tokenObj, examName, academicYear,smartId);
 				permission.put("reportCard", reportForHod);
 				double per=reportCardService.calculatPercentage(tokenObj.getSmartId(), reportForHod);
-				String percentage=reportCardService.grade(per,tokenObj.getHierarchy().getHid());
+				Profile info=profileDao.getParentInfo(smartId);
+				System.out.println(tokenObj.getRole());
+				if(tokenObj.getRole().equals("ADMIN")){
+					System.out.println("in side >>>>>>>>>>>>.. 1111");
+					percentage=reportCardService.grade(per,info.getHierarchy().getHid());
+				}
+				else if(tokenObj.getRole().equals("DIRECTOR")){
+					System.out.println("in side >>>>>>>>>>>>.. 2222");
+					percentage=reportCardService.grade(per,info.getHierarchy().getHid());	
+				}
+				else{
+					System.out.println("in side >>>>>>>>>>>>.. 3333");
+					percentage=reportCardService.grade(per,tokenObj.getHierarchy().getHid());
+				}
 				ReportCard rpcd=new ReportCard();
 				rpcd.setTotalGrade(percentage);
 				permission.put("totalGrade", rpcd);
+				Loggers.loggerEnd(permission);
 				return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 			
 		} catch (Exception e) {

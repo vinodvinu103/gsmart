@@ -1,13 +1,11 @@
 package com.gsmart.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
-import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 
@@ -26,12 +24,12 @@ public interface ProfileServices{
 	/* for profile image change*/
 	
 	public String changeprofileimage(Profile profile)throws GSmartServiceException;
-
+	
 	/*for profile*/
 
 	public Map<String, Object> getProfiles(String role,String smartId,Long hid, int min, int max)throws GSmartServiceException;
 
-	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
+/*	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;*/
 	
 	public Map<String, Object> getParentInfo(String empSmartId)throws GSmartServiceException;
 
@@ -39,7 +37,7 @@ public interface ProfileServices{
 	
 	Profile getProfileDetails(String smartId)throws GSmartServiceException;
 	
-	List<Profile> search( Profile profileList)throws GSmartServiceException;
+	List<Profile> search( Profile profileList, Hierarchy hierarchy)throws GSmartServiceException;
 
 	public void editRole(Profile profile)throws GSmartServiceException;
 	
@@ -47,9 +45,9 @@ public interface ProfileServices{
 	
 	List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
 
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
 	
-	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
 	
 	public List<Profile> addRfid(Profile rfid)throws GSmartServiceException;
 	

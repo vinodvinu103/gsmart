@@ -28,6 +28,7 @@ import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
+import com.gsmart.model.Token;
 //import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 
@@ -54,9 +55,9 @@ public interface ProfileDao {
 	
 	/* for profile image change*/
 	public String changeprofileimage(Profile profile);
-
+	
 	/* for profile */
-	public ArrayList<Profile> getAllProfiles();
+	public ArrayList<Profile> getAllProfiles(String AcademicYear);
 
 	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
 			int max);
@@ -74,8 +75,8 @@ public interface ProfileDao {
 	 * @return list of Profile entities available in the {@link Profile} Table
 	 * @throws GSmartDatabaseException
 	 */
-	public List<Profile> search(Profile profile) throws GSmartDatabaseException;
-
+	public List<Profile> search(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException;
+	
 	/**
 	 * @param profile
 	 *            instanceOf {@link Profile}
@@ -92,11 +93,11 @@ public interface ProfileDao {
 	
 	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
 
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
-	
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
+
 	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 	
