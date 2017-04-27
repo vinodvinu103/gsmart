@@ -45,7 +45,9 @@ public class Attendance {
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
-
+	
+	@Column(name="     role")
+	private String role;
 	
 	public String getStatus() {
 		return status;
@@ -117,10 +119,14 @@ public class Attendance {
 	}
 
 
+	
+
+
 	@Override
 	public String toString() {
-		return "Attendance \n\t [\n\t rfId=" + rfId + ", \n\t smartId=" + smartId + ", \n\t inTime=" + inTime + ", \n\t outTime=" + outTime
-				+ ", \n\t inDate=" + inDate + ", \n\t isActive=" + isActive + "]";
+		return "Attendance [rfId=" + rfId + ", smartId=" + smartId + ", inTime=" + inTime + ", outTime=" + outTime
+				+ ", inDate=" + inDate + ", isActive=" + isActive + ", status=" + status + ", hierarchy=" + hierarchy
+				+ ", role=" + role + "]";
 	}
 
 
@@ -134,5 +140,15 @@ public class Attendance {
 	}
 
 
+	public String getRole() {
+		return role;
+	}
+
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	
 	
 }

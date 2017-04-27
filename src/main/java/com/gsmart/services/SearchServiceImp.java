@@ -617,7 +617,50 @@ public class SearchServiceImp implements SearchService {
 				"Total profiles reporting to the parentId : " + parentId + " is of size : " + childSmartIdList.size());
 		return childSmartIdList;
 	}
-
+	
+	
+	@Override
+	public ArrayList<Profile> getAllChildSmartIdForDashboard(String parentId, Map<String, Profile> allProfiles) {
+		Loggers.loggerStart("getAllChildSmartId in services is called with parentId : " + parentId);
+		ArrayList<Profile> childSmartIdList = new ArrayList<Profile>();
+		ArrayList<Profile> childList = searchEmployeeInfo(parentId, allProfiles);
+		ArrayList<Profile> tempProfile = childList;
+		Map<Integer, ArrayList<Profile>> map = new HashMap<Integer, ArrayList<Profile>>();
+		int i = 1;
+		map.put(i, childList);
+		boolean boo = false;
+		try {
+			do {
+				if (!tempProfile.isEmpty()) {
+					ArrayList<Profile> gotoloop = childOfChilds(tempProfile, allProfiles);
+					if (!gotoloop.isEmpty()) {
+						map.put(++i, gotoloop);
+						boo = map.get(i).get(0).getRole().toLowerCase().equals("student");
+						tempProfile = map.get(i);
+						Loggers.loggerValue("tempProfile value ", tempProfile);
+						for (Profile profile : gotoloop) {
+							childSmartIdList.add(profile);
+						}
+					} else {
+						for (Profile profile : childList) {
+							childSmartIdList.add(profile);
+						}
+						return childSmartIdList;
+					}
+				} else {
+					boo = true;
+				}
+			} while (!boo);
+			for (Profile profile : childList) {
+				childSmartIdList.add(profile);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(
+				"Total profiles reporting to the parentId : " + parentId + " is of size : " + childSmartIdList.size());
+		return childSmartIdList;
+	}
 
 
 }

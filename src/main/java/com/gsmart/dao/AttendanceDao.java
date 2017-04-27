@@ -17,7 +17,6 @@ public interface AttendanceDao  {
 	
 	public List<Attendance> getAttendanceByhierarchy(Long date, Hierarchy hierarchy);
 
-
 	public List<Map<String, Object>> getPresentAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException;
 	
