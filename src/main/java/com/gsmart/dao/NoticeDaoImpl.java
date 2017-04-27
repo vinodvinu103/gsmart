@@ -222,7 +222,7 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 			
 			Profile currentProfile = (Profile) sessionFactory.getCurrentSession().createQuery("from Profile where smartId=" + smartId).list()
 					.get(0);
-			if (currentProfile.getReportingManagerId() != smartId)
+			if (currentProfile.getReportingManagerId().equals(smartId))
 				return getProfileDetails(currentProfile.getReportingManagerId());
 			else
 				return null;
