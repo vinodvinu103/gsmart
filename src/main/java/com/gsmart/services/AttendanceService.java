@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,5 +24,7 @@ public interface AttendanceService {
 
     public List<Map<String, Object>> getAttendanceByhierarchyForHr(String smartId, Long date, List<Hierarchy> hidList);
     
-	public Map<String, Object> getAttendanceCount(List<String> childList);
+	public Map<String, Object> getAttendanceCount(List<String> childList,Date date);
+
+	public void addClassAttendance(List<Attendance> attendance) throws GSmartServiceException;
 }
