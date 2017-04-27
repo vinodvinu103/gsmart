@@ -76,15 +76,21 @@ public class NoticeController {
 		List<Notice> list = new ArrayList<Notice>();
 
 		try {
+			
+			if(tokenObj.getRole().equalsIgnoreCase("director") || tokenObj.getRole().equalsIgnoreCase("admin")){
+				list = noticeService.viewAdminNoticeService(smartId);
+			}else{
+				Map<String, Profile> allprofiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
 
-			Map<String, Profile> allprofiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
+				ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
 
-			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
+				System.out.println("parent list  :"+parentSmartIdList);
 
-			System.out.println("parent list  :"+parentSmartIdList);
+				parentSmartIdList.remove(smartId);
+				list = noticeService.viewNotice(parentSmartIdList,tokenObj.getHierarchy().getHid());
+			}
 
-			parentSmartIdList.remove(smartId);
-			list = noticeService.viewNotice(parentSmartIdList,tokenObj.getHierarchy().getHid());
+			
 			
 			for (Notice notice : list) {
 
@@ -192,7 +198,7 @@ public class NoticeController {
 	 * 
 	 * e.printStackTrace(); return null;
 	 * 
-	 * 
+	 * true
 	 * 
 	 * }
 	 */

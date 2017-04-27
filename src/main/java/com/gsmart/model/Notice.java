@@ -1,5 +1,7 @@
 package com.gsmart.model;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,7 +35,10 @@ public class Notice {
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
-
+     
+	@Column(name = "MESSAGE_Sub")
+	private String messagesubject;
+	
 	public Hierarchy getHierarchy() {
 		return hierarchy;
 	}
@@ -160,12 +165,24 @@ public class Notice {
 	public void setUpdate_time(String update_time) {
 		this.update_time = update_time;
 	}
+	
+	
+
+	public String getMessagesubject() {
+		return messagesubject;
+	}
+
+	public void setMessagesubject(String messagesubject) {
+		this.messagesubject = messagesubject;
+	}
 
 	@Override
 	public String toString() {
 		return "Notice [entryTime=" + entryTime + ", smartId=" + smartId + ", message=" + message + ", exitTime="
-				+ exitTime + ", update_time=" + update_time + ", role=" + role + ", isActive=" + isActive + ", type="
-				+ type + ", childFlag=" + childFlag + ", updatedId=" + updatedId + ", image=" + image + ", format=" + format + "]";
+				+ exitTime + ", update_time=" + update_time + ", hierarchy=" + hierarchy + ", messagesubject="
+				+ messagesubject + ", image=" + Arrays.toString(image) + ", format=" + format + ", role=" + role
+				+ ", isActive=" + isActive + ", type=" + type + ", childFlag=" + childFlag + ", updatedId=" + updatedId
+				+ "]";
 	}
 	
 
