@@ -2,6 +2,7 @@ package com.gsmart.services;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -265,17 +267,24 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	public Map<String, Object> getAttendanceCount(List<String> childList) {
+	public Map<String, Object> getAttendanceCount(List<String> childList,Date date) {
 		try {
 			Loggers.loggerStart();
 
-			return attendancedao.getAttendanceCount(childList);
+			
+			return attendancedao.getAttendanceCount(childList,date);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 
+	}
+	@Override
+	public void addClassAttendance(List<Attendance> attendance) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		attendancedao.addClassAttendance(attendance);
+		
 	}
 
 }

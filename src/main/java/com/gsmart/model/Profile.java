@@ -29,12 +29,12 @@ public class Profile {
 	}
 
 	@Id
-	@Column(name = "SMART_ID")
-	@Index(name = "smartId")
+    @Column(name = "SMART_ID")
+//	@Index(name = "smartId")
 	private String smartId;
 
-	@Column(name = "RFID")
-	@Index(name = "rfId")
+	@Column(name="RFID")
+//	@Index(name = "rfId")
 	private String rfId;
 
 	@Column(name = "FIRST_NAME")
@@ -83,11 +83,11 @@ public class Profile {
 	private String languageKnown;
 
 	@Column(name = "INSTITUTION")
-	@Index(name = "institution")
+//	@Index(name = "institution")
 	private String institution;
 
 	@Column(name = "SCHOOL")
-	@Index(name = "school")
+//	@Index(name = "school")
 	private String school;
 
 	@Column(name = "BAND")
@@ -97,7 +97,7 @@ public class Profile {
 	private String designation;
 
 	@Column(name = "ROLE")
-	@Index(name = "role")
+//	@Index(name = "role")
 	private String role;
 
 	@Column(name = "DEPT_NAME")
@@ -303,7 +303,7 @@ public class Profile {
 	private String studentId;
 
 	@Column(name = "CLASS")
-	@Index(name = "standard")
+//	@Index(name = "standard")
 	private String standard;
 
 	@Column(name = "SECTION")
@@ -331,8 +331,20 @@ public class Profile {
 	private String exitTime;
 
 	@Column(name = "IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name ="isActive")
 	private String isActive;
+	
+	@Column(name="DEVICE_TOKEN")
+	private String finalToken;
+
+	public String getFinalToken() {
+		return finalToken;
+	}
+
+	public void setFinalToken(String finalToken) {
+		this.finalToken = finalToken;
+	}
+
 
 	@Transient
 	private boolean childFlag;
@@ -348,10 +360,11 @@ public class Profile {
 
 	@Transient
 	private double balanceAmount;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+//	@Index(name = "hierarchy")
 
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "hid")
-	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	// -----------------------------------------------------------/

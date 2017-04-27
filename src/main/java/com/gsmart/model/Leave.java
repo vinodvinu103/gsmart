@@ -19,7 +19,7 @@ import org.hibernate.annotations.Index;
 public class Leave {
 	@Id
 	@Column(name="SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	public String getSmartId() {
@@ -48,14 +48,14 @@ public class Leave {
 	private String description;
 	
 	@Column(name="LEAVE_TYPE")
-	@Index(name = "leaveType")
+//	@Index(name = "leaveType")
 	private String leaveType;
 	
 	@Column(name="UPDATED_TIME")
 	private String updatedTime;
 	
 	@Column(name="IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="EXIT_TIME")

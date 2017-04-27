@@ -20,7 +20,7 @@ public class Notice {
 	@Column(name = "ENTRY_TIME")
 	private String entryTime;
 	@Column(name = "SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	private String smartId;
 	@Lob
 	@Column(name = "MESSAGE")
@@ -44,7 +44,7 @@ public class Notice {
 	
 	@Lob
 	@Column(name = "Image")
-	@Index(name = "image")
+//	@Index(name = "image")
 	private byte[] image;
 	
 	

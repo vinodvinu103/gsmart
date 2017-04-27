@@ -51,7 +51,7 @@ public class LeaveDaoImpl implements LeaveDao {
 			criteria.add(Restrictions.eq("hierarchy.hid",  hierarchy.getHid()));
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
-			criteria.addOrder(Order.asc("smartId"));
+			criteria.addOrder(Order.desc("entryTime"));
 			leave = criteria.list();
 
 			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(Leave.class);

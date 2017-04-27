@@ -3,6 +3,8 @@ package com.gsmart.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Lob;
@@ -22,7 +24,7 @@ public class Banners {
 	 */
 	@Lob
 	@Column(name = "IMAGE",length = 400000)
-	@Index(name = "image")
+//	@Index(name = "image")
 	private byte[] image;
 
 	/*public String getTitle() {
@@ -40,6 +42,19 @@ public class Banners {
 	public void setImage(byte[] image) {
 		this.image = image;
 	}
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	private int imageId;
+	
+	public int getImageId() {
+		return imageId;
+	}
+
+	public void setImageId(int imageId) {
+		this.imageId = imageId;
+	}
+
 	@Id
 	@Column(name = "ENTRY_TIME")
 	private String entryTime;
@@ -51,7 +66,7 @@ public class Banners {
 	private String updatedTime;
 
 	@Column(name = "IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 
 	public String getEntryTime() {
