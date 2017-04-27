@@ -1,5 +1,7 @@
 package com.gsmart.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,7 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -15,10 +18,11 @@ import javax.persistence.Table;
 @IdClass(com.gsmart.model.CompoundAttendance.class)
 public class Attendance {
 	
-	@Id
-	@Column(name="RFID")
+	@Column(name="RFID",unique=true)
 	private String rfId;
 	
+	
+	@Id
 	@Column(name="smartId")
 //	@Index(name = "smartId")
 	private String smartId;
@@ -40,6 +44,19 @@ public class Attendance {
 	@Column(name="STATUS")
 	private String status;
 	
+	
+	@Transient
+	private Date date;
+	
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
@@ -159,12 +176,15 @@ public class Attendance {
 	}
 
 
+	
+
 	@Override
 	public String toString() {
-		return "Attendance \n\t [\n\t rfId=" + rfId + ", \n\t smartId=" + smartId + ", \n\t inTime=" + inTime + ", \n\t outTime=" + outTime
-				+ ", \n\t inDate=" + inDate + ", \n\t isActive=" + isActive + "]";
+		return "Attendance [rfId=" + rfId + ", smartId=" + smartId + ", inTime=" + inTime + ", outTime=" + outTime
+				+ ", inDate=" + inDate + ", isActive=" + isActive + ", status=" + status + ", date=" + date
+				+ ", hierarchy=" + hierarchy + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName="
+				+ lastName + ", finalToken=" + finalToken + "]";
 	}
-
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;
