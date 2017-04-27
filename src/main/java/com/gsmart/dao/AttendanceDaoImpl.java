@@ -307,7 +307,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		}
 	}
 
-	@Scheduled(cron = "0 54 16 * * ?")
+	@Scheduled(cron = "0 0 1 * * ?")
 	public void insertAttendanceData() {
 
 		String date = CalendarCalculator.getTimeStamp();
