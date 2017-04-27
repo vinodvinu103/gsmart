@@ -288,7 +288,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			System.out.println("childList" + childList);
 
 			query = sessionFactory.getCurrentSession()
-					.createQuery("from Attendance where smartId in  (:smartIdList) and status='PRESENT'  and inDate=:inDate");
+					.createQuery("from Attendance where smartId in  (:smartIdList)  and inDate=:inDate");
 			query.setParameterList("smartIdList", childList);
 			// query.setParameter("isActive", "Y");
 			query.setParameter("inDate", epoch1);
