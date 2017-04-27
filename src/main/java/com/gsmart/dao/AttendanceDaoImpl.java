@@ -241,8 +241,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		Loggers.loggerStart();
 		System.out.println("intime >>>>>>>>>>>>>>>>>>>>>>>>>> " + date);
 		try {
-			query = sessionFactory.getCurrentSession()
-					.createQuery("from Attendance where inDate=:inDate and hierarchy.hid=:hId");
+
+			query = sessionFactory.getCurrentSession().createQuery("from Attendance where inDate=:inDate and hierarchy.hid=:hId and status='PRESENT'");
+
 			query.setParameter("inDate", date);
 			query.setParameter("hId", hierarchy.getHid());
 			return query.list();
@@ -253,7 +254,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			return null;
 		}
 	}
-
+	
 	private Profile getSmartId(String rfid) {
 		Loggers.loggerStart();
 		try {

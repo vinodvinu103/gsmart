@@ -61,6 +61,9 @@ public class Attendance {
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
 	
+	@Column(name="role")
+	private String role;
+
 	@Column(name = "FIRST_NAME")
 	private String firstName;
 
@@ -104,7 +107,6 @@ public class Attendance {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-
 	
 	public String getStatus() {
 		return status;
@@ -178,12 +180,14 @@ public class Attendance {
 
 	
 
+
 	@Override
 	public String toString() {
 		return "Attendance [rfId=" + rfId + ", smartId=" + smartId + ", inTime=" + inTime + ", outTime=" + outTime
 				+ ", inDate=" + inDate + ", isActive=" + isActive + ", status=" + status + ", date=" + date
 				+ ", hierarchy=" + hierarchy + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName="
-				+ lastName + ", finalToken=" + finalToken + "]";
+				+ lastName + ", finalToken=" + finalToken + ", role=" + role + "]";
+
 	}
 
 	public Hierarchy getHierarchy() {
@@ -196,5 +200,15 @@ public class Attendance {
 	}
 
 
+	public String getRole() {
+		return role;
+	}
+
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	
 	
 }
