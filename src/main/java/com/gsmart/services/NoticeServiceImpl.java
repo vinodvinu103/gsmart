@@ -14,6 +14,7 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
+import com.gsmart.util.GSmartServiceException;
 
 @Service
 @Transactional
@@ -60,7 +61,10 @@ public class NoticeServiceImpl implements NoticeService
 		return noticeDao.viewMyNotice(role,hid);
 	}
 
-	
+	@Override 
+	public List<Notice> viewAdminNoticeService(String SmartId) throws GSmartServiceException{
+		return noticeDao.viewAdminNoticeDao(SmartId);
+	}
 	/*@Override
 	public ArrayList<Profile> getAllProfiles() {
 		ArrayList<Profile> profileList = profileDao.getAllProfiles();
