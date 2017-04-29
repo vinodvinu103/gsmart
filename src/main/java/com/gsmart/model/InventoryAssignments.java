@@ -46,7 +46,18 @@ public class InventoryAssignments
 	@Column(name="LEFT_QUANTITY")
 	private Integer leftQuantity;
 
+	@Column(name="TEACHER_ID")
+	private String teacherId;
 	
+	
+	public String getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(String teacherId) {
+		this.teacherId = teacherId;
+	}
+
 	public Integer getLeftQuantity() {
 		return leftQuantity;
 	}
@@ -80,8 +91,17 @@ public class InventoryAssignments
 	
 	@Column(name="SMART_ID")
 	private String smartId;
+  
+	@Column(name="RETURN")
+	private Integer invreturn;
 	
+	public Integer getInvreturn() {
+		return invreturn;
+	}
 
+	public void setInvreturn(Integer invreturn) {
+		this.invreturn = invreturn;
+	}
 	@Transient
 	int childFlag;
 	

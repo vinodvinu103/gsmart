@@ -28,9 +28,9 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	
 
 	@Override
-	public Map<String, Object> getInventoryAssignList(String role, String smartid, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+	public Map<String, Object> getInventoryAssignList(String role, String smartid, Long hid, Integer min, Integer max) throws GSmartServiceException {
 		try {
-			return inventoryAssignmentsDao.getInventoryAssignList(role,smartid,hierarchy, min, max);
+			return inventoryAssignmentsDao.getInventoryAssignList(role,smartid,hid, min, max);
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;
 
@@ -40,11 +40,11 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	}
 
 	@Override
-	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory) {
+	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory,Long hid) {
 		InventoryAssignmentsCompoundKey compoundKey=null;
 		try {
 			Loggers.loggerStart(inventoryAssignments);
-			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments,oldInventory);
+			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments,oldInventory,hid);
 			Loggers.loggerEnd(compoundKey);
 		} catch (GSmartDatabaseException e) {
 			e.printStackTrace();
@@ -117,7 +117,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	}
 
 	@Override
-	public Map<String, Object> getInventoryList(String role, Hierarchy hierarchy, Integer min, Integer max)
+	public Map<String, Object> getInventoryList(String role, Long hid, Integer min, Integer max)
 			throws GSmartServiceException {
 		// TODO Auto-generated method stub
 		return null;

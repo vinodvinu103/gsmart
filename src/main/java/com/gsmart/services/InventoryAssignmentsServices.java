@@ -13,11 +13,11 @@ import com.gsmart.util.GSmartServiceException;
 public interface InventoryAssignmentsServices {
 
 
-	public Map<String, Object> getInventoryList(String role, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
+	public Map<String, Object> getInventoryList(String role, Long hid, Integer min, Integer max) throws GSmartServiceException;
 
-	public Map<String, Object> getInventoryAssignList(String role, String smartId, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
+	public Map<String, Object> getInventoryAssignList(String role, String smartId, Long hid, Integer min, Integer max) throws GSmartServiceException;
 
-	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory);
+	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory,Long hid);
 
 	public InventoryAssignments editInventoryDetails(InventoryAssignments inventoryAssignments);
 
@@ -26,5 +26,8 @@ public interface InventoryAssignmentsServices {
 	public List<InventoryAssignments>getInventoryDashboardData(ArrayList<String> smartIdList,Hierarchy hierarchy) throws GSmartServiceException;
 	
 	public List<InventoryAssignments>groupCategoryAndItem(List<InventoryAssignments> inventoryAssignments, List<Inventory> inventory) throws GSmartServiceException;
+
+	
+
 	
 }
