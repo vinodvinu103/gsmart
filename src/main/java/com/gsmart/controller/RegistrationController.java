@@ -182,6 +182,7 @@ public class RegistrationController {
 
 			profile.setSmartId(smartId);
 			profile.setEntryTime(Calendar.getInstance().getTime().toString());
+			
 
 			if (profileServices.insertUserProfileDetails(profile)) {
 
@@ -189,7 +190,7 @@ public class RegistrationController {
 				login.setReferenceSmartId(Encrypt.md5(smartId));
 				login.setSmartId(smartId);
 				passwordServices.setPassword(login, profile.getHierarchy());
-
+				
 				if (profile.getRole().equalsIgnoreCase("student")) {
 					FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
 					Fee fee = new Fee();
@@ -214,6 +215,8 @@ public class RegistrationController {
 					fee.setBalanceFee(feeMaster.getTotalFee());
 					feeService.addFee(fee);
 				}
+
+				
 				if (!sendMail(profile)) {
 					if (profileDao.deleteProfileIfMailFailed(profile.getSmartId())) {
 						jsonMap.put("status", 404);
@@ -269,8 +272,6 @@ public class RegistrationController {
 		str.length();
 		Loggers.loggerValue("Updated by: ", updEmpSmartId);
 		Map<String, Object> jsonResult = new HashMap<>();
-			Token tokenObj = (Token) httpSession.getAttribute("token");
-//			profile.setHierarchy(tokenObj.getHierarchy());
 			String result = profileServices.updateProfile(profile);
 			jsonResult.put("status", 200);
 			jsonResult.put("result", result);
