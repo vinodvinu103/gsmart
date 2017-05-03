@@ -159,6 +159,15 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 					oldFeeMaster.setUpdatedTime(CalendarCalculator.getTimeStamp());
 					oldFeeMaster.setIsActive("N");
 					session.update(oldFeeMaster);
+					
+					query=sessionFactory.getCurrentSession().createQuery("update Fee set sportsFee=:sportsFee,tuitionFee=:tuitionFee,idCardFee=:idCardFee,miscellaneousFee=:miscellaneousFee,totalFee=:totalFee where standard=:standard");
+					query.setParameter("sportsFee", feeMaster.getSportsFee());
+					query.setParameter("tuitionFee", feeMaster.getTuitionFee());
+					query.setParameter("idCardFee", feeMaster.getIdCardFee());
+					query.setParameter("miscellaneousFee", feeMaster.getMiscellaneousFee());
+					query.setParameter("totalFee", feeMaster.getTotalFee());
+					query.setParameter("standard", feeMaster.getStandard());
+					query.executeUpdate();
 
 					return oldFeeMaster;
 				
@@ -176,8 +185,10 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 
 			}
 		} catch (ConstraintViolationException e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 		return ch;
@@ -249,7 +260,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	}*/
 
 	@Override
-	public FeeMaster getFeeStructure(String standard,Long hid) {
+	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartDatabaseException  {
 		try {
 			
 				query = sessionFactory.getCurrentSession().createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy.hid=:hierarchy");

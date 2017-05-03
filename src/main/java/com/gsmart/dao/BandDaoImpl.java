@@ -162,14 +162,23 @@ private Band updateBand(Band oldBand,Band band) throws GSmartDatabaseException {
 				oldBand.setUpdatedTime(CalendarCalculator.getTimeStamp());
 				oldBand.setIsActive("N");
 				session.update(oldBand);
+				
+				query=sessionFactory.getCurrentSession().createQuery("update Profile set role=:role,designation=:designation,band=:bandId where band=:band");
+				query.setParameter("role", band.getRole());
+				query.setParameter("designation", band.getDesignation());
+				query.setParameter("bandId", band.getBandId());
+				query.setParameter("band",oldBand.getBandId());
+				query.executeUpdate();
 
 				
 				return oldBand;
 
 			}
 		} catch (ConstraintViolationException e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 		return ch;

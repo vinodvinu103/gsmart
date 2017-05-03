@@ -11,6 +11,7 @@ import com.gsmart.dao.RolePermissionDao;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -185,6 +186,23 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 		}
 		
 		return list;
+	}
+	@Override
+	public List<Roles> getRoles() throws GSmartServiceException {
+		Loggers.loggerStart();
+		List<Roles> roles=null;
+		try {
+			roles=rolePermissionDao.getRoles();
+			
+		} catch (GSmartDatabaseException exception ) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		
+		
+		Loggers.loggerEnd();
+		return roles;
 	}	
 	
 

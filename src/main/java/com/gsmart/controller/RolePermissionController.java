@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.model.Token;
 import com.gsmart.services.RolePermissionServices;
 import com.gsmart.util.CalendarCalculator;
@@ -186,6 +187,19 @@ public class RolePermissionController {
 	public void getPermission(String role) throws GSmartServiceException {
 
 		rolePermissionServices.getPermission(role);
+	}
+	
+	@RequestMapping(value="/roles",method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getRoles(@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
+		Loggers.loggerStart();
+		Map<String, Object> respMap =new HashMap<>();
+		List<Roles> roles=rolePermissionServices.getRoles();
+		respMap.put("data", roles);
+		Loggers.loggerEnd(respMap);
+		
+		return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+		
+		
 	}
 
 }

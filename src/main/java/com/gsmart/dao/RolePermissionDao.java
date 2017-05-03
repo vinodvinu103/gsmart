@@ -6,6 +6,7 @@ import java.util.Map;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 /**
@@ -47,6 +48,8 @@ public interface RolePermissionDao {
 	public Map<String, Object> getPermission(String role)throws GSmartBaseException;
 	
 	public List<RolePermission> getSubModuleNames(String role) throws GSmartDatabaseException;
+	
+	public List<Roles> getRoles()throws GSmartDatabaseException;
 
 	
 }
