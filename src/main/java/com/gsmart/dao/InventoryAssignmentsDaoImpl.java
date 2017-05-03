@@ -216,6 +216,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		Loggers.loggerStart();
 		Session session=this.sessionFactory.getCurrentSession();
 		CompoundInventoryAssignmentsStudent chstudent1=null;
+	   
 		try {
 			Loggers.loggerValue("inside the dao of add inventory details : ", inventoryAssignmentsStudent.getReturnstu());
 			Loggers.loggerValue("what no of quntity", inventoryAssignmentsStudent.getQuantity());
@@ -231,10 +232,15 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			System.out.println(numQuntity1+" ********************************** ");
 			
 			if (updeteInv(cat,item,numQuntity,numQuntity1,profileDao.getProfileDetails(reportingManagerId).getReportingManagerId(),oldInventoryAssignment,hid) == 200) {
-				
-				chstudent1=	(CompoundInventoryAssignmentsStudent) session.save(inventoryAssignmentsStudent);
+				if(inventoryAssignmentsStudent.getQuantity() == 0) {
+					System.out.println("inside the second if condition");
+					System.out.println("Quntity"+ inventoryAssignmentsStudent.getQuantity() );
+                    inventoryAssignmentsStudent.setIsActive("D");
+                    inventoryAssignmentsStudent.setExitTime(CalendarCalculator.getTimeStamp());
+					chstudent1=	(CompoundInventoryAssignmentsStudent) session.save(inventoryAssignmentsStudent);
 		    	System.out.println(chstudent1+" inside if condition ");
 			}
+				}
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -246,20 +252,25 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
          @Override
 		public InventoryAssignmentsStudent editInventoryStudentDetails(
 				InventoryAssignmentsStudent inventoryAssignmentsStudent) throws GSmartDatabaseException {
+        	 Session session=this.sessionFactory.getCurrentSession();
 			try{
 				Loggers.loggerStart(inventoryAssignmentsStudent);
 				InventoryAssignmentsStudent oldInventoryAssignment = getInventoryAssignment(inventoryAssignmentsStudent.getEntryTime(),inventoryAssignmentsStudent.getHierarchy().getHid());
+				System.out.println("old  inventory"+oldInventoryAssignment);
 				if(oldInventoryAssignment != null){
 					oldInventoryAssignment.setIsActive("N");
 					oldInventoryAssignment.setUpdatedTime(CalendarCalculator.getTimeStamp());
-					sessionFactory.getCurrentSession().update(oldInventoryAssignment);
+					session.update(oldInventoryAssignment);
 					
 					returnStudentDetails(inventoryAssignmentsStudent, oldInventoryAssignment,oldInventoryAssignment.getSmartId(),inventoryAssignmentsStudent.getHierarchy().getHid());
+				
 				}
 			}catch (Throwable e) {
+				System.out.println(" exceptin in editInvStudent");
 				e.printStackTrace();
 				throw new GSmartDatabaseException(e.getMessage());
 	      }
+			Loggers.loggerEnd(inventoryAssignmentsStudent);
 		   return inventoryAssignmentsStudent;
 		}
 		
@@ -437,6 +448,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 		Loggers.loggerStart();
 		try{
 			inventoryAssignmentsStudent.setIsActive("D");
+			System.out.println("we are setting isActive as D....................");
 			inventoryAssignmentsStudent.setExitTime(CalendarCalculator.getTimeStamp());
 			session.update(inventoryAssignmentsStudent);
 	    Loggers.loggerEnd();

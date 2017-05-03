@@ -203,7 +203,7 @@ public class InventoryAssignmentsController {
 	public ResponseEntity<IAMResponse> editInventoryStudent(
 			@RequestBody InventoryAssignmentsStudent inventoryAssignmentsStudent, @PathVariable("task") String task,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-
+Loggers.loggerStart();
 		IAMResponse myResponse = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -223,7 +223,7 @@ public class InventoryAssignmentsController {
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 
 		}
-
+Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 	}
 
