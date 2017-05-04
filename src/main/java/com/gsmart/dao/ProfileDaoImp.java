@@ -22,6 +22,7 @@ import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
+import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -70,7 +71,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		boolean flag = false;
 		try {
-			query = sessionFactory.getCurrentSession().createQuery("from Profile where emailId=:emailId");
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where emailId=:emailId and isActive='Y'");
 			query.setParameter("emailId", profile.getEmailId());
 			Profile profile2 = (Profile) query.uniqueResult();
 			if (profile2 != null) {
@@ -343,17 +344,18 @@ public class ProfileDaoImp implements ProfileDao {
 		try {
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("owner") || role.equalsIgnoreCase("director")) {
 				query = sessionFactory.getCurrentSession()
-						.createQuery("from Profile where isActive like('Y') and band<:band and school =:school");
+						.createQuery("from Profile where isActive like('Y') and band<:band ");
 			} else {
 				query = sessionFactory.getCurrentSession().createQuery(
 						"from Profile where isActive like('Y') and band<:band and school=:school and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("school", search.getSchool());
 			}
 			query.setParameter("band", search.getBand());
-			query.setParameter("school", search.getSchool());
+			
 			List<Profile> profileList = (List<Profile>) query.list();
 			query = sessionFactory.getCurrentSession()
-					.createQuery("from Profile where isActive like('Y') and role='ADMIN'");
+					.createQuery("from Profile where isActive like('Y') and role='ADMIN' ");
 			profileList.addAll((List<Profile>) query.list());
 			Loggers.loggerEnd();
 			return profileList;
@@ -395,6 +397,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		return profileList;
 	}
+	
 
 	/**
 	 * persists the updated profile instance
@@ -470,8 +473,14 @@ public class ProfileDaoImp implements ProfileDao {
 			profileListWithoutRfid = criteria.list();
 			System.out.println("withoutjhfvdbjdfhvjhdfbvjdh" + profileListWithoutRfid);
 			rfidMap.put("profileListWithoutRfid", profileListWithoutRfid);
-			criteria.setProjection(Projections.rowCount());
-			rfidMap.put("totalrfid", criteria.uniqueResult());
+			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(Profile.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			criteriaCount.add(Restrictions.disjunction()
+					.add(Restrictions.or(Restrictions.isNull("rfId"), Restrictions.like("rfId", ""))));
+
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hierarchy));
+			rfidMap.put("totalrfid", criteriaCount.uniqueResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -528,8 +537,12 @@ public class ProfileDaoImp implements ProfileDao {
 			profileListWithRfid = criteria.list();
 			System.out.println("dfcsdgcysyhfvgyhfgv" + profileListWithRfid);
 			rfidWithMap.put("profileListWithRfid", profileListWithRfid);
-			criteria.setProjection(Projections.rowCount());
-			rfidWithMap.put("totalwithrfid", criteria.uniqueResult());
+			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(Profile.class);
+			criteriaCount.setProjection(Projections.rowCount());
+			criteriaCount.add(Restrictions.neOrIsNotNull("rfId", ""));
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hierarchy));
+			rfidWithMap.put("totalwithrfid", criteriaCount.uniqueResult());
 
 		} catch (Exception e) {
 			e.printStackTrace();

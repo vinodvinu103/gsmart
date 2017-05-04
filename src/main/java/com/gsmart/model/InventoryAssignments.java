@@ -23,7 +23,7 @@ public class InventoryAssignments
 		
 	@Id
 	@Column (name="CATEGORY")
-	@Index(name = "category")
+//	@Index(name = "category")
 	private String category;
 	
 	@Id
@@ -34,7 +34,7 @@ public class InventoryAssignments
 	private String teacherName;
 	
 	@Column(name="STANDARD")
-	@Index(name = "standard")
+//	@Index(name = "standard")
 	private String standard;
 	
 	@Column(name="SECTION")

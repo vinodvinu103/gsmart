@@ -86,6 +86,7 @@ public class PasswordDaoImpl implements PasswordDao {
 			currentPassword = (Login) query.uniqueResult();
 
 			if (currentPassword != null) {
+				currentPassword.setAttempt(0);
 				currentPassword.setPassword(Encrypt.md5(login.getConfirmPassword()));
 				session.update(currentPassword);
 				pwd = true;
@@ -105,7 +106,7 @@ public class PasswordDaoImpl implements PasswordDao {
 		try {
 
 		    System.out.println(email);
-			query = sessionFactory.getCurrentSession().createQuery("from Profile where emailId=:emailId ");
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where emailId=:emailId and isActive='Y' ");
 			query.setParameter("emailId", email);
 			emailId = (Profile) query.uniqueResult();
 		} catch (Exception e) {

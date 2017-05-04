@@ -1,11 +1,17 @@
 package com.gsmart.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gsmart.model.Attendance;
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
+import com.gsmart.model.InventoryAssignments;
+import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
@@ -184,6 +192,123 @@ public class DashboardDaoImpl implements DashboardDao {
 		}
 		Loggers.loggerEnd();
 		return examName;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, Object> getInventoryAssignList(String role, String smartId, Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException 
+	{
+		Loggers.loggerStart();
+
+		List<InventoryAssignments> inventoryList=null;
+		Map<String, Object> inventoryassignMap = new HashMap<String, Object>();
+		Criteria criteria = null;
+		criteria = sessionFactory.getCurrentSession().createCriteria(InventoryAssignments.class);
+		Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(InventoryAssignments.class);
+		try
+		{
+		if(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("finance") || role.equalsIgnoreCase("director"))
+		{
+		criteria.add(Restrictions.eq("isActive", "Y"));
+		}else{
+			criteria.add(Restrictions.eq("isActive", "Y"));
+			criteria.add(Restrictions.eq("hierarchy.hid", hierarchy.getHid()));
+			criteria.add(Restrictions.eq("smartId",smartId));
+		}
+		
+		criteria.setMaxResults(max);
+		criteria.setFirstResult(min);
+		criteria.addOrder(Order.asc("standard"));
+		inventoryList = criteria.list();
+		
+		criteriaCount.setProjection(Projections.rowCount());
+		inventoryassignMap.put("totalinventoryassign", criteriaCount.uniqueResult());
+	    inventoryassignMap.put("inventoryList", inventoryList);
+		 Loggers.loggerEnd();
+		}
+		catch(Throwable e)
+		{
+			throw new GSmartDatabaseException(e.getMessage());
+		} 
+		Loggers.loggerEnd();
+		
+		return inventoryassignMap;
+
+		
+	}
+	
+	@Override
+	public List<Profile> studentProfile(Token token, Hierarchy hierarchy) {
+		List<Profile> studentProfile = null;
+		String role = token.getRole();
+		Loggers.loggerStart();
+		if(role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR"))
+		{
+			query=sessionFactory.getCurrentSession().createQuery("from Profile where role='STUDENT' and isActive='Y'");
+		}
+		else{
+			query=sessionFactory.getCurrentSession().createQuery("from Profile where hierarchy="+hierarchy.getHid()+" and role='STUDENT' and isActive='Y'");
+		}
+		studentProfile=query.list();
+		return studentProfile;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Profile> searchStudentByName(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+
+		List<Profile> profileList;
+		try {
+			if (hierarchy == null) {
+
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%' and role=:role");
+				query.setParameter("role", "STUDENT");
+				
+			} else {
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%" + profile.getFirstName() + "%' and hierarchy.hid=:hierarchy and role=:role");
+				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("role", "STUDENT");
+				
+			}
+
+			profileList = query.list();
+
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		Loggers.loggerEnd();
+
+		return profileList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Profile> searchStudentById(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+
+		List<Profile> profileList;
+		try {
+			if (hierarchy == null) {
+
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where smartId like '%" + profile.getSmartId() + "%' and role=:role");
+				query.setParameter("role", "STUDENT");
+				
+			} else {
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where smartId like '%" + profile.getSmartId() + "%' and hierarchy.hid=:hierarchy and role=:role");
+				query.setParameter("hierarchy", hierarchy.getHid());
+				query.setParameter("role", "STUDENT");
+				
+			}
+
+			profileList = query.list();
+
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		Loggers.loggerEnd();
+
+		return profileList;
 	}
 
 }

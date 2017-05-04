@@ -76,14 +76,21 @@ public class NoticeController {
 		List<Notice> list = new ArrayList<Notice>();
 
 		try {
+			
+			if(tokenObj.getRole().equalsIgnoreCase("director") || tokenObj.getRole().equalsIgnoreCase("admin")){
+				list = noticeService.viewAdminNoticeService(smartId);
+			}else{
+				Map<String, Profile> allprofiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
 
-			Map<String, Profile> allprofiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
+				ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
 
-			ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
-			System.out.println("parent list  :"+parentSmartIdList);
+				System.out.println("parent list  :"+parentSmartIdList);
 
-			parentSmartIdList.remove(smartId);
-			list = noticeService.viewNotice(parentSmartIdList,tokenObj.getHierarchy().getHid());
+				parentSmartIdList.remove(smartId);
+				list = noticeService.viewNotice(parentSmartIdList,tokenObj.getHierarchy().getHid());
+			}
+
+			
 			
 			for (Notice notice : list) {
 
@@ -191,7 +198,7 @@ public class NoticeController {
 	 * 
 	 * e.printStackTrace(); return null;
 	 * 
-	 * 
+	 * true
 	 * 
 	 * }
 	 */
@@ -229,7 +236,7 @@ public class NoticeController {
 	public ResponseEntity<Map<String, Object>> addNotice(@RequestBody Notice notice, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartServiceException {
 		{
-			Loggers.loggerStart();
+			Loggers.loggerStart(notice);
 			String tokenNumber = token.get("Authorization").get(0);
 			String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 			str.length();
@@ -239,7 +246,10 @@ public class NoticeController {
 
 //				Token token1 = tokenService.getToken(tokenNumber);
 				// String smartId = token1.getSmartId();
-				notice.setHierarchy(tokenObj.getHierarchy());
+				if(notice.getHierarchy() == null){
+					notice.setHierarchy(tokenObj.getHierarchy());
+				}
+				
 				noticeService.addNotice(notice, tokenObj);
 				jsonMap.put("status", 200);
 				jsonMap.put("result", "success");

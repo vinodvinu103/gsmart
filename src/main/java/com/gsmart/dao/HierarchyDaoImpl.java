@@ -178,8 +178,10 @@ public class HierarchyDaoImpl implements HierarchyDao {
 		Loggers.loggerStart(hierarchy);
 		Hierarchy ch = null;
 		try {
-			//getHierarchy(hierarchy.getEntryTime());
-			ch = updateHierarchy(hierarchy);
+//			Hierarchy oldHierarchy = getHierarchy(hierarchy.getEntryTime());
+			ch = updateHierarchy( hierarchy);
+			
+
 			return ch;
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -191,28 +193,35 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	}
 
-	private Hierarchy updateHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
+	private Hierarchy updateHierarchy( Hierarchy hierarchy) throws GSmartDatabaseException {
 		
-		Hierarchy ch = null;
 		try {
-			Hierarchy hierarchy1 = fetch(hierarchy);
-			if (hierarchy1 == null) {
-				Session session=this.sessionFactory.getCurrentSession();
+
+
 				hierarchy.setUpdateTime(CalendarCalculator.getTimeStamp());
 				hierarchy.setIsActive("Y");
-				session.update(hierarchy);
+				sessionFactory.getCurrentSession().update(hierarchy);
+				
+				query=sessionFactory.getCurrentSession().createQuery("update Profile set school=:school,institution=:institution where hierarchy.hid=:hierarchy");
+				query.setParameter("school", hierarchy.getSchool());
+				query.setParameter("institution", hierarchy.getInstitution());
+				query.setParameter("hierarchy", hierarchy.getHid());
+				query.executeUpdate();
 
 				return hierarchy;
 
-			}
+		/*	}*/
 		} catch (ConstraintViolationException e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			e.printStackTrace();
+			
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+			
 		} catch (Throwable e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
-		return ch;
 
 	}
 

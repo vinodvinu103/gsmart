@@ -107,6 +107,62 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerEnd(childList);
 		return childList;
 	}
+	
+	@Override
+	public ArrayList<Profile> searchEmployeeInfoForFinance(String smartId, Map<String, Profile> map) {
+		Loggers.loggerStart("searchEmployeeInfo ");
+		ArrayList<Profile> childList = new ArrayList<Profile>();
+		/* Loggers.loggerValue("profiles in map", map); */
+		try {
+			Set<String> key = map.keySet();
+
+			/* Loggers.loggerValue("key", key); */
+
+			for (String temp : key) {
+				Profile p = map.get(temp);
+				if (p.getFinanceManagerId() != null) {
+					if (p.getFinanceManagerId().equals(smartId)) {
+						if (!(p.getSmartId().equals(smartId))) {
+							childList.add(p);
+						}
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(childList);
+		return childList;
+	}
+	
+	@Override
+	public ArrayList<Profile> searchEmployeeInfoForHr(String smartId, Map<String, Profile> map) {
+		Loggers.loggerStart("searchEmployeeInfo ");
+		ArrayList<Profile> childList = new ArrayList<Profile>();
+		/* Loggers.loggerValue("profiles in map", map); */
+		try {
+			Set<String> key = map.keySet();
+
+			/* Loggers.loggerValue("key", key); */
+
+			for (String temp : key) {
+				Profile p = map.get(temp);
+				if (p.getHrManagerId() != null) {
+					if (p.getHrManagerId().equals(smartId)) {
+						if (!(p.getSmartId().equals(smartId))) {
+							childList.add(p);
+						}
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(childList);
+		return childList;
+	}
 
 	public Map<String, Profile> searchRep(Search search, String role, Hierarchy hierarchy) {
 
@@ -377,6 +433,7 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerEnd();
 		return childOfChildList;
 	}
+	
 
 	public ArrayList<Profile> totalfees(Map<String, Profile> profileMap, ArrayList<Profile> fees) {
 
@@ -466,6 +523,136 @@ public class SearchServiceImp implements SearchService {
 			} while (!boo);
 			for (Profile profile : childList) {
 				childSmartIdList.add(profile.getSmartId());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(
+				"Total profiles reporting to the parentId : " + parentId + " is of size : " + childSmartIdList.size());
+		return childSmartIdList;
+	}
+	
+	@Override
+	public ArrayList<String> getAllChildSmartIdForFinance(String parentId, Map<String, Profile> allProfiles) {
+		Loggers.loggerStart("getAllChildSmartId in services is called with parentId : " + parentId);
+		ArrayList<String> childSmartIdList = new ArrayList<String>();
+		ArrayList<Profile> childList = searchEmployeeInfoForFinance(parentId, allProfiles);
+		ArrayList<Profile> tempProfile = childList;
+		Map<Integer, ArrayList<Profile>> map = new HashMap<Integer, ArrayList<Profile>>();
+		int i = 1;
+		map.put(i, childList);
+		boolean boo = false;
+		try {
+			do {
+				if (!tempProfile.isEmpty()) {
+					ArrayList<Profile> gotoloop = childOfChilds(tempProfile, allProfiles);
+					if (!gotoloop.isEmpty()) {
+						map.put(++i, gotoloop);
+						boo = map.get(i).get(0).getRole().toLowerCase().equals("student");
+						tempProfile = map.get(i);
+						Loggers.loggerValue("tempProfile value ", tempProfile);
+						for (Profile profile : gotoloop) {
+							childSmartIdList.add(profile.getSmartId());
+						}
+					} else {
+						for (Profile profile : childList) {
+							childSmartIdList.add(profile.getSmartId());
+						}
+						return childSmartIdList;
+					}
+				} else {
+					boo = true;
+				}
+			} while (!boo);
+			for (Profile profile : childList) {
+				childSmartIdList.add(profile.getSmartId());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(
+				"Total profiles reporting to the parentId : " + parentId + " is of size : " + childSmartIdList.size());
+		return childSmartIdList;
+	}
+
+	@Override
+	public ArrayList<String> getAllChildSmartIdForHr(String parentId, Map<String, Profile> allProfiles) {
+		Loggers.loggerStart("getAllChildSmartId in services is called with parentId : " + parentId);
+		ArrayList<String> childSmartIdList = new ArrayList<String>();
+		ArrayList<Profile> childList = searchEmployeeInfoForHr(parentId, allProfiles);
+		ArrayList<Profile> tempProfile = childList;
+		Map<Integer, ArrayList<Profile>> map = new HashMap<Integer, ArrayList<Profile>>();
+		int i = 1;
+		map.put(i, childList);
+		boolean boo = false;
+		try {
+			do {
+				if (!tempProfile.isEmpty()) {
+					ArrayList<Profile> gotoloop = childOfChilds(tempProfile, allProfiles);
+					if (!gotoloop.isEmpty()) {
+						map.put(++i, gotoloop);
+						boo = map.get(i).get(0).getRole().toLowerCase().equals("student");
+						tempProfile = map.get(i);
+						Loggers.loggerValue("tempProfile value ", tempProfile);
+						for (Profile profile : gotoloop) {
+							childSmartIdList.add(profile.getSmartId());
+						}
+					} else {
+						for (Profile profile : childList) {
+							childSmartIdList.add(profile.getSmartId());
+						}
+						return childSmartIdList;
+					}
+				} else {
+					boo = true;
+				}
+			} while (!boo);
+			for (Profile profile : childList) {
+				childSmartIdList.add(profile.getSmartId());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(
+				"Total profiles reporting to the parentId : " + parentId + " is of size : " + childSmartIdList.size());
+		return childSmartIdList;
+	}
+	
+	
+	@Override
+	public ArrayList<Profile> getAllChildSmartIdForDashboard(String parentId, Map<String, Profile> allProfiles) {
+		Loggers.loggerStart("getAllChildSmartId in services is called with parentId : " + parentId);
+		ArrayList<Profile> childSmartIdList = new ArrayList<Profile>();
+		ArrayList<Profile> childList = searchEmployeeInfo(parentId, allProfiles);
+		ArrayList<Profile> tempProfile = childList;
+		Map<Integer, ArrayList<Profile>> map = new HashMap<Integer, ArrayList<Profile>>();
+		int i = 1;
+		map.put(i, childList);
+		boolean boo = false;
+		try {
+			do {
+				if (!tempProfile.isEmpty()) {
+					ArrayList<Profile> gotoloop = childOfChilds(tempProfile, allProfiles);
+					if (!gotoloop.isEmpty()) {
+						map.put(++i, gotoloop);
+						boo = map.get(i).get(0).getRole().toLowerCase().equals("student");
+						tempProfile = map.get(i);
+						Loggers.loggerValue("tempProfile value ", tempProfile);
+						for (Profile profile : gotoloop) {
+							childSmartIdList.add(profile);
+						}
+					} else {
+						for (Profile profile : childList) {
+							childSmartIdList.add(profile);
+						}
+						return childSmartIdList;
+					}
+				} else {
+					boo = true;
+				}
+			} while (!boo);
+			for (Profile profile : childList) {
+				childSmartIdList.add(profile);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
