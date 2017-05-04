@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
+import com.gsmart.model.Hierarchy;
+import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -49,6 +51,33 @@ public class BandDaoImpl implements BandDao {
 	 * 
 	 * @return list of band entities available in Band
 	 */
+	@SuppressWarnings("unchecked")
+	public List<Band> search(Band band, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+
+		List<Band> bandList;
+		try {
+			if (hierarchy == null) {
+
+				query = sessionFactory.getCurrentSession()
+						.createQuery("from Band where role like '%" + band.getRole() + "%' AND isActive='Y'");
+			} else {
+				query = sessionFactory.getCurrentSession().createQuery("from Band where role like '%"
+						+ band.getRole() + "%' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+
+			bandList = query.list();
+
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		Loggers.loggerEnd();
+
+		return bandList;
+	}
+	
 	@Override
 	public Map<String, Object> getBandList(int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
