@@ -101,7 +101,28 @@ public class Fee {
 	
 	@Column(name="MODE_OF_PAYMENT")
 	private String modeOfPayment;
+	@Column(name="CHEQUE_NUMBER")
+	private Integer chequeNumber;
 	
+	@Column(name="BANK_NAME")
+	private String bankName;
+	
+	public Integer getChequeNumber() {
+		return chequeNumber;
+	}
+
+	public void setChequeNumber(Integer chequeNumber) {
+		this.chequeNumber = chequeNumber;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
 	@Column(name="SPORTS_FEE")
 	private Integer sportsFee;
 	
@@ -115,7 +136,7 @@ public class Fee {
 	private Integer miscellaneousFee;
 	
 	@Column(name = "TRANSPORTATION_FEE")
-	private String transportationFee;
+	private int transportationFee;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -129,11 +150,11 @@ public class Fee {
 		this.hierarchy = hierarchy;
 	}
 	
-	public String getTransportationFee() {
+	public int getTransportationFee() {
 		return transportationFee;
 	}
 
-	public void setTransportationFee(String transportationFee) {
+	public void setTransportationFee(int transportationFee) {
 		this.transportationFee = transportationFee;
 	}
 

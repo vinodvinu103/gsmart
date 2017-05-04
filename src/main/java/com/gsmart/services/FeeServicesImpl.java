@@ -143,7 +143,7 @@ public class FeeServicesImpl implements FeeServices {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
 			e.printStackTrace();
-			// Loggers.loggerException(e.getMessage());
+			
 		}
 		Loggers.loggerEnd();
 
@@ -151,24 +151,7 @@ public class FeeServicesImpl implements FeeServices {
 	
 	
 	
-/*	int i=0;
-    String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
 
-	private String myinvoice(String inst) {
-		if (inst=="KAVE") {
-			System.out.println("hi suni");
-			
-		}
-		else if(inst.equals("VELL")){
-			System.out.println("hi machi");
-		}
-	Loggers.loggerStart(inst);
-		String a="gwr";
-		++i;
-		String b=a+"-"+year+"-"+i;
-		Loggers.loggerValue("b value is ", b);
-		return b;
-	}*/
 
 	@Override
 	public void deleteFee(Fee fee) throws GSmartServiceException {
