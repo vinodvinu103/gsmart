@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
-import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.BandServices;
 import com.gsmart.util.CalendarCalculator;

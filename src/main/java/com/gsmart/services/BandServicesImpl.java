@@ -11,7 +11,6 @@ import com.gsmart.dao.BandDao;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;

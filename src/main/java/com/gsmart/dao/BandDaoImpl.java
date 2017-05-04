@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;

@@ -6,7 +6,6 @@ import java.util.Map;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartServiceException;
 
 /**
