@@ -207,7 +207,7 @@ public class RegistrationController {
 					fee.setSportsFee(feeMaster.getSportsFee());
 					fee.setStandard(feeMaster.getStandard());
 					fee.setTuitionFee(feeMaster.getTuitionFee());
-					fee.setTransportationFee(feeMaster.getTransportationFee());
+					//fee.setTransportationFee(feeMaster.getTransportationFee());
 					fee.setReportingManagerId(profile.getReportingManagerId());
 					fee.setModeOfPayment("cash");
 					fee.setAcademicYear(profile.getAcademicYear());
