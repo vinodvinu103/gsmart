@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gsmart.dao.BandDao;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -34,6 +35,16 @@ public class BandServicesImpl implements BandServices {
 	/**
 	 * @return calls {@link BandDao}'s <code>getBandList()</code> method
 	 */
+	@Override
+	public List<Band> search(Band band, Hierarchy hierarchy) throws GSmartServiceException {
+		try {
+			return bandDao.search(band, hierarchy);
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+
+	}
+	
 	@Override
 	public Map<String, Object> getBandList(int min, int max) throws GSmartServiceException {
 		Loggers.loggerStart();
