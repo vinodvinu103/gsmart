@@ -11,12 +11,13 @@ import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.model.InventoryAssignmentsStudent;
+import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
 
 public interface InventoryAssignmentsDao {
 
 
-	public Map<String, Object> getInventoryAssignList(String role, String smartId, Long hid, Integer min, Integer max) throws GSmartDatabaseException;
+	public Map<String, Object> getInventoryAssignList(Token tokenObj, Long hid, Integer min, Integer max) throws GSmartDatabaseException;
 
 	public Map<String, Object> getInventoryAssignStudentList(String role,Long hid, Integer min, Integer max) throws GSmartDatabaseException; 
 	
@@ -36,5 +37,5 @@ public interface InventoryAssignmentsDao {
 			throws GSmartDatabaseException;
 
 
-	public List<InventoryAssignments> getInventoryStudentList(Long hid)throws GSmartDatabaseException;
+	public List<InventoryAssignments> getInventoryStudentList(Token tokenObj)throws GSmartDatabaseException;
 }

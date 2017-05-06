@@ -193,6 +193,14 @@ public class InventoryAssignments
 	public void setTotalQuantity(int totalQuantity) {
 		this.totalQuantity = totalQuantity;
 	}
+
+	@Override
+	public String toString() {
+		return "InventoryAssignments [category=" + category + ", itemType=" + itemType + ", teacherName=" + teacherName
+				+ ", standard=" + standard + ", section=" + section + ", quantity=" + quantity + ", leftQuantity="
+				+ leftQuantity + ", teacherId=" + teacherId + ", entryTime=" + entryTime + ", isActive=" + isActive
+				+ ", smartId=" + smartId + ", invreturn=" + invreturn + ", hierarchy=" + hierarchy + "]";
+	}
 	
 	
 }

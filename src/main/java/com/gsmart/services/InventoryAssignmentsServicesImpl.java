@@ -14,6 +14,7 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
+import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -28,9 +29,9 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	
 
 	@Override
-	public Map<String, Object> getInventoryAssignList(String role, String smartid, Long hid, Integer min, Integer max) throws GSmartServiceException {
+	public Map<String, Object> getInventoryAssignList(Token tokenObj, Long hid, Integer min, Integer max) throws GSmartServiceException {
 		try {
-			return inventoryAssignmentsDao.getInventoryAssignList(role,smartid,hid, min, max);
+			return inventoryAssignmentsDao.getInventoryAssignList(tokenObj,hid, min, max);
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;
 

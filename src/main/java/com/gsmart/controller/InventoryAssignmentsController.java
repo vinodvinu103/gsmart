@@ -99,20 +99,17 @@ public class InventoryAssignmentsController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Loggers.loggerStart(tokenObj);
+		System.out.println("-------------------------------------");
 		str.length();
-		System.out.println("coming");
 		Map<String, Object> responseMap = new HashMap<>();
 		Map<String, Object> dataMap = new HashMap<>();
 		Map<String, Object> inventoryList = null;
-		System.out.println("inside the if condition");
 		if (tokenObj.getHierarchy() == null) {
-			System.out.println("hierarchy is null");
 			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
-			System.out.println("going inside for loop");
 			for (Hierarchy hid1 : hierarchyList) {
 
-				inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), tokenObj.getSmartId(), hid, min, max);
-                System.out.println("going to the map");
+				inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj, hid, min, max);
 				dataMap.put("inventoryList", inventoryList);
 				dataMap.put("hierarchy",hid1);
 				Loggers.loggerEnd("Inventory List:" + inventoryList);
@@ -123,7 +120,7 @@ public class InventoryAssignmentsController {
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
 
-			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj.getRole(), profileServices.getProfileDetails(tokenObj.getSmartId()).getTeacherId(),hid, min, max);
+			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj,hid, min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
@@ -281,7 +278,7 @@ Loggers.loggerEnd();
 		List<InventoryAssignments> inveStdList = null;
 		Map<String, Object> permissions = new HashMap<>();
 
-		inveStdList = inventoryassignmentdao.getInventoryStudentList(tokenObj.getHierarchy().getHid());
+		inveStdList = inventoryassignmentdao.getInventoryStudentList(tokenObj);
 
 		permissions.put("inventoryStudentList", inveStdList);
 

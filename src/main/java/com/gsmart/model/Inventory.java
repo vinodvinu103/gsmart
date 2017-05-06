@@ -143,10 +143,12 @@ public class Inventory {
 
 	@Override
 	public String toString() {
-		return "Inventory [\n category=" + category + ", \n itemType=" + itemType + ",  \n entryTime=" + entryTime + ", \n quantity="
-				+ quantity + ", \n leftQuantity=" + leftQuantity + ", \n exitTime=" + exitTime + ", \n updateTime=" + updateTime
-				+ ", \n isActive=" + isActive + "]";
+		return "Inventory [category=" + category + ", itemType=" + itemType + ", entryTime=" + entryTime + ", quantity="
+				+ quantity + ", leftQuantity=" + leftQuantity + ", isActive=" + isActive + ", hierarchy=" + hierarchy
+				+ "]";
 	}
+
+	
 
 	
 
