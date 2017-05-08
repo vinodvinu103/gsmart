@@ -1,29 +1,26 @@
 package com.gsmart.services;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.HolidayDao;
 import com.gsmart.dao.LeaveDao;
 import com.gsmart.dao.LeaveMasterDao;
-import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.WeekDaysDao;
 import com.gsmart.model.CompoundLeave;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Leave;
 import com.gsmart.model.LeaveMaster;
-import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
 import com.gsmart.util.GSmartDatabaseException;
@@ -31,22 +28,22 @@ import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class LeaveServicesImpl implements LeaveServices {
 
 	@Autowired
 	private LeaveDao leaveDao;
 
 	@Autowired
-	HolidayDao holidayDao;
+	private HolidayDao holidayDao;
 
 	@Autowired
-	WeekDaysDao weekDays;
+	private WeekDaysDao weekDays;
+ 
+	
 
 	@Autowired
-	ProfileDao profileDao;
-
-	@Autowired
-	LeaveMasterDao leaveMasterDao;
+	private LeaveMasterDao leaveMasterDao;
 
 	@Override
 	public Map<String, Object> getLeaveList(Token tokenObj, Hierarchy hierarchy, int min, int max)
@@ -79,10 +76,9 @@ public class LeaveServicesImpl implements LeaveServices {
 	public CompoundLeave addLeave(Leave leave, Integer noOfdays, String smartId, String role, Hierarchy hierarchy)
 			throws GSmartServiceException {
 		Loggers.loggerStart();
-		Profile profile = null;
-		profile = profileDao.getProfileDetails(smartId);
-		String school = profile.getSchool();
-		String institution = profile.getInstitution();
+		/*Profile profile = profileDao.getProfileDetails(smartId);*/
+		/*String school = profile.getSchool();
+		String institution = profile.getInstitution();*/
 		CompoundLeave cl = null;
 		try {
 			Calendar startCal = Calendar.getInstance();
@@ -103,8 +99,6 @@ public class LeaveServicesImpl implements LeaveServices {
 			
 			cl=avoidLeaveForSameDate(leave, hierarchy.getHid());
 			if(cl==null){
-
-				//ArrayList<WeekDays> weekOffs = (ArrayList<WeekDays>) weekDays.getWeekdaysForHoliday(school, institution);
 
 				ArrayList<WeekDays> weekOffs = (ArrayList<WeekDays>) weekDays.getWeekdaysForHoliday(hierarchy.getHid());
 
@@ -129,7 +123,7 @@ public class LeaveServicesImpl implements LeaveServices {
 					}
 
 					startCal.setTime(leave.getStartDate());
-				} // for
+				} // for±±
 
 				System.out.println("days: " + days);
 

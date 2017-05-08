@@ -8,9 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
-
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 
 import com.gsmart.model.CompoundPerformanceAppraisal;
-
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.model.Profile;
@@ -48,9 +44,9 @@ import com.gsmart.util.Loggers;
 public class PerformanceController {
 
 	@Autowired
-	PerformanceAppraisalService appraisalservice;
+	private PerformanceAppraisalService appraisalservice;
 	@Autowired
-	GetAuthorization getauthorization;
+	private GetAuthorization getauthorization;
 	@Autowired
 	TokenService tokenService;
 	@Autowired

@@ -1,12 +1,20 @@
 package com.gsmart.model;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "notice")
 public class Notice {
@@ -14,6 +22,7 @@ public class Notice {
 	@Column(name = "ENTRY_TIME")
 	private String entryTime;
 	@Column(name = "SMART_ID")
+//	@Index(name = "smartId")
 	private String smartId;
 	@Lob
 	@Column(name = "MESSAGE")
@@ -23,10 +32,24 @@ public class Notice {
 	@Column(name = "UPDATE_TIME")
 	private String update_time;
 	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+     
+	@Column(name = "MESSAGE_Sub")
+	private String messagesubject;
 	
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
 	
 	@Lob
 	@Column(name = "Image")
+//	@Index(name = "image")
 	private byte[] image;
 	
 	
@@ -142,12 +165,24 @@ public class Notice {
 	public void setUpdate_time(String update_time) {
 		this.update_time = update_time;
 	}
+	
+	
+
+	public String getMessagesubject() {
+		return messagesubject;
+	}
+
+	public void setMessagesubject(String messagesubject) {
+		this.messagesubject = messagesubject;
+	}
 
 	@Override
 	public String toString() {
 		return "Notice [entryTime=" + entryTime + ", smartId=" + smartId + ", message=" + message + ", exitTime="
-				+ exitTime + ", update_time=" + update_time + ", role=" + role + ", isActive=" + isActive + ", type="
-				+ type + ", childFlag=" + childFlag + ", updatedId=" + updatedId + ", image=" + image + ", format=" + format + "]";
+				+ exitTime + ", update_time=" + update_time + ", hierarchy=" + hierarchy + ", messagesubject="
+				+ messagesubject + ", image=" + Arrays.toString(image) + ", format=" + format + ", role=" + role
+				+ ", isActive=" + isActive + ", type=" + type + ", childFlag=" + childFlag + ", updatedId=" + updatedId
+				+ "]";
 	}
 	
 

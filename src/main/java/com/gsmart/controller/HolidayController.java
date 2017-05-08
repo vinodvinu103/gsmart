@@ -20,10 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.dao.HierarchyDao;
 import com.gsmart.model.CompoundHoliday;
 import com.gsmart.model.Holiday;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.HolidayServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -46,16 +44,13 @@ import com.gsmart.util.Loggers;
 public class HolidayController {
 
 	@Autowired
-	HolidayServices holidayServices;
+	private HolidayServices holidayServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
 	@Autowired
-	TokenService tokenService;
-	
-	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 	
 
 	/**
@@ -79,18 +74,14 @@ public class HolidayController {
 		str.length();
 
 		Map<String, Object> holidayList = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> permissions = new HashMap<>();
-		permissions.put("modulePermission", modulePermission);
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
-			System.out.println("hid"+hierarchy);
 			hid=hierarchy;
 		}else{
 			hid=tokenObj.getHierarchy().getHid();
 		}
-		/*if (modulePermission != null) {*/
 			holidayList = holidayServices.getHolidayList(hid, min, max);
 			if(holidayList!=null){
 				permissions.put("status", 200);
@@ -104,9 +95,6 @@ public class HolidayController {
 			}
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		/*} else {
-			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-		}*/
 
 	}
 	
@@ -130,9 +118,8 @@ public class HolidayController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			if(tokenObj.getHierarchy()==null){
 				holiday.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
 			}else{
@@ -149,10 +136,6 @@ public class HolidayController {
 				respMap.put("status", 400);
 	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
-		} else {
-			respMap.put("status", 403);
-        	respMap.put("message", "Permission Denied");
-		}
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
@@ -178,7 +161,6 @@ public class HolidayController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				ch = holidayServices.editHoliday(holiday);
 				if (ch != null) {
@@ -195,10 +177,6 @@ public class HolidayController {
 	        	respMap.put("message", "Deleted Successfully");
 			}
 
-		} else {
-			respMap.put("status", 403);
-        	respMap.put("message", "Permission Denied");
-		}
 		Loggers.loggerEnd(respMap);
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}

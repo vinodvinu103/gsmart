@@ -9,12 +9,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "LEAVEMASTER")
 @IdClass(com.gsmart.model.CompoundLeaveMaster.class)
 public class LeaveMaster {
 	@Id
 	@Column(name = "LEAVE_TYPE")
+//	@Index(name = "leaveType")
 	private String leaveType;
     @Id
 	@Column(name = "DAYS_ALLOW")
@@ -30,10 +34,12 @@ public class LeaveMaster {
 	private String exitTime;
 
 	@Column(name = "IS_ACTIVE")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
+//	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {

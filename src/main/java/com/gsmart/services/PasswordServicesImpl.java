@@ -3,6 +3,7 @@ package com.gsmart.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.PasswordDao;
 import com.gsmart.model.Hierarchy;
@@ -11,10 +12,11 @@ import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 @Service
+@Transactional
 public class PasswordServicesImpl implements PasswordServices {
 	
 	@Autowired
-	PasswordDao passwordDao;
+	private PasswordDao passwordDao;
 
 	@Override
 	public void setPassword(Login login,Hierarchy hierarchy)throws GSmartServiceException {

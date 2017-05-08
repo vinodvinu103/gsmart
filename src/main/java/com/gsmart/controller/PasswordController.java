@@ -26,7 +26,6 @@ import com.gsmart.util.CommonMail;
 import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
-import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
 @Controller
@@ -34,11 +33,9 @@ import com.gsmart.util.Loggers;
 public class PasswordController {
 
 	@Autowired
-	PasswordServices passwordServices;
+	private PasswordServices passwordServices;
 
 	
-	@Autowired
-	GetAuthorization getAuthorization;
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> setPassword(@RequestBody Login login, @RequestHeader HttpHeaders token,
@@ -50,10 +47,11 @@ public class PasswordController {
 		Map<String, Object> responseMap = new HashMap<>();
 		if (token.get("Authorization")!= null) {
 			try {
-				String tokenNumber=token.get("Authorization").get(0);
-				if(getAuthorization.authorizationForPost(tokenNumber, httpSession));
-				{
-				Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+
+
+				
+				Token tokenObj=(Token) httpSession.getAttribute("token");
+
 				String smartId = tokenObj.getSmartId();
 				login.setHierarchy(tokenObj.getHierarchy());
 				boolean pwd = passwordServices.changePassword(login, smartId,tokenObj.getHierarchy());
@@ -63,7 +61,6 @@ public class PasswordController {
 				} else {
 					responseMap.put("status", 404);
 					responseMap.put("message", "Enter Valid Password");
-				}
 				}
 
 			} catch (GSmartServiceException e) {
@@ -94,9 +91,9 @@ public class PasswordController {
 			responseMap.put("message", "valid user");
 			CommonMail commonMail = new CommonMail();
 	
-			String smartId=Encrypt.md5(profile.getSmartId());
+//			String smartId=Encrypt.md5(profile.getSmartId());
 				try {
-					commonMail.passwordMail(profile,smartId);
+					commonMail.passwordMail(profile,profile.getSmartId());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -3,36 +3,39 @@ package com.gsmart.services;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.gsmart.dao.HierarchyDao;
 import com.gsmart.dao.LoginDao;
 import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class LoginServicesImpl implements LoginServices{
 
 	@Autowired
-	LoginDao loginDao;
+	private LoginDao loginDao;
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	RolePermissionServices permissionServices;
+	private RolePermissionServices permissionServices;
 
 	@Autowired
-	TokenService tokenService;
+	private TokenService tokenService;
+	
+	@Autowired
+	private HierarchyDao hierarchyDao;
 
 	@Override
 	public Map<String, Object> authenticate(Login login, String tokenNumber) throws GSmartServiceException {
@@ -48,8 +51,14 @@ public class LoginServicesImpl implements LoginServices{
 				System.out.println("role is"+tokenDetails.getRole());
 				Loggers.loggerValue("User is already logged in", "");
 				
-				List<RolePermission> rolePermissions = permissionServices.getPermission(tokenDetails.getRole());
+				Map<String, Object> rolePermissions = permissionServices.getPermission(tokenDetails.getRole());
 				Profile profile = profileServices.getProfileDetails(tokenDetails.getSmartId());
+				
+				if(tokenDetails.getHierarchy()!=null){
+					jsonMap.put("hierarchy", hierarchyDao.getHierarchyByHid(tokenDetails.getHierarchy().getHid()));
+				}else{
+					jsonMap.put("hierarchy", null);
+				}
 				jsonMap.put("permissions", rolePermissions);
 				jsonMap.put("profile", profile);
 				jsonMap.put("token", tokenDetails.getTokenNumber());
@@ -66,8 +75,15 @@ public class LoginServicesImpl implements LoginServices{
 					Profile profile = profileServices.getProfileDetails(smartId);
 					String role = profile.getRole();
 					String reportingId = profile.getReportingManagerId();
-					List<RolePermission> rolePermissions = permissionServices.getPermission(role);
+	
+					Map<String, Object> rolePermissions = permissionServices.getPermission(role);
 					Token token = issueToken(smartId, role, loginObj,reportingId);
+					
+					if(loginObj.getHierarchy()!=null){
+						jsonMap.put("hierarchy", hierarchyDao.getHierarchyByHid(loginObj.getHierarchy().getHid()));
+					}else{
+						jsonMap.put("hierarchy", null);
+					}
 					jsonMap.put("permissions", rolePermissions);
 					jsonMap.put("profile", profile);
 					jsonMap.put("token", token.getTokenNumber());

@@ -2,7 +2,6 @@ package com.gsmart.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
@@ -13,7 +12,7 @@ public interface NoticeDao{
 	
 	public void addNotice(Notice notice,Token token)throws Exception;
 
-	public List<Notice> viewNotice(ArrayList<String> smartIdList)throws Exception;
+	public List<Notice> viewNotice(ArrayList<String> smartIdList,Long hid)throws Exception;
 
     public  void deleteNotice(Notice notice) throws Exception;
 
@@ -21,7 +20,7 @@ public interface NoticeDao{
 
 	public List<Notice> viewGenericNotice(String type);
 	
-	public List<Notice> viewMyNotice(String role);
+	public List<Notice> viewMyNotice(String role, Long hid);
 	
 	public ArrayList<Profile> getProfiles(String role,String smartId)throws GSmartServiceException;
 
@@ -34,7 +33,9 @@ public interface NoticeDao{
 
 	public List<Profile> getAllRecord();
 
-
+	public List<Notice> viewNoticeForAdmin(Long hid)throws GSmartServiceException;
+	
+	public List<Notice> viewAdminNoticeDao(String SmartId)throws GSmartServiceException;
     
    // public List<Notice> viewSpecificNotice(Integer smart_id)throws Exception;
 

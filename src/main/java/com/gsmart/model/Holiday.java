@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 /**
  * class-name: Holiday.java 
  * Assigning holiday for everyone who enrolled in the school
@@ -21,6 +23,7 @@ import javax.persistence.Table;
  * @since 2016-08-01
  *
  */
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "HOLIDAY_MASTER")
 @IdClass(com.gsmart.model.CompoundHoliday.class)
@@ -31,6 +34,7 @@ public class Holiday {
 	 */
 	@Id
 	@Column(name="HOLIDAY_DATE")
+//	@Index(name = "holidayDate")
 	private Date holidayDate;
 	
 	public Date getHolidayDate() {
@@ -59,6 +63,7 @@ public class Holiday {
 	private String updatedTime;
 	
 	@Column(name="IS_ACTIVE")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@OneToOne(fetch=FetchType.EAGER)

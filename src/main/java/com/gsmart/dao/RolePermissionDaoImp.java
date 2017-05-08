@@ -1,7 +1,6 @@
 package com.gsmart.dao;
 
 import java.security.acl.Permission;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,17 +9,18 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -37,13 +37,12 @@ import com.gsmart.util.Loggers;
  */
 
 @Repository
+@Transactional
 public class RolePermissionDaoImp implements RolePermissionDao {
 
 	@Autowired
-	SessionFactory sessionFactory;
-	Session session;
+	private SessionFactory sessionFactory;
 	Query query;
-	Transaction transaction;
 
 	/**
 	 * to view the list of records available in {@link RolePermission} table
@@ -55,28 +54,24 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 
 	public Map<String, Object> getPermissionList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		Loggers.loggerStart();
 		List<RolePermission> rolePermissions = null;
 		Map<String, Object> rolePermissionMap = new HashMap<>();
 		Criteria criteria = null;
-		getConnection();
 		
 		try {
-			criteria = session.createCriteria(RolePermission.class);
+			criteria = sessionFactory.getCurrentSession().createCriteria(RolePermission.class);
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.setFirstResult(min);
 		     criteria.setMaxResults(max);
 		     criteria.addOrder(Order.asc("role"));
 		     rolePermissions = criteria.list();		     
-		     Criteria criteriaCount = session.createCriteria(RolePermission.class);
+		     Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(RolePermission.class);
+		     criteriaCount.add(Restrictions.eq("isActive", "Y"));
 		     criteriaCount.setProjection(Projections.rowCount());
-		     Long count = (Long) criteriaCount.uniqueResult();
-		     rolePermissionMap.put("totalpermission", count);
+		     rolePermissionMap.put("totalpermission", criteriaCount.uniqueResult());
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
 		}
 		Loggers.loggerEnd(rolePermissions);
 		rolePermissionMap.put("rolePermissions", rolePermissions);
@@ -93,11 +88,10 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	@Override
 	public RolePermissionCompound addPermission(RolePermission rolePermission) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
+		Session session=this.sessionFactory.getCurrentSession();
 		RolePermissionCompound cb = null;
 		RolePermission permission1 = null;
 		try {
-			// Hierarchy hierarchy=rolePermission.getHierarchy();
 			if (rolePermission.getSubModuleName() == null) {
 				permission1 = fetch3(rolePermission);
 			} else {
@@ -109,7 +103,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 				rolePermission.setIsActive("Y");
 				cb = (RolePermissionCompound) session.save(rolePermission);
 			}
-			transaction.commit();
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -117,8 +110,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
 		return cb;
@@ -127,10 +118,10 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	/**
 	 * create instance for session and begins transaction
 	 */
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
-	}
+	}*/
 
 	/**
 	 * persists the updated permission instance
@@ -143,7 +134,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 
 	@Override
 	public RolePermission editPermission(RolePermission rolePermission) throws GSmartBaseException {
-		getConnection();
 		Loggers.loggerStart();
 		RolePermission cb = null;
 
@@ -165,6 +155,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 
 	private RolePermission updateRolePermission(RolePermission oldRolePermission, RolePermission rolePermission)
 			throws GSmartDatabaseException {
+		Session session=this.sessionFactory.getCurrentSession();
 		RolePermission rolePermission1 = null;
 		RolePermission ch = null;
 		try {
@@ -176,7 +167,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 						oldRolePermission.setIsActive("N");
 						session.update(oldRolePermission);
 
-						transaction.commit();
 						return oldRolePermission;
 					
 				} else {
@@ -186,7 +176,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 						oldRolePermission.setIsActive("N");
 						session.update(oldRolePermission);
 
-						transaction.commit();
 						return oldRolePermission;
 					}
 
@@ -201,7 +190,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 						oldRolePermission.setIsActive("N");
 						session.update(oldRolePermission);
 
-						transaction.commit();
 						return oldRolePermission;
 
 					
@@ -213,7 +201,6 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 						oldRolePermission.setIsActive("N");
 						session.update(oldRolePermission);
 
-						transaction.commit();
 						return oldRolePermission;
 					}
 
@@ -232,7 +219,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	private RolePermission fetch3(RolePermission rolePermission) {
 		Loggers.loggerStart();
 		RolePermission rolePermissionList = null;
-		query = session.createQuery("FROM RolePermission WHERE role=:role and moduleName=:moduleName  AND isActive='Y'");
+		query = sessionFactory.getCurrentSession().createQuery("FROM RolePermission WHERE role=:role and moduleName=:moduleName  AND isActive='Y'");
 		query.setParameter("role", rolePermission.getRole());
 
 		query.setParameter("moduleName", rolePermission.getModuleName());
@@ -246,7 +233,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	private RolePermission fetch4(RolePermission rolePermission) {
 		Loggers.loggerStart();
 		RolePermission rolePermissionList = null;
-		query = session.createQuery(
+		query = sessionFactory.getCurrentSession().createQuery(
 				"FROM RolePermission WHERE role=:role and moduleName=:moduleName and subModuleName=:subModuleName  AND isActive=:isActive");
 		query.setParameter("subModuleName", rolePermission.getSubModuleName());
 		query.setParameter("role", rolePermission.getRole());
@@ -310,39 +297,36 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	 * @return Nothing
 	 */
 	public void deletePermission(RolePermission permission) throws GSmartBaseException {
-		getConnection();
 		Loggers.loggerStart();
-
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 
 
 			permission.setExitTime(CalendarCalculator.getTimeStamp());
 			permission.setIsActive("D");
 			session.update(permission);
-			session.getTransaction().commit();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 	}
 
 	@SuppressWarnings("unchecked")
 
 	@Override
-	public List<RolePermission> getPermission(String role) throws GSmartDatabaseException {
-		getConnection();
+	public Map<String, Object> getPermission(String role) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 
-		List<RolePermission> rolePermissions = new ArrayList<>();
+//		List<RolePermission> rolePermissions = new ArrayList<>();
+		Map<String, Object> rolePermissions=new HashMap<>();
+		
 
 		try {
 
 
 			Loggers.loggerValue("given role is : ", role);
-			query = session.createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"SELECT DISTINCT moduleName from RolePermission where role=:role and isActive=:isActive");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
@@ -350,41 +334,65 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			Loggers.loggerValue("given modules size is : ", modules.size());
 			for (String moduleName : modules) {
 				RolePermission permission = new RolePermission();
-				permission.setModuleName(moduleName);
-				Loggers.loggerValue("given moduleName is : ", moduleName);
-				rolePermissions.add(permission);
+				/*permission.setModuleName(moduleName);
+				Loggers.loggerValue("given moduleName is : ", moduleName);*/
+				
+				if(moduleName.equalsIgnoreCase("maintenance")){
+					permission.setModuleName(moduleName);
+					rolePermissions.put(moduleName, permission);
+				}else{
+					rolePermissions.put(moduleName,getPermission(role,moduleName));
+				}
+				
 			}
+			
 
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd(rolePermissions);
 		return rolePermissions;
+	}
+	
+	private RolePermission getPermission(String role, String module) {
+		
+		Loggers.loggerStart(role);
+		Loggers.loggerStart(module);
+		
+		RolePermission permissions=null;
+		try{
+		
+		query = sessionFactory.getCurrentSession().createQuery("from RolePermission where role=:role and (moduleName=:moduleName or subModuleName=:moduleName) and isActive=:isActive");
+		query.setParameter("role", role);
+		query.setParameter("moduleName", module);
+		query.setParameter("isActive","Y");
+		permissions = (RolePermission) query.uniqueResult();
+
+		Loggers.loggerEnd(permissions);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return permissions;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RolePermission> getSubModuleNames(String role, Hierarchy hierarchy) throws GSmartDatabaseException {
+	public List<RolePermission> getSubModuleNames(String role) throws GSmartDatabaseException {
 		Loggers.loggerStart(role);
 		List<RolePermission> rolePermissions = null;
-		System.out.println("hierarchry ...." + hierarchy);
-		getConnection();
 		try {
-			query = session.createQuery(
-					"from RolePermission where role=:role and moduleName=:moduleName and isActive=:isActive");
+			query = sessionFactory.getCurrentSession().createQuery(
+					"from RolePermission where role=:role and lower(moduleName)=:moduleName and isActive=:isActive");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
-			query.setParameter("moduleName", "Maintenance");
+			query.setParameter("moduleName", "maintenance");
 			rolePermissions = (List<RolePermission>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd(rolePermissions);
 		return rolePermissions;
 	}
@@ -393,7 +401,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	public RolePermission getRolePermission(String entryTime) {
 		Loggers.loggerStart();
 		try {
-			query = session.createQuery("from RolePermission where isActive='Y' and entryTime=:entryTime ");
+			query = sessionFactory.getCurrentSession().createQuery("from RolePermission where isActive='Y' and entryTime=:entryTime ");
 			query.setParameter("entryTime", entryTime);
 			RolePermission permission = (RolePermission) query.uniqueResult();
 			// session.close();
@@ -405,6 +413,27 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			return null;
 		}
 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Roles> getRoles() throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<Roles> roles=null;
+		try {
+			query=sessionFactory.getCurrentSession().createQuery("from Roles");
+			roles=query.list();
+			
+		}catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		
+		return roles;
 	}
 
 }

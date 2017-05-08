@@ -6,6 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 /**
  * class-name: Band.java 
  * Assigning band for everyone who enrolled in the school
@@ -16,6 +18,7 @@ import javax.persistence.Table;
  * @since 2016-02-23
  *
  */
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "BAND_MASTER")
 @IdClass(com.gsmart.model.CompoundBand.class)
@@ -26,6 +29,7 @@ public class Band {
 	 */
 	@Id
 	@Column(name = "BAND_ID")
+//	@Index(name= "bandId")
 	private int bandId;
 	/**
 	 * Designation of the particular person 
@@ -38,6 +42,7 @@ public class Band {
 	 */
 	@Id
 	@Column(name = "ROLE")
+//	@Index(name = "role")
 	private String role;
 	/**
 	 * timeStamp is the Time when the band entity is added

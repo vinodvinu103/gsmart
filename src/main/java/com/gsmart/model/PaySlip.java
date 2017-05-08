@@ -5,13 +5,17 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="PAY_SLIP")
 public class PaySlip {
 	
 	@Id
 	@Column(name="SMART_ID")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Column(name="FROM_MONTH")
@@ -24,6 +28,7 @@ public class PaySlip {
 	private String toMonth;
 	
 	@Column(name="TO_YEAR")
+//	@Index(name = "toYear")
 	private String toYear;
 	
 	

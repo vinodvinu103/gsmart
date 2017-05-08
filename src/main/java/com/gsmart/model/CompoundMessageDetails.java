@@ -8,23 +8,28 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class CompoundMessageDetails implements Serializable{
 
- private String smartId;
-	 private String entryTime;
+	private String smartId;
+//	private String entryTime;
+	private String message;
+	
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
 	public String getSmartId() {
 		return smartId;
 	}
 	public void setSmartId(String smartId) {
 		this.smartId = smartId;
 	}
-	public String getEntryTime() {
+	/*public String getEntryTime() {
 		return entryTime;
 	}
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
-	}
-	 
-	 
-	 
-	
-	
+	}*/
+
 }

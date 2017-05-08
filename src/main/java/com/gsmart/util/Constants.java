@@ -31,8 +31,14 @@ public class Constants {
 	public static final String CRONJOB = "/cronjob";
 	public static final String PASSWORD="/password";
 	public static final String ATTENDANCE="/attendance";
+	public static final String TRANSPOTATIONFEE="/transpotationfee";
+	public static final String GRADES="/grades";
+
 	public static final	String CONTACT="/contact";
+
 	public static final String DASHBOARD="/dashboard";
+	
+	public static final String TRANSPORTATION="/transportation";
 
 }
 

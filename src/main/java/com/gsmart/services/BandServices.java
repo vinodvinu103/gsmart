@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartServiceException;
 
 /**
@@ -44,5 +45,7 @@ public interface BandServices {
 	public void deleteBand(Band band)throws GSmartServiceException;
 
 	public List<Band> getBandList1()  throws GSmartServiceException;
+
+	List<Band> search(Band band, Hierarchy hierarchy) throws GSmartServiceException;
 
 }

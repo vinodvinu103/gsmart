@@ -22,10 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
+import com.gsmart.model.Token;
 //import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 
@@ -40,6 +43,7 @@ public interface ProfileDao {
 	/* for registration */
 
 	public String getMaxSmartId();
+	
 
 	public boolean userProfileInsert(Profile profile);
 
@@ -48,9 +52,12 @@ public interface ProfileDao {
 	public String deleteprofile(Profile profile);
 	
 	public boolean deleteProfileIfMailFailed(String smartId);
-
+	
+	/* for profile image change*/
+	public String changeprofileimage(Profile profile);
+	
 	/* for profile */
-	public ArrayList<Profile> getAllProfiles();
+	public ArrayList<Profile> getAllProfiles(String AcademicYear);
 
 	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
 			int max);
@@ -68,8 +75,8 @@ public interface ProfileDao {
 	 * @return list of Profile entities available in the {@link Profile} Table
 	 * @throws GSmartDatabaseException
 	 */
-	public List<Profile> search(Profile profile) throws GSmartDatabaseException;
-
+	public List<Profile> search(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException;
+	
 	/**
 	 * @param profile
 	 *            instanceOf {@link Profile}
@@ -81,15 +88,16 @@ public interface ProfileDao {
 
 	public List<Profile> getsearchRep(Search search,String role,Hierarchy hierarchy);
 
-	public Profile profileDetails(String smartId)throws GSmartDatabaseException;
 
 	public List<Profile> getProfileByHierarchy(Hierarchy hierarchy) throws GSmartDatabaseException;
-
-	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
 	
+	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException;
+
+	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
+
 	public Map<String, Object> addRfid(Profile rfid)throws GSmartDatabaseException;
 	
-	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Hierarchy hierarchy)throws GSmartDatabaseException;
+	public Map<String, Object> getProfilesWithRfid(Integer min, Integer max,Long hierarchy)throws GSmartDatabaseException;
 	
 	public List<Profile> editRfid(Profile rfid)throws GSmartDatabaseException;
 	
@@ -99,7 +107,7 @@ public interface ProfileDao {
 	
 	public void addBanner(Banners banner) throws GSmartDatabaseException;
 
-	public Map<String, Object> getBannerList(Integer min, Integer max);
+	public List<Banners> getBannerList();
 	
 	/*public Banners editBanner(Banners banner) throws GSmartDatabaseException, Exception;*/
 

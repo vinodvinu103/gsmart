@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.NoticeDao;
 import com.gsmart.dao.ProfileDao;
@@ -14,15 +15,15 @@ import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartServiceException;
-import com.gsmart.util.Loggers;
 
 @Service
+@Transactional
 public class NoticeServiceImpl implements NoticeService
 {
 	@Autowired
-	NoticeDao noticeDao;
+	private NoticeDao noticeDao;
 	@Autowired
-	ProfileDao profileDao;
+	private ProfileDao profileDao;
 
 	@Override
 	public void addNotice(Notice notice,Token token) throws Exception {
@@ -31,8 +32,8 @@ public class NoticeServiceImpl implements NoticeService
 	}
 
 	@Override
-	public List<Notice> viewNotice(ArrayList<String> smartIdList) throws Exception{
-		return noticeDao.viewNotice(smartIdList);
+	public List<Notice> viewNotice(ArrayList<String> smartIdList,Long hid) throws Exception{
+		return noticeDao.viewNotice(smartIdList,hid);
 		
 	}
 
@@ -56,16 +57,19 @@ public class NoticeServiceImpl implements NoticeService
 	}
 	
 	@Override
-	public List<Notice> viewMyNotice(String role) {
-		return noticeDao.viewMyNotice(role);
+	public List<Notice> viewMyNotice(String role, Long hid) {
+		return noticeDao.viewMyNotice(role,hid);
 	}
 
-	
-	@Override
+	@Override 
+	public List<Notice> viewAdminNoticeService(String SmartId) throws GSmartServiceException{
+		return noticeDao.viewAdminNoticeDao(SmartId);
+	}
+	/*@Override
 	public ArrayList<Profile> getAllProfiles() {
 		ArrayList<Profile> profileList = profileDao.getAllProfiles();
 		return profileList;
-	}
+	}*/
 	
 //	@Override
 //	public ArrayList<Profile> getProfiles(String role,String smartId) throws GSmartServiceException {

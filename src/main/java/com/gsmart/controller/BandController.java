@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
-import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.BandServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -43,13 +42,11 @@ import com.gsmart.util.Loggers;
 public class BandController {
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
 	@Autowired
-	BandServices bandServices;
+	private BandServices bandServices;
 
-	@Autowired
-	TokenService tokenService;
 
 	/**
 	 * to view {@link Band} details.
@@ -62,22 +59,39 @@ public class BandController {
 	 */
 	// String module=getAuthorization.getModuleName();
 
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> search(@RequestBody Band band,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<Band> bandList = null;
+		
+		Map<String, Object> privilege = new HashMap<>();
+			bandList = bandServices.search(band, tokenObj.getHierarchy());
+			privilege.put("bandList", bandList);
+			
+			Loggers.loggerEnd(bandList);
+		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
+	}
+
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("hierarchy") Integer hierarchy, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
+	throws GSmartBaseException {
 		Loggers.loggerStart(hierarchy);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	    str.length();
 	    Map<String, Object> bandList = null;
        
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> permissions = new HashMap<>();
         
-		permissions.put("modulePermission",modulePermission);
-		/*if (modulePermission != null) {
-			System.out.println("success");*/
 			bandList = bandServices.getBandList(min, max);
 			if(bandList!=null){
 				permissions.put("status", 200);
@@ -91,9 +105,6 @@ public class BandController {
 			}
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		/*} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}*/
 		
 		}
 	
@@ -106,13 +117,9 @@ public class BandController {
 	    str.length();
 
 	    List<Band>bandList=null;
-	    RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 
 		Map<String, Object> permissions = new HashMap<>();
         
-		permissions.put("modulePermission",modulePermission);
-		/*if (modulePermission != null) {
-			System.out.println("success");*/
 		bandList = bandServices.getBandList1();
 			if(bandList!=null){
 				permissions.put("status", 200);
@@ -126,9 +133,6 @@ public class BandController {
 			}
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		/*} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}*/
 		
 		}
 
@@ -152,7 +156,6 @@ public class BandController {
 
 		str.length();
 
-        if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
 		CompoundBand cb=bandServices.addBand(band);
 		
 	        if(cb!=null)
@@ -168,12 +171,8 @@ public class BandController {
 		    }
 		    
 	    	
-        }else{
-        	respMap.put("status", 403);
-        	respMap.put("message", "Permission Denied");
-               }
         Loggers.loggerEnd();
-    	return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+        return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 	     
 	}
 
@@ -196,9 +195,6 @@ public class BandController {
 
 		str.length();
 
-
-
-		 if(getAuthorization.authorizationForPut(tokenNumber,task, httpSession)){
 		    if(task.equals("edit")){
 		    	cb=bandServices.editBand(band);
 		    	if(cb!=null){
@@ -215,15 +211,10 @@ public class BandController {
 	        	respMap.put("message", "Deleted Successfully");
 		    }
 		    
-		}
-		 
-		 else {
-			 respMap.put("status", 403);
-	        	respMap.put("message", "Permission Denied");;
-		     }
 		 Loggers.loggerEnd();
 	        
 	     return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 
-}}
+}
+	}
 

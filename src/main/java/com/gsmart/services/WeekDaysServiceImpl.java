@@ -1,10 +1,11 @@
 package com.gsmart.services;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.WeekDaysDao;
 import com.gsmart.model.WeekDays;
@@ -12,20 +13,21 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 @Service
+@Transactional
 public class WeekDaysServiceImpl implements WeekDaysService{
 	
 	@Autowired
-	WeekDaysDao weekday;
+	private WeekDaysDao weekday;
 	
 	@Override
 	public List<WeekDays> getWeekDaysList(long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
-		List<WeekDays> list=null;
+		List<WeekDays> list=new ArrayList<>();
 		try {
      		
 			 list= weekday.getWeekList(hid);
-			 
-			 for (WeekDays weekDays : list) {
+			
+			 /*for (WeekDays weekDays : list) {
 					String wk=weekDays.getWeekDay();
 					String day=null;
 						switch(wk) {
@@ -56,8 +58,8 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 					
 					weekDays.setWeekDay(day);
 					System.out.println("weekdays +++++"+weekDays.getWeekDay());
-					}
-			
+					}*/
+			Loggers.loggerEnd(list);
 			 return list;
 		}  catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();

@@ -9,11 +9,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.Index;
 
 /**
  * class-name: RolePermission.java Assigning permission for everyone who
@@ -24,6 +24,7 @@ import javax.persistence.Transient;
  * @since 2016-08-01
  *
  */
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "PERMISSION_MASTER")
 @IdClass(com.gsmart.model.RolePermissionCompound.class)
@@ -41,12 +42,14 @@ public class RolePermission implements Serializable {
 	 */
 	@Id
 	@Column(name = "ROLE")
+//	@Index(name = "role")
 	private String role;
 	/**
 	 * Permission allowed module name
 	 */
 	@Id
 	@Column(name = "MODULE_NAME")
+//	@Index(name = "moduleName")
 	private String moduleName;
 	/**
 	 * Role of the person to access the add permission
@@ -100,6 +103,7 @@ public class RolePermission implements Serializable {
 	private String exitTime;
 
 	@Column(name = "IS_ACTIVE")
+//	@Index(name = "isActive")
 	private String isActive;
 
 	@Transient

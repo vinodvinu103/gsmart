@@ -9,12 +9,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="FEE")
 public class Fee {
 	
 	
 	@Column(name="SMART_ID")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -22,6 +26,7 @@ public class Fee {
 	private String entryTime;
 	
 	@Column(name="ACADEMIC_YEAR")
+//	@Index(name = "academicYear")
 	private String academicYear;
 	
 	@Column(name="NAME")
@@ -30,8 +35,17 @@ public class Fee {
 	@Column(name="ISACTIVE")
 	private String isActive;
 	
+	@Column(name="IN_VOICE")
+	private String inVoice;
 	
-	
+	public String getInVoice() {
+		return inVoice;
+	}
+
+	public void setInVoice(String inVoice) {
+		this.inVoice = inVoice;
+	}
+
 	public String getIsActive() {
 		return isActive;
 	}
@@ -87,7 +101,28 @@ public class Fee {
 	
 	@Column(name="MODE_OF_PAYMENT")
 	private String modeOfPayment;
+	@Column(name="CHEQUE_NUMBER")
+	private Integer chequeNumber;
 	
+	@Column(name="BANK_NAME")
+	private String bankName;
+	
+	public Integer getChequeNumber() {
+		return chequeNumber;
+	}
+
+	public void setChequeNumber(Integer chequeNumber) {
+		this.chequeNumber = chequeNumber;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
 	@Column(name="SPORTS_FEE")
 	private Integer sportsFee;
 	
@@ -122,8 +157,6 @@ public class Fee {
 	public void setTransportationFee(Integer transportationFee) {
 		this.transportationFee = transportationFee;
 	}
-
-	
 
 	@Column(name="BALANCE_FEE")
 	private Integer balanceFee;

@@ -7,10 +7,10 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
@@ -21,32 +21,38 @@ import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
 @Repository
+@Transactional
 public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	@Autowired
 	SessionFactory sessionFactory;
-	Session session;
 	Query query;
-	Transaction transaction;
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> getPerformanceRecord(String smartId, String year,Long hid,String reportingId) throws GSmartDatabaseException {
-		
-		Map<String, Object> recordobject=new HashMap<>();
+	public Map<String, Object> getPerformanceRecord(String smartId, String year, Long hid, String reportingId)
+			throws GSmartDatabaseException {
+
+		Map<String, Object> recordobject = new HashMap<>();
 		Loggers.loggerStart(smartId);
 		Loggers.loggerStart(reportingId);
-		getConnection();
 		List<PerformanceRecord> performancerecordList = null;
-		List<PerformanceRecord> performancerecordList1=getRecord( reportingId,  smartId,  year, hid);
+		List<PerformanceRecord> performancerecordList1 = getRecord(reportingId, smartId, year, hid);
 		try {
-			
-			System.out.println(smartId);
+
+			System.out.println();
 			Loggers.loggerStart();
-			
-			query = session
-					.createQuery("from PerformanceRecord where smartId=:smartId AND reportingManagerID=null AND  year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			query = sessionFactory.getCurrentSession()
+					.createQuery("from PerformanceRecord where smartId=:smartId AND year=:year AND isActive=:isActive");
+			query.setParameter("smartId", smartId);
+			query.setParameter("year", year);
+			query.setParameter("isActive", "y");
+			performancerecordList = (List<PerformanceRecord>) query.list();
+			Loggers.loggerEnd(performancerecordList);
+
+			query = sessionFactory.getCurrentSession().createQuery(
+					"from PerformanceRecord where smartId=:smartId AND reportingManagerID=null AND  year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hid);
-			
+
 			query.setParameter("smartId", smartId);
 			query.setParameter("year", year);
 			query.setParameter("isActive", "Y");
@@ -55,75 +61,60 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
-		 recordobject.put("owncomments", performancerecordList);
-		 recordobject.put("managercomments", performancerecordList1);
+		recordobject.put("owncomments", performancerecordList);
+		recordobject.put("managercomments", performancerecordList1);
 		return recordobject;
 	}
-	
-	public List<PerformanceRecord> getRecord(String reportingId, String smartId, String year,
-			Long hid) {
-		List<PerformanceRecord> performancerecordList11=null;
+
+	public List<PerformanceRecord> getRecord(String reportingId, String smartId, String year, Long hid) {
+		List<PerformanceRecord> performancerecordList11 = null;
 		Loggers.loggerStart();
-		
+
 		Loggers.loggerValue("reportingId", reportingId);
 
 		try {
-			System.out.println("smartId"+smartId);
+			System.out.println("smartId" + smartId);
 			Loggers.loggerStart();
-			
-			
-			
-		query = session
-				.createQuery("from PerformanceRecord where smartId=:smartId AND  reportingManagerID=:reportingManagerID AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
-		query.setParameter("hierarchy",hid);
-			
-		query.setParameter("smartId", smartId);
-		query.setParameter("year", year);
-		query.setParameter("isActive", "Y");
-		query.setParameter("reportingManagerID", reportingId);
-		performancerecordList11 = (List<PerformanceRecord>) query.list();
-		Loggers.loggerEnd(performancerecordList11);
-		
+
+			query = sessionFactory.getCurrentSession().createQuery(
+					"from PerformanceRecord where smartId=:smartId AND  reportingManagerID=:reportingManagerID AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hid);
+
+			query.setParameter("smartId", smartId);
+			query.setParameter("year", year);
+			query.setParameter("isActive", "Y");
+			query.setParameter("reportingManagerID", reportingId);
+			performancerecordList11 = (List<PerformanceRecord>) query.list();
+			Loggers.loggerEnd(performancerecordList11);
+
+		} catch (Exception e) {
+			Loggers.loggerException(e.getMessage());
 		}
-		 catch (Exception e) {
-				Loggers.loggerException(e.getMessage());
-			} 
-			Loggers.loggerEnd();
-			
-			return performancerecordList11;
+		Loggers.loggerEnd();
+
+		return performancerecordList11;
 	}
-	
-	
-	
-	
-	
+
 	@Override
 	public Map<String, Object> getPerformanceRecordManager(String reportingManagerId, String smartId, String year,
 			Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		Map<String, Object> recordobject=new HashMap<>();
-		getConnection();
+		Map<String, Object> recordobject = new HashMap<>();
 		List<PerformanceRecord> performancerecordList = null;
-		
-		List<PerformanceRecord> performancerecordList11=getManagerRecord( reportingManagerId,  smartId,  year,  hid);
 
-	
-		
+		List<PerformanceRecord> performancerecordList11 = getManagerRecord(reportingManagerId, smartId, year, hid);
+
 		try {
-			
+
 			Loggers.loggerStart();
-			
-				
-			query = session
-					.createQuery("from PerformanceRecord where smartId=:smartId and reportingManagerID=null  AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
+
+			query = sessionFactory.getCurrentSession().createQuery(
+					"from PerformanceRecord where smartId=:smartId and reportingManagerID=null  AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hid);
-			
-			
-		//	query.setParameter("reportingManagerID", reportingManagerId);
+
+			// query.setParameter("reportingManagerID", reportingManagerId);
 			query.setParameter("smartId", smartId);
 			query.setParameter("year", year);
 			query.setParameter("isActive", "Y");
@@ -132,129 +123,97 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 
 		} catch (Exception e) {
 			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
 		recordobject.put("teammemberscomments", performancerecordList);
-	
-		recordobject.put("managercomments",performancerecordList11);
-		return recordobject;
-		
-	}
-	
-	
-	
-	
 
-	public List<PerformanceRecord> getManagerRecord(String reportingManagerId, String smartId, String year,
-			Long hid) {
-		List<PerformanceRecord> performancerecordList1=null;
+		recordobject.put("managercomments", performancerecordList11);
+		return recordobject;
+
+	}
+
+	public List<PerformanceRecord> getManagerRecord(String reportingManagerId, String smartId, String year, Long hid) {
+		List<PerformanceRecord> performancerecordList1 = null;
 		Loggers.loggerStart();
 		Loggers.loggerValue("reportingId", reportingManagerId);
 
 		try {
-			System.out.println("smartId"+smartId);
+			System.out.println("smartId" + smartId);
 			Loggers.loggerStart();
-			
-			
-		query = session
-				.createQuery("from PerformanceRecord where smartId=:smartId AND  reportingManagerID=:reportingManagerID AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
-		query.setParameter("hierarchy", hid);
-			
-		query.setParameter("smartId", smartId);
-		query.setParameter("year", year);
-		query.setParameter("isActive", "Y");
-		query.setParameter("reportingManagerID", reportingManagerId);
-		performancerecordList1 = (List<PerformanceRecord>) query.list();
-		Loggers.loggerEnd(performancerecordList1);
-		
+
+			query = sessionFactory.getCurrentSession().createQuery(
+					"from PerformanceRecord where smartId=:smartId AND  reportingManagerID=:reportingManagerID AND year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hid);
+
+			query.setParameter("smartId", smartId);
+			query.setParameter("year", year);
+			query.setParameter("isActive", "Y");
+			query.setParameter("reportingManagerID", reportingManagerId);
+			performancerecordList1 = (List<PerformanceRecord>) query.list();
+			Loggers.loggerEnd(performancerecordList1);
+
+		} catch (Exception e) {
+			Loggers.loggerException(e.getMessage());
 		}
-		 catch (Exception e) {
-				Loggers.loggerException(e.getMessage());
-			} 
-			Loggers.loggerEnd();
-			return performancerecordList1;
+		Loggers.loggerEnd();
+		return performancerecordList1;
 	}
 
 	@Override
 	public void addAppraisalRecord(PerformanceRecord appraisal) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Loggers.loggerStart(appraisal);
-		
-		getConnection();
+
 		try {
-			
-		
+
 			appraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
 			appraisal.setIsActive("Y");
-			
-			
-            session.save(appraisal);
-            
-			
-			transaction.commit();
+
+			sessionFactory.getCurrentSession().save(appraisal);
+
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
 		}
 	}
-	
-	
+
 	@Override
 	public void addAppraisalRecordManager(PerformanceRecord appraisal) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Loggers.loggerStart(appraisal);
-		
-		getConnection();
+
 		try {
-			
-		
+
 			appraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
 			appraisal.setIsActive("Y");
-			
-			
-            session.save(appraisal);
-            
-			
-			transaction.commit();
+
+			sessionFactory.getCurrentSession().save(appraisal);
+
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
 		}
-		
-	}
 
-	
-	
-	
-	
+	}
 
 	@Override
 	public void editAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		try {
-			
+
 			PerformanceRecord oldAppraisalrecord = getAppraisalRecord(appraisal.getEntryTime());
 			oldAppraisalrecord.setIsActive("N");
 			oldAppraisalrecord.setUpdateTime(CalendarCalculator.getCurrentEpochTime());
-			session.update(oldAppraisalrecord);
+			sessionFactory.getCurrentSession().update(oldAppraisalrecord);
 			appraisal.setEntryTime(CalendarCalculator.getCurrentEpochTime());
 			appraisal.setIsActive("Y");
-			session.save(appraisal);
-			transaction.commit();
-			session.close();
+			sessionFactory.getCurrentSession().save(appraisal);
 
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
@@ -268,7 +227,8 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	public PerformanceRecord getAppraisalRecord(Long entryTime) {
 		try {
 
-			query = session.createQuery("from PerformanceRecord where isActive=:isActive and entryTime=:entryTime");
+			query = sessionFactory.getCurrentSession()
+					.createQuery("from PerformanceRecord where isActive=:isActive and entryTime=:entryTime");
 			query.setParameter("entryTime", entryTime);
 			query.setParameter("isActive", "Y");
 			PerformanceRecord appraisalrecord = (PerformanceRecord) query.uniqueResult();
@@ -278,6 +238,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+
 		}
 	}
 
@@ -285,34 +246,21 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	public void deletAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
-		getConnection();
 		try {
-		
 
 			appraisal.setExitTime(CalendarCalculator.getCurrentEpochTime());
 			appraisal.setIsActive("D");
-			session.update(appraisal);
-			transaction.commit();
+			sessionFactory.getCurrentSession().update(appraisal);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			session.close();
 		}
 		Loggers.loggerEnd();
 	}
 
-	public void getConnection() {
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
-	}
-
-
-
-
-
-
-
-
+	/*
+	 * public void getConnection() { session = sessionFactory.openSession();
+	 * transaction = session.beginTransaction(); }
+	 */
 
 }

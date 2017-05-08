@@ -6,6 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="GENERATE_SALARY_STATEMENT")
 @IdClass(CompoundGenerateSalaryStatement.class)
@@ -13,6 +16,7 @@ public class GenerateSalaryStatement {
 
 	@Id
 	@Column(name="SMART_ID")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -28,12 +32,14 @@ public class GenerateSalaryStatement {
 	private String entryTime;
 
 	@Column(name="EMP_NAME")
+//	@Index(name = "empName")
 	private String empName;
 	
 	@Column(name="EMP_DESIGNATION")
 	private String empDesignation;
 	
 	@Column(name="EMP_ROLE")
+//	@Index(name = "empRole")
 	private String empRole;
 	
 	@Column(name="UPD_SMART_ID")

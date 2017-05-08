@@ -10,13 +10,13 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.CompoundFeeMaster;
 import com.gsmart.model.FeeMaster;
@@ -36,13 +36,12 @@ import com.gsmart.util.Loggers;
  */
 
 @Repository
+@Transactional
 public class FeeMasterDaoImpl implements FeeMasterDao {
 
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
-	Session session = null;
-	Transaction transaction = null;
 	Query query;
 	Criteria criteria = null;
 
@@ -56,19 +55,18 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	public Map<String, Object> getFeeList(Long hid, int min, int max)
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
 		List<FeeMaster> feeList = null;
 		Map<String, Object> feeMap = new HashMap<>();
 		
 		try {
-			criteria = session.createCriteria(FeeMaster.class);
+			criteria = sessionFactory.getCurrentSession().createCriteria(FeeMaster.class);
 			criteria.setMaxResults(max);
 			criteria.setFirstResult(min);
 			criteria.addOrder(Order.asc("standard"));
 			criteria.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			feeList = criteria.list();
-			Criteria criteriaCount = session.createCriteria(FeeMaster.class);
+			Criteria criteriaCount = sessionFactory.getCurrentSession().createCriteria(FeeMaster.class);
 			criteriaCount.add(Restrictions.eq("isActive", "Y"));
 			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.setProjection(Projections.rowCount());
@@ -79,10 +77,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 		System.out.println(feeList);
 		feeMap.put("feeList", feeList);
@@ -102,8 +97,8 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	 */
 	@Override
 	public CompoundFeeMaster addFee(FeeMaster feeMaster) throws GSmartDatabaseException {
-		getConnection();
 		Loggers.loggerStart();
+		Session session=this.sessionFactory.getCurrentSession();
 		
 		CompoundFeeMaster cfm = null;
 		try {
@@ -114,15 +109,12 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 				feeMaster.setEntryTime(CalendarCalculator.getTimeStamp());
 			
 				cfm = (CompoundFeeMaster) session.save(feeMaster);
-				transaction.commit();
 			}
 		} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 		
 		return cfm;
@@ -138,7 +130,6 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public FeeMaster editFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 
-		getConnection();
 		Loggers.loggerStart();
 		FeeMaster ch=null;
 		try {
@@ -160,6 +151,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	}
 	private FeeMaster updateFeeMaster(FeeMaster oldFeeMaster, FeeMaster feeMaster) throws GSmartDatabaseException {
 
+		Session session=this.sessionFactory.getCurrentSession();
 		FeeMaster ch = null;
 		try {
 			if(oldFeeMaster.getStandard().equals(feeMaster.getStandard())){
@@ -167,8 +159,16 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 					oldFeeMaster.setUpdatedTime(CalendarCalculator.getTimeStamp());
 					oldFeeMaster.setIsActive("N");
 					session.update(oldFeeMaster);
+					
+					query=sessionFactory.getCurrentSession().createQuery("update Fee set sportsFee=:sportsFee,tuitionFee=:tuitionFee,idCardFee=:idCardFee,miscellaneousFee=:miscellaneousFee,totalFee=:totalFee where standard=:standard");
+					query.setParameter("sportsFee", feeMaster.getSportsFee());
+					query.setParameter("tuitionFee", feeMaster.getTuitionFee());
+					query.setParameter("idCardFee", feeMaster.getIdCardFee());
+					query.setParameter("miscellaneousFee", feeMaster.getMiscellaneousFee());
+					query.setParameter("totalFee", feeMaster.getTotalFee());
+					query.setParameter("standard", feeMaster.getStandard());
+					query.executeUpdate();
 
-					transaction.commit();
 					return oldFeeMaster;
 				
 			}else{
@@ -178,7 +178,6 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 					oldFeeMaster.setIsActive("N");
 					session.update(oldFeeMaster);
 
-					transaction.commit();
 					return oldFeeMaster;
 				
 			}
@@ -186,8 +185,10 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 
 			}
 		} catch (ConstraintViolationException e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 		return ch;
@@ -196,7 +197,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	private FeeMaster fetch2(FeeMaster feeMaster) {
 		Hierarchy hierarchy=feeMaster.getHierarchy();
 		FeeMaster feeMaster2=null;
-		query=session.createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive and hierarchy.hid=:hierarchy");
+		query=sessionFactory.getCurrentSession().createQuery("FROM FeeMaster WHERE standard=:standard AND isActive=:isActive and hierarchy.hid=:hierarchy");
 		query.setParameter("hierarchy", hierarchy.getHid());
 		
 		query.setParameter("standard", feeMaster.getStandard());
@@ -218,20 +219,18 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	@Override
 	public void deleteFee(FeeMaster feeMaster) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		getConnection();
+		Session session=this.sessionFactory.getCurrentSession();
 		try {
 			
 			feeMaster.setExitTime(CalendarCalculator.getTimeStamp());
 			feeMaster.setIsActive("D");
 			session.update(feeMaster);
-			transaction.commit();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
-		} finally {
-			session.close();
-		}
+			throw new GSmartDatabaseException(e.getMessage());
+		} 
 		Loggers.loggerEnd();
 		
 	}
@@ -239,7 +238,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	public FeeMaster getFeeMas(String entryTime,Hierarchy hierarchy)
 	{
 		Loggers.loggerStart();
-			query = session.createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime and hierarchy.hid=:hierarchy");
+			query = sessionFactory.getCurrentSession().createQuery("from FeeMaster where isActive=:isActive and entryTime =:entryTime and hierarchy.hid=:hierarchy");
 			query.setParameter("hierarchy", hierarchy.getHid());
 		
 		query.setParameter("isActive", "Y");
@@ -255,17 +254,16 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	/**
 	 * create instance for session and begins transaction
 	 */
-	public void getConnection() {
+	/*public void getConnection() {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
-	}
+	}*/
 
 	@Override
-	public FeeMaster getFeeStructure(String standard,Long hid) {
-		getConnection();
+	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartDatabaseException  {
 		try {
 			
-				query = session.createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy.hid=:hierarchy");
+				query = sessionFactory.getCurrentSession().createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hid);
 				
 			
@@ -275,9 +273,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
 			return null;
-		} finally {
-			session.close();
-		}
+		} 
 	}
 
 	

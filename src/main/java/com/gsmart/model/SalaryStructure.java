@@ -1,12 +1,17 @@
 package com.gsmart.model;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name="SALARY_STRUCTURE")
 @IdClass(CompoundSalaryStructure.class)
@@ -15,6 +20,7 @@ public class SalaryStructure {
 	
 	@Id
 	@Column(name="SMART_ID")
+//	@Index(name = "smartId")
 	private String smartId;
 	
 	@Id
@@ -37,9 +43,11 @@ public class SalaryStructure {
 	private String empDesignation;
 	
 	@Column(name="EMP_ROLE")
+//	@Index(name = "empRole")
 	private String empRole;
 	
 	@Column(name="IS_ACTIVE")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@Column(name="EXIT_TIME")
@@ -84,7 +92,18 @@ public class SalaryStructure {
 	@Column(name="STATUTORY")
 	private Double statutory;
 	
-	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
 	public String getSmartId() {
 		return smartId;
 	}

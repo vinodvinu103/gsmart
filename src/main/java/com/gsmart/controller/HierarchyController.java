@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Hierarchy;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.HierarchyServices;
 import com.gsmart.util.CalendarCalculator;
@@ -44,13 +43,12 @@ import com.gsmart.util.Loggers;
 public class HierarchyController {
 
 	@Autowired
-	HierarchyServices hierarchyServices;
+	private HierarchyServices hierarchyServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
-	@Autowired
-	LoginController controller;
+	
 
 	/**
 	 * to view {@link Hierarchy} details.
@@ -73,13 +71,10 @@ public class HierarchyController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> hierarchyList = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 
 		Map<String, Object> permissions = new HashMap<>();
-		permissions.put("modulePermission", modulePermission);
 
-//		if (modulePermission != null) {
 			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
 			if(hierarchyList!=null){
 				permissions.put("status", 200);
@@ -93,9 +88,6 @@ public class HierarchyController {
 			}
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-//		} else {
-//			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-//		}
 
 	}
 	
@@ -109,13 +101,10 @@ public class HierarchyController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		List<Hierarchy> hierarchyList = null;
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 
 		Map<String, Object> permissions = new HashMap<>();
-		permissions.put("modulePermission", modulePermission);
 
-//		if (modulePermission != null) {
 			hierarchyList = hierarchyServices.getHierarchyList1(tokenObj.getRole(),tokenObj.getHierarchy());
 			if(hierarchyList!=null){
 				permissions.put("status", 200);
@@ -129,9 +118,6 @@ public class HierarchyController {
 			}
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-//		} else {
-//			return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
-//		}
 
 	}
 
@@ -155,7 +141,6 @@ public class HierarchyController {
 		str.length();
 
 		Map<String, Object> respMap=new HashMap<>();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			boolean status = hierarchyServices.addHierarchy(hierarchy);
 			if (status) {
 				respMap.put("status", 200);
@@ -164,10 +149,6 @@ public class HierarchyController {
 				respMap.put("status", 400);
 	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
-		} else {
-			respMap.put("status", 403);
-        	respMap.put("message", "Permission Denied");
-		}
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
@@ -193,13 +174,11 @@ public class HierarchyController {
 
 		Hierarchy ch=null;
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("edit")) {
 				ch = hierarchyServices.editHierarchy(hierarchy);
 				if (ch != null) {
 					respMap.put("status", 200);
 		        	respMap.put("message", "Saved Succesfully");
-
 				} else {
 					respMap.put("status", 400);
 		        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
@@ -209,11 +188,7 @@ public class HierarchyController {
 				respMap.put("status", 200);
 	        	respMap.put("message", "Deleted Successfully");
 			} 
-		}
-		else {
-			respMap.put("status", 403);
-        	respMap.put("message", "Permission Denieds");
-		}
+		
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}

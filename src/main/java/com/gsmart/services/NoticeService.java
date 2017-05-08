@@ -13,7 +13,7 @@ public interface NoticeService {
 	
 	public void addNotice(Notice notice,Token token)throws Exception;
 
-	public List<Notice> viewNotice(ArrayList<String> smartIdIList)throws Exception;
+	public List<Notice> viewNotice(ArrayList<String> smartIdIList,Long hid)throws Exception;
 	
     public  void deleteNotice(Notice notice) throws Exception;
     
@@ -21,13 +21,15 @@ public interface NoticeService {
 
 	public List<Notice> viewGenericNotice(String type);
 	
-	public List<Notice> viewMyNotice(String role);
+	public List<Notice> viewMyNotice(String role, Long hid);
+	
+	public List<Notice> viewAdminNoticeService(String SmartId) throws GSmartServiceException;
 	
 
 	
 //	public ArrayList<Profile> getProfiles(String role,String smartId)throws GSmartServiceException;
 
-	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
+//	public ArrayList<Profile> getAllProfiles()throws GSmartServiceException;
 	
 	public Map<String, Object> getParentInfo(String empSmartId)throws GSmartServiceException;
 	

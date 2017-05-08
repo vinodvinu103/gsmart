@@ -8,16 +8,22 @@ import javax.persistence.Embeddable;
 public class CompoundAttendance implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String rfId;
+	
 	
 	private long inDate;
 
-	public String getRfId() {
-		return rfId;
+	
+
+	private String smartId;
+
+	
+
+	public String getSmartId() {
+		return smartId;
 	}
 
-	public void setRfId(String rfId) {
-		this.rfId = rfId;
+	public void setSmartId(String smartId) {
+		this.smartId = smartId;
 	}
 
 	public long getInDate() {

@@ -1,5 +1,6 @@
 package com.gsmart.controller;
 
+import java.time.DayOfWeek;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.HierarchyDao;
-import com.gsmart.dao.ProfileDaoImp;
-import com.gsmart.dao.TokenDaoImpl;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.model.WeekDays;
 import com.gsmart.services.WeekDaysService;
@@ -37,64 +35,81 @@ public class WeekDayController {
 
 	
 	@Autowired
-	WeekDaysService weekDaysService;
+	private WeekDaysService weekDaysService;
 
-	@Autowired
-	TokenDaoImpl tokenDaoImpl;
 	
 	@Autowired
-	ProfileDaoImp profileDaoImp;
+	private GetAuthorization getAuthorization;
 	
 	@Autowired
-	GetAuthorization getAuthorization;
-	
-	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 	
 	@RequestMapping(value="/{hierarchy}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getWeekDaysList(@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException {
-		Loggers.loggerStart("loggers start for weekdays +++++++++++++++++++");
-		
-		List<WeekDays> list = null;
+		Loggers.loggerStart();
+		List<WeekDays> weekofflist=null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		
 		
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
 		
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		
 		Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("modulePremission", modulePermission);
 	
-		 System.out.println("weekdays...map entery.......");
 		 Long hid=null;
 			if(tokenObj.getHierarchy()==null){
+				System.out.println("entry into if tokenobj................");
 				hid=hierarchy;
 			}else{
 				hid=tokenObj.getHierarchy().getHid();
 			}
-		try {
 			
-			System.out.println("weekdays try block entry...........");
-			if (modulePermission.getView()){
-				System.out.println("in side if condition for get weekdays>>>>>>>>>>>");
-				list = weekDaysService.getWeekDaysList(hid);
-				resultMap.put("data", list);
+			weekofflist = weekDaysService.getWeekDaysList(hid);
+			for (WeekDays weekDays : weekofflist) {
+			String wk=weekDays.getWeekDay();
+			String day=null;
+				switch(wk) {
+				case "1":
+					day="SUNDAY";
+					break;
+
+				case "2":
+					day="MONDAY";
+					break;
+					
+				case "3":
+					day="TUESDAY";
+					break;
+				case "4":
+					day="WEDNESDAY";
+					break;
+				case "5":
+					day="THURSDAY";
+					break;
+				case "6":
+					day="FRIDAY";
+					break;
+				case "7":
+					day="SATURDAY";
+					break;
+				}
+			
+			weekDays.setWeekDay(day);
+			System.out.println("weekdays +++++"+weekDays.getWeekDay());
+			}
+				/* for (WeekDays weekDays : weekofflist) {
+					 int num=Integer.parseInt(weekDays.getWeekDay());
+					 String day=DayOfWeek.of(num).toString();
+					 System.out.println("-----days----- "+DayOfWeek.of(num).toString());
+					 weekDays.setWeekDay(day);
+				}*/
+				resultMap.put("data", weekofflist);
 				resultMap.put("status", 200);
 				resultMap.put("message", "success");
-				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-			}
-			else{
-				System.out.println("in side else >>>>>>>>>>>");
-			}
 			
-		} catch (Exception e) {
-			throw new GSmartBaseException(e.getMessage());
-			
-		}
-
+         Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
 
@@ -107,18 +122,16 @@ public class WeekDayController {
 
 		str.length();
 		
-		Token tokenObj= tokenDaoImpl.getToken(tokenNumber);
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		 if(tokenObj.getHierarchy()==null){
 			 weekDays.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
 			}else{
 				weekDays.setHierarchy(tokenObj.getHierarchy());
 			}
 		
-		System.out.println("weekdays info display>>>>>>"+weekDays);
 		
 		
 		Map<String, Object> respMap=new HashMap<>();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 			boolean status =weekDaysService.addWeekDaysList(weekDays);
 			  
 			if (status) {
@@ -128,10 +141,6 @@ public class WeekDayController {
 				respMap.put("status", 400);
 	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
-		} else {
-			respMap.put("status", 403);
-        	respMap.put("message", "Permission Denied");
-		}
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
@@ -150,7 +159,6 @@ public class WeekDayController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			if (task.equals("delete")) {
 				weekDaysService.deleteWeekdaysList(weekDays);
 			
@@ -159,12 +167,8 @@ public class WeekDayController {
 			Loggers.loggerEnd();
 
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
+		
 
-		else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
 
 	}
 

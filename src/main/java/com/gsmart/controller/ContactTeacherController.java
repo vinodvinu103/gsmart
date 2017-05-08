@@ -18,289 +18,209 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.MessageDetails;
 import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.BeanFactory;
 import com.gsmart.services.ContactServices;
+import com.gsmart.services.TokenService;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
-import antlr.Token;
 
 @Controller
 @RequestMapping("/contact")
 public class ContactTeacherController {
 
 	@Autowired
-	ContactServices contactServices;
+	private ContactServices contactServices;
 
 	@Autowired
 	BeanFactory employeeBeanFactory;
-	
+
 	@Autowired
-	GetAuthorization getAuthorization;
-	
-	@RequestMapping(value="/studentToTeacher", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, String>> studentToTeacher(@RequestBody MessageDetails details,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {
-		Map<String, String> result=new HashMap<>();
-	
-		String tokenNumber=token.get("Authorization").get(0);
+    	GetAuthorization getAuthorization;
+
+	@Autowired
+	TokenService tokenService;
+
+	@RequestMapping(value = "/studentToTeacher", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, String>> studentToTeacher(@RequestBody MessageDetails details,
+			@RequestHeader HttpHeaders token, HttpSession httpSession,String role) throws GSmartServiceException {
+		Map<String, String> result = new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+
 		Loggers.loggerStart(tokenNumber);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		System.out.println(""+details.getMessage());
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-			
-		getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		try 
-		{
-			if(getAuthorization.authorizationForPost(tokenNumber, httpSession));
-			{
-			
-			if (contactServices.studentToTeacher(details))
-			{
-				result.put("result", "MSG Posted");
-				return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
-			}
-			}
-			return new ResponseEntity<Map<String,String>>(result,HttpStatus.OK);
-		} 
-		catch (Exception e) 
-		{
+
+		try {
+				Token tk = (Token) httpSession.getAttribute("token");
+
+				if (contactServices.studentToTeacher(details,tk.getRole())) {
+					result.put("result", "MSG Posted");
+					return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
+				}
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
+		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", "MSG insertion Failed");
 			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String,String>>(result,HttpStatus.OK);
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 		}
 	}
 	
+	@RequestMapping(value = "/teacherToStudent", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, String>> teacherToStudent(@RequestBody MessageDetails details,
+			@RequestHeader HttpHeaders token, HttpSession httpSession,String role) throws GSmartServiceException {
+		Map<String, String> result = new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+		Loggers.loggerStart(tokenNumber);
+		System.out.println(""+details.getMessage());
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+
+		try {
+				Token tk1 = (Token) httpSession.getAttribute("token");
+
+				if (contactServices.teacherToStudent(details,tk1.getRole())) {
+					result.put("result", "MSG Posted");
+					return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
+				}
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", "MSG insertion Failed");
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
+		}
+	}
 	
-	@RequestMapping(value="/msgListForTeacher", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, ArrayList<MessageDetails>>> msgList(@RequestBody MessageDetails details,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {
-		List<MessageDetails> messages=new ArrayList<>();
+	@RequestMapping(value = "/msgListForTeacher", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, ArrayList<MessageDetails>>> msgList(@RequestBody MessageDetails details,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
+		List<MessageDetails> messages = new ArrayList<>();
 		Loggers.loggerStart();
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, ArrayList<MessageDetails>> jsonMap = new HashMap<>();
-		
-		getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		try 
-		{
-			if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
-			{
-			messages=contactServices.msgList(details);
-			if (messages.size() != 0) {
-				jsonMap.put("result", (ArrayList<MessageDetails>) messages);
-				return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap,HttpStatus.OK);
-			} 
-			}
-		}
-		catch (Exception e) 
-		{
+
+		try {
+				messages = contactServices.msgList(details);
+				if (messages.size() != 0) {
+					jsonMap.put("result", (ArrayList<MessageDetails>) messages);
+					return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap, HttpStatus.OK);
+				}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap,HttpStatus.OK);
+		return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap, HttpStatus.OK);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	@RequestMapping(value="/teacherView", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, ArrayList<MessageDetails>>> teacherView(@RequestBody MessageDetails details,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException
-	{
+
+	@RequestMapping(value = "/teacherView/{min}/{max}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> teacherView(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @RequestBody MessageDetails details, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartServiceException {
 		Loggers.loggerStart();
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		
-		//getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		List<MessageDetails> messages=new ArrayList<>();
-		Map<String, ArrayList<MessageDetails>> jsonMap = new HashMap<>();
-		try 
-		{
-			if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
-			{
-			messages=contactServices.teacherView(details);
-			if (messages.size()!=0) {
-				jsonMap.put("result", (ArrayList<MessageDetails>) messages);
-				return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap,HttpStatus.OK);
-			}
-			}
-		} 
-		catch (Exception e) 
-		{
+		// List<MessageDetails> messages=new ArrayList<>();
+		Map<String, Object> messages = null;
+		Map<String, Object> jsonMap = new HashMap<>();
+		try {
+				messages = contactServices.teacherView(details, min, max);
+				if (messages.size() != 0) {
+					jsonMap.put("result", messages);
+					return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+				}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		Loggers.loggerEnd(messages);
-		return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap,HttpStatus.OK);
-	}
-	
-	
-	@RequestMapping(value="/teacherToStudent", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, String>> teacherToStudent(@RequestBody MessageDetails details,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {
-		Map<String, String> result=new HashMap<>();
-		Loggers.loggerStart();
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
-		
-		getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		
-		try 
-		{
-			if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
-			{
-			if (contactServices.teacherToStudent(details)) {
-
-				result.put("result", "MSG Posted");
-				result.put("result", "Image Posted");
-				return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
-			}
-			}
-			return new ResponseEntity<Map<String,String>>(result,HttpStatus.OK);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-			result.put("result", "MSG insertion Failed");
-			result.put("result", "Image insertion failed");
-			return new ResponseEntity<Map<String,String>>(result,HttpStatus.OK);
-		}
+		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 	}
 
+	
+	@RequestMapping(value = "/teacherChat", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> teacherView(@RequestBody MessageDetails details, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartServiceException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
 
-	
-/*	@RequestMapping(value="/teacherToStudent", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, String>> teacherToStudent1(@RequestBody MessageDetails details,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {
-		Map<String, String> result=new HashMap<>();
-		Loggers.loggerStart();
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
-		
-		getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		
-		try 
-		{
-			if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
-			{
-			if (contactServices.teacherToStudent(details)) {
-
-				result.put("result", "image Posted");
-				return new ResponseEntity<Map<String,String>>(result, HttpStatus.OK);
-			}
-			}
-			return new ResponseEntity<Map<String,String>>(result,HttpStatus.OK);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-			result.put("result", "image insertion Failed");
-			return new ResponseEntity<Map<String,String>>(result,HttpStatus.OK);
-		}
-	}
-	*/
-	
-	
-	
-	
-	@RequestMapping(value="/studentView", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, ArrayList<MessageDetails>>> studentView(@RequestBody MessageDetails details,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException
-	{
-		Loggers.loggerStart(details);
-		System.out.println("getting token : "+token);
-		/*String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
-		
-		getAuthorization.authorizationForGet(tokenNumber, httpSession);*/
-		
-		List<MessageDetails> messages=new ArrayList<>();
-		Map<String, ArrayList<MessageDetails>> jsonMap = new HashMap<>();
-		try 
-		{
-			/*if(getAuthorization.authorizationForPost(tokenNumber, httpSession))*/
-			{
-			messages=contactServices.studentView(details);
-			if (messages.size()!=0) {
-				jsonMap.put("result", (ArrayList<MessageDetails>) messages);
-				return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap,HttpStatus.OK);
-			}
-			}
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-		return new ResponseEntity<Map<String, ArrayList<MessageDetails>>>(jsonMap,HttpStatus.OK);
-	}
-	
-	
-	@RequestMapping(value="/view", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, ArrayList<MessageDetails>>> allMessages(@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartServiceException {
-		Loggers.loggerStart();
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
-		
-		getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Map<String, ArrayList<MessageDetails>> result=new HashMap<>();
-		ArrayList<MessageDetails> messages=new ArrayList<>();
-		try 
-		{
-			if(getAuthorization.authorizationForPost(tokenNumber, httpSession))
-			{
-			messages=(ArrayList<MessageDetails>) contactServices.viewAllMessages();
-			result.put("result", messages);
-			return new ResponseEntity<Map<String,ArrayList<MessageDetails>>>(result,HttpStatus.OK);
-			}
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-			result.put("result", null);
-			return new ResponseEntity<Map<String,ArrayList<MessageDetails>>>(result,HttpStatus.OK);
-		}
-		return new ResponseEntity<Map<String,ArrayList<MessageDetails>>>(result,HttpStatus.OK);
-	}
-	
-	@RequestMapping(value="/get",method=RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getDetails(@RequestHeader HttpHeaders token,HttpSession httpSession)throws GSmartBaseException{
-		Loggers.loggerStart();
-		String tokenNumber=token.get("Authorization").get(0);
-		String str=getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();
-		
-		RolePermission modulePermission=getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Map<String, Object> permission=new HashMap<>();
-		permission.put("modulePermission", modulePermission);
-		List<MessageDetails> list=null;
+		// List<MessageDetails> messages=new ArrayList<>();
+		Map<String, Object> messages = null;
+		Map<String, Object> jsonMap = new HashMap<>();
 		try {
-			if(modulePermission!=null){
-			list=contactServices.getData();
-			permission.put("contactList", list);
+				messages = contactServices.teacherChat(details);
+				if (messages.size() != 0) {
+					jsonMap.put("result", messages);
+					return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity<Map<String,Object>>(permission, HttpStatus.OK);
+		Loggers.loggerEnd(messages);
+		System.out.println("fetched message :"+details.getMessage());
+		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 	}
-	/*@RequestMapping(value = "/downloadURL/", method = RequestMethod.PUT)
-	public void downloadFile(HttpServletResponse response,
-	        @RequestBody Map<String,String> spParams
-	        ) throws IOException {
-	        OutputStream outStream=null;
-	outStream = response.getOutputStream();//is important manage the exceptions here
-	ObjectThatWritesOnOutputStream myWriter= new ObjectThatWritesOnOutputStream();// note that this object doesn exist on JAVA,
-	ObjectThatWritesOnOutputStream.write(outStream);//you can configure more things here
-	outStream.flush();
-	return;
+
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/studentChat", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> studentView(@RequestBody MessageDetails details, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartServiceException {
+		Loggers.loggerStart(details);
+		System.out.println("getting token : " + token);
+
+		Map<String, Object> messages = null;
+		Map<String, Object> jsonMap = new HashMap<>();
+		try {
+				messages = contactServices.studentChat(details);
+				if (messages.size() != 0) {
+					jsonMap.put("result", messages);
+					return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 	}
-	*/
+	
+	@RequestMapping(value = "/studentView/{min}/{max}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Object>> studentView(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @RequestBody MessageDetails details, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartServiceException {
+		Loggers.loggerStart(details);
+		System.out.println("getting token : " + token);
+		
+			String tokenNumber=token.get("Authorization").get(0); String
+		    str=getAuthorization.getAuthentication(tokenNumber, httpSession);
+		    str.length();
+
+		// List<MessageDetails> messages=new ArrayList<>();
+		Map<String, Object> messages = null;
+		Map<String, Object> jsonMap = new HashMap<>();
+		try {
+				/*messages = contactServices.studentView(details, Integer.parseInt(min), Integer.parseInt(max));*/
+				  messages = contactServices.studentView(details, min, max);
+				if (messages.size() != 0) {
+					jsonMap.put("result", messages);
+					return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+	}
 
 }

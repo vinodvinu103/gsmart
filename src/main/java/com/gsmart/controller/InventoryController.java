@@ -23,10 +23,8 @@ import com.gsmart.dao.HierarchyDao;
 import com.gsmart.dao.InventoryDao;
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Inventory;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.InventoryServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -49,17 +47,15 @@ import com.gsmart.util.Loggers;
 public class InventoryController {
 
 	@Autowired
-	InventoryServices inventoryServices;
+	private InventoryServices inventoryServices;
 	@Autowired
-	GetAuthorization getauthorization;
-	@Autowired
-	TokenService tokenService;
+	private GetAuthorization getauthorization;
 	
 	@Autowired
-	HierarchyDao hierarchyDao;
+	private HierarchyDao hierarchyDao;
 	
 	@Autowired
-	InventoryDao inventorydao;
+	private InventoryDao inventorydao;
 	
 
 	/**
@@ -79,16 +75,11 @@ public class InventoryController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Inventory> inveList= null;
-		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
 		Map<String, Object> permissions = new HashMap<>();
-		permissions.put("modulePermission", modulePermission); 
-		Long hid=null;
 		
-		inveList=inventorydao.getInventory(hid);
-		permissions.put("modulePermission", modulePermission); 
+		inveList=inventorydao.getInventory(tokenObj.getHierarchy().getHid());
 		permissions.put("inventoryList", inveList); 
 		
 		Loggers.loggerEnd("InventoryList:" + inveList);
@@ -105,27 +96,31 @@ public class InventoryController {
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> inventoryList = null;
-		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> permissions = new HashMap<>();
 
-		permissions.put("modulePermission", modulePermission);
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
 			hid=hierarchy;
 		}else{
 			hid=tokenObj.getHierarchy().getHid();
 		}
-
-		if (modulePermission != null) {
-
-			inventoryList = inventoryServices.getInventoryList(hid, min, max);
-			permissions.put("inventoryList", inventoryList);
+          inventoryList = inventoryServices.getInventoryList(hid, min, max);
+          if(inventoryList!=null)
+	        {
+        	  permissions.put("status", 200);
+        	  permissions.put("inventoryList", inventoryList);
+        	  permissions.put("message", "Success");
+	        }
+	        	  
+		    else{
+		    	permissions.put("status", 400);
+		    	permissions.put("message", "No Data Found");
+		    	
+		    }
+			
 			Loggers.loggerEnd(inventoryList);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
 	}
 
 	/**
@@ -148,8 +143,7 @@ public class InventoryController {
 		str.length();
 
 		Map<String, Object> respMap=new HashMap<>();
-		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			if(tokenObj.getHierarchy()==null){
 				inventory.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
 			}else{
@@ -171,10 +165,6 @@ public class InventoryController {
 		    	
 		    }
 		    
-        }else{
-        	respMap.put("status", 403);
-        	respMap.put("message", "Permission Denied");
-               }
         Loggers.loggerEnd();
     	return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 	}
@@ -183,7 +173,7 @@ public class InventoryController {
 	public ResponseEntity<Map<String, Object>> editInventory(@RequestBody Inventory inventory,
 			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
-		Loggers.loggerStart();
+		Loggers.loggerStart(inventory);
 		Inventory ch=null;
 		String tokenNumber = token.get("Authorization").get(0);
 
@@ -192,7 +182,6 @@ public class InventoryController {
 		str.length();
 		Map<String, Object> respMap=new HashMap<>();
 
-		if (getauthorization.authorizationForPut(tokenNumber, task, httpSession)) {
 			
 			if (task.equals("edit")) {
 				ch = inventoryServices.editInventory(inventory);
@@ -210,10 +199,6 @@ public class InventoryController {
 	        	respMap.put("message", "Deleted Successfully");
 			}
 
-		} else {
-			respMap.put("status", 403);
-        	respMap.put("message", "Permission Denied");
-		}
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}

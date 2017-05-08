@@ -25,7 +25,6 @@ import com.gsmart.model.Fee;
 import com.gsmart.model.FeeMaster;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Search;
 import com.gsmart.model.Token;
 
@@ -33,12 +32,10 @@ import com.gsmart.services.PasswordServices;
 
 import com.gsmart.services.FeeMasterServices;
 import com.gsmart.services.FeeServices;
-import com.gsmart.services.HierarchyServices;
 
 //import com.gsmart.model.Search;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.CommonMail;
 //import com.gsmart.services.SearchService;
@@ -54,32 +51,28 @@ import com.gsmart.util.Loggers;
 public class RegistrationController {
 
 	@Autowired
-	ProfileServices profileServices;
+	private ProfileServices profileServices;
 
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 
 	@Autowired
-	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
+
 
 	@Autowired
-	TokenService tokenService;
+	private PasswordServices passwordServices;
+
 
 	@Autowired
-    PasswordServices passwordServices;
+	private FeeMasterServices feeMasterServices;
 
 	@Autowired
-	HierarchyServices hierarchyServices;
-
+	private FeeServices feeService;
 	@Autowired
-	FeeMasterServices feeMasterServices;
-
+	private HierarchyDao hierarchyDao;
 	@Autowired
-	FeeServices feeService;
-	@Autowired
-	HierarchyDao hierarchyDao;
-	@Autowired
-	ProfileDao profileDao;
+	private ProfileDao profileDao;
 
 	int i = 0;
 
@@ -94,9 +87,7 @@ public class RegistrationController {
 		Map<String, Object> jsonMap = new HashMap<>();
 
 		Map<String, Object> profileList = null;
-		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-		jsonMap.put("modulePermisson", modulePermisson);
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Long hid = null;
 		if (tokenObj.getHierarchy() == null) {
 			hid = hierarchy;
@@ -105,13 +96,11 @@ public class RegistrationController {
 			hid = tokenObj.getHierarchy().getHid();
 		}
 
-		if (modulePermisson != null) {
 			profileList = profileServices.getProfiles("employee", tokenObj.getSmartId(), hid, min, max);
 			if (profileList != null) {
 				jsonMap.put("status", 200);
 				jsonMap.put("result", profileList);
 				jsonMap.put("message", "success");
-				jsonMap.put("modulePermisson", modulePermisson);
 			} else {
 				jsonMap.put("status", 400);
 				jsonMap.put("message", "try again");
@@ -120,11 +109,6 @@ public class RegistrationController {
 
 			Loggers.loggerEnd(jsonMap);
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-		} else {
-			jsonMap.put("status", 403);
-			jsonMap.put("message", "Permission Denied");
-			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-		}
 
 	}
 
@@ -138,11 +122,9 @@ public class RegistrationController {
 		str.length();
 		Map<String, Object> jsonMap = new HashMap<>();
 
-		RolePermission modulePermisson = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		jsonMap.put("modulePermisson", modulePermisson);
 
 		Map<String, Object> profileMap1 = null;
-		Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Long hid = null;
 		if (tokenObj.getHierarchy() == null) {
 			hid = hierarchy;
@@ -151,13 +133,11 @@ public class RegistrationController {
 			hid = tokenObj.getHierarchy().getHid();
 		}
 
-		if (modulePermisson != null) {
 			profileMap1 = profileServices.getProfiles("student", tokenObj.getSmartId(), hid, min, max);
 			if (profileMap1 != null) {
 				jsonMap.put("status", 200);
 				jsonMap.put("result", profileMap1);
 				jsonMap.put("message", "success");
-				jsonMap.put("modulePermisson", modulePermisson);
 			} else {
 				jsonMap.put("status", 400);
 				jsonMap.put("message", "try again");
@@ -165,11 +145,6 @@ public class RegistrationController {
 			}
 			Loggers.loggerEnd(jsonMap);
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-		} else {
-			jsonMap.put("status", 403);
-			jsonMap.put("message", "Permission Denied");
-			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-		}
 	}
 
 	@RequestMapping(value = "/addProfile/{hierarchy}", method = RequestMethod.POST)
@@ -180,9 +155,8 @@ public class RegistrationController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> jsonMap = new HashMap<>();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
 
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			// String updSmartId = tokenObj.getSmartId();
 
 			Loggers.loggerStart(profile.getFirstName());
@@ -208,6 +182,7 @@ public class RegistrationController {
 
 			profile.setSmartId(smartId);
 			profile.setEntryTime(Calendar.getInstance().getTime().toString());
+			
 
 			if (profileServices.insertUserProfileDetails(profile)) {
 
@@ -215,7 +190,7 @@ public class RegistrationController {
 				login.setReferenceSmartId(Encrypt.md5(smartId));
 				login.setSmartId(smartId);
 				passwordServices.setPassword(login, profile.getHierarchy());
-
+				
 				if (profile.getRole().equalsIgnoreCase("student")) {
 					FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
 					Fee fee = new Fee();
@@ -232,7 +207,7 @@ public class RegistrationController {
 					fee.setSportsFee(feeMaster.getSportsFee());
 					fee.setStandard(feeMaster.getStandard());
 					fee.setTuitionFee(feeMaster.getTuitionFee());
-					fee.setTransportationFee(feeMaster.getTransportationFee());
+					//fee.setTransportationFee(feeMaster.getTransportationFee());
 					fee.setReportingManagerId(profile.getReportingManagerId());
 					fee.setModeOfPayment("cash");
 					fee.setAcademicYear(profile.getAcademicYear());
@@ -240,6 +215,8 @@ public class RegistrationController {
 					fee.setBalanceFee(feeMaster.getTotalFee());
 					feeService.addFee(fee);
 				}
+
+				
 				if (!sendMail(profile)) {
 					if (profileDao.deleteProfileIfMailFailed(profile.getSmartId())) {
 						jsonMap.put("status", 404);
@@ -261,7 +238,7 @@ public class RegistrationController {
 				jsonMap.put("message", "EmailID is already Registered");
 			}
 
-		}
+		
 
 		Loggers.loggerEnd(jsonMap);
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
@@ -295,20 +272,31 @@ public class RegistrationController {
 		str.length();
 		Loggers.loggerValue("Updated by: ", updEmpSmartId);
 		Map<String, Object> jsonResult = new HashMap<>();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
-			profile.setHierarchy(tokenObj.getHierarchy());
 			String result = profileServices.updateProfile(profile);
 			jsonResult.put("status", 200);
 			jsonResult.put("result", result);
-		} else {
-			jsonResult.put("status", 500);
-			jsonResult.put("result", "Not Updated..!, Please try again.");
-		}
 		Loggers.loggerEnd(jsonResult);
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 
 	}
+	
+	@RequestMapping(value="/changeprofileimage",method = RequestMethod.POST)
+	public ResponseEntity<Map<String,Object>> changeprofileimage(@RequestBody Profile profile,@RequestHeader HttpHeaders token, HttpSession httpSession)
+	throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Map<String,Object> jsonResult = new HashMap<String, Object>();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		profile.setSmartId(tokenObj.getSmartId());
+		String result = profileServices.changeprofileimage(profile);
+		jsonResult.put("status", 200);
+		jsonResult.put("result", result);
+		Loggers.loggerEnd(jsonResult);
+		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
+	}
+	
 
 	@RequestMapping(value = "/delete/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<Map<String, Object>> deleteProfile(@RequestBody Profile profile,
@@ -319,8 +307,8 @@ public class RegistrationController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		Map<String, Object> jsonResult = new HashMap();
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+		
+		Map<String, Object> jsonResult = new HashMap<String, Object>();
 			if (task.equals("delete")) {
 				String result = profileServices.deleteprofile(profile);
 				jsonResult.put("result", result);
@@ -328,10 +316,11 @@ public class RegistrationController {
 
 			}
 
-		}
+		
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 	}
-
+    
+	
 	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> searchRep(@RequestBody Search search, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) {
@@ -341,8 +330,7 @@ public class RegistrationController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj = (Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			Loggers.loggerStart("search.getName() before : " + search.getName());
 			Map<String, Profile> map = searchService.searchRep(search, tokenObj.getRole(), tokenObj.getHierarchy());
 			Loggers.loggerStart("search.getName() after : " + search.getName());
@@ -380,7 +368,7 @@ public class RegistrationController {
 				jsonMap.put("message", "try again");
 			}
 			Loggers.loggerEnd();
-		}
+		
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 
 	}
