@@ -1,12 +1,13 @@
 package com.gsmart.services;
 
+
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.PerformanceAppraisalDao;
-import com.gsmart.model.CompoundPerformanceAppraisal;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -19,11 +20,25 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 	@Autowired
 	private PerformanceAppraisalDao appraisalDao;
 
+	
 	@Override
-	public List<PerformanceAppraisal> getAppraisalList(String smartId, String year) throws GSmartServiceException {
+	public List<PerformanceAppraisal> getAppraisalList(String reportingId,String year,Long hid) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-			return appraisalDao.getAppraisalList(smartId, year);
+			return appraisalDao.getAppraisalList(reportingId,year,hid);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			Loggers.loggerException(e.getMessage());
+			throw new GSmartServiceException(e.getMessage());
+
+		}
+	}
+	@Override
+	public List<PerformanceAppraisal> getTeamAppraisalList(String smartId, String year,Long hid) throws GSmartServiceException {
+		Loggers.loggerStart();
+		try {
+			return appraisalDao.getTeamAppraisalList(smartId,year,hid);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
@@ -34,20 +49,20 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 	}
 
 	@Override
-	public CompoundPerformanceAppraisal addAppraisal(PerformanceAppraisal appraisal) throws GSmartServiceException {
+	public void addAppraisal(PerformanceAppraisal performanceAppraisal) throws GSmartServiceException {
 		Loggers.loggerStart();
 
-		CompoundPerformanceAppraisal ca = null;
+		
 
 		try {
-			ca = appraisalDao.addAppraisal(appraisal);
+			 appraisalDao.addAppraisal(performanceAppraisal);
 		} catch (GSmartDatabaseException exception) {
 			throw (GSmartServiceException) exception;
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
 		Loggers.loggerEnd();
-		return ca;
+		
 	}
 
 	@Override
@@ -83,5 +98,9 @@ public class PerformanceAppraisalServiceImpl implements PerformanceAppraisalServ
 
 		Loggers.loggerEnd();
 	}
+
+
+
+	
 
 }
