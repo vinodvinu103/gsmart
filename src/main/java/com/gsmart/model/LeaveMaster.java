@@ -18,7 +18,7 @@ import org.hibernate.annotations.Index;
 public class LeaveMaster {
 	@Id
 	@Column(name = "LEAVE_TYPE")
-	@Index(name = "leaveType")
+//	@Index(name = "leaveType")
 	private String leaveType;
     @Id
 	@Column(name = "DAYS_ALLOW")
@@ -34,12 +34,12 @@ public class LeaveMaster {
 	private String exitTime;
 
 	@Column(name = "IS_ACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
-	@Index(name = "hierarchy")
+//	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {

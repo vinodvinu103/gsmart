@@ -34,6 +34,8 @@ public interface NoticeDao{
 	public List<Profile> getAllRecord();
 
 	public List<Notice> viewNoticeForAdmin(Long hid)throws GSmartServiceException;
+	
+	public List<Notice> viewAdminNoticeDao(String SmartId)throws GSmartServiceException;
     
    // public List<Notice> viewSpecificNotice(Integer smart_id)throws Exception;
 

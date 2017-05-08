@@ -42,7 +42,7 @@ public class Hierarchy {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Index(name = "hid")
+//	@Index(name = "hid")
     private Long hid;
 	
 
@@ -53,7 +53,7 @@ public class Hierarchy {
 	 * Institution of a person
 	 */
 	@Column(name="INSTITUTION")
-	@Index(name = "institution")
+//	@Index(name = "institution")
 	private String institution;
 
 	/**
@@ -77,7 +77,7 @@ public class Hierarchy {
 	
 	
 	@Column(name="PINCODE")
-	private int pincode;
+	private String pincode;
 	
 	
 	@Column(name="LANDLINE_NUMBER")
@@ -119,11 +119,13 @@ public class Hierarchy {
 		this.schoolAddress2 = schoolAddress2;
 	}
 
-	public int getPincode() {
+
+
+	public String getPincode() {
 		return pincode;
 	}
 
-	public void setPincode(int pincode) {
+	public void setPincode(String pincode) {
 		this.pincode = pincode;
 	}
 

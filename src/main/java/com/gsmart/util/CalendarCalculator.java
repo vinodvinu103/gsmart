@@ -13,7 +13,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Repository;
 
@@ -39,6 +38,7 @@ public class CalendarCalculator {
 	@Autowired
 	LoginServices loginservices;
 
+	
 	public static String getTimeStamp() {
 		try {
 			Date a = new Date();
@@ -58,6 +58,11 @@ public class CalendarCalculator {
 		System.out.println("Hello Quartz!");
 	}*/
 	
+	public static Long getCurrentEpochTime() {
+		return new Date().getTime()/1000;
+	}
+
+
 	private Long getUnixtime(String timestamp) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 		Long unixTime = null;

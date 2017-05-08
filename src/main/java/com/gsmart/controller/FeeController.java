@@ -90,6 +90,46 @@ public class FeeController {
 		return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap, HttpStatus.OK);
 
 	}
+	@RequestMapping(value = "/studentunpaidfee/{smartId}/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, ArrayList<Fee>>> getStudentUnpaid(@PathVariable("smartId") String smartId,@PathVariable("academicYear") String academicYear,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart();
+
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+
+		str.length();
+		Map<String, ArrayList<Fee>> jsonMap1 = new HashMap<String, ArrayList<Fee>>();
+		
+		Fee fee =new Fee();
+		fee.setAcademicYear(academicYear);
+		fee.setSmartId(smartId);
+		Map<String, Object> responseMap = new HashMap<>();
+
+		
+
+			ArrayList<Fee> feeList = (ArrayList<Fee>) feeServices.getStudentUnpaidFeeList(fee,tokenObj.getHierarchy().getHid());
+
+			if (feeList.size() != 0) {
+				jsonMap1.put("result", feeList);
+				responseMap.put("data", jsonMap1);
+				responseMap.put("status", 200);
+				responseMap.put("message", "success");
+				Loggers.loggerEnd();
+			} else {
+				jsonMap1.put("result", null);
+				Loggers.loggerEnd();
+			}
+
+		
+		return new ResponseEntity<Map<String, ArrayList<Fee>>>(jsonMap1, HttpStatus.OK);
+
+	}
+
+	
+	
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<IAMResponse> addFee(@RequestBody Fee fee, @RequestHeader HttpHeaders token,

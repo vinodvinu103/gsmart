@@ -35,6 +35,8 @@ public interface FeeServices {
 	public void editFee(Fee fee) throws GSmartServiceException;
 
 	public void deleteFee(Fee fee) throws GSmartServiceException;
+
+	public List<Fee> getStudentUnpaidFeeList(Fee fee, Long hid) throws GSmartServiceException;
 	
 	
 

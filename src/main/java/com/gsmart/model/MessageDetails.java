@@ -13,6 +13,7 @@ import javax.print.DocFlavor.INPUT_STREAM;
 
 import org.hibernate.annotations.Index;
 
+import org.hibernate.annotations.Index;
 
 
 @SuppressWarnings("deprecation")
@@ -31,7 +32,7 @@ public class MessageDetails
 
 	@Id
 	@Column(name = "SMART_ID")
-	@Index(name = "smartId")
+//	@Index(name = "smartId")
 	String smartId;
 	
 	@Column(name = "ENTRY_TIME")
@@ -47,7 +48,7 @@ public class MessageDetails
 	int childFlag;
 	
 	@Column(name = "POSTED_BY")
-	@Index(name = "postedBy")
+//	@Index(name = "postedBy")
 	String postedBy;
 	
 	@Column(name = "POSTED_TO")
