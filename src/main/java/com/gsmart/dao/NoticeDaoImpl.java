@@ -309,7 +309,7 @@ public Profile getProfileDetails(String smartId) {
     	 Loggers.loggerStart();
     	 List<Notice> list = new ArrayList<>();
     	 try{
-    		 query=sessionFactory.getCurrentSession().createQuery("from Notice where smartId= :smartId ");
+    		 query=sessionFactory.getCurrentSession().createQuery("from Notice where smartId= :smartId and isActive='Y' ");
     		 query.setParameter("smartId", smartId);
     		 list=query.list();
     	 }catch(Exception e){

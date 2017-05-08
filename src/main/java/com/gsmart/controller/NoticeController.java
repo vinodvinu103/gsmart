@@ -281,11 +281,15 @@ public class NoticeController {
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
 		{
 
+			Token tokenObj = (Token) httpSession.getAttribute("token");
 			Loggers.loggerStart(notice);
-			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-			Date d=new Date(Long.parseLong(notice.getEntryTime()));
+			if(tokenObj.getHierarchy()==null){
+				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+				Date d=new Date(Long.parseLong(notice.getEntryTime()));
 
-			notice.setEntryTime(f.format(d));
+				notice.setEntryTime(f.format(d));
+			}
+			
 			String tokenNumber = token.get("Authorization").get(0);
 			String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 			str.length();
@@ -314,10 +318,13 @@ public class NoticeController {
 			@RequestHeader HttpHeaders Token, HttpSession httpSession) throws GSmartServiceException {
 
 		Loggers.loggerStart();
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-		Date d=new Date(Long.parseLong(notice.getEntryTime()));
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		if(tokenObj.getHierarchy()==null){
+			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+			Date d=new Date(Long.parseLong(notice.getEntryTime()));
 
-		notice.setEntryTime(f.format(d));
+			notice.setEntryTime(f.format(d));
+		}
 
 		String tokenNumber = Token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
