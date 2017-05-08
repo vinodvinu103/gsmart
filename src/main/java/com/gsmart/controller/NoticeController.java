@@ -338,8 +338,6 @@ public class NoticeController {
 		}
 
 	}
-	
-	
 	@RequestMapping(value = "/adminNotice/{hid}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewNoticeForAdmin(@PathVariable("hid") Long hid,
 			@RequestHeader HttpHeaders token, HttpSession httpSession)

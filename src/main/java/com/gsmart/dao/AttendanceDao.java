@@ -20,7 +20,6 @@ public interface AttendanceDao  {
 
 	public List<Map<String, Object>> getPresentAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException;
-	
 	public List<Map<String, Object>> getAbsentAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException;
 	public Map<String, Object> getAttendanceCount(List<String> childList,Date date);

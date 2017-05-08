@@ -1,12 +1,14 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.PerformanceRecordDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.util.GSmartDatabaseException;
@@ -19,10 +21,10 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 	@Autowired
 	private PerformanceRecordDao performancerecordao;
 	@Override
-	public List<PerformanceRecord> getPerformanceRecord(PerformanceAppraisal appraisal,String smartId) throws GSmartServiceException {
+	public Map<String, Object> getPerformanceRecord(String smartId,String year,Long hid,String reportingId) throws GSmartServiceException {
 		Loggers.loggerStart();
 		try {
-	return	performancerecordao.getPerformanceRecord(appraisal,smartId);
+	return	performancerecordao.getPerformanceRecord(smartId,year,hid, reportingId);
 		
 	
 	} catch (GSmartDatabaseException exception) {
@@ -35,7 +37,26 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 	
 }
 	@Override
-	public void addAppraisalRecord(PerformanceAppraisal appraisal) throws GSmartServiceException {
+	public Map<String, Object> getPerformanceRecordManager(String reportingManagerId, String smartId, String year,
+			Long hid) throws GSmartServiceException {
+		Loggers.loggerStart();
+		try {
+			return performancerecordao.getPerformanceRecordManager(reportingManagerId,smartId,year,hid);
+			
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		}catch (Exception e) {
+			Loggers.loggerException(e.getMessage());
+			throw new GSmartServiceException(e.getMessage());
+
+		}
+		
+	}
+	
+	
+	
+	@Override
+	public void addAppraisalRecord(PerformanceRecord appraisal) throws GSmartServiceException {
 		try {
 		performancerecordao.addAppraisalRecord(appraisal);
 		}
@@ -46,6 +67,24 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 		}
 		Loggers.loggerEnd();
 	}
+	
+	@Override
+	public void addAppraisalRecordManager(PerformanceRecord appraisal) throws GSmartServiceException {
+		try {
+			performancerecordao.addAppraisalRecordManager(appraisal);
+			}
+			catch (GSmartDatabaseException exception) {
+				throw (GSmartServiceException) exception;
+			} catch (Exception e) {
+				throw new GSmartServiceException(e.getMessage());
+			}
+			Loggers.loggerEnd();
+		
+	}
+	
+	
+	
+	
 	@Override
 	public void editAppraisalrecord(PerformanceAppraisal appraisal) throws GSmartServiceException {
 		try {
@@ -71,4 +110,9 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 		Loggers.loggerEnd();
 		
 	}
+
+
+
+
+	
 }

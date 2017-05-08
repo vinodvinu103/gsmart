@@ -168,9 +168,8 @@ public class ProfileServicesImp implements ProfileServices {
 		return profileDao.getProfileByHierarchy(hierarchy);
 	}
 	
-
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
-
+	
 		return profileDao.getProfilesWithoutRfid(min, max,hierarchy);
 	}
 
