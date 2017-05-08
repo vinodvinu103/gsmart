@@ -150,6 +150,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			int numofQuantity = inventoryAssignments.getQuantity();
 			 
 			if (updateInventory(cat, item, numofQuantity, numofQuantity, oldInventory,hid) == 200) {
+				inventoryAssignments.setInvreturn(0);
 		    	ch=	(InventoryAssignmentsCompoundKey) session.save(inventoryAssignments);
 			}
 		
@@ -206,6 +207,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 			int  numQuntity = inventoryAssignmentsStudent.getQuantity();
 			
 			if (updeteInv(cat,item,numQuntity,numQuntity, profileDao.getProfileDetails(reportingManagerId).getSmartId(),oldInventoryAssignment,hid) == 200){
+				inventoryAssignmentsStudent.setReturnstu(0);
 				chstudent= (CompoundInventoryAssignmentsStudent) session.save(inventoryAssignmentsStudent);
 			}
 			}catch (Exception e) {
