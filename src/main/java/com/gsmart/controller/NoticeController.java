@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gsmart.dao.NoticeDao;
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
@@ -44,7 +45,9 @@ public class NoticeController {
 	@Autowired
 	private SearchService searchService;
 
-
+    @Autowired
+	private ProfileDao profileDao;
+	
 	@Autowired
 	private GetAuthorization getAuthorization;
 	
@@ -74,13 +77,21 @@ public class NoticeController {
 		Map<String, Object> responseMap = new HashMap<>();
 
 		List<Notice> list = new ArrayList<Notice>();
+		Map<String, Profile> allprofiles =new HashMap<>();
 
 		try {
 			
 			if(tokenObj.getRole().equalsIgnoreCase("director") || tokenObj.getRole().equalsIgnoreCase("admin")){
 				list = noticeService.viewAdminNoticeService(smartId);
 			}else{
-				Map<String, Profile> allprofiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
+				List<Profile> profiles= profileDao.getAllProfiles(academicYear);
+				for (Profile profile : profiles) {
+					Loggers.loggerValue("smartIds :", profile.getSmartId());
+
+					allprofiles.put(profile.getSmartId(), profile);
+				}
+				
+			
 
 				ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
 
@@ -93,13 +104,13 @@ public class NoticeController {
 			
 			
 			for (Notice notice : list) {
-
 				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 				Date d = f.parse(notice.getEntryTime());
 				notice.setEntryTime(String.valueOf(d.getTime()));
+				
 				Loggers.loggerStart("notice.getEntryTime : " + notice.getEntryTime());
 			}
-			System.out.printf("smart id list :", list);
+			System.out.printf("smart id list :"+ list);
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucess");
@@ -270,8 +281,11 @@ public class NoticeController {
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
 		{
 
-			Loggers.loggerStart();
+			Loggers.loggerStart(notice);
+			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+			Date d=new Date(Long.parseLong(notice.getEntryTime()));
 
+			notice.setEntryTime(f.format(d));
 			String tokenNumber = token.get("Authorization").get(0);
 			String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 			str.length();
@@ -300,6 +314,10 @@ public class NoticeController {
 			@RequestHeader HttpHeaders Token, HttpSession httpSession) throws GSmartServiceException {
 
 		Loggers.loggerStart();
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+		Date d=new Date(Long.parseLong(notice.getEntryTime()));
+
+		notice.setEntryTime(f.format(d));
 
 		String tokenNumber = Token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);

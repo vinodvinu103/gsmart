@@ -14,8 +14,8 @@ public class Constants {
 	public static final String REGISTRATION = "/registration";
 	public static final String CONSTRAINT_VIOLATION = "RECORD ALREADY EXISTS";
 	public static final String NULL_PONITER = "null";
-	public static final String SMTP_HOST_NAME = "mail.gowdanar.com";
-	public static final String SUPPORT_MAIL = "surendrak@gowdanar.com";
+	public static final String SMTP_HOST_NAME = "smtp.gmail.com";
+	public static final String SUPPORT_MAIL = "vinukv42@gmail.com";
 	public static final String PRIVILEGE = "/privilege";
 	public static final String FEE = "/fee";
 	public static final String QUESTIONBANK = "/questionBank";

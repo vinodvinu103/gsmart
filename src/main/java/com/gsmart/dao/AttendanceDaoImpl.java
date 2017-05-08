@@ -348,6 +348,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 					attendance.setStatus("ABSENT");
 					attendance.setIsActive("N");
 					attendance.setInDate(epoch1);
+					attendance.setRole(profile.getRole());
 					attendance.setHierarchy(profile.getHierarchy());
 					attendance.setFinalToken(profile.getFinalToken());
 					attendance.setFirstName(profile.getFirstName());
@@ -382,8 +383,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			Session session = this.sessionFactory.getCurrentSession();
 			for (Attendance attendance : attendanceList) {
 				System.out.println("attendance status"+attendance.getStatus());
-				if(attendance.getStatus().equals("ABSENT")){
+				if(attendance.getStatus().equals("ABSENT") && attendance.getStatus()==null){
 					attendance.setIsActive("N");
+					attendance.setIsActive("ABSENT");
 				}else{
 					attendance.setIsActive("Y");
 				}

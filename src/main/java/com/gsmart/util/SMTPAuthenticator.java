@@ -11,9 +11,9 @@ public class SMTPAuthenticator extends Authenticator {
 
 	public PasswordAuthentication getPasswordAuthentication() {
 
-		username = "vinod@gowdanar.com";
+//		username = "vinod@gowdanar.com";
 
-		username = "vinodkumarreddy@gowdanar.com";
+		username = "viratvinu@gmail.com";
 
 		password = "vinodvinu@103";
 		return new PasswordAuthentication(username, password);
