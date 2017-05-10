@@ -10,7 +10,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Index;
-
 @SuppressWarnings("deprecation")
 @Entity
 @Table(name = "WEEKDAYS")
@@ -23,12 +22,12 @@ public class WeekDays {
 	private String weekDay;
 
 	@Column(name = "ISACTIVE")
-	@Index(name = "isActive")
+//	@Index(name = "isActive")
 	private String isActive;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "hid")
-	@Index(name = "hierarchy")
+//	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	@Id

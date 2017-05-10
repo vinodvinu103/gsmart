@@ -1,18 +1,14 @@
 package com.gsmart.controller;
 
 
-import java.util.HashMap;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
-
 import java.util.Map;
-import java.util.logging.Logger;
 
-import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,30 +22,27 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
-import com.gsmart.model.Token;
 import com.gsmart.dao.AttendanceDao;
 import com.gsmart.dao.DashboardDao;
 import com.gsmart.dao.HolidayDao;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.ReportCardDao;
-import com.gsmart.model.Attendance;
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Inventory;
+import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
-import com.gsmart.model.RolePermission;
+import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
+import com.gsmart.services.InventoryAssignmentsServices;
 import com.gsmart.services.InventoryServices;
 import com.gsmart.services.ProfileServices;
-import com.gsmart.services.ReportCardService;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
-
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
@@ -83,9 +76,11 @@ public class DashboardController {
 	private AttendanceDao attendancedao;
 	@Autowired
 	private ProfileDao profileDao;
+	@Autowired
+	private InventoryAssignmentsServices inventoryAssignmentServices;
 
 	
-	@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventory1(@PathVariable("academicYear") String academicYear,@RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
@@ -128,7 +123,57 @@ public class DashboardController {
 			}
 			Loggers.loggerEnd(inventoryByHierarchy);
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
-		} 
+		} */
+	@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getInventory(@PathVariable("academicYear") String academicYear,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Map<String, Object> responseMap = new HashMap<>();
+		List<Map<String, Object>> inventoryByHierarchy = new ArrayList<>();
+		Map<String, Object> finalResponse = new HashMap<>();
+		
+		
+		List<Inventory> inventoryList = null;
+		if (tokenObj.getHierarchy() == null) {
+			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
+			for (Hierarchy hierarchy : hierarchyList) {
+				Map<String, Object> dataMap = new HashMap<>();
+				Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear,
+						hierarchy.getHid());
+				ArrayList<String> childsList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
+				childsList.add(tokenObj.getSmartId());
+				
+				inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), hierarchy);
+				System.out.println("Inventory list::::::::::::::"+inventoryList);
+				
+				dataMap.put("inventoryList", inventoryList);
+				dataMap.put("hierarchy", hierarchy);
+				inventoryByHierarchy.add(dataMap);
+			}
+			finalResponse.put("inventoryList", inventoryByHierarchy);
+			responseMap.put("data", finalResponse);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		} else if (tokenObj.getHierarchy() != null) {
+			Map<String, Object> dataMap = new HashMap<>();
+			Map<String, Profile> allProfiles = searchService.getAllProfiles(academicYear, tokenObj.getHierarchy().getHid());
+			ArrayList<String> childsList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
+			childsList.add(tokenObj.getSmartId());
+			inventoryList = inventoryServices.getInventoryList(tokenObj.getRole(), tokenObj.getHierarchy());
+			dataMap.put("inventoryList", inventoryList);
+			dataMap.put("hierarchy", tokenObj.getHierarchy());
+			inventoryByHierarchy.add(dataMap);
+			finalResponse.put("inventoryList", inventoryByHierarchy);
+			responseMap.put("data", finalResponse);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		}
+		Loggers.loggerEnd(responseMap);
+		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+	}
+
 	
 
 	/*@RequestMapping(value = "/inventory1/{academicYear}", method = RequestMethod.GET)
@@ -181,8 +226,8 @@ public class DashboardController {
 		}
 		Loggers.loggerEnd(responseMap);
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
-	}*/
-
+	}
+*/
 	@RequestMapping(value = "/attendance/{date}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@PathVariable("date") Long date,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
@@ -201,7 +246,16 @@ public class DashboardController {
 			System.out.println("in side else");
 			hierarchyList.add(tokenObj.getHierarchy());
 		}
-		attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
+		if(tokenObj.getRole().equalsIgnoreCase("FINANCE")){
+			attendanceList=attendanceService.getAttendanceByhierarchyForFinance(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		else if(tokenObj.getRole().equalsIgnoreCase("HR")){
+			attendanceList=attendanceService.getAttendanceByhierarchyForHr(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		else{
+			attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
+		}
+		
 		responseMap.put("message", "success");
 		responseMap.put("status", 200);
 		responseMap.put("data", attendanceList);
@@ -252,9 +306,16 @@ public class DashboardController {
 
 			Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
 					tokenObj.getHierarchy().getHid());
-
-			List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
-
+			List<String> childList=null;
+			if(tokenObj.getRole().equalsIgnoreCase("FINANCE")){
+				childList = searchService.getAllChildSmartIdForFinanceFee(tokenObj.getSmartId(), allProfiles);
+			}
+			else if(tokenObj.getRole().equalsIgnoreCase("HR")){
+				childList = searchService.getAllChildSmartIdForHrFee(tokenObj.getSmartId(), allProfiles);
+			}
+			else{
+				childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
+			}
 			childList.add(tokenObj.getSmartId());
 			totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
 			totalFees = feeServices.getPaidFeeDashboard(academincYear, tokenObj.getHierarchy().getHid(), childList);
@@ -365,7 +426,7 @@ public class DashboardController {
 		fee.setSmartId(smartId);
 		
 		feeList = feeServices.getDashboardFeeList(fee, profile.getHierarchy().getHid());
-			profileList = profileDao.searchStudent(profile, tokenObj.getHierarchy());
+			profileList = dashboardDao.searchStudentByName(profile, tokenObj.getHierarchy());
 			List<Map<String, Object>> attendanceList=attendanceService.getPresentAttendance(startDate, endDate, smartId);
 			List<Map<String, Object>> absentList=attendancedao.getAbsentAttendance(startDate, endDate, smartId);
 			System.out.println("attendenceList"+attendanceList);
@@ -454,11 +515,57 @@ public class DashboardController {
 		
 		Map<String,Object> profileMap=new HashMap<>();
 		List<Profile> profileList=null;
-		profileList=profileDao.studentProfile(tokenObj,tokenObj.getHierarchy());
+		profileList=dashboardDao.studentProfile(tokenObj,tokenObj.getHierarchy());
 		System.out.println("STUDENT>>>>>>>>"+profileList);
 		profileMap.put("profileList", profileList);
 		
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String,Object>>(profileMap, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/searchbyname", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchByName(@RequestBody Profile profile,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<Profile> studentList = null;
+        
+		
+		Map<String, Object> privilege = new HashMap<>();
+			studentList = dashboardDao.searchStudentByName(profile, tokenObj.getHierarchy());
+			
+			System.out.println("studentList>>>>>>>>>>>>>>>>>>>>>>>>>>>>::"+studentList);
+			
+			privilege.put("studentList", studentList);
+			Loggers.loggerEnd(studentList);
+		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
+	}
+	@RequestMapping(value="/searchbyId", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchById(@RequestBody Profile profile,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<Profile> studentList = null;
+        
+		
+		Map<String, Object> privilege = new HashMap<>();
+			studentList = dashboardDao.searchStudentById(profile, tokenObj.getHierarchy());
+			
+			System.out.println("studentList>>>>>>>>>>>>>>>>>>>>>>>>>>>>::"+studentList);
+			privilege.put("studentList", studentList);
+			Loggers.loggerEnd(studentList);
+		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
 	}
 }

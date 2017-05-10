@@ -23,6 +23,8 @@ public interface NoticeService {
 	
 	public List<Notice> viewMyNotice(String role, Long hid);
 	
+	public List<Notice> viewAdminNoticeService(String SmartId) throws GSmartServiceException;
+	
 
 	
 //	public ArrayList<Profile> getProfiles(String role,String smartId)throws GSmartServiceException;

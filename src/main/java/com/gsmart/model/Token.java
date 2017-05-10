@@ -17,7 +17,7 @@ public class Token {
 
 	@Id
 	@Column(name="TOKEN_NUMBER")
-	@Index(name = "tokenNumber")
+//	@Index(name = "tokenNumber")
 	String tokenNumber;
 	
 	@Column(name="SMART_ID")
@@ -26,6 +26,15 @@ public class Token {
 	@Column(name="ROLE")
 	String role;
 	
+	@Column(name="REPORTINGMANAGER_ID")
+	String reportingManagerId;
+	
+	public String getReportingManagerId() {
+		return reportingManagerId;
+	}
+	public void setReportingManagerId(String reportingManagerId) {
+		this.reportingManagerId = reportingManagerId;
+	}
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
@@ -60,7 +69,7 @@ public class Token {
 	@Override
 	public String toString() {
 		return "Token [\t tokenNumber=" + tokenNumber + ",\t smartId=" + smartId + ",\t role=" + role + ",\t hierarchy="
-				+ hierarchy + "]";
+				+ hierarchy + "\n\tRole="+role+"\n\tReportingManagerId="+reportingManagerId+"\n\t]";
 	}
 	
 	

@@ -28,12 +28,12 @@ public class Inventory {
 
 	@Id
 	@Column(name="CATEGORY")
-	@Index(name = "category")
+//	@Index(name = "category")
 	private String category;
 
     @Id
 	@Column(name="ITEM_Type")
-	@Index(name = "itemType")
+//	@Index(name = "itemType")
 	private String itemType;
 
 	@Id
@@ -78,7 +78,7 @@ public class Inventory {
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
-	@Index(name = "hierarchy")
+//	@Index(name = "hierarchy")
 	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {
@@ -143,10 +143,12 @@ public class Inventory {
 
 	@Override
 	public String toString() {
-		return "Inventory [\n category=" + category + ", \n itemType=" + itemType + ",  \n entryTime=" + entryTime + ", \n quantity="
-				+ quantity + ", \n leftQuantity=" + leftQuantity + ", \n exitTime=" + exitTime + ", \n updateTime=" + updateTime
-				+ ", \n isActive=" + isActive + "]";
+		return "Inventory [category=" + category + ", itemType=" + itemType + ", entryTime=" + entryTime + ", quantity="
+				+ quantity + ", leftQuantity=" + leftQuantity + ", isActive=" + isActive + ", hierarchy=" + hierarchy
+				+ "]";
 	}
+
+	
 
 	
 

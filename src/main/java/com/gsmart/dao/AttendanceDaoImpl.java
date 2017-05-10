@@ -62,6 +62,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 
+
 		}
 
 		Loggers.loggerEnd();
@@ -72,6 +73,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	@Override
 	public List<Map<String, Object>> getPresentAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException {
+
 
 		Loggers.loggerStart();
 
@@ -94,21 +96,22 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		Loggers.loggerEnd();
 		return constructAttendanceList((List<Attendance>) attendanceList);
 	}
-	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Map<String, Object>> getAbsentAttendance(Long startDate, Long endDate, String smartId)
 			throws GSmartDatabaseException {
-	
+
 		Loggers.loggerStart();
 
 		List<Attendance> attendanceList = null;
 		try {
-			query =sessionFactory.getCurrentSession().createQuery(
+			query = sessionFactory.getCurrentSession().createQuery(
 					"from Attendance where isActive=:isActive and smartId=:smartId and status=:status and inDate between :startDate and :endDate");
 			query.setParameter("isActive", "Y");
 			query.setParameter("smartId", smartId);
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
+
 			query.setParameter("status", "ABSENT");
 			attendanceList = query.list();
 		} catch (Exception e) {
@@ -121,17 +124,19 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		return constructAttendanceList((List<Attendance>) attendanceList);
 	}
 
+
 	@Override
 	public List<String> addAttendance(List<Attendance> attendanceList) throws GSmartDatabaseException {
 
 		List<String> rfidList = new ArrayList<>();
 		Loggers.loggerStart("attendanceList : " + attendanceList + " " + attendanceList.size());
 		try {
+
 			Session session = this.sessionFactory.getCurrentSession();
 			for (Attendance attendance : attendanceList) {
 				Profile profile = getSmartId(attendance.getRfId());
 				if (profile.getSmartId() != null) {
-					System.out.println("Updating Attendance: "+profile.getSmartId());
+					System.out.println("Updating Attendance: " + profile.getSmartId());
 					attendance.setSmartId(profile.getSmartId());
 					attendance.setHierarchy(profile.getHierarchy());
 					session.saveOrUpdate(attendance);
@@ -193,8 +198,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	public Attendance getAttendance(long inDate, String smartId) {
 		Loggers.loggerStart(inDate);
 		try {
-			query = sessionFactory.getCurrentSession()
-					.createQuery("from Attendance where  inDate=:inDate and smartId=:smartId");
+			query = sessionFactory.getCurrentSession().createQuery("from Attendance where  inDate=:inDate and smartId=:smartId");
 			query.setParameter("smartId", smartId);
 			query.setParameter("inDate", inDate);
 			Attendance attendance = (Attendance) query.uniqueResult();
@@ -208,12 +212,11 @@ public class AttendanceDaoImpl implements AttendanceDao {
 
 	}
 
-	/*
-	 * private void getconnection() { session = sessionFactory.openSession(); tx
-	 * = session.beginTransaction();
-	 * 
-	 * }
-	 */
+	/*private void getconnection() {
+		session = sessionFactory.openSession();
+		tx = session.beginTransaction();
+
+	}*/
 
 	private List<Map<String, Object>> constructAttendanceList(List<Attendance> list) {
 
@@ -240,7 +243,9 @@ public class AttendanceDaoImpl implements AttendanceDao {
 		Loggers.loggerStart();
 		System.out.println("intime >>>>>>>>>>>>>>>>>>>>>>>>>> " + date);
 		try {
-			query = sessionFactory.getCurrentSession().createQuery("from Attendance where inDate=:inDate and hierarchy.hid=:hId");
+
+			query = sessionFactory.getCurrentSession().createQuery("from Attendance where inDate=:inDate and hierarchy.hid=:hId and status='PRESENT'");
+
 			query.setParameter("inDate", date);
 			query.setParameter("hId", hierarchy.getHid());
 			return query.list();
@@ -251,7 +256,7 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			return null;
 		}
 	}
-
+	
 	private Profile getSmartId(String rfid) {
 		Loggers.loggerStart();
 		try {
@@ -266,32 +271,36 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	}
 
 	@Override
-	public Map<String, Object> getAttendanceCount(List<String> childList) {
+	public Map<String, Object> getAttendanceCount(List<String> childList, Date date) {
 		Loggers.loggerStart();
 		try {
 			Map<String, Object> respMap = new HashMap<>();
-			String date = CalendarCalculator.getTimeStamp();
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-			Date date1 = df
-					.parse(date); /* long epoch = date1.getTime() / 1000; */
-			calendar.setTime(date1);
+			// String date = CalendarCalculator.getTimeStamp();
+//			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+			// Date date1 = df.parse(date); /* long epoch = date1.getTime() /
+			// 1000; */
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
 			calendar.set(Calendar.MILLISECOND, 0);
 			calendar.set(Calendar.SECOND, 0);
 			calendar.set(Calendar.MINUTE, 0);
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
 			Date date2 = calendar.getTime();
 			long epoch1 = date2.getTime() / 1000;
+
 			System.out.println("today epoch date" + epoch1);
 			System.out.println("childList" + childList);
 
-			query = sessionFactory.getCurrentSession().createQuery(
-					"from Attendance where smartId in  (:smartIdList) and isActive=:isActive and inDate=:inDate");
+			query = sessionFactory.getCurrentSession()
+					.createQuery("from Attendance where smartId in  (:smartIdList)  and inDate=:inDate");
 			query.setParameterList("smartIdList", childList);
-			query.setParameter("isActive", "Y");
+			// query.setParameter("isActive", "Y");
 			query.setParameter("inDate", epoch1);
+			@SuppressWarnings("unchecked")
+			List<Attendance> attendanceList = query.list();
+			respMap.put("childList", attendanceList);
+			respMap.put("Attendancecount", attendanceList.size());
 
-			respMap.put("Attendancecount", query.list().size());
-			respMap.put("childList", query.list());
 			respMap.put("totalCount", childList.size());
 
 			return respMap;
@@ -304,13 +313,15 @@ public class AttendanceDaoImpl implements AttendanceDao {
 
 	@Scheduled(cron = "0 0 1 * * ?")
 	public void insertAttendanceData() {
-		
+
 		String date = CalendarCalculator.getTimeStamp();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 		Date date1;
-		int year = Calendar.getInstance().get(Calendar.YEAR);   // Gets the current date and time
-		
-		String academicYear=year+"-"+(year+1);
+		int year = Calendar.getInstance().get(Calendar.YEAR); // Gets the
+																// current date
+																// and time
+
+		String academicYear = year + "-" + (year + 1);
 		try {
 			date1 = df.parse(date);
 			calendar.setTime(date1);
@@ -323,21 +334,30 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			System.out.println("today epoch date" + epoch1);
 			System.out.println("attendance insert data using cron job");
 			ArrayList<Profile> allProfiles = profileDao.getAllProfiles(academicYear);
-			
-			
+
 			for (Profile profile : allProfiles) {
-				String smartId=profile.getSmartId();
-				String rfid=profile.getRfId();
-				if (profile.getSmartId() != null && profile.getRfId()!=null) {
+				String smartId = profile.getSmartId();
+
+				String rfid = profile.getRfId();
+				if (profile.getSmartId() != null) {
 					Attendance attendance = new Attendance();
 					Session session = this.sessionFactory.getCurrentSession();
 					attendance.setSmartId(smartId);
-					attendance.setRfId(rfid);
+					if (rfid != null) {
+						attendance.setRfId(rfid);
+					} else {
+						attendance.setRfId(smartId);
+					}
 					attendance.setStatus("ABSENT");
 					attendance.setIsActive("N");
 					attendance.setInDate(epoch1);
+					attendance.setRole(profile.getRole());
 					attendance.setHierarchy(profile.getHierarchy());
-					session.save(attendance);
+					attendance.setFinalToken(profile.getFinalToken());
+					attendance.setFirstName(profile.getFirstName());
+					attendance.setMiddleName(profile.getMiddleName());
+					attendance.setLastName(profile.getLastName());
+					session.saveOrUpdate(attendance);
 					System.out.println("data saved in attendance table" + attendance);
 				}
 			}
@@ -346,4 +366,53 @@ public class AttendanceDaoImpl implements AttendanceDao {
 
 		}
 	}
+
+	@Override
+	public void addClassAttendance(List<Attendance> attendanceList) throws GSmartDatabaseException {
+		
+		Loggers.loggerStart();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(attendanceList.get(0).getDate());
+		Date date = calendar.getTime();
+		long inTimeEpoch=date.getTime()/1000;
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		Date date2 = calendar.getTime();
+		long epoch1 = date2.getTime()/1000;
+		try {
+			Session session = this.sessionFactory.getCurrentSession();
+			for (Attendance attendance : attendanceList) {
+				System.out.println("attendance status"+attendance.getStatus());
+				if(attendance.getStatus().equals("ABSENT") && attendance.getStatus()==null){
+					attendance.setIsActive("N");
+					attendance.setIsActive("ABSENT");
+				}else{
+					attendance.setIsActive("Y");
+				}
+				attendance.setInDate(epoch1);
+				attendance.setInTime(inTimeEpoch);
+				session.saveOrUpdate(attendance);
+				/*Profile profile = getSmartId(attendance.getRfId());
+				if (profile.getSmartId() != null) {
+					System.out.println("Updating Attendance: " + profile.getSmartId());
+					attendance.setSmartId(profile.getSmartId());
+					attendance.setHierarchy(profile.getHierarchy());
+					session.saveOrUpdate(attendance);
+				}*/
+			}
+			System.out.println("atttenfdenceListjj" + attendanceList);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+
+		}
+		Loggers.loggerEnd();
+		
+		
+	}
+
 }

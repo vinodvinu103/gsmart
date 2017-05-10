@@ -1,6 +1,8 @@
 package com.gsmart.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -44,6 +46,7 @@ public class NoticeDaoImpl implements NoticeDao {
 			notice.setSmartId(token.getSmartId());
 			notice.setRole(token.getRole());
 			notice.setIsActive("Y");
+
 			notice.setEntryTime(CalendarCalculator.getTimeStamp()); 
 			session.save(notice);
 			Loggers.loggerEnd();
@@ -101,7 +104,7 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 
 	@Override
 	public void deleteNotice(Notice notice) {
-		Loggers.loggerStart();
+		Loggers.loggerStart(notice);
 		Session session=this.sessionFactory.getCurrentSession();
 		try{
 		
@@ -118,11 +121,10 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 
 	@Override
 	public Notice editNotice(Notice notice)throws GSmartBaseException{
+		Loggers.loggerStart(notice);
 	
 		Session session=this.sessionFactory.getCurrentSession();
 		try{
-			Loggers.loggerStart();
-			
 			Notice oldNotice = getNotice(notice.getEntryTime());
 			oldNotice.setUpdate_time(CalendarCalculator.getTimeStamp());
 			oldNotice.setIsActive("N");
@@ -141,18 +143,20 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 			throw new GSmartBaseException(e.getMessage());
 		}
 		
-	
+	Loggers.loggerEnd();
 	return notice;
 	
 	}
 	
 	public Notice getNotice(String entryTime){
       try{
+    	  Loggers.loggerStart(entryTime);
     	  
 			query = sessionFactory.getCurrentSession().createQuery("from Notice where isActive='Y' and entryTime='" + entryTime + "' ORDER BY entryTime desc");
 			@SuppressWarnings("unchecked")
 			ArrayList<Notice> viewNotice = (ArrayList<Notice>) query.list();
 			
+			Loggers.loggerEnd();
 			return viewNotice.get(0);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -221,7 +225,7 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 			
 			Profile currentProfile = (Profile) sessionFactory.getCurrentSession().createQuery("from Profile where smartId=" + smartId).list()
 					.get(0);
-			if (currentProfile.getReportingManagerId() != smartId)
+			if (currentProfile.getReportingManagerId().equals(smartId))
 				return getProfileDetails(currentProfile.getReportingManagerId());
 			else
 				return null;
@@ -298,8 +302,26 @@ public Profile getProfileDetails(String smartId) {
        	Loggers.loggerEnd(list);
     	return list;
     }
-
+    
+     
+     @Override
+     public List<Notice> viewAdminNoticeDao(String smartId)  throws GSmartServiceException {
+    	 Loggers.loggerStart();
+    	 List<Notice> list = new ArrayList<>();
+    	 try{
+    		 query=sessionFactory.getCurrentSession().createQuery("from Notice where smartId= :smartId and isActive='Y' ");
+    		 query.setParameter("smartId", smartId);
+    		 list=query.list();
+    	 }catch(Exception e){
+    		 e.printStackTrace();
+    		 
+    	 }
+    	 return list;
+     }
 }
+
+
+
 
 /*
 	@Override

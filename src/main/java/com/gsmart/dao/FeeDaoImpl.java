@@ -1,5 +1,6 @@
 package com.gsmart.dao;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
+import org.postgresql.largeobject.LargeObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,13 +67,13 @@ public class FeeDaoImpl implements FeeDao {
 	@Override
 	public ArrayList<Fee> getFeeList(Fee fee, Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart(fee.getAcademicYear());
-		
+		Loggers.loggerStart(hid);
 		ArrayList<Fee> feeList;
 		try {
 			
 
 				query = sessionFactory.getCurrentSession().createQuery(
-						"from Fee where smartId =:smartId and academicYear =:academicYear and hierarchy.hid=:hierarchy");
+						"from Fee where smartId =:smartId and academicYear =:academicYear and paidFee>'0' and hierarchy.hid=:hierarchy");
 				query.setParameter("hierarchy", hid);
 			
 			query.setParameter("smartId", fee.getSmartId());
@@ -82,9 +84,34 @@ public class FeeDaoImpl implements FeeDao {
 		} 
 			
 			 
-		Loggers.loggerEnd();
+		Loggers.loggerEnd(feeList);
 		return feeList;
 	}
+	
+	@Override
+	public ArrayList<Fee> getStudentUnpaidFeeList(Fee fee, Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart(fee.getAcademicYear());
+		Loggers.loggerStart(hid);
+		ArrayList<Fee> StudentUnpaidfeeList;
+		try {
+			
+
+				query = sessionFactory.getCurrentSession().createQuery(
+						"from Fee where smartId =:smartId and academicYear =:academicYear and isActive='Y' and paidFee='0' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hid);
+		
+			query.setParameter("smartId", fee.getSmartId());
+			query.setParameter("academicYear", fee.getAcademicYear());
+			StudentUnpaidfeeList = (ArrayList<Fee>) query.list();
+		} catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		} 
+			
+			 
+		Loggers.loggerEnd(StudentUnpaidfeeList);
+		return StudentUnpaidfeeList;
+	}
+	
 
 	@Override
 	public void addFee(Fee fee) throws GSmartDatabaseException {
@@ -261,7 +288,7 @@ public class FeeDaoImpl implements FeeDao {
 
 
 	@Override
-	public void editFee(Fee fee) throws GSmartDatabaseException {
+	public void editFee(Fee fee,String schoolname) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Session session=this.sessionFactory.getCurrentSession();
 		try {
@@ -272,11 +299,8 @@ public class FeeDaoImpl implements FeeDao {
 			oldFee.setIsActive("N");
 			//System.out.println("--------------------"+oldFee);
 			session.update(oldFee);
-
-			/*
-			 * feeMaster.setEntryTime(CalendarCalculator.getTimeStamp());
-			 * feeMaster.setIsActive("Y"); session.save(feeMaster);
-			 */
+            String invoicenumber=getinvoice(fee.getHierarchy(),schoolname);
+			fee.setInVoice(invoicenumber);
 
 			addFee(fee);
 
@@ -292,6 +316,55 @@ public class FeeDaoImpl implements FeeDao {
 		Loggers.loggerEnd();
 
 	}
+	  String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
+
+public String getinvoice(Hierarchy hierarchy,String schoolname) {
+	Loggers.loggerStart();
+	try {
+	query = sessionFactory.getCurrentSession()
+			.createQuery("select inVoice from Fee where inVoice!='null' and hierarchy.hid=:hierarchy");
+	
+	query.setParameter("hierarchy", hierarchy.getHid());
+	ArrayList<String> number = (ArrayList<String>) query.list();
+	if (!number.isEmpty()) {
+		Loggers.loggerStart("NEW INVOICE CREATING -----");
+		String oldinvoice=getRecentInvioceNumber(hierarchy);
+		System.out.println(oldinvoice);
+		String[] temp = oldinvoice.split("-");
+		String newinvoice = temp[0]+"-"+temp[1]+"-"+temp[2]+"-"+temp[3]+"-"+String.valueOf(Integer.parseInt(temp[4])+1);
+		System.out.println(newinvoice);
+		return newinvoice;
+		
+	} else {
+		Loggers.loggerStart("FRIST INVIOCE NUMBER------");
+		String invoicenumber=schoolname+"-"+year+"-"+1;
+		
+		return  invoicenumber;
+		
+
+	}
+	}
+	catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+
+	}
+
+public String getRecentInvioceNumber(Hierarchy hierarchy) {
+	
+	Loggers.loggerStart("OLD INVOICE CHECKING");
+	
+	
+	query = sessionFactory.getCurrentSession()
+			.createQuery("select inVoice from Fee where  (entryTime in (select max(entryTime) from Fee where inVoice!='null' and hierarchy.hid=:hierarchy ))");
+	query.setParameter("hierarchy", hierarchy.getHid());
+	Loggers.loggerEnd(hierarchy.getHid());
+	String lastinvoice = (String)query.uniqueResult();
+	
+	
+	return lastinvoice;
+}
 
 public Fee getFee(String entryTime,Hierarchy hierarchy) {
 		
@@ -356,5 +429,7 @@ public Fee getFee(String entryTime,Hierarchy hierarchy) {
 		Loggers.loggerEnd();
 		return feeList;
 	}
+
+
 
 }
