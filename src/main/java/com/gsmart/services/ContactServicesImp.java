@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.ContactDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.MessageDetails;
+import com.gsmart.model.Token;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -28,14 +30,14 @@ public class ContactServicesImp implements ContactServices {
 	}
 	
 	@Override
-	public Map<String, Object> teacherView(MessageDetails details, Integer min, Integer max) throws Exception {
-		return dao.teacherView(details, min, max);
+	public Map<String, Object> teacherView(Token tk1, Integer min, Integer max) throws Exception {
+		return dao.teacherView(tk1, min, max);
 	}
 
 	@Override
-	public Map<String, Object> studentView(MessageDetails details, Integer min, Integer max) throws Exception {
+	public Map<String, Object> studentView(Token tk1, Integer min, Integer max) throws Exception {
 		
-		return dao.studentView(details, min, max);
+		return dao.studentView(tk1, min, max);
 	}
 
 	@Override
@@ -57,13 +59,11 @@ public class ContactServicesImp implements ContactServices {
 
 	@Override
 	public boolean studentToTeacher(MessageDetails details, String role) throws Exception {
-		
 		return dao.studentToTeacher(details,role);
 	}
 	
 	@Override
 	public boolean teacherToStudent(MessageDetails details, String role) throws Exception {
-		
 		return dao.teacherToStudent(details,role);
 	}
 	
@@ -74,8 +74,12 @@ public class ContactServicesImp implements ContactServices {
 
 	@Override
 	public Map<String, Object> studentChat(MessageDetails details) throws Exception {
-		
 		return dao.studentChat(details);
 	}
-	
+
+	@Override
+	public void updateStatus(Long hid, String smartId) throws Exception {
+		dao.updateStatus(hid, smartId);
+	}
+
 }
