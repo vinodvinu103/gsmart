@@ -108,17 +108,17 @@ public class ContactDaoImp implements ContactDao {
 
 		List<MessageDetails> messages = null;
 		Map<String, Object> messageMap = new HashMap<>();
+		String reportingManagerId = token.getSmartId();
 		
 		int count = 0;
 		try {
 			Session session=this.sessionFactory.getCurrentSession();
-			String reportingManagerId = token.getSmartId();
 			
 			System.out.println("reporting manager id :"+reportingManagerId);
 				
 			Criteria criteria1 = session.createCriteria(MessageDetails.class);
 			criteria1.add(Restrictions.eq("postedBy", "STUDENT"));
-			criteria1.add(Restrictions.eq("readByStudent", "Unread"));
+//			criteria1.add(Restrictions.eq("readByStudent", "Unread"));
 			criteria1.add(Restrictions.or(Restrictions.eq("postedTo", reportingManagerId), Restrictions.isNull("postedTo")));
 			criteria1.addOrder(Order.desc("entryTime"));
 			
@@ -130,7 +130,7 @@ public class ContactDaoImp implements ContactDao {
 			
 			Criteria criteriaCount1 = session.createCriteria(MessageDetails.class);
 			criteriaCount1.add(Restrictions.eq("postedBy", "STUDENT"));
-			criteriaCount1.add(Restrictions.eq("readByStudent", "Unread"));
+//			criteriaCount1.add(Restrictions.eq("readByStudent", "Unread"));
 			criteriaCount1.add(Restrictions.or(Restrictions.eq("postedTo", reportingManagerId), Restrictions.isNull("postedTo")));
 			criteriaCount1.setProjection(Projections.rowCount());
 			messageMap.put("totalmessage", criteriaCount1.uniqueResult());
@@ -140,9 +140,7 @@ public class ContactDaoImp implements ContactDao {
 			Loggers.loggerEnd(messageMap);
 			
 			Loggers.loggerEnd(messages);
-			count = messages.size();
 			System.out.println(" count ??????????????????? "+count);
-			messageMap.put("unreadCount", count);
 			messageMap.put("messages", messages);
 		}
 		catch (Exception e) 
@@ -150,7 +148,12 @@ public class ContactDaoImp implements ContactDao {
 			e.printStackTrace();
 			return null;
 		}
+		query = sessionFactory.getCurrentSession().createQuery(
+				"from MessageDetails where readByStudent='Unread' and postedBy='STUDENT' and reportingManagerId=:rId ORDER BY entryTime DESC");
+		query.setParameter("rId", reportingManagerId);
+		count = query.list().size();
 		
+		messageMap.put("unreadCount", count);
 		return messageMap;
 	}
 
@@ -161,14 +164,14 @@ public class ContactDaoImp implements ContactDao {
 		List<MessageDetails> messages = null;
 		Map<String, Object> msgMap = new HashMap<>();
 		int count=0;
+		String smartId = token.getSmartId();
 		
 		try {
 			Session session=this.sessionFactory.getCurrentSession();
-       		String smartId = token.getSmartId();
 			
 			Criteria criteria = session.createCriteria(MessageDetails.class);
 			criteria.add(Restrictions.eq("postedBy", "TEACHER"));
-			criteria.add(Restrictions.eq("readByStudent", "Unread"));
+//			criteria.add(Restrictions.eq("readByStudent", "Unread"));
 			criteria.add(Restrictions.or(Restrictions.eq("postedTo", smartId), Restrictions.isNull("postedTo")));
 			criteria.addOrder(Order.desc("entryTime"));
 			
@@ -177,7 +180,7 @@ public class ContactDaoImp implements ContactDao {
 			messages = criteria.list();
 			Criteria criteriaCount = session.createCriteria(MessageDetails.class);
 			criteriaCount.add(Restrictions.eq("postedBy", "TEACHER"));
-			criteriaCount.add(Restrictions.eq("readByStudent", "Unread"));
+//			criteriaCount.add(Restrictions.eq("readByStudent", "Unread"));
 			criteriaCount.setProjection(Projections.rowCount());
 			criteriaCount.add(Restrictions.or(Restrictions.eq("postedTo", smartId), Restrictions.isNull("postedTo")));
 			msgMap.put("totalmessage", criteriaCount.uniqueResult());
@@ -185,9 +188,7 @@ public class ContactDaoImp implements ContactDao {
 			Loggers.loggerEnd(criteria.list());
 			
 			Loggers.loggerEnd(messages);
-			count=messages.size();
 			System.out.println(" count ??????????????????? "+count);
-			msgMap.put("unreadCount", count);
 			msgMap.put("messages", messages);
 		}
 		catch (Exception e) 
@@ -195,7 +196,12 @@ public class ContactDaoImp implements ContactDao {
 			e.printStackTrace();
 			return null;
 		}
+		query = sessionFactory.getCurrentSession().createQuery(
+				"from MessageDetails where readByStudent='Unread' and postedBy='TEACHER' and postedTo=:rId ORDER BY entryTime DESC");
+		query.setParameter("rId", smartId);
+		count = query.list().size();
 		
+		msgMap.put("unreadCount", count);
 		return msgMap;
 	}
 	
@@ -301,12 +307,21 @@ public class ContactDaoImp implements ContactDao {
 	}
 
 	@Override
-	public void updateStatus(Long hid, String smartId) throws Exception {
+	public void updateStatus(Token tk1, Long hid, String smartId) throws Exception {
+		String role = tk1.getRole();
+		
 		try{
-			query=sessionFactory.getCurrentSession().createQuery("update MessageDetails set readByStudent='Read' where hierarchy.hid=:hierarchy and postedTo=:smartId");
-			query.setParameter("hierarchy", hid);
-			query.setParameter("smartId", smartId);
-			query.executeUpdate();
+			if (role.equalsIgnoreCase("STUDENT")) {
+				query=sessionFactory.getCurrentSession().createQuery("update MessageDetails set readByStudent='Read' where hierarchy.hid=:hierarchy and postedTo=:smartId");
+				query.setParameter("hierarchy", hid);
+				query.setParameter("smartId", smartId);
+				query.executeUpdate();
+			}else if (role.equalsIgnoreCase("TEACHER")) {
+				query=sessionFactory.getCurrentSession().createQuery("update MessageDetails set readByStudent='Read' where hierarchy.hid=:hierarchy and reportingManagerId=:smartId");
+				query.setParameter("hierarchy", hid);
+				query.setParameter("smartId", smartId);
+				query.executeUpdate();	
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
