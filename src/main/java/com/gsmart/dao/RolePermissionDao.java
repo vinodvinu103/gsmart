@@ -50,6 +50,7 @@ public interface RolePermissionDao {
 	public List<RolePermission> getSubModuleNames(String role) throws GSmartDatabaseException;
 	
 	public List<Roles> getRoles()throws GSmartDatabaseException;
+	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy)throws GSmartDatabaseException;
 
 	
 }
