@@ -118,7 +118,7 @@ public class ContactDaoImp implements ContactDao {
 				
 			Criteria criteria1 = session.createCriteria(MessageDetails.class);
 			criteria1.add(Restrictions.eq("postedBy", "STUDENT"));
-			criteria1.add(Restrictions.eq("readByStudent", "Unread"));
+//			criteria1.add(Restrictions.eq("readByStudent", "Unread"));
 			criteria1.add(Restrictions.or(Restrictions.eq("postedTo", reportingManagerId), Restrictions.isNull("postedTo")));
 			criteria1.addOrder(Order.desc("entryTime"));
 			
@@ -130,7 +130,7 @@ public class ContactDaoImp implements ContactDao {
 			
 			Criteria criteriaCount1 = session.createCriteria(MessageDetails.class);
 			criteriaCount1.add(Restrictions.eq("postedBy", "STUDENT"));
-			criteriaCount1.add(Restrictions.eq("readByStudent", "Unread"));
+//			criteriaCount1.add(Restrictions.eq("readByStudent", "Unread"));
 			criteriaCount1.add(Restrictions.or(Restrictions.eq("postedTo", reportingManagerId), Restrictions.isNull("postedTo")));
 			criteriaCount1.setProjection(Projections.rowCount());
 			messageMap.put("totalmessage", criteriaCount1.uniqueResult());
@@ -171,7 +171,7 @@ public class ContactDaoImp implements ContactDao {
 			
 			Criteria criteria = session.createCriteria(MessageDetails.class);
 			criteria.add(Restrictions.eq("postedBy", "TEACHER"));
-			criteria.add(Restrictions.eq("readByStudent", "Unread"));
+//			criteria.add(Restrictions.eq("readByStudent", "Unread"));
 			criteria.add(Restrictions.or(Restrictions.eq("postedTo", smartId), Restrictions.isNull("postedTo")));
 			criteria.addOrder(Order.desc("entryTime"));
 			
@@ -180,7 +180,7 @@ public class ContactDaoImp implements ContactDao {
 			messages = criteria.list();
 			Criteria criteriaCount = session.createCriteria(MessageDetails.class);
 			criteriaCount.add(Restrictions.eq("postedBy", "TEACHER"));
-			criteriaCount.add(Restrictions.eq("readByStudent", "Unread"));
+//			criteriaCount.add(Restrictions.eq("readByStudent", "Unread"));
 			criteriaCount.setProjection(Projections.rowCount());
 			criteriaCount.add(Restrictions.or(Restrictions.eq("postedTo", smartId), Restrictions.isNull("postedTo")));
 			msgMap.put("totalmessage", criteriaCount.uniqueResult());
