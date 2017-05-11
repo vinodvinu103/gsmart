@@ -29,6 +29,6 @@ public interface ContactDao {
 
 	public Map<String, Object> studentChat(MessageDetails details) throws Exception;
 
-	public void updateStatus(Long hid, String smartId) throws Exception;
+	public void updateStatus(Token tk1, Long hid, String smartId) throws Exception;
 
 }
