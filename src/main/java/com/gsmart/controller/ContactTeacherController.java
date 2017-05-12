@@ -250,12 +250,11 @@ public class ContactTeacherController {
 		Map<String, Object> jsonMap = new HashMap<>();
 		try {
 			Token tk1 = (Token) httpSession.getAttribute("token");
-			contactServices.updateStatus(tk1.getHierarchy().getHid(),tk1.getSmartId());
+			contactServices.updateStatus(tk1, tk1.getHierarchy().getHid(), tk1.getSmartId());
 			jsonMap.put("status", 200);
 			jsonMap.put("result", "success");
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		}
-
 		catch (Exception e) {
 			jsonMap.put("result", "error");
 			jsonMap.put("status", 400);
