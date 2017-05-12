@@ -29,6 +29,7 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.model.Token;
+import com.gsmart.util.GSmartBaseException;
 //import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
 
@@ -114,5 +115,8 @@ public interface ProfileDao {
 	public void deleteBanner(Banners banner)throws GSmartDatabaseException;
 
 	public List<Profile> getProfileByHierarchyAndYear(Hierarchy hierarchy, String year);
+
+
+	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy)throws GSmartDatabaseException;
 
 }
