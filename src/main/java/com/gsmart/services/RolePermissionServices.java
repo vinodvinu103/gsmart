@@ -47,5 +47,6 @@ public interface RolePermissionServices {
 	public List<RolePermission> getSubModuleNames(String role) throws GSmartServiceException;
 	
 	public List<Roles> getRoles()throws GSmartServiceException;
+	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy)throws GSmartServiceException;
 	
 }
