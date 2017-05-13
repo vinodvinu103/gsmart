@@ -11,18 +11,19 @@ import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.model.InventoryAssignmentsStudent;
+import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
 
 public interface InventoryAssignmentsDao {
 
 
-	public Map<String, Object> getInventoryAssignList(String role, String smartId, Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException;
+	public Map<String, Object> getInventoryAssignList(Token tokenObj, Long hid, Integer min, Integer max) throws GSmartDatabaseException;
 
-	public Map<String, Object> getInventoryAssignStudentList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartDatabaseException; 
+	public Map<String, Object> getInventoryAssignStudentList(String role,Long hid, Integer min, Integer max) throws GSmartDatabaseException; 
 	
-	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory) throws GSmartDatabaseException;
+	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory,Long hid) throws GSmartDatabaseException;
 
-	public CompoundInventoryAssignmentsStudent addInventoryStudent(InventoryAssignmentsStudent inventoryAssignmentsStudent,InventoryAssignmentsStudent oldInventoryAssignment,String reportingManagerId) throws GSmartDatabaseException;
+	public CompoundInventoryAssignmentsStudent addInventoryStudent(InventoryAssignmentsStudent inventoryAssignmentsStudent,InventoryAssignmentsStudent oldInventoryAssignment,String reportingManagerId,Long hid) throws GSmartDatabaseException;
 	
 	public InventoryAssignments editInventoryDetails(InventoryAssignments inventoryAssignments) throws GSmartDatabaseException;
 	
@@ -35,5 +36,6 @@ public interface InventoryAssignmentsDao {
 	public List<InventoryAssignments> getInventoryDashboardData(ArrayList<String> smartIdList, Hierarchy hierarchy)
 			throws GSmartDatabaseException;
 
-	public List<InventoryAssignments> getInventoryStudentList(Long hid)throws GSmartDatabaseException;
+
+	public List<InventoryAssignments> getInventoryStudentList(Token tokenObj)throws GSmartDatabaseException;
 }

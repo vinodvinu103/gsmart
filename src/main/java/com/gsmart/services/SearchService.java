@@ -40,9 +40,9 @@ public interface SearchService {
 
 	public ArrayList<String> getAllChildSmartId(String mySmartId, Map<String, Profile> allProfiles);
 	
-	public ArrayList<String> getAllChildSmartIdForFinance(String mySmartId, Map<String, Profile> allProfiles);
+	public ArrayList<String> getAllChildSmartIdForFinanceFee(String mySmartId, Map<String, Profile> allProfiles);
 	
-	public ArrayList<String> getAllChildSmartIdForHr(String mySmartId, Map<String, Profile> allProfiles);
+	public ArrayList<String> getAllChildSmartIdForHrFee(String mySmartId, Map<String, Profile> allProfiles);
 	
 	
 
@@ -52,5 +52,11 @@ public interface SearchService {
 	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees);
 	
 	public ArrayList<Profile> getAllChildSmartIdForDashboard(String parentId, Map<String, Profile> allProfiles) ;
+	
+	public ArrayList<Profile> getAllChildSmartIdForFinanceAttendance(String parentId, Map<String, Profile> allProfiles) ;
+	
+	public ArrayList<Profile> getAllChildSmartIdForHrAttendance(String parentId, Map<String, Profile> allProfiles) ;
+	
+	
 
 }

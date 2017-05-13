@@ -436,4 +436,16 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 		return roles;
 	}
 
+	@Override
+	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy) throws GSmartDatabaseException {
+		List<RolePermission> role = null;
+		try{
+		query = sessionFactory.getCurrentSession().createQuery("from RolePermission where role like '%" + permission.getRole() + "%' AND isActive='Y'");
+		role = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return role;
+	}
+
 }

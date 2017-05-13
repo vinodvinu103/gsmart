@@ -14,6 +14,7 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
 import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.InventoryAssignmentsCompoundKey;
+import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -28,9 +29,9 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	
 
 	@Override
-	public Map<String, Object> getInventoryAssignList(String role, String smartid, Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException {
+	public Map<String, Object> getInventoryAssignList(Token tokenObj, Long hid, Integer min, Integer max) throws GSmartServiceException {
 		try {
-			return inventoryAssignmentsDao.getInventoryAssignList(role,smartid,hierarchy, min, max);
+			return inventoryAssignmentsDao.getInventoryAssignList(tokenObj,hid, min, max);
 		} catch (GSmartDatabaseException Exception) {
 			throw (GSmartServiceException) Exception;
 
@@ -40,11 +41,11 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	}
 
 	@Override
-	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory) {
+	public InventoryAssignmentsCompoundKey addInventoryDetails(InventoryAssignments inventoryAssignments,InventoryAssignments oldInventory,Long hid) {
 		InventoryAssignmentsCompoundKey compoundKey=null;
 		try {
 			Loggers.loggerStart(inventoryAssignments);
-			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments,oldInventory);
+			compoundKey=inventoryAssignmentsDao.addInventoryDetails(inventoryAssignments,oldInventory,hid);
 			Loggers.loggerEnd(compoundKey);
 		} catch (GSmartDatabaseException e) {
 			e.printStackTrace();
@@ -117,7 +118,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 	}
 
 	@Override
-	public Map<String, Object> getInventoryList(String role, Hierarchy hierarchy, Integer min, Integer max)
+	public Map<String, Object> getInventoryList(String role, Long hid, Integer min, Integer max)
 			throws GSmartServiceException {
 		// TODO Auto-generated method stub
 		return null;

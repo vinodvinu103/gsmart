@@ -203,6 +203,10 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 		
 		Loggers.loggerEnd();
 		return roles;
+	}
+	@Override
+	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy) throws GSmartServiceException {
+		return rolePermissionDao.search(permission, hierarchy);
 	}	
 	
 
