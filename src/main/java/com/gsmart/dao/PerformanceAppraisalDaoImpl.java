@@ -129,9 +129,7 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 		} catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 
-		} finally {
-			session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 	}
 

@@ -110,6 +110,22 @@ public class PerformanceRecordServiceImpl implements PerformanceRecordService {
 		Loggers.loggerEnd();
 		
 	}
+	@Override
+	public Map<String, Object> getrating(String year, Long hid) throws GSmartServiceException {
+		
+		Loggers.loggerStart();
+		try {
+	return	performancerecordao.getrating(year,hid);
+		
+	
+	} catch (GSmartDatabaseException exception) {
+		throw (GSmartServiceException) exception;
+	} catch (Exception e) {
+		Loggers.loggerException(e.getMessage());
+		throw new GSmartServiceException(e.getMessage());
+
+	}
+	}
 
 
 

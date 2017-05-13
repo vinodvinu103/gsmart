@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
-import com.gsmart.model.CompoundPerformanceAppraisal;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 import com.gsmart.services.PerformanceAppraisalService;
 import com.gsmart.services.PerformanceRecordService;
@@ -74,11 +71,9 @@ public class PerformanceController {
 		Map<String, Object> jsonMap = new HashMap<>();
 		List<PerformanceAppraisal> appraisalList = null;
 		Map<String, Object> performancerecordList = null;
-		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		
 		Map<String, Object> permissions = new HashMap<>();
-		permissions.put("modulePermission", modulePermission);
 		IAMResponse rsp = new IAMResponse();
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
@@ -87,7 +82,6 @@ public class PerformanceController {
 			hid=tokenObj.getHierarchy().getHid();
 		}
 
-		if (modulePermission != null) {
 
 			appraisalList = appraisalservice.getAppraisalList(tokenObj.getReportingManagerId(), year,hid);
 			performancerecordList = performancerecord.getPerformanceRecord(smartId, year,hid,tokenObj.getReportingManagerId());
@@ -95,16 +89,13 @@ public class PerformanceController {
 			jsonMap.put("performancerecord", performancerecordList);
 			Loggers.loggerEnd(jsonMap);
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
+		
 	}
 	@RequestMapping(value = "/om",method = RequestMethod.POST)
 	public ResponseEntity<IAMResponse> addAppraisal(@RequestBody PerformanceAppraisal  performanceAppraisal,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
 	    Loggers.loggerStart( performanceAppraisal);
-		IAMResponse myResponse;
 		
 
 		IAMResponse resp = new IAMResponse();
@@ -112,25 +103,22 @@ public class PerformanceController {
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		
-		Token token1 = tokenService.getToken(tokenNumber);
-		String smartId = token1.getSmartId();
-		 performanceAppraisal.setReportingManagerID(smartId);
+	
 		
-		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+	
+			Token tokenObj=(Token) httpSession.getAttribute("token");
+			String smartId = tokenObj.getSmartId();
+			 performanceAppraisal.setReportingManagerID(smartId);
 			performanceAppraisal.setHierarchy(tokenObj.getHierarchy());
 			appraisalservice.addAppraisal( performanceAppraisal);
 			resp.setMessage("success");
 		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		} else {
-			resp.setMessage("Permission Denied");
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		}
+		
 	
 	}
 	
 
-	@RequestMapping(value = "/om/{task}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/omkar/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<IAMResponse> editPerformance(@RequestBody PerformanceAppraisal appraisal,
 			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
@@ -142,7 +130,7 @@ public class PerformanceController {
 
 		str.length();
 
-		if (getauthorization.authorizationForPut(tokenNumber, task, httpSession)) {
+		
 			if (task.equals("edit"))
 
 				appraisalservice.editAppraisal(appraisal);
@@ -154,10 +142,7 @@ public class PerformanceController {
 			myResponse = new IAMResponse("success");
 			Loggers.loggerEnd();
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		}
+		
 	}
 
 	@RequestMapping(value = "/record/{year}/{smartId}/{hierarchy}", method = RequestMethod.GET)
@@ -174,9 +159,7 @@ public class PerformanceController {
 		Map<String, Object> jsonMap = new HashMap<>();
 		List<Profile> teamrecordList = null;
 		List<PerformanceAppraisal> teamappraisalList = null;
-		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
-		permissions.put("modulePermission", modulePermission);
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		IAMResponse rsp = new IAMResponse();
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
@@ -185,7 +168,6 @@ public class PerformanceController {
 			hid=tokenObj.getHierarchy().getHid();
 		}
 
-		if (modulePermission != null) {
 
 			Profile profile = profileServices.getProfileDetails(smartId);
 			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getHierarchy().getHid());
@@ -196,9 +178,7 @@ public class PerformanceController {
 			jsonMap.put("teamAppraisalLiat", teamappraisalList);
 			Loggers.loggerEnd(permissions);
 			return new ResponseEntity<Map<String, Object>>(	jsonMap, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
+		
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -210,14 +190,14 @@ public class PerformanceController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		Token token1 = tokenService.getToken(tokenNumber);
-		String smartId = token1.getSmartId();
-	//	String reportingId = token1.getReportingManagerId();
-		appraisal.setSmartId(smartId);
-	//	appraisal.setReportingManagerID(reportingId);
+		
 
-		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj=(Token) httpSession.getAttribute("token");
+			String smartId = tokenObj.getSmartId();
+			
+			//	String reportingId = token1.getReportingManagerId();
+				appraisal.setSmartId(smartId);
+			//	appraisal.setReportingManagerID(reportingId);
 			Loggers.loggerStart(appraisal);
 			Loggers.loggerStart(smartId);
 			appraisal.setHierarchy(tokenObj.getHierarchy());
@@ -227,11 +207,7 @@ public class PerformanceController {
 			resp.put("message", "success");
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
-		} else {
-			resp.put("status", 403);
-			resp.put("message", "permission denied");
-			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
-		}
+		
 
 	}
 	
@@ -280,11 +256,9 @@ public class PerformanceController {
 		Map<String, Object> jsonMap = new HashMap<>();
 		
 		Map<String, Object> performancerecordList1 = null;
-		RolePermission modulePermission = getauthorization.authorizationForGet(tokenNumber, httpSession);
-		Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+		Token tokenObj=(Token) httpSession.getAttribute("token");
 		
 		Map<String, Object> permissions = new HashMap<>();
-		permissions.put("modulePermission", modulePermission);
 		IAMResponse rsp = new IAMResponse();
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
@@ -293,7 +267,6 @@ public class PerformanceController {
 			hid=tokenObj.getHierarchy().getHid();
 		}
 		
-		if (modulePermission != null) {
 
 			
 			performancerecordList1 = performancerecord.getPerformanceRecordManager(reportingManagerId,smartId, year,hid);
@@ -301,9 +274,7 @@ public class PerformanceController {
 			jsonMap.put("performancerecord", performancerecordList1);
 			Loggers.loggerEnd(jsonMap);
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
+		
 	}
 	
 	@RequestMapping(value="/addManagerComment", method = RequestMethod.POST)
@@ -321,8 +292,7 @@ public class PerformanceController {
 		appraisal.setSmartId(smartId);
 	appraisal.setReportingManagerID(reportingId);*/
 
-		if (getauthorization.authorizationForPost(tokenNumber, httpSession)) {
-			Token tokenObj=(Token) httpSession.getAttribute("hierarchy");
+			Token tokenObj=(Token) httpSession.getAttribute("token");
 			Loggers.loggerStart(appraisal);
 			
 			appraisal.setHierarchy(tokenObj.getHierarchy());
@@ -332,14 +302,44 @@ public class PerformanceController {
 			resp.put("message", "success");
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
-		} else {
-			resp.put("status", 403);
-			resp.put("message", "permission denied");
-			return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
-		}
+		
 
 	}
 	
 	
+	
+	@RequestMapping(value = "/rating/{year}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> ratingOfEmployee(@PathVariable("year") String year,
+			 @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+	
+		Loggers.loggerStart(year);
+	
+
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+
+		Map<String, Object> jsonMap = new HashMap<>();
+		
+		Map<String, Object> performancerecordratingList = null;
+		Token tokenObj=(Token) httpSession.getAttribute("token");
+		
+	
+		
+		Long hid=null;
+		hid=tokenObj.getHierarchy().getHid();
+		Loggers.loggerStart(hid);
+		
+		
+
+			
+		performancerecordratingList = performancerecord.getrating(year,hid);
+			
+			jsonMap.put("performancerecord", performancerecordratingList);
+			Loggers.loggerEnd(jsonMap);
+			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		
+	}
 
 }

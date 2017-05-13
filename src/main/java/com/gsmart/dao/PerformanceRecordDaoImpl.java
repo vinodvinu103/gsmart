@@ -41,13 +41,13 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 
 			System.out.println();
 			Loggers.loggerStart();
-			query = sessionFactory.getCurrentSession()
+			/*query = sessionFactory.getCurrentSession()
 					.createQuery("from PerformanceRecord where smartId=:smartId AND year=:year AND isActive=:isActive");
 			query.setParameter("smartId", smartId);
 			query.setParameter("year", year);
 			query.setParameter("isActive", "y");
 			performancerecordList = (List<PerformanceRecord>) query.list();
-			Loggers.loggerEnd(performancerecordList);
+			Loggers.loggerEnd(performancerecordList);*/
 
 			query = sessionFactory.getCurrentSession().createQuery(
 					"from PerformanceRecord where smartId=:smartId AND reportingManagerID=null AND  year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
@@ -258,9 +258,34 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		Loggers.loggerEnd();
 	}
 
-	/*
-	 * public void getConnection() { session = sessionFactory.openSession();
-	 * transaction = session.beginTransaction(); }
-	 */
+	@Override
+	public Map<String, Object> getrating(String year, Long hid) throws GSmartDatabaseException {
+		Map<String, Object> rating= new HashMap<>();
+		List<PerformanceRecord> performancerecordratingList = null;
+		try {
+
+			System.out.println();
+			Loggers.loggerStart();
+		    query = sessionFactory.getCurrentSession().createQuery(
+					"from PerformanceRecord where ratings!=null AND reportingManagerID!=null AND  year=:year AND isActive=:isActive and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hid);
+
+			
+			query.setParameter("year", year);
+			query.setParameter("isActive", "Y");
+			performancerecordratingList = (List<PerformanceRecord>) query.list();
+			Loggers.loggerEnd(performancerecordratingList);
+
+		} catch (Exception e) {
+			Loggers.loggerException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		rating.put("ratings", performancerecordratingList);
+		
+		return rating;
+		
+	}
+
+	
 
 }
