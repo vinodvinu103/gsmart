@@ -1,6 +1,5 @@
 package com.gsmart.services;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +61,7 @@ public class ProfileServicesImp implements ProfileServices {
 		try {
 			return profileDao.userProfileInsert(profile);
 		} catch (Exception e) {
+			System.out.println(" profileservice in catch block  ");
 			e.printStackTrace();
 			return false;
 		}
@@ -99,7 +99,7 @@ public class ProfileServicesImp implements ProfileServices {
 
 
 	@Override
-	public Map<String, Object> getParentInfo(String empSmartId) {
+	public Map<String, Object> getParentInfo(String empSmartId) throws GSmartDatabaseException {
 		Map<String, Object> parentInfo = new HashMap<>();
 		Profile parentProfile = profileDao.getParentInfo(empSmartId);
 		parentInfo.put("parentProfile", parentInfo);
@@ -236,8 +236,15 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 	@Override
 	public List<Banners> getBannerList() throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return profileDao.getBannerList();
+		Loggers.loggerStart("getBanner api started in Profile Service  " );
+		List<Banners> bannnerList=null;
+		try {
+			bannnerList=profileDao.getBannerList();
+		}catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		Loggers.loggerEnd("getBanner api ended in Profile Service  " );
+		return bannnerList;
 	}
 
 	@Override

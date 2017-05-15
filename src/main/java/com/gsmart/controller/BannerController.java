@@ -54,7 +54,7 @@ public class BannerController {
 	public ResponseEntity<Map<String, Object>> getBanner(@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
-		Loggers.loggerStart();
+		Loggers.loggerStart("getBanner api started in Banner controller  " );
 		String tokenNumber = null;
 		List<Banners> bannerList = null;
 		Map<String, Object> permissions = new HashMap<>();
@@ -73,7 +73,7 @@ public class BannerController {
 		
 			bannerList = profileServices.getBannerList();
 			permissions.put("bannerList", bannerList);
-			Loggers.loggerEnd(bannerList);
+			Loggers.loggerEnd("getBanner api ended in Banner controller  with bannerList with size of "+bannerList.size() );
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		
 

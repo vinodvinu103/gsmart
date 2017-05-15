@@ -47,7 +47,7 @@ public interface SearchService {
 	
 
 	
-	public Map<String, Object> getParentInfo(String smartId);
+	public Map<String, Object> getParentInfo(String smartId) throws GSmartServiceException;
 
 	public Profile totalFessToAdmin( Profile profileMap,ArrayList<Profile> fees);
 	
