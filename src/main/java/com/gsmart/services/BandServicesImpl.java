@@ -39,7 +39,10 @@ public class BandServicesImpl implements BandServices {
 	public List<Band> search(Band band, Hierarchy hierarchy) throws GSmartServiceException {
 		try {
 			return bandDao.search(band, hierarchy);
-		} catch (Exception e) {
+		} catch (GSmartDatabaseException e) {
+			throw new GSmartServiceException(e.getMessage());
+		}catch (Exception e) {
+			e.printStackTrace();
 			throw new GSmartServiceException(e.getMessage());
 		}
 

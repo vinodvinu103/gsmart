@@ -21,6 +21,7 @@ import com.gsmart.model.Hierarchy;
 //import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
+import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -94,6 +95,8 @@ public class SearchServiceImp implements SearchService {
 				Profile p = map.get(temp);
 				if (p.getReportingManagerId() != null) {
 					if (p.getReportingManagerId().equals(smartId)) {
+						System.out.println("reporting manager id"+p.getReportingManagerId());
+						System.out.println("smart id"+smartId);
 						if (!(p.getSmartId().equals(smartId))) {
 							childList.add(p);
 						}
@@ -184,7 +187,7 @@ public class SearchServiceImp implements SearchService {
 
 	@Override
 	public ArrayList<String> searchParentInfo(String smartId, Map<String, Profile> map) {
-
+		Loggers.loggerStart("searchParentInfo Api started in Search Service for id :"+smartId);
 		ArrayList<String> parentList = new ArrayList<String>();
 
 		parentList.add(smartId);
@@ -192,14 +195,12 @@ public class SearchServiceImp implements SearchService {
 		Profile p;
 		boolean temp;
 		do {
-			Loggers.loggerValue("entered int do while in searchParentInfo", "");
 			p = map.get(smartId);
 			if (p != null && p.getReportingManagerId() != null) {
 				if (!(p.getReportingManagerId().equals(smartId))) {
 					parentList.add(p.getReportingManagerId());
 					smartId = p.getReportingManagerId();
 					temp = true;
-					Loggers.loggerValue("entered into if in do while in searchParentInfo", "");
 				} else {
 					temp = false;
 				}
@@ -207,7 +208,17 @@ public class SearchServiceImp implements SearchService {
 				temp = false;
 			}
 		} while (temp);
-		Loggers.loggerValue("ended do while in searchParentInfo", "");
+	
+		Set<String> keys =map.keySet();
+		for (String smartid : keys) {
+			if(map.get(smartid).getRole()!=null){
+				if(map.get(smartid).getRole().equalsIgnoreCase("hr") ){
+					parentList.add(smartid);
+				}	
+			}
+			
+		}
+		Loggers.loggerEnd("searchParentInfo Api ended in Search Service for id :"+smartId+" with parentList size of "+parentList.size());
 		return parentList;
 	}
 
@@ -476,16 +487,26 @@ public class SearchServiceImp implements SearchService {
 	}
 
 	@Override
-	public Map<String, Object> getParentInfo(String smartId) {
+	public Map<String, Object> getParentInfo(String smartId) throws GSmartServiceException  {
 		Map<String, Object> parentInfo = new HashMap<>();
 		Loggers.loggerStart();
-		Profile parentProfile = profiledao.getParentInfo(smartId);
-		parentInfo.put("parentProfile", parentProfile);
-		if (parentProfile != null) {
-			String parentSmartId = parentProfile.getSmartId();
-			parentInfo.put("reportingProfiles", profiledao.getReportingProfiles(parentSmartId));
-		} else
-			parentInfo.put("reportingProfiles", null);
+		Profile parentProfile;
+		try {
+			parentProfile = profiledao.getParentInfo(smartId);
+			parentInfo.put("parentProfile", parentProfile);
+			if (parentProfile != null) {
+				String parentSmartId = parentProfile.getSmartId();
+				parentInfo.put("reportingProfiles", profiledao.getReportingProfiles(parentSmartId));
+			} else
+				parentInfo.put("reportingProfiles", null);
+		} catch (GSmartDatabaseException exception) {
+			exception.printStackTrace();
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartServiceException(e.getMessage());
+		}
+		
 		return parentInfo;
 	}
 

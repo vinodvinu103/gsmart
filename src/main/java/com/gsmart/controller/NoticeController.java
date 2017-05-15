@@ -41,80 +41,70 @@ public class NoticeController {
 	@Autowired
 	private NoticeService noticeService;
 
-
 	@Autowired
 	private SearchService searchService;
 
-    @Autowired
+	@Autowired
 	private ProfileDao profileDao;
-	
+
 	@Autowired
 	private GetAuthorization getAuthorization;
-	
+
 	@Autowired
 	NoticeDao noticeDao;
 
 	final Logger logger = Logger.getLogger(NoticeDao.class);
 
 	@RequestMapping(value = "/viewNotice/{smartId}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> viewNotice(@PathVariable("smartId") String smartId, @RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartServiceException {
+	public ResponseEntity<Map<String, Object>> viewNotice(@PathVariable("smartId") String smartId,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
 
-		Loggers.loggerStart();
-		Calendar now = Calendar.getInstance();   // Gets the current date and time
-		int year = now.get(Calendar.YEAR);       // The current year
-		int year1=year;
-		int year2=++year;
-		String academicYear=year1+"-"+year2;
+		Loggers.loggerStart("view notice api started in notice controller for id :" + smartId);
+		Calendar now = Calendar.getInstance(); // Gets the current date and time
+		int year = now.get(Calendar.YEAR); // The current year
+		int year1 = year;
+		int year2 = ++year;
+		String academicYear = year1 + "-" + year2;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-
-
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 
 		Map<String, Object> responseMap = new HashMap<>();
 
 		List<Notice> list = new ArrayList<Notice>();
-		Map<String, Profile> allprofiles =new HashMap<>();
+		Map<String, Profile> allprofiles = new HashMap<>();
 
 		try {
-			
-			if(tokenObj.getRole().equalsIgnoreCase("director") || tokenObj.getRole().equalsIgnoreCase("admin")){
+
+			if (tokenObj.getRole().equalsIgnoreCase("director") || tokenObj.getRole().equalsIgnoreCase("admin")) {
 				list = noticeService.viewAdminNoticeService(smartId);
-			}else{
-				List<Profile> profiles= profileDao.getAllProfiles(academicYear);
+			} else {
+				List<Profile> profiles = profileDao.getAllProfiles(academicYear);
 				for (Profile profile : profiles) {
-					Loggers.loggerValue("smartIds :", profile.getSmartId());
 
 					allprofiles.put(profile.getSmartId(), profile);
 				}
-				
-			
 
 				ArrayList<String> parentSmartIdList = searchService.searchParentInfo(smartId, allprofiles);
 
-				System.out.println("parent list  :"+parentSmartIdList);
-
 				parentSmartIdList.remove(smartId);
-				list = noticeService.viewNotice(parentSmartIdList,tokenObj.getHierarchy().getHid());
+				list = noticeService.viewNotice(parentSmartIdList, tokenObj.getHierarchy().getHid());
 			}
 
-			
-			
 			for (Notice notice : list) {
 				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 				Date d = f.parse(notice.getEntryTime());
 				notice.setEntryTime(String.valueOf(d.getTime()));
-				
-				Loggers.loggerStart("notice.getEntryTime : " + notice.getEntryTime());
+
 			}
-			System.out.printf("smart id list :"+ list);
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucess");
 
+			Loggers.loggerEnd("view notice api ended in notice controller for id :" + smartId
+					+ " with noticeList size of " + list.size());
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -125,7 +115,7 @@ public class NoticeController {
 	@RequestMapping(value = "/viewMyNotice/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewMyNotice(@PathVariable("smartId") String smartId,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
-		Loggers.loggerStart();
+		Loggers.loggerStart("viewMyNotice api started in notice controller for id :" + smartId);
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -133,16 +123,16 @@ public class NoticeController {
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 
-
 		Map<String, Object> responseMap = new HashMap<>();
 
 		List<Notice> list = new ArrayList<Notice>();
 
 		try {
-			list = noticeService.viewMyNotice(smartId,tokenObj.getHierarchy().getHid());
+			list = noticeService.viewMyNotice(smartId, tokenObj.getHierarchy().getHid());
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucess");
+			Loggers.loggerEnd("viewMyNotice api ended in notice controller for id :" + smartId+" with mynoticeList size of "+list.size());
 			return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -215,14 +205,12 @@ public class NoticeController {
 	 */
 	@RequestMapping(value = "/generic/{type}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewGenericNotice(@PathVariable("type") String type) {
-		Loggers.loggerStart();
+		Loggers.loggerStart("viewGenericNotice api started in notice controller  of type " + type);
 
 		List<Notice> list = new ArrayList<Notice>();
 		Map<String, Object> responeMap = new HashMap<>();
 
 		try {
-			System.out.println("role coming from frontend" + type);
-
 
 			list = noticeService.viewGenericNotice(type);
 			for (Notice notice : list) {
@@ -230,12 +218,11 @@ public class NoticeController {
 				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 				Date d = f.parse(notice.getEntryTime());
 				notice.setEntryTime(String.valueOf(d.getTime()));
-				Loggers.loggerStart("notice.getEntryTime : " + notice.getEntryTime());
 			}
 			responeMap.put("data", list);
 			responeMap.put("status", 200);
 			responeMap.put("message", "success");
-			Loggers.loggerEnd();
+			Loggers.loggerEnd("viewGenericNotice api ended in notice controller  of type " + type +" with list size of "+list.size());
 			return new ResponseEntity<Map<String, Object>>(responeMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -247,7 +234,7 @@ public class NoticeController {
 	public ResponseEntity<Map<String, Object>> addNotice(@RequestBody Notice notice, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartServiceException {
 		{
-			Loggers.loggerStart(notice);
+			Loggers.loggerStart("addNotice api started in notice controller  of type " + notice.getType());
 			String tokenNumber = token.get("Authorization").get(0);
 			String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 			str.length();
@@ -255,16 +242,16 @@ public class NoticeController {
 			try {
 				Token tokenObj = (Token) httpSession.getAttribute("token");
 
-//				Token token1 = tokenService.getToken(tokenNumber);
+				// Token token1 = tokenService.getToken(tokenNumber);
 				// String smartId = token1.getSmartId();
-				if(notice.getHierarchy() == null){
+				if (notice.getHierarchy() == null) {
 					notice.setHierarchy(tokenObj.getHierarchy());
 				}
-				
+
 				noticeService.addNotice(notice, tokenObj);
 				jsonMap.put("status", 200);
 				jsonMap.put("result", "success");
-
+				Loggers.loggerEnd("addNotice api ended in notice controller  of type " );
 				return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -283,13 +270,13 @@ public class NoticeController {
 
 			Token tokenObj = (Token) httpSession.getAttribute("token");
 			Loggers.loggerStart(notice);
-			if(tokenObj.getHierarchy()==null){
+			if (tokenObj.getHierarchy() == null) {
 				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-				Date d=new Date(Long.parseLong(notice.getEntryTime()));
+				Date d = new Date(Long.parseLong(notice.getEntryTime()));
 
 				notice.setEntryTime(f.format(d));
 			}
-			
+
 			String tokenNumber = token.get("Authorization").get(0);
 			String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 			str.length();
@@ -319,9 +306,9 @@ public class NoticeController {
 
 		Loggers.loggerStart();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
-		if(tokenObj.getHierarchy()==null){
+		if (tokenObj.getHierarchy() == null) {
 			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-			Date d=new Date(Long.parseLong(notice.getEntryTime()));
+			Date d = new Date(Long.parseLong(notice.getEntryTime()));
 
 			notice.setEntryTime(f.format(d));
 		}
@@ -345,22 +332,22 @@ public class NoticeController {
 		}
 
 	}
+
 	@RequestMapping(value = "/adminNotice/{hid}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewNoticeForAdmin(@PathVariable("hid") Long hid,
-			@RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartServiceException {
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
 
 		Loggers.loggerStart();
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-//		Token tokenObj = (Token) httpSession.getAttribute("token");
+		// Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> responseMap = new HashMap<>();
 		List<Notice> list = new ArrayList<Notice>();
 
 		try {
-			list=noticeDao.viewNoticeForAdmin(hid);
+			list = noticeDao.viewNoticeForAdmin(hid);
 			responseMap.put("data", list);
 			responseMap.put("status", 200);
 			responseMap.put("message", "sucess");

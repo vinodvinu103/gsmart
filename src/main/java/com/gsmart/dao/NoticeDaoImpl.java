@@ -1,8 +1,6 @@
 package com.gsmart.dao;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -10,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,9 @@ import com.gsmart.model.Notice;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
+import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
+import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
 
@@ -56,35 +57,40 @@ public class NoticeDaoImpl implements NoticeDao {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Notice> viewNotice(ArrayList<String> smartIdList,Long hid) {
-		Loggers.loggerStart();
-		
+	public List<Notice> viewNotice(ArrayList<String> smartIdList,Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart("viewNotice started in notice Dao for hierarchyId :"+hid+" with smardIdList count of "+smartIdList.size());
+		List<Notice> notices=null;
 		try{
 			query=sessionFactory.getCurrentSession().createQuery("FROM Notice where isActive='Y' and smartId in  (:smartIdList) and hid=:hid and type='Specific' ORDER BY entryTime desc");
 			query.setParameterList("smartIdList", smartIdList);
 			query.setParameter("hid", hid);
-		Loggers.loggerValue("smartIdList", smartIdList);
-			Loggers.loggerStart(smartIdList);
 
 			//FROM UserDetails user ORDER BY user.userName DESC
 			//query.setMaxResults(6);
-			@SuppressWarnings("unchecked")
-			List<Notice> notices=query.list();
-			Loggers.loggerEnd(notices);
-			return notices;
-		}catch(Exception e){
-			e.printStackTrace();
-			return null;
-		}
+			notices=query.list();
+			
+		}catch (ConstraintViolationException e) {
+ 			e.printStackTrace();
+ 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+ 		}catch (NullPointerException e) {
+ 			e.printStackTrace();
+ 			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+ 		}catch (Exception e) {
+ 			e.printStackTrace();
+ 			throw new GSmartDatabaseException(e.getMessage());
+ 		} 
+		Loggers.loggerEnd("viewNotice ended in notice service for hierarchyId :"+hid+" with notices count of "+notices.size());
+		return notices;
 		
 		
 	}
+	@SuppressWarnings("unchecked")
 	@Override
-public List<Notice> viewMyNotice(String smartId, Long hid) {
-		Loggers.loggerStart();
-		Loggers.loggerStart();
-		
+public List<Notice> viewMyNotice(String smartId, Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart("viewMyNotice api started in notice Dao for id :" + smartId +" with hierarchyId of "+hid);
+		List<Notice> list=null;
 
 		try{
 			Loggers.loggerStart(smartId);
@@ -92,14 +98,14 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 			query.setParameter("smartId", smartId);
 			query.setParameter("hid", hid);
 			//query.setMaxResults(6);
-			@SuppressWarnings("unchecked")
-			List<Notice> list=query.list();
-			Loggers.loggerEnd(list);
-			return list;
+			list=query.list();
+			
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
 		}
+		Loggers.loggerEnd("viewMyNotice ended in notice Dao for id :"+smartId+" with hierarchyId of "+hid+"  myNoticesList count of "+list.size());
+		return list;
 	}
 
 	@Override
@@ -164,24 +170,29 @@ public List<Notice> viewMyNotice(String smartId, Long hid) {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Notice> viewGenericNotice(String type) {
-		Loggers.loggerStart();
-		Loggers.loggerStart();
-		
+	public List<Notice> viewGenericNotice(String type) throws GSmartDatabaseException{
+		Loggers.loggerStart("viewGenericNotice api started in notice Dao  of type " + type);
+		List<Notice> list=null;
 		try{
 			
 			query=sessionFactory.getCurrentSession().createQuery("from Notice where is_active='Y' and type='Generic' ORDER BY entryTime desc");
 		//	query.setParameter("type", type);
 			//query.setMaxResults(6);
-			@SuppressWarnings("unchecked")
-			List<Notice> list=query.list();
-			Loggers.loggerEnd(list);
-			return list;
-		}catch(Exception e){
-			e.printStackTrace();
-			return null;
+			list=query.list();
+			
+		}catch (ConstraintViolationException e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		}catch (NullPointerException e) {
+			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+		}catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
 		}
+		Loggers.loggerEnd("viewGenericNotice api started in notice Dao  of type " + type+" wit list size of "+list.size());
+		return list;
 	}
 	@SuppressWarnings("unchecked")
 	@Override
@@ -304,18 +315,26 @@ public Profile getProfileDetails(String smartId) {
     }
     
      
-     @Override
+     @SuppressWarnings("unchecked")
+	@Override
      public List<Notice> viewAdminNoticeDao(String smartId)  throws GSmartServiceException {
-    	 Loggers.loggerStart();
+    	 Loggers.loggerStart("viewAdminNoticeDao started in notice Dao for id :"+smartId);
     	 List<Notice> list = new ArrayList<>();
     	 try{
     		 query=sessionFactory.getCurrentSession().createQuery("from Notice where smartId= :smartId and isActive='Y' ");
     		 query.setParameter("smartId", smartId);
     		 list=query.list();
-    	 }catch(Exception e){
-    		 e.printStackTrace();
-    		 
-    	 }
+    	 }catch (ConstraintViolationException e) {
+ 			e.printStackTrace();
+ 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+ 		}catch (NullPointerException e) {
+ 			e.printStackTrace();
+ 			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+ 		}catch (Exception e) {
+ 			e.printStackTrace();
+ 			throw new GSmartDatabaseException(e.getMessage());
+ 		} 
+    	 Loggers.loggerEnd("viewAdminNoticeDao started in notice Dao for id :"+smartId+" with list size of "+list.size());
     	 return list;
      }
 }

@@ -45,7 +45,7 @@ public interface ProfileDao {
 	public String getMaxSmartId();
 	
 
-	public boolean userProfileInsert(Profile profile);
+	public boolean userProfileInsert(Profile profile) throws GSmartDatabaseException;
 
 	public String updateProfile(Profile profile);
 	
@@ -57,12 +57,12 @@ public interface ProfileDao {
 	public String changeprofileimage(Profile profile);
 	
 	/* for profile */
-	public ArrayList<Profile> getAllProfiles(String AcademicYear);
+	public ArrayList<Profile> getAllProfiles(String AcademicYear) throws GSmartDatabaseException;
 
 	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
 			int max);
 
-	public Profile getParentInfo(String empSmartId);
+	public Profile getParentInfo(String empSmartId) throws GSmartDatabaseException;
 
 	public ArrayList<Profile> getReportingProfiles(String parentSmartId);
 

@@ -64,7 +64,7 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 	}
 
-	public boolean userProfileInsert(Profile profile) {
+	public boolean userProfileInsert(Profile profile) throws GSmartDatabaseException{
 		Loggers.loggerStart();
 		Session session = this.sessionFactory.getCurrentSession();
 
@@ -90,9 +90,15 @@ public class ProfileDaoImp implements ProfileDao {
 
 				flag = true;
 			}
-		} catch (Exception e) {
+		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
-			flag = false;
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		}catch (NullPointerException e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
 		}
 		Loggers.loggerEnd();
 
@@ -170,19 +176,27 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ArrayList<Profile> getAllProfiles(String academicYear) {
-		Loggers.loggerStart();
-
+	public ArrayList<Profile> getAllProfiles(String academicYear) throws GSmartDatabaseException{
+		Loggers.loggerStart("getAllProfiles Api started in Profile Dao for year :"+academicYear);
+		ArrayList<Profile> getAllProfiles=null;
 		try {
 
 			query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y' and academicYear=:academicYear");
 			query.setParameter("academicYear", academicYear);
-			Loggers.loggerEnd();
-			return (ArrayList<Profile>) query.list();
-		} catch (Exception e) {
+			getAllProfiles=(ArrayList<Profile>) query.list();
+			
+		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
-			return null;
-		}
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		}catch (NullPointerException e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		} 
+		Loggers.loggerStart("getAllProfiles Api ended in Profile Dao for year :"+academicYear+ " with profiles count of"+getAllProfiles.size());
+		return getAllProfiles;
 	}
 
 	@Override
@@ -241,7 +255,7 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	@Override
-	public Profile getParentInfo(String smartId) {
+	public Profile getParentInfo(String smartId) throws GSmartDatabaseException{
 
 		Loggers.loggerStart();
 
@@ -261,10 +275,13 @@ public class ProfileDaoImp implements ProfileDao {
 			else
 				return null;
 
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
-		}
+			throw new GSmartDatabaseException(e.getMessage());
+		} 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -617,7 +634,7 @@ public class ProfileDaoImp implements ProfileDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Banners> getBannerList() {
-		Loggers.loggerStart();
+		Loggers.loggerStart("getBanner api started in Profile Dao  " );
 		List<Banners> bannerlist = null;
 		try {
 			Query query = sessionFactory.getCurrentSession()
@@ -627,7 +644,7 @@ public class ProfileDaoImp implements ProfileDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Loggers.loggerEnd(bannerlist);
+		Loggers.loggerEnd("getBanner api ended in Profile Dao with bandList size of  "+bannerlist.size() );
 		return bannerlist;
 	}
 
