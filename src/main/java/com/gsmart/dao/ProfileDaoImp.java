@@ -24,6 +24,7 @@ import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
+import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
@@ -797,6 +798,26 @@ public class ProfileDaoImp implements ProfileDao {
 		}
 		Loggers.loggerEnd();
 		return profileByStudent;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException{
+		List<Profile> emplist = null;
+		Loggers.loggerStart(hierarchy);
+		try {
+		if(hierarchy != null){
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%"+ profile.getFirstName() +"%' and isActive = 'Y' and role!='STUDENT' and hierarchy = :hierarchy");
+			query.setParameter("hierarchy", hierarchy.getHid());
+		}else{
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%"+ profile.getFirstName() +"%' and isActive = 'Y' and role!='STUDENT'");
+		}
+		emplist = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(emplist);
+				return emplist;
 	}
 
 }

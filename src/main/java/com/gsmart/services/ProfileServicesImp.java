@@ -12,6 +12,7 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -265,6 +266,15 @@ public class ProfileServicesImp implements ProfileServices {
 	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy, String reportingManagerId)
 			throws GSmartDatabaseException {
 		return profileDao.getProfileByStuentHierarchy(hierarchy, reportingManagerId);
+	}
+
+	@Override
+	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy)throws GSmartServiceException {
+		try {
+			return profileDao.searchemp(profile, hierarchy);
+		} catch (GSmartBaseException e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
 	}
 
 }
