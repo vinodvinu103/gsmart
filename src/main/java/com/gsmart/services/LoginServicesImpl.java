@@ -74,8 +74,10 @@ public class LoginServicesImpl implements LoginServices{
 					Login loginObj = ((Login)authentication.get("login"));
 					Profile profile = profileServices.getProfileDetails(smartId);
 					String role = profile.getRole();
+					String reportingId = profile.getReportingManagerId();
+	
 					Map<String, Object> rolePermissions = permissionServices.getPermission(role);
-					Token token = issueToken(smartId, role, loginObj);
+					Token token = issueToken(smartId, role, loginObj,reportingId);
 					
 					if(loginObj.getHierarchy()!=null){
 						jsonMap.put("hierarchy", hierarchyDao.getHierarchyByHid(loginObj.getHierarchy().getHid()));
@@ -114,7 +116,7 @@ public class LoginServicesImpl implements LoginServices{
 		return jsonMap;
 	}
 
-	private Token issueToken(String smartId, String role, Login loginObj) throws GSmartServiceException {
+	private Token issueToken(String smartId, String role, Login loginObj,String reportingId) throws GSmartServiceException {
 
 		Token token = null;
 		String tokenNumber = null;
@@ -127,11 +129,12 @@ public class LoginServicesImpl implements LoginServices{
 			token.setTokenNumber(tokenNumber);
 			token.setSmartId(smartId);
 			token.setRole(role);
+			token.setReportingManagerId(reportingId);
 			token.setHierarchy(loginObj.getHierarchy());
 			tokenService.saveToken(token, loginObj);
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
-			issueToken(smartId, role, loginObj);
+			issueToken(smartId, role, loginObj,reportingId);
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}

@@ -178,7 +178,10 @@ public class AttendanceServiceImpl implements AttendanceService {
 				List<Attendance> attendanceList = attendancedao.getAttendanceByhierarchy(date, hierarchy);
 				Loggers.loggerStart(attendanceList);
 				int totalCount = 0;
-				int totalPresent = 0;
+				int studentPresentCount = 0;
+				int employeePresentCount = 0;
+				int studentAbsentCount = 0;
+				int employeeAbsentCount = 0;
 				// Date dateObj = new Date(date * 1000);
 				int year = Calendar.getInstance().get(Calendar.YEAR);
 				Map<String, Profile> profileMap = new HashMap<>();
@@ -187,25 +190,52 @@ public class AttendanceServiceImpl implements AttendanceService {
 				for (Profile profile : profileList) {
 					profileMap.put(profile.getSmartId(), profile);
 				}
-				ArrayList<String> childsList = searchService.getAllChildSmartIdForFinance(smartId, profileMap);
+				ArrayList<Profile> childsList = searchService.getAllChildSmartIdForFinanceAttendance(smartId, profileMap);
 				Loggers.loggerStart(childsList);
 				totalCount = childsList.size();
+				int totalStd = 0;
 				System.out.println("total child count" + totalCount);
 				for (Attendance attendance : attendanceList) {
-					System.out.println("in side 1st for loop attendance>>>>>>>>>>>>>>>>>>>>>>>>>>");
-					for (String childSmartId : childsList) {
+					System.out.println("in side 1st for loop attendance>>>>>>>>>>>>>>>>>>>>>>>>>>"+attendanceList.size());
+					for (Profile childSmartId : childsList) {
 						System.out.println("in side 2nd  for loop child list >>  >  >>>>   >>>>>>");
-						if (childSmartId.equalsIgnoreCase(attendance.getSmartId())) {
-							System.out.println("if condition to clculate");
-							++totalPresent;
-							System.out.println("total child present ><><><><  " + totalPresent);
-							// childsList.remove(childSmartId);
-							// attendanceList.remove(attendance);
+						if (childSmartId.getRole().equalsIgnoreCase("student")) {
+							if (childSmartId.getSmartId().equalsIgnoreCase(attendance.getSmartId())) {
+								System.out.println("if condition to clculate");
+
+								++studentPresentCount;
+								System.out.println("total child present ><><><><  " + studentPresentCount);
+
+							}
+
+						} else {
+							if (childSmartId.getSmartId().equalsIgnoreCase(attendance.getSmartId())) {
+								System.out.println("if condition to clculate");
+
+								++employeePresentCount;
+								System.out.println("total Employee present ><><><><  " + employeePresentCount);
+
+							}
+
 						}
+
 					}
 				}
+				for (Profile pro : childsList) {
+					if(pro.getRole().equalsIgnoreCase("student")){
+						totalStd++;
+					}
+				}
+				
+				studentAbsentCount = totalStd - studentPresentCount;
+				employeeAbsentCount=totalCount-(employeePresentCount+studentAbsentCount+studentPresentCount);
+				System.out.println("emp absent ><><><>  "+employeeAbsentCount+" tolat emp"+employeePresentCount);
+				System.out.println("total absent count>>>>>>>>>>>>>>>>>>>>  " +totalStd + " present std "+studentPresentCount+" std abt "+studentAbsentCount);
 				schoolData.put("totalCount", totalCount);
-				schoolData.put("totalPresent", totalPresent);
+				schoolData.put("studentPresentCount", studentPresentCount);
+				schoolData.put("employeePresentCount", employeePresentCount);
+				schoolData.put("studentAbsentCount", studentAbsentCount);
+				schoolData.put("employeeAbsentCount", employeeAbsentCount);
 				schoolData.put("hierarchy", hierarchy);
 				responseList.add(schoolData);
 			}
@@ -227,7 +257,10 @@ public class AttendanceServiceImpl implements AttendanceService {
 				List<Attendance> attendanceList = attendancedao.getAttendanceByhierarchy(date, hierarchy);
 				Loggers.loggerStart(attendanceList);
 				int totalCount = 0;
-				int totalPresent = 0;
+				int studentPresentCount = 0;
+				int employeePresentCount = 0;
+				int studentAbsentCount = 0;
+				int employeeAbsentCount = 0;
 				// Date dateObj = new Date(date * 1000);
 				int year = Calendar.getInstance().get(Calendar.YEAR);
 				Map<String, Profile> profileMap = new HashMap<>();
@@ -236,25 +269,52 @@ public class AttendanceServiceImpl implements AttendanceService {
 				for (Profile profile : profileList) {
 					profileMap.put(profile.getSmartId(), profile);
 				}
-				ArrayList<String> childsList = searchService.getAllChildSmartIdForHr(smartId, profileMap);
+				ArrayList<Profile> childsList = searchService.getAllChildSmartIdForHrAttendance(smartId, profileMap);
 				Loggers.loggerStart(childsList);
 				totalCount = childsList.size();
+				int totalStd = 0;
 				System.out.println("total child count" + totalCount);
 				for (Attendance attendance : attendanceList) {
-					System.out.println("in side 1st for loop attendance>>>>>>>>>>>>>>>>>>>>>>>>>>");
-					for (String childSmartId : childsList) {
+					System.out.println("in side 1st for loop attendance>>>>>>>>>>>>>>>>>>>>>>>>>>"+attendanceList.size());
+					for (Profile childSmartId : childsList) {
 						System.out.println("in side 2nd  for loop child list >>  >  >>>>   >>>>>>");
-						if (childSmartId.equalsIgnoreCase(attendance.getSmartId())) {
-							System.out.println("if condition to clculate");
-							++totalPresent;
-							System.out.println("total child present ><><><><  " + totalPresent);
-							// childsList.remove(childSmartId);
-							// attendanceList.remove(attendance);
+						if (childSmartId.getRole().equalsIgnoreCase("student")) {
+							if (childSmartId.getSmartId().equalsIgnoreCase(attendance.getSmartId())) {
+								System.out.println("if condition to clculate");
+
+								++studentPresentCount;
+								System.out.println("total child present ><><><><  " + studentPresentCount);
+
+							}
+
+						} else {
+							if (childSmartId.getSmartId().equalsIgnoreCase(attendance.getSmartId())) {
+								System.out.println("if condition to clculate");
+
+								++employeePresentCount;
+								System.out.println("total Employee present ><><><><  " + employeePresentCount);
+
+							}
+
 						}
+
 					}
 				}
+				for (Profile pro : childsList) {
+					if(pro.getRole().equalsIgnoreCase("student")){
+						totalStd++;
+					}
+				}
+				
+				studentAbsentCount = totalStd - studentPresentCount;
+				employeeAbsentCount=totalCount-(employeePresentCount+studentAbsentCount+studentPresentCount);
+				System.out.println("emp absent ><><><>  "+employeeAbsentCount+" tolat emp"+employeePresentCount);
+				System.out.println("total absent count>>>>>>>>>>>>>>>>>>>>  " +totalStd + " present std "+studentPresentCount+" std abt "+studentAbsentCount);
 				schoolData.put("totalCount", totalCount);
-				schoolData.put("totalPresent", totalPresent);
+				schoolData.put("studentPresentCount", studentPresentCount);
+				schoolData.put("employeePresentCount", employeePresentCount);
+				schoolData.put("studentAbsentCount", studentAbsentCount);
+				schoolData.put("employeeAbsentCount", employeeAbsentCount);
 				schoolData.put("hierarchy", hierarchy);
 				responseList.add(schoolData);
 			}

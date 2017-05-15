@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -412,6 +413,39 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 			return null;
 		}
 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Roles> getRoles() throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<Roles> roles=null;
+		try {
+			query=sessionFactory.getCurrentSession().createQuery("from Roles");
+			roles=query.list();
+			
+		}catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		
+		return roles;
+	}
+
+	@Override
+	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy) throws GSmartDatabaseException {
+		List<RolePermission> role = null;
+		try{
+		query = sessionFactory.getCurrentSession().createQuery("from RolePermission where role like '%" + permission.getRole() + "%' AND isActive='Y'");
+		role = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return role;
 	}
 
 }

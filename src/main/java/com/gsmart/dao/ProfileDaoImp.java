@@ -22,7 +22,6 @@ import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
-import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -257,7 +256,7 @@ public class ProfileDaoImp implements ProfileDao {
 			query.setParameter("smartId", smartId);
 			Profile currentProfile = (Profile) query.uniqueResult();
 			Loggers.loggerEnd(currentProfile);
-			if (currentProfile.getReportingManagerId() != smartId)
+			if (!currentProfile.getReportingManagerId().equals(smartId))
 				return getProfileDetails(currentProfile.getReportingManagerId());
 			else
 				return null;
@@ -765,6 +764,7 @@ public class ProfileDaoImp implements ProfileDao {
 		transaction = session.beginTransaction();
 	}*/
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy,String reportingManagerId) throws GSmartDatabaseException {
 		List<Profile> profileByStudent = null;

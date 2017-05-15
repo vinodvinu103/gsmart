@@ -53,6 +53,33 @@ public class InventoryAssignmentsStudent {
 	@Column(name="SMART_ID")
 	private String smartId;
 	
+	@Column(name="RETURN")
+	private Integer returnstu;
+	
+	@Column(name="STUDENT_ID")
+	private String studentId;
+	
+	
+	public String getStudentId() {
+		return studentId;
+	}
+
+
+	public void setStudentId(String studentId) {
+		this.studentId = studentId;
+	}
+
+
+	public Integer getReturnstu() {
+		return returnstu;
+	}
+
+
+	public void setReturnstu(Integer returnstu) {
+		this.returnstu = returnstu;
+	}
+
+
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;

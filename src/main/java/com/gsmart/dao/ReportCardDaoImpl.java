@@ -269,7 +269,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Hierarchy hierarchy = token.getHierarchy();
 		String role = token.getRole();
 		try {
-
 			if (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR")) {
 
 				query = sessionFactory.getCurrentSession().createQuery(

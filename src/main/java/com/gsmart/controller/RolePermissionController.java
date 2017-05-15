@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.gsmart.model.Band;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.model.Token;
 import com.gsmart.services.RolePermissionServices;
 import com.gsmart.util.CalendarCalculator;
@@ -56,9 +60,31 @@ public class RolePermissionController {
 	 *            parameters
 	 * @return returns list of permission entities present in the RolePermission
 	 *         table
+	 * @throws GSmartServiceException 
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
+	@RequestMapping(value="/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> search(@RequestBody RolePermission permission, @RequestHeader HttpHeaders token, HttpSession httpSession ) throws GSmartServiceException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<RolePermission> permissionss = null;
+		
+		Map<String, Object> privilege = new HashMap<>();
+		permissionss = rolePermissionServices.search(permission, tokenObj.getHierarchy());
+			privilege.put("permissionss", permissionss);
+			
+			Loggers.loggerEnd(permissionss);
+		return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
+		
+	}
+	
+	
 	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
 
 	public ResponseEntity<Map<String, Object>> getPermissionList(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
@@ -186,6 +212,19 @@ public class RolePermissionController {
 	public void getPermission(String role) throws GSmartServiceException {
 
 		rolePermissionServices.getPermission(role);
+	}
+	
+	@RequestMapping(value="/roles",method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getRoles(@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
+		Loggers.loggerStart();
+		Map<String, Object> respMap =new HashMap<>();
+		List<Roles> roles=rolePermissionServices.getRoles();
+		respMap.put("data", roles);
+		Loggers.loggerEnd(respMap);
+		
+		return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+		
+		
 	}
 
 }
