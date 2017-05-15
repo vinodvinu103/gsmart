@@ -146,7 +146,7 @@ import com.gsmart.util.Loggers;
 			Loggers.loggerStart(oldBand);
 			if (oldBand == null) {
 			Session session=this.sessionFactory.getCurrentSession();
-				band.setEntryTime("2017-03-17-10.49.01.429");
+				band.setEntryTime(CalendarCalculator.getTimeStamp());
 				band.setIsActive("Y");
 			
 				cb = (CompoundBand) session.save(band);
