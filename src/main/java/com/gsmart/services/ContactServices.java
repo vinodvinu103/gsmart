@@ -29,6 +29,6 @@ public interface ContactServices   {
 
 	public Map<String, Object> teacherChat(MessageDetails details) throws Exception;
 
-	public void updateStatus(Long hid, String smartId) throws Exception;
+	public void updateStatus(Token tk1, Long hid, String smartId) throws Exception;
 
 }
