@@ -80,7 +80,7 @@
                 <value>com.gsmart.model.PayRoll</value>
 	            <value>com.gsmart.model.PerformanceAppraisal</value>
 				<value>com.gsmart.model.InventoryAssignmentsStudent</value>
-				
+				<value>com.gsmart.model.TimeTable</value>
 			</list>
 
 		</property>
