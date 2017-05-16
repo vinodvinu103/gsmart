@@ -61,6 +61,8 @@ public class AssignDaoImpl implements AssignDao {
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			assignList = criteria.list();
 			criteriaCount= sessionFactory.getCurrentSession().createCriteria(Assign.class);
+			criteriaCount.add(Restrictions.eq("isActive", "Y"));
+			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.setProjection(Projections.rowCount());
 			 count= (Long) criteriaCount.uniqueResult();
 			assignMap.put("totalassign", count);
