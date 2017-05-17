@@ -6,6 +6,7 @@ import java.util.Map;
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 
@@ -73,5 +74,7 @@ public interface ProfileServices{
 	 * @throws GSmartServiceException
 	 */
 	public void deleteBanner(Banners banner)throws GSmartServiceException;
+
+	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy)throws GSmartServiceException;
 
 }

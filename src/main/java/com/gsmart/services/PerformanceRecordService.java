@@ -23,6 +23,8 @@ public interface PerformanceRecordService {
 
 	public void addAppraisalRecordManager(PerformanceRecord appraisal)throws GSmartServiceException;
 
+	public Map<String, Object> getrating(String year, Long hid)throws GSmartServiceException;
+
 	
 
 }

@@ -333,34 +333,40 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			long epoch1 = date2.getTime() / 1000;
 			System.out.println("today epoch date" + epoch1);
 			System.out.println("attendance insert data using cron job");
-			ArrayList<Profile> allProfiles = profileDao.getAllProfiles(academicYear);
+			ArrayList<Profile> allProfiles;
+			try {
+				allProfiles = profileDao.getAllProfiles(academicYear);
+				for (Profile profile : allProfiles) {
+					String smartId = profile.getSmartId();
 
-			for (Profile profile : allProfiles) {
-				String smartId = profile.getSmartId();
-
-				String rfid = profile.getRfId();
-				if (profile.getSmartId() != null) {
-					Attendance attendance = new Attendance();
-					Session session = this.sessionFactory.getCurrentSession();
-					attendance.setSmartId(smartId);
-					if (rfid != null) {
-						attendance.setRfId(rfid);
-					} else {
-						attendance.setRfId(smartId);
+					String rfid = profile.getRfId();
+					if (profile.getSmartId() != null) {
+						Attendance attendance = new Attendance();
+						Session session = this.sessionFactory.getCurrentSession();
+						attendance.setSmartId(smartId);
+						if (rfid != null) {
+							attendance.setRfId(rfid);
+						} else {
+							attendance.setRfId(smartId);
+						}
+						attendance.setStatus("ABSENT");
+						attendance.setIsActive("N");
+						attendance.setInDate(epoch1);
+						attendance.setRole(profile.getRole());
+						attendance.setHierarchy(profile.getHierarchy());
+						attendance.setFinalToken(profile.getFinalToken());
+						attendance.setFirstName(profile.getFirstName());
+						attendance.setMiddleName(profile.getMiddleName());
+						attendance.setLastName(profile.getLastName());
+						session.saveOrUpdate(attendance);
+						System.out.println("data saved in attendance table" + attendance);
 					}
-					attendance.setStatus("ABSENT");
-					attendance.setIsActive("N");
-					attendance.setInDate(epoch1);
-					attendance.setRole(profile.getRole());
-					attendance.setHierarchy(profile.getHierarchy());
-					attendance.setFinalToken(profile.getFinalToken());
-					attendance.setFirstName(profile.getFirstName());
-					attendance.setMiddleName(profile.getMiddleName());
-					attendance.setLastName(profile.getLastName());
-					session.saveOrUpdate(attendance);
-					System.out.println("data saved in attendance table" + attendance);
 				}
+			} catch (GSmartDatabaseException e) {
+				e.printStackTrace();
 			}
+
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 

@@ -3,6 +3,7 @@ package com.gsmart.controller;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -44,6 +45,7 @@ import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
+
 
 @Controller
 @RequestMapping(Constants.REGISTRATION)
@@ -370,6 +372,23 @@ public class RegistrationController {
 			Loggers.loggerEnd();
 		
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+
+	}
+	
+	@RequestMapping(value = "/searchemp1", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchemp(@RequestBody Profile profile, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<Profile> emplist = null;
+		Map<String, Object> emplistMap = new HashMap<>();
+		emplist = profileServices.searchemp(profile, tokenObj.getHierarchy());
+		emplistMap.put("searchlist", emplist);
+		Loggers.loggerEnd(emplistMap);
+		return new ResponseEntity<Map<String, Object>>(emplistMap, HttpStatus.OK);
 
 	}
 

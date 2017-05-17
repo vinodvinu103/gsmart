@@ -64,7 +64,7 @@ public class ContactDaoImp implements ContactDao {
 	}
 	
 	@Override
-	public boolean teacherToStudent(MessageDetails details, String role) throws Exception {
+	public MessageDetails teacherToStudent(MessageDetails details, String role) throws Exception {
 		Loggers.loggerStart(details);
 		Session session=this.sessionFactory.getCurrentSession();
 		try {
@@ -79,10 +79,10 @@ public class ContactDaoImp implements ContactDao {
 			details.setReadByTeacher("Y");
 			session.save(details);
 			Loggers.loggerEnd();
-			return true;
+			return details;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		} 
 	}
 	
