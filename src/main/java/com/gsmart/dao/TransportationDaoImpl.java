@@ -49,7 +49,7 @@ public class TransportationDaoImpl implements TransportationDao {
 	    getConnection();
 		Loggers.loggerStart();
 		try {
-			query = session.createQuery("from Transportation where hierarchy.hid=:hierarchy");
+			query = session.createQuery("from Transportation where isactive='Y' and hierarchy.hid=:hierarchy");
 			//query = session.createQuery("from Transportation");
 			query.setParameter("hierarchy", hid);
 	        Loggers.loggerStart(hid);
