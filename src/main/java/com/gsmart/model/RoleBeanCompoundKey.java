@@ -12,7 +12,7 @@ public class RoleBeanCompoundKey implements Serializable {
 	private String moduleName;
 	private String entryTime;
 
-	@Override
+	/*@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -21,8 +21,8 @@ public class RoleBeanCompoundKey implements Serializable {
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		return result;
 	}
-
-	@Override
+*/
+	/*@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -48,7 +48,7 @@ public class RoleBeanCompoundKey implements Serializable {
 			return false;
 		return true;
 	}
-
+*/
 
 
 }

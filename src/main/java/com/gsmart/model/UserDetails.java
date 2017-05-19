@@ -79,7 +79,7 @@ public class UserDetails {
 		this.applicationForm = applicationForm;
 	}*/
 
-	public Profile getProfileMap(String key) {
+	/*public Profile getProfileMap(String key) {
 		return profileMap.get(key);
 	}
 
@@ -87,13 +87,13 @@ public class UserDetails {
 		this.profileMap.put(key, value);
 	}
 
-	/*public List<LeaveType> getLeaveTypeMap(String key) {
+	public List<LeaveType> getLeaveTypeMap(String key) {
 		return leaveTypeMap.get(key);
 	}
 
 	public void setLeaveTypeMap(String key,List<LeaveType> value) {
 		this.leaveTypeMap.put(key, value);
-	}*/
+	}
 
 	public List<LeaveDetails> getLeaveDetailsMap(String key) {
 		return leaveDetailsMapList.get(key);
@@ -102,5 +102,5 @@ public class UserDetails {
 	public void setLeaveDetailsMap(String key, List<LeaveDetails> value) {
 		this.leaveDetailsMapList.put(key, value);
 	}
-
+*/
 }

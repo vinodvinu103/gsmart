@@ -24,7 +24,6 @@ import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
-import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
@@ -677,6 +676,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		Loggers.loggerEnd("getBanner api ended in Profile Dao with bandList size of  "+bannerlist.size() );
 		return bannerlist;
