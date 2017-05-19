@@ -39,7 +39,13 @@ public interface RolePermissionServices {
 	 * @param permission instanceOf {@link RolePermission}
 	 * @return nothing
 	 * @throws GSmartServiceException
+	 * 
+	 * 
 	 */
+	
+	public RolePermissionCompound addPermissionsForUsers(List<RolePermission> permissionList) throws GSmartServiceException;
+	
+	
 	public RolePermissionCompound addPermission(RolePermission permission) throws GSmartServiceException;
 
 	public Map<String, Object> getPermission(String role) throws GSmartServiceException;

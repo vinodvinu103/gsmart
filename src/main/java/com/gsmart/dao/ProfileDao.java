@@ -61,7 +61,7 @@ public interface ProfileDao {
 	public ArrayList<Profile> getAllProfiles(String AcademicYear) throws GSmartDatabaseException;
 
 	public Map<String, Object> getProfiles(String role, String smartId,Long hid, int min,
-			int max);
+			int max) throws GSmartDatabaseException;
 
 	public Profile getParentInfo(String empSmartId) throws GSmartDatabaseException;
 

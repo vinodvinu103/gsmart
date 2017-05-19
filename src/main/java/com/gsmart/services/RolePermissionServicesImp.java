@@ -207,6 +207,21 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	@Override
 	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy) throws GSmartServiceException {
 		return rolePermissionDao.search(permission, hierarchy);
+	}
+	@Override
+	public RolePermissionCompound addPermissionsForUsers(List<RolePermission> permissionList)
+			throws GSmartServiceException {
+		Loggers.loggerStart();
+		RolePermissionCompound cb = null;
+		try {
+			cb=rolePermissionDao.addPermissionsForUsers(permissionList);
+		} catch (GSmartDatabaseException exception) {
+			throw (GSmartServiceException) exception;
+		} catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		Loggers.loggerEnd();
+		return cb;
 	}	
 	
 

@@ -102,6 +102,7 @@ public class RolePermission implements Serializable {
 	@Column(name = "EXIT_TIME")
 	private String exitTime;
 
+	
 	@Column(name = "IS_ACTIVE")
 //	@Index(name = "isActive")
 	private String isActive;
