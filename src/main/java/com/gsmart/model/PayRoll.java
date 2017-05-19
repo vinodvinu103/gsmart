@@ -102,9 +102,5 @@ public class PayRoll {
 	}
 
 	
-	@Override
-	public String toString() {
-	     return "Payroll [smartId=" + smartId + ", firstName=" + firstName + ", role=" + role + ",pf=" + pf + ","
-				+ "esi=" + esi + ",totalSalary=" + totalSalary + ",deduction=" + deduction + ",salarySlip=" + salarySlip + "]";
-	}
+	
 }
