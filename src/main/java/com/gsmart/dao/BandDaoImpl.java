@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -36,7 +37,7 @@ import com.gsmart.util.Loggers;
  */
 @Repository
 @Transactional
-public class BandDaoImpl implements BandDao {
+ public class BandDaoImpl implements BandDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -49,6 +50,39 @@ public class BandDaoImpl implements BandDao {
 	 * 
 	 * @return list of band entities available in Band
 	 */
+	@SuppressWarnings("unchecked")
+	public List<Band> search(Band band, Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+
+		List<Band> bandList=null;
+		try {
+			if (hierarchy == null) {
+
+				query = sessionFactory.getCurrentSession()
+						.createQuery("from Band where role like '%" + band.getRole() + "%' AND isActive='Y'");
+			} else {
+				query = sessionFactory.getCurrentSession().createQuery("from Band where role like '%"
+						+ band.getRole() + "%' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hierarchy.getHid());
+			}
+
+			bandList = query.list();
+
+		} catch (ConstraintViolationException e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		}catch (NullPointerException e) {
+			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+		}catch (Exception e) {
+			throw new GSmartDatabaseException(e.getMessage());
+		}
+
+		Loggers.loggerEnd();
+
+		return bandList;
+	}
+	
 	@Override
 	public Map<String, Object> getBandList(int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
@@ -99,7 +133,7 @@ public class BandDaoImpl implements BandDao {
 	public CompoundBand addBand(Band band) throws GSmartDatabaseException {
 		CompoundBand cb = null;
 		try {
-			Session session=this.sessionFactory.getCurrentSession();
+			
 			
 
 			query = sessionFactory.getCurrentSession().createQuery(
@@ -111,6 +145,7 @@ public class BandDaoImpl implements BandDao {
 			Band oldBand = (Band) query.uniqueResult();
 			Loggers.loggerStart(oldBand);
 			if (oldBand == null) {
+			Session session=this.sessionFactory.getCurrentSession();
 				band.setEntryTime(CalendarCalculator.getTimeStamp());
 				band.setIsActive("Y");
 			
@@ -119,12 +154,22 @@ public class BandDaoImpl implements BandDao {
 			}
 			
 		} catch (ConstraintViolationException e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
-		} catch (Exception e) {
+		}catch (NullPointerException e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
+			e.printStackTrace();
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getCause());
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} 
+		}
 		Loggers.loggerEnd();
 		return cb;
 	}
@@ -162,14 +207,23 @@ private Band updateBand(Band oldBand,Band band) throws GSmartDatabaseException {
 				oldBand.setUpdatedTime(CalendarCalculator.getTimeStamp());
 				oldBand.setIsActive("N");
 				session.update(oldBand);
+				
+				query=sessionFactory.getCurrentSession().createQuery("update Profile set role=:role,designation=:designation,band=:bandId where band=:band");
+				query.setParameter("role", band.getRole());
+				query.setParameter("designation", band.getDesignation());
+				query.setParameter("bandId", band.getBandId());
+				query.setParameter("band",oldBand.getBandId());
+				query.executeUpdate();
 
 				
 				return oldBand;
 
 			}
 		} catch (ConstraintViolationException e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Throwable e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 		return ch;

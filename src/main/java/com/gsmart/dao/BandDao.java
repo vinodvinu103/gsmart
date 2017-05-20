@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.util.GSmartDatabaseException;
 /**
  * 
@@ -31,6 +32,8 @@ public interface BandDao {
 
 	public CompoundBand addBand(Band band) throws GSmartDatabaseException;
 	
+	
+	
 	/**
 	 * @param band instanceOf {@link Band}
 	 * @return Nothing
@@ -51,5 +54,7 @@ public interface BandDao {
 	public Band getMaxband() throws GSmartDatabaseException;
 
 	public List<Band> getBandList1() throws GSmartDatabaseException;
+
+	public List<Band> search(Band band, Hierarchy hierarchy) throws GSmartDatabaseException;
 
 }

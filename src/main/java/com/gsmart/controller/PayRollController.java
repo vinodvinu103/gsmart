@@ -52,7 +52,7 @@ public class PayRollController {
 			throws GSmartBaseException{
 		//Map<String, Object> resp=new HashMap<>();
 		Map<String, Object>resp= payrollService.getPayroll();
-		if(resp!=null){
+		if(!resp.isEmpty()){
 			resp.put("status", 200);
 			resp.put("message", "success");
 			

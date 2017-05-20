@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+
 @Embeddable
 public class CompoundPerformanceAppraisal implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -11,7 +12,8 @@ public class CompoundPerformanceAppraisal implements Serializable {
 	private Long entryTime;
 
 	private String year;
-	private String smartId;
+
+	private String reportingManagerID;
 
 	public void setEntryTime(Long entryTime) {
 		this.entryTime = entryTime;
@@ -29,12 +31,12 @@ public class CompoundPerformanceAppraisal implements Serializable {
 		this.year = year;
 	}
 
-	public String getSmartId() {
-		return smartId;
+	public String getReportingManagerID() {
+		return reportingManagerID;
 	}
 
-	public void setSmartId(String smartId) {
-		this.smartId = smartId;
+	public void setReportingManagerID(String reportingManagerID) {
+		this.reportingManagerID = reportingManagerID;
 	}
 
 }

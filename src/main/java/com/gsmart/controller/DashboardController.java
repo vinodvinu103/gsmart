@@ -571,7 +571,7 @@ public class DashboardController {
 		Map<String, Object> privilege = new HashMap<>();
 			studentList = dashboardDao.searchStudentById(profile, tokenObj.getHierarchy());
 			
-			System.out.println("studentList>>>>>>>>::"+studentList);
+			System.out.println("Student by ID list (controller): "+studentList);
 			privilege.put("studentList", studentList);
 			Loggers.loggerEnd(studentList);
 		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);

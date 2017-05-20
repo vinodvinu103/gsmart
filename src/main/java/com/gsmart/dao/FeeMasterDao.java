@@ -49,7 +49,7 @@ public interface FeeMasterDao {
 
 	public void deleteFee(FeeMaster feeMaster) throws GSmartDatabaseException;
 
-	public FeeMaster getFeeStructure(String standard,Long hid);
+	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartDatabaseException ;
 
 	/*public void fileUpload(FileUpload fileUpload) throws GSmartDatabaseException;*/
 

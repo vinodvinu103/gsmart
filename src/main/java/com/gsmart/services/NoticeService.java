@@ -19,9 +19,11 @@ public interface NoticeService {
     
     public  void editNotice(Notice notice) throws Exception;
 
-	public List<Notice> viewGenericNotice(String type);
+	public List<Notice> viewGenericNotice(String type) throws GSmartServiceException;
 	
-	public List<Notice> viewMyNotice(String role, Long hid);
+	public List<Notice> viewMyNotice(String role, Long hid) throws GSmartServiceException;
+	
+	public List<Notice> viewAdminNoticeService(String SmartId) throws GSmartServiceException;
 	
 
 	

@@ -1,6 +1,5 @@
 package com.gsmart.model;
 
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,12 +10,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Index;
 
-@SuppressWarnings({ "serial", "deprecation" })
 @Entity
 @Table(name = "LOGIN")
-public class Login implements Serializable {
+public class Login  {
 
 	@Id
 	@Column(name = "SMART_ID")

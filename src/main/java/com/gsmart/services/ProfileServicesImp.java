@@ -1,6 +1,5 @@
 package com.gsmart.services;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -62,6 +62,7 @@ public class ProfileServicesImp implements ProfileServices {
 		try {
 			return profileDao.userProfileInsert(profile);
 		} catch (Exception e) {
+			System.out.println(" profileservice in catch block  ");
 			e.printStackTrace();
 			return false;
 		}
@@ -99,7 +100,7 @@ public class ProfileServicesImp implements ProfileServices {
 
 
 	@Override
-	public Map<String, Object> getParentInfo(String empSmartId) {
+	public Map<String, Object> getParentInfo(String empSmartId) throws GSmartDatabaseException {
 		Map<String, Object> parentInfo = new HashMap<>();
 		Profile parentProfile = profileDao.getParentInfo(empSmartId);
 		parentInfo.put("parentProfile", parentInfo);
@@ -168,9 +169,8 @@ public class ProfileServicesImp implements ProfileServices {
 		return profileDao.getProfileByHierarchy(hierarchy);
 	}
 	
-
 	public Map<String, Object> getProfilesWithoutRfid(Integer min, Integer max,Long hierarchy) throws GSmartDatabaseException {
-
+	
 		return profileDao.getProfilesWithoutRfid(min, max,hierarchy);
 	}
 
@@ -237,8 +237,15 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 	@Override
 	public List<Banners> getBannerList() throws GSmartServiceException {
-		// TODO Auto-generated method stub
-		return profileDao.getBannerList();
+		Loggers.loggerStart("getBanner api started in Profile Service  " );
+		List<Banners> bannnerList=null;
+		try {
+			bannnerList=profileDao.getBannerList();
+		}catch (Exception e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
+		Loggers.loggerEnd("getBanner api ended in Profile Service  " );
+		return bannnerList;
 	}
 
 	@Override
@@ -259,6 +266,15 @@ public class ProfileServicesImp implements ProfileServices {
 	public List<Profile> getProfileByStuentHierarchy(Hierarchy hierarchy, String reportingManagerId)
 			throws GSmartDatabaseException {
 		return profileDao.getProfileByStuentHierarchy(hierarchy, reportingManagerId);
+	}
+
+	@Override
+	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy)throws GSmartServiceException {
+		try {
+			return profileDao.searchemp(profile, hierarchy);
+		} catch (GSmartBaseException e) {
+			throw new GSmartServiceException(e.getMessage());
+		}
 	}
 
 }

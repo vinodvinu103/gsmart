@@ -201,14 +201,24 @@ public class HierarchyDaoImpl implements HierarchyDao {
 				hierarchy.setUpdateTime(CalendarCalculator.getTimeStamp());
 				hierarchy.setIsActive("Y");
 				sessionFactory.getCurrentSession().update(hierarchy);
+				
+				query=sessionFactory.getCurrentSession().createQuery("update Profile set school=:school,institution=:institution where hierarchy.hid=:hierarchy");
+				query.setParameter("school", hierarchy.getSchool());
+				query.setParameter("institution", hierarchy.getInstitution());
+				query.setParameter("hierarchy", hierarchy.getHid());
+				query.executeUpdate();
 
 				return hierarchy;
 
 		/*	}*/
 		} catch (ConstraintViolationException e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			e.printStackTrace();
+			
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+			
 		} catch (Throwable e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}

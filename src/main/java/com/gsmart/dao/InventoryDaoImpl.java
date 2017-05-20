@@ -96,7 +96,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		Session session=this.sessionFactory.getCurrentSession();
 
 		CompoundInventory cb = null;
-
+/*
 		try {
 			inventoryassign= fetch(inventory);
 			if (inventoryassign == null) {
@@ -106,7 +106,7 @@ public class InventoryDaoImpl implements InventoryDao {
 
 
 			}
-
+*/
 		/*CompoundInventory cb = null;*/
 
 		try {
@@ -118,9 +118,9 @@ public class InventoryDaoImpl implements InventoryDao {
 				cb = (CompoundInventory) session.save(inventory);
 			}
 
-		} catch (ConstraintViolationException e) {
+		/*} catch (ConstraintViolationException e) {
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
-		} 
+		} */
 		}catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}

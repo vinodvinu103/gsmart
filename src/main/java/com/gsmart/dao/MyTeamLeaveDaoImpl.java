@@ -44,6 +44,7 @@ public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy,Inte
 			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")||role.equalsIgnoreCase("hr")) {
 				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class);
 				criteria.add(Restrictions.eq("isActive", "Y"));
+				criteria.addOrder(Order.asc("fullName"));
 				criteria.add(Restrictions.eq("hierarchy.hid", hierarchy));
 				criteria.setFirstResult(min);
 				criteria.setMaxResults(max);

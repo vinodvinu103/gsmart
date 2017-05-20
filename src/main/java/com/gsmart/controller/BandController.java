@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.gsmart.model.Band;
 import com.gsmart.model.CompoundBand;
+import com.gsmart.model.Token;
 import com.gsmart.services.BandServices;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartBaseException;
@@ -58,7 +59,26 @@ public class BandController {
 	 */
 	// String module=getAuthorization.getModuleName();
 
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> search(@RequestBody Band band,@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<Band> bandList = null;
+		
+		Map<String, Object> privilege = new HashMap<>();
+			bandList = bandServices.search(band, tokenObj.getHierarchy());
+			privilege.put("bandList", bandList);
+			
+			Loggers.loggerEnd(bandList);
+		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
+	}
 
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("hierarchy") Integer hierarchy, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)

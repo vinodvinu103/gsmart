@@ -160,12 +160,13 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Loggers.loggerStart();
 		try {
 			query = sessionFactory.getCurrentSession().createQuery(
-					"from ReportCard where smartId=:smartId and isActive=:isActive and subject=:subject and examName=:examName and standard=:standard");
+					"from ReportCard where smartId=:smartId and isActive=:isActive and subject=:subject and examName=:examName and standard=:standard and academicYear=:academicYear");
 			query.setParameter("smartId", card.getSmartId());
 			query.setParameter("isActive", "Y");
 			query.setParameter("subject", card.getSubject());
 			query.setParameter("examName", card.getExamName());
 			query.setParameter("standard", card.getStandard());
+			query.setParameter("academicYear", card.getAcademicYear());
 			ReportCard list = (ReportCard) query.uniqueResult();
 			return list;
 		} catch (Exception e) {
@@ -268,7 +269,6 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		Hierarchy hierarchy = token.getHierarchy();
 		String role = token.getRole();
 		try {
-
 			if (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR")) {
 
 				query = sessionFactory.getCurrentSession().createQuery(
@@ -463,10 +463,12 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		return examName;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> reportCardListForTeacher(Token tokenDetail, Integer min, Integer max,
 			String academicYear, String examName) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		@SuppressWarnings("rawtypes")
 		Map<String, Object> reportCard = new HashMap();
 		try {
 			criteria = sessionFactory.getCurrentSession().createCriteria(ReportCard.class);
@@ -483,7 +485,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			criteria = sessionFactory.getCurrentSession().createCriteria(ReportCard.class)
 					.add(Restrictions.eq("isActive", "Y"))
 					.add(Restrictions.eq("reportingManagerId", tokenDetail.getSmartId()))
-					.add(Restrictions.eq("academicYear", academicYear)).add(Restrictions.eq("examName", examName))
+					.add(Restrictions.eq("academicYear", academicYear))
+					.add(Restrictions.eq("examName", examName))
 					.add(Restrictions.eq("hierarchy.hid", tokenDetail.getHierarchy().getHid()))
 					.setProjection(Projections.rowCount());
 			Long count = (Long) criteria.uniqueResult();
@@ -510,7 +513,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			query.setParameter("hierarchy", hierarchy.getHid());
 			query.setParameter("academicYear", acdemicYear);
 			childTeacher = (ArrayList<Profile>) query.list();
-			sessionFactory.getCurrentSession().close();
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
