@@ -167,7 +167,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return responseList;
 	}
 
-	@Override
+	/*@Override
 	public List<Map<String, Object>> getAttendanceByhierarchyForFinance(String smartId, Long date,
 			List<Hierarchy> hidList) {
 		List<Map<String, Object>> responseList = new ArrayList<>();
@@ -324,7 +324,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 			e.printStackTrace();
 		}
 		return responseList;
-	}
+	}*/
 
 	@Override
 	public Map<String, Object> getAttendanceCount(List<String> childList,Date date) {

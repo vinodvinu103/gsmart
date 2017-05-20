@@ -119,7 +119,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		ArrayList<ReportCard> examName = new ArrayList<>();
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		String role = tokenDetail.getRole();
-		System.out.println(role);
+		System.out.println("role is>>>>"+role);
 		System.out.println(role.equals("ADMIN"));
 		System.out.println(!role.equals("ADMIN"));
 		System.out.println(!role.equals("DIRECTOR"));

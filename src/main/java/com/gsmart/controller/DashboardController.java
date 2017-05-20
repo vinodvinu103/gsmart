@@ -247,10 +247,14 @@ public class DashboardController {
 			hierarchyList.add(tokenObj.getHierarchy());
 		}
 		if(tokenObj.getRole().equalsIgnoreCase("FINANCE")){
-			attendanceList=attendanceService.getAttendanceByhierarchyForFinance(tokenObj.getSmartId(), date, hierarchyList);
+			Profile profile=profileDao.getProfileDetails(tokenObj.getSmartId());
+			attendanceList=attendanceService.getAttendanceByhierarchy(profile.getReportingManagerId(), date, hierarchyList);
+			//attendanceList=attendanceService.getAttendanceByhierarchyForFinance(tokenObj.getSmartId(), date, hierarchyList);
 		}
 		else if(tokenObj.getRole().equalsIgnoreCase("HR")){
-			attendanceList=attendanceService.getAttendanceByhierarchyForHr(tokenObj.getSmartId(), date, hierarchyList);
+			Profile profile=profileDao.getProfileDetails(tokenObj.getSmartId());
+			attendanceList=attendanceService.getAttendanceByhierarchy(profile.getReportingManagerId(), date, hierarchyList);
+			//attendanceList=attendanceService.getAttendanceByhierarchyForHr(tokenObj.getSmartId(), date, hierarchyList);
 		}
 		else{
 			attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
@@ -308,10 +312,14 @@ public class DashboardController {
 					tokenObj.getHierarchy().getHid());
 			List<String> childList=null;
 			if(tokenObj.getRole().equalsIgnoreCase("FINANCE")){
-				childList = searchService.getAllChildSmartIdForFinanceFee(tokenObj.getSmartId(), allProfiles);
+				Profile profile=profileDao.getProfileDetails(tokenObj.getSmartId());
+				childList=searchService.getAllChildSmartId(profile.getReportingManagerId(), allProfiles);
+				//childList = searchService.getAllChildSmartIdForFinanceFee(tokenObj.getSmartId(), allProfiles);
 			}
 			else if(tokenObj.getRole().equalsIgnoreCase("HR")){
-				childList = searchService.getAllChildSmartIdForHrFee(tokenObj.getSmartId(), allProfiles);
+				Profile profile=profileDao.getProfileDetails(tokenObj.getSmartId());
+				childList=searchService.getAllChildSmartId(profile.getReportingManagerId(), allProfiles);
+				//childList = searchService.getAllChildSmartIdForHrFee(tokenObj.getSmartId(), allProfiles);
 			}
 			else{
 				childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
@@ -563,7 +571,7 @@ public class DashboardController {
 		Map<String, Object> privilege = new HashMap<>();
 			studentList = dashboardDao.searchStudentById(profile, tokenObj.getHierarchy());
 			
-			System.out.println("studentList>>>>>>>>>>>>>>>>>>>>>>>>>>>>::"+studentList);
+			System.out.println("studentList>>>>>>>>::"+studentList);
 			privilege.put("studentList", studentList);
 			Loggers.loggerEnd(studentList);
 		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
