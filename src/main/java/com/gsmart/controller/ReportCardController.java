@@ -227,10 +227,10 @@ public class ReportCardController {
 					if (p != null && p.getReportingManagerId() != null)
 						if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
 							childList.get(i).setChildFlag(true);
-							if (p.getSmartId() != childList.get(i).getSmartId()) {
+							if (!(p.getSmartId()).equals(childList.get(i).getSmartId())) {
 								
 								for (int k = 0; k < childReportCards.size(); k++) {
-									if (childList.get(i).getSmartId() == childReportCards.get(k).getSmartId()) {
+									if (childList.get(i).getSmartId().equals(childReportCards.get(k).getSmartId())) {
 										childReportCards.get(k).setChildReportFlag(1);
 										childOfChildReport.add(childReportCards.get(k));
 										flag = 1;

@@ -88,7 +88,7 @@ public class LeaveServicesImpl implements LeaveServices {
 			endCal.setTime(leave.getEndDate());
 			if (startCal.getTimeInMillis() > endCal.getTimeInMillis()) {
 				Loggers.loggerEnd();
-				return cl = null;
+				return  null;
 			}
 			endCal.add(Calendar.DAY_OF_MONTH, 1);
 

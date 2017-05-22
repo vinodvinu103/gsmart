@@ -250,6 +250,14 @@ Loggers.loggerStart();
 
 			resultmap.put("selfProfile", profile);
 			resultmap.put("childList", childList);*/
+			if(childList.isEmpty()){
+				resultmap.put("status", 400);
+				resultmap.put("message", "No Data Found");
+			}else{
+				resultmap.put("status", 200);
+				resultmap.put("message", "success");
+				
+			}
 			Loggers.loggerEnd();
 			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
 

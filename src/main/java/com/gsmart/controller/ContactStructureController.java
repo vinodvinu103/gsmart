@@ -58,7 +58,7 @@ public class ContactStructureController {
 			ArrayList<MessageDetails> childMessage=new ArrayList<>();
 			for (int i = 0; i < childList.size(); i++){
 				for (int j = 0; j < allMessages.size(); j++){
-					if(childList.get(i).getSmartId()== allMessages.get(j).getSmartId()){
+					if(childList.get(i).getSmartId().equals(allMessages.get(j).getSmartId())){
 						childMessage.add(allMessages.get(j));
 					}
 				}

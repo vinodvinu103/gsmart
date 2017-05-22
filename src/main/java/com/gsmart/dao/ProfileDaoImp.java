@@ -24,7 +24,6 @@ import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
-import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
@@ -201,7 +200,7 @@ public class ProfileDaoImp implements ProfileDao {
 	}
 
 	@Override
-	public Map<String, Object> getProfiles(String role, String smartId, Long hid, int min, int max) {
+	public Map<String, Object> getProfiles(String role, String smartId, Long hid, int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart(role);
 		Loggers.loggerStart("current smartId" + smartId);
 		/*
@@ -210,6 +209,8 @@ public class ProfileDaoImp implements ProfileDao {
 		 */
 
 		// List<Profile> profileList = null;
+		
+		
 		Map<String, Object> profileMap = new HashMap<String, Object>();
 		try {
 
@@ -226,6 +227,7 @@ public class ProfileDaoImp implements ProfileDao {
 			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
 			if (role.toLowerCase().equals("student")) {
 				criteria.add(Restrictions.eq("role", "student").ignoreCase());
+				Profile employeeId=getPreviousEmployeeId(role,hid);
 
 				criteriaCount.add(Restrictions.eq("role", "student").ignoreCase());
 
@@ -234,17 +236,20 @@ public class ProfileDaoImp implements ProfileDao {
 				 * isActive='Y'and lower(role)='student'" );
 				 */
 				profileMap.put("profileMap1", criteria.list());
+				profileMap.put("employeeId", employeeId.getStudentId());
 			} else {
 				criteria.add(Restrictions.ne("role", "student").ignoreCase());
 				criteriaCount.add(Restrictions.ne("role", "student").ignoreCase());
-
+				Profile employeeId=getPreviousEmployeeId(role,hid);
 				/**
 				 * query = session.createQuery( "from Profile where
 				 * isActive='Y'and lower(role)!='student' " );
 				 */
 				profileMap.put("profileList", criteria.list());
+				profileMap.put("employeeId", employeeId.getTeacherId());
 			}
 			criteriaCount.setProjection(Projections.rowCount());
+			
 			profileMap.put("totalProfiles", criteriaCount.uniqueResult());
 			Loggers.loggerEnd(criteria.list());
 			return profileMap;
@@ -253,6 +258,33 @@ public class ProfileDaoImp implements ProfileDao {
 			return null;
 		}
 
+	}
+
+	private Profile getPreviousEmployeeId(String role, Long hid) throws GSmartDatabaseException {
+		Profile currentProfile =null;
+		try {
+			Loggers.loggerStart();
+			if (role.toLowerCase().equals("student")) {
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where entryTime in (select max(entryTime) from Profile where lower(role)=:role and hid=:hid)");
+				query.setParameter("role", role);
+			} else {
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where entryTime in (select max(entryTime) from Profile where lower(role)!='student' and hid=:hid)");
+			}
+			query.setParameter("hid", hid);
+			
+			currentProfile= (Profile) query.uniqueResult();
+			
+			
+		} 	catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GSmartDatabaseException(e.getMessage());
+		} 
+		Loggers.loggerEnd("previous employeeId"+currentProfile.getTeacherId());
+		return currentProfile;
+		
 	}
 
 	@Override
@@ -644,6 +676,7 @@ public class ProfileDaoImp implements ProfileDao {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		Loggers.loggerEnd("getBanner api ended in Profile Dao with bandList size of  "+bannerlist.size() );
 		return bannerlist;

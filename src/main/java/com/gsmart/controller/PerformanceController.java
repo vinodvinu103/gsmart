@@ -75,8 +75,6 @@ public class PerformanceController {
 		Map<String, Object> performancerecordList = null;
 		Token tokenObj=(Token) httpSession.getAttribute("token");
 		
-		Map<String, Object> permissions = new HashMap<>();
-		IAMResponse rsp = new IAMResponse();
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
 			hid=hierarchy;
@@ -159,10 +157,8 @@ public class PerformanceController {
 
 		Map<String, Object> permissions = new HashMap<>();
 		Map<String, Object> jsonMap = new HashMap<>();
-		List<Profile> teamrecordList = null;
 		List<PerformanceAppraisal> teamappraisalList = null;
 		Token tokenObj=(Token) httpSession.getAttribute("token");
-		IAMResponse rsp = new IAMResponse();
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
 			hid=hierarchy;
@@ -259,8 +255,6 @@ public class PerformanceController {
 		Map<String, Object> performancerecordList1 = null;
 		Token tokenObj=(Token) httpSession.getAttribute("token");
 		
-		Map<String, Object> permissions = new HashMap<>();
-		IAMResponse rsp = new IAMResponse();
 		Long hid=null;
 		if(tokenObj.getHierarchy()==null){
 			hid=hierarchy;

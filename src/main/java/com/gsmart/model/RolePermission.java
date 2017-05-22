@@ -1,7 +1,6 @@
 
 package com.gsmart.model;
 
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Index;
 
 /**
  * class-name: RolePermission.java Assigning permission for everyone who
@@ -24,13 +22,11 @@ import org.hibernate.annotations.Index;
  * @since 2016-08-01
  *
  */
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "PERMISSION_MASTER")
 @IdClass(com.gsmart.model.RolePermissionCompound.class)
-public class RolePermission implements Serializable {
+public class RolePermission {
 
-	private static final long serialVersionUID = 1L;
 	/**
 	 * Its a time when the new permission instance is add or edit
 	 */
@@ -102,6 +98,7 @@ public class RolePermission implements Serializable {
 	@Column(name = "EXIT_TIME")
 	private String exitTime;
 
+	
 	@Column(name = "IS_ACTIVE")
 //	@Index(name = "isActive")
 	private String isActive;
