@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.CompoundFeeMaster;
@@ -44,6 +45,7 @@ public interface FeeMasterServices
 	
 	
 	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartServiceException;
+	public List<FeeMaster> searchfeemaster(FeeMaster feemaster, Long hid)throws GSmartServiceException;
 	
 	/*public void fileUpload(FileUpload fileUpload)throws GSmartServiceException;*/
 	

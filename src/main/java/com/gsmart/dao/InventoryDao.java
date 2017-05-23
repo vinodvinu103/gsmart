@@ -57,6 +57,11 @@ public interface InventoryDao {
 	public void deleteInventory(Inventory inventory) throws GSmartDatabaseException;
 	
 	public List<Inventory> getInventory(Long hid) throws GSmartDatabaseException;
+
+
+
+
+	public List<Inventory> searchinventory(Inventory inventory, Long hid)throws GSmartDatabaseException;
 	
 	/**
 	 * @param timeStamp

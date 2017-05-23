@@ -331,4 +331,22 @@ public class InventoryDaoImpl implements InventoryDao {
 		Loggers.loggerEnd("inveList:"+inventory);
 		return inventory;
 	}
+
+	@Override
+	public List<Inventory> searchinventory(Inventory inventory, Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<Inventory> searchinventory = null;
+		try {
+			if (hid != null) {
+				query = sessionFactory.getCurrentSession().createQuery("from Inventory where itemType like '%"+inventory.getItemType()+"%' and isActive = 'Y' and hierarchy.hid = :hierarchy");
+				query.setParameter("hierarchy", hid);
+			} else {
+				query = sessionFactory.getCurrentSession().createQuery("from Inventory where itemType like '%"+inventory.getItemType()+"%' and isActive = 'Y'");
+			}
+			searchinventory = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return searchinventory;
+	}
 }

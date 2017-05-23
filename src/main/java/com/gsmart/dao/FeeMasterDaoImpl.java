@@ -276,6 +276,28 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 		} 
 	}
 
+
+
+
+	@Override
+	public List<FeeMaster> searchfeemaster(FeeMaster feemaster, Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<FeeMaster> feelist = null;
+		try{
+			if(hid != null){
+				query = sessionFactory.getCurrentSession().createQuery("from FeeMaster where standard like '%"+feemaster.getStandard()+"%' and isActive = 'Y' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hid);
+			}else {
+				query = sessionFactory.getCurrentSession().createQuery("from FeeMaster where standard like '%"+feemaster.getStandard()+"%' and isActive = 'Y'");
+			}
+			feelist = query.list();
+		}catch (Exception e){
+			
+			e.printStackTrace();
+		}
+		return feelist;
+	}
+
 	
 
 	/*@Override

@@ -11,6 +11,7 @@ import com.gsmart.dao.InventoryDao;
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
+import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;
@@ -133,6 +134,12 @@ public class InventoryServicesImpl implements InventoryServices {
 	@Override
 	public List<Inventory> getInventoryList(String role, Hierarchy hierarchy) throws GSmartServiceException {
 		return inventoryDao.getInventoryList( role, hierarchy);
+	}
+
+
+	@Override
+	public List<Inventory> searchinventory(Inventory inventory, Long hid) throws GSmartBaseException {
+		return inventoryDao.searchinventory(inventory, hid);
 	}
 
 }

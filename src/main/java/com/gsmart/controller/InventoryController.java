@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-//import org.hibernate.annotations.common.util.impl.Log_.logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -67,6 +66,27 @@ public class InventoryController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchinventory(@RequestBody Inventory inventory, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Long hid = null;
+		Token tokenob = (Token) httpSession.getAttribute("token");
+		if(tokenob.getHierarchy()==null){
+			hid = inventory.getHierarchy().getHid();
+		}else {
+			hid = tokenob.getHierarchy().getHid();
+		}
+		List<Inventory> searchlist = null;
+		searchlist = inventoryServices.searchinventory(inventory, hid);
+		Map<String, Object> si = new HashMap<>();
+		si.put("searchinventory", searchlist);
+		return new ResponseEntity<>(si, HttpStatus.OK);
+		
+	}
 	
 	@RequestMapping(value="/List" , method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> inventoryList(@RequestHeader HttpHeaders token,
