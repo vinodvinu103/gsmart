@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
@@ -38,4 +39,6 @@ public interface ReportCardDao {
 	public ArrayList<Profile> findChildTeacher(Token tokenObj, String acdemicYear)throws GSmartDatabaseException;
 	
 	public List<Profile> studentList(Token tokenDetail) throws GSmartDatabaseException;
+	
+	public Fee studentFee(String smartId, String academicYear)throws GSmartDatabaseException;
 }

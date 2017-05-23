@@ -17,9 +17,9 @@ public interface SearchService {
 
 	ArrayList<Profile> searchEmployeeInfo(String smartId, Map<String, Profile> beanFactory1);
 	
-	ArrayList<Profile> searchEmployeeInfoForFinance(String smartId, Map<String, Profile> beanFactory1);
+	/*ArrayList<Profile> searchEmployeeInfoForFinance(String smartId, Map<String, Profile> beanFactory1);
 	
-	ArrayList<Profile> searchEmployeeInfoForHr(String smartId, Map<String, Profile> beanFactory1);
+	ArrayList<Profile> searchEmployeeInfoForHr(String smartId, Map<String, Profile> beanFactory1);*/
 
 	Map<String, Profile> searchRep(Search search,String role,Hierarchy hierarchy);
 
@@ -40,9 +40,9 @@ public interface SearchService {
 
 	public ArrayList<String> getAllChildSmartId(String mySmartId, Map<String, Profile> allProfiles);
 	
-	public ArrayList<String> getAllChildSmartIdForFinanceFee(String mySmartId, Map<String, Profile> allProfiles);
+	/*public ArrayList<String> getAllChildSmartIdForFinanceFee(String mySmartId, Map<String, Profile> allProfiles);
 	
-	public ArrayList<String> getAllChildSmartIdForHrFee(String mySmartId, Map<String, Profile> allProfiles);
+	public ArrayList<String> getAllChildSmartIdForHrFee(String mySmartId, Map<String, Profile> allProfiles);*/
 	
 	
 
@@ -53,9 +53,9 @@ public interface SearchService {
 	
 	public ArrayList<Profile> getAllChildSmartIdForDashboard(String parentId, Map<String, Profile> allProfiles) ;
 	
-	public ArrayList<Profile> getAllChildSmartIdForFinanceAttendance(String parentId, Map<String, Profile> allProfiles) ;
+	/*public ArrayList<Profile> getAllChildSmartIdForFinanceAttendance(String parentId, Map<String, Profile> allProfiles) ;
 	
-	public ArrayList<Profile> getAllChildSmartIdForHrAttendance(String parentId, Map<String, Profile> allProfiles) ;
+	public ArrayList<Profile> getAllChildSmartIdForHrAttendance(String parentId, Map<String, Profile> allProfiles) */;
 	
 	
 

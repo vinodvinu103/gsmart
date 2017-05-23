@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
@@ -537,5 +538,22 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		}
 		Loggers.loggerEnd();
 		return list;
+	}
+	
+	@Override
+	public Fee studentFee(String smartId, String academicYear) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		Fee fee=null;
+		try {
+			query=sessionFactory.getCurrentSession().createQuery("from Fee where entryTime in(select max(entryTime) from Fee where smartId=:smartId and academicYear=:academicYear)");
+			query.setParameter("smartId", smartId);
+			query.setParameter("academicYear", academicYear);
+			fee=(Fee) query.uniqueResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Loggers.loggerEnd(fee);
+		return fee;
 	}
 }

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
+import com.gsmart.dao.HierarchyDao;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.model.Profile;
@@ -51,6 +51,8 @@ public class PerformanceController {
 
 	@Autowired
 	SearchService searchService;
+	@Autowired
+	private HierarchyDao hierarchyDao;
 
 	@Autowired
 	ProfileServices profileServices;
@@ -166,7 +168,7 @@ public class PerformanceController {
 
 
 			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",tokenObj.getHierarchy().getHid());
+			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",hid);
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			teamappraisalList  = appraisalservice.getTeamAppraisalList(smartId, year, hid);
@@ -248,8 +250,7 @@ public class PerformanceController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-
-		Map<String, Object> jsonMap = new HashMap<>();
+	Map<String, Object> jsonMap = new HashMap<>();
 		
 		Map<String, Object> performancerecordList1 = null;
 		Token tokenObj=(Token) httpSession.getAttribute("token");
@@ -271,8 +272,8 @@ public class PerformanceController {
 		
 	}
 	
-	@RequestMapping(value="/addManagerComment", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addAppraisalRecordManager(@RequestBody PerformanceRecord appraisal,
+	@RequestMapping(value="/addManagerComment/hierarchy/{hierarchy}", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addAppraisalRecordManager(@PathVariable("hierarchy") Long hierarchy,@RequestBody PerformanceRecord appraisal,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(appraisal);
 
@@ -286,10 +287,19 @@ public class PerformanceController {
 		appraisal.setSmartId(smartId);
 	appraisal.setReportingManagerID(reportingId);*/
 
+		
+		
+		
 			Token tokenObj=(Token) httpSession.getAttribute("token");
 			Loggers.loggerStart(appraisal);
+			Long hid=null;
+			if(tokenObj.getHierarchy()==null){
+				appraisal.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
+			}else{
+				appraisal.setHierarchy(tokenObj.getHierarchy());
+			}
 			
-			appraisal.setHierarchy(tokenObj.getHierarchy());
+			
 			performancerecord.addAppraisalRecordManager(appraisal);
 
 			resp.put("status", 200);
