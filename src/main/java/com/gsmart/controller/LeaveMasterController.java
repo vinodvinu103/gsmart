@@ -40,6 +40,26 @@ public class LeaveMasterController {
 	private HierarchyDao hierarchyDao;
 	@Autowired
 	private LeaveMasterDao leaveMasterDao;
+	
+	@RequestMapping(value="/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchLeaveMaster(@RequestBody LeaveMaster leavemaster, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid = null;
+		if(tokenObj.getHierarchy()==null){
+			hid=leavemaster.getHierarchy().getHid();
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		List<LeaveMaster> searchlist = null;
+		searchlist = leaveMasterService.searchLeaveMaster(leavemaster, hid);
+		Map<String, Object> ch = new HashMap<>();
+		ch.put("searchlist", searchlist);
+		return new ResponseEntity<>(ch, HttpStatus.OK);
+		
+	}
 
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getleavemaster(@PathVariable("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable("max") Integer max, @RequestHeader HttpHeaders token,

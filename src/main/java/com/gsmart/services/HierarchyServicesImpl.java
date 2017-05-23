@@ -108,4 +108,9 @@ public class HierarchyServicesImpl implements HierarchyServices {
 		
 	}
 
+	@Override
+	public List<Hierarchy> searchhierarchy(Hierarchy hierarchy) throws GSmartServiceException {
+		return hierarchyDao.searchhierarchy(hierarchy);
+	}
+
 }

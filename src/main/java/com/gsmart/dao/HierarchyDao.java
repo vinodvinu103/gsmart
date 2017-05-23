@@ -74,4 +74,6 @@ public interface HierarchyDao {
 
 	public List<Hierarchy> getAllHierarchy();
 
+	public List<Hierarchy> searchhierarchy(Hierarchy hierarchy)throws GSmartDatabaseException;
+
 }
