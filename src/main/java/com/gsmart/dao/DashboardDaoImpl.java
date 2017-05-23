@@ -119,7 +119,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		ArrayList<ReportCard> examName = new ArrayList<>();
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		String role = tokenDetail.getRole();
-		System.out.println(role);
+		System.out.println("role is>>>>"+role);
 		System.out.println(role.equals("ADMIN"));
 		System.out.println(!role.equals("ADMIN"));
 		System.out.println(!role.equals("DIRECTOR"));
@@ -290,11 +290,11 @@ public class DashboardDaoImpl implements DashboardDao {
 		try {
 			if (hierarchy == null) {
 
-				query = sessionFactory.getCurrentSession().createQuery("from Profile where smartId like '%" + profile.getSmartId() + "%' and role=:role");
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where studentId like '%" + profile.getStudentId() + "%' and role=:role");
 				query.setParameter("role", "STUDENT");
 				
 			} else {
-				query = sessionFactory.getCurrentSession().createQuery("from Profile where smartId like '%" + profile.getSmartId() + "%' and hierarchy.hid=:hierarchy and role=:role");
+				query = sessionFactory.getCurrentSession().createQuery("from Profile where studentId like '%" + profile.getStudentId() + "%' and hierarchy.hid=:hierarchy and role=:role");
 				query.setParameter("hierarchy", hierarchy.getHid());
 				query.setParameter("role", "STUDENT");
 				

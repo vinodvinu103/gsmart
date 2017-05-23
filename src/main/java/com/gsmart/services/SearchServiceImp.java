@@ -111,15 +111,15 @@ public class SearchServiceImp implements SearchService {
 		return childList;
 	}
 	
-	@Override
+	/*@Override
 	public ArrayList<Profile> searchEmployeeInfoForFinance(String smartId, Map<String, Profile> map) {
 		Loggers.loggerStart("searchEmployeeInfo ");
 		ArrayList<Profile> childList = new ArrayList<Profile>();
-		/* Loggers.loggerValue("profiles in map", map); */
+		 Loggers.loggerValue("profiles in map", map); 
 		try {
 			Set<String> key = map.keySet();
 
-			/* Loggers.loggerValue("key", key); */
+			 Loggers.loggerValue("key", key); 
 
 			for (String temp : key) {
 				Profile p = map.get(temp);
@@ -143,11 +143,11 @@ public class SearchServiceImp implements SearchService {
 	public ArrayList<Profile> searchEmployeeInfoForHr(String smartId, Map<String, Profile> map) {
 		Loggers.loggerStart("searchEmployeeInfo ");
 		ArrayList<Profile> childList = new ArrayList<Profile>();
-		/* Loggers.loggerValue("profiles in map", map); */
+		 Loggers.loggerValue("profiles in map", map); 
 		try {
 			Set<String> key = map.keySet();
 
-			/* Loggers.loggerValue("key", key); */
+			 Loggers.loggerValue("key", key); 
 
 			for (String temp : key) {
 				Profile p = map.get(temp);
@@ -165,7 +165,7 @@ public class SearchServiceImp implements SearchService {
 		}
 		Loggers.loggerEnd(childList);
 		return childList;
-	}
+	}*/
 
 	public Map<String, Profile> searchRep(Search search, String role, Hierarchy hierarchy) {
 
@@ -553,7 +553,7 @@ public class SearchServiceImp implements SearchService {
 		return childSmartIdList;
 	}
 	
-	@Override
+	/*@Override
 	public ArrayList<String> getAllChildSmartIdForFinanceFee(String parentId, Map<String, Profile> allProfiles) {
 		Loggers.loggerStart("getAllChildSmartId in services is called with parentId : " + parentId);
 		ArrayList<String> childSmartIdList = new ArrayList<String>();
@@ -637,7 +637,7 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerEnd(
 				"Total profiles reporting to the parentId : " + parentId + " is of size : " + childSmartIdList.size());
 		return childSmartIdList;
-	}
+	}*/
 	
 	
 	@Override
@@ -683,7 +683,7 @@ public class SearchServiceImp implements SearchService {
 		return childSmartIdList;
 	}
 	
-	@Override
+	/*@Override
 	public ArrayList<Profile> getAllChildSmartIdForFinanceAttendance(String parentId, Map<String, Profile> allProfiles) {
 		Loggers.loggerStart("getAllChildSmartId in services is called with parentId : " + parentId);
 		ArrayList<Profile> childSmartIdList = new ArrayList<Profile>();
@@ -767,6 +767,6 @@ public class SearchServiceImp implements SearchService {
 		Loggers.loggerEnd(
 				"Total profiles reporting to the parentId : " + parentId + " is of size : " + childSmartIdList.size());
 		return childSmartIdList;
-	}
+	}*/
 	
 }
