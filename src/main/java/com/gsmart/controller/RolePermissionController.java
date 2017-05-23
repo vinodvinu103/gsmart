@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -226,5 +227,34 @@ public class RolePermissionController {
 		
 		
 	}
+	@RequestMapping(value="/addPermission",method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addPermissionForUsers(@RequestBody List<RolePermission> permission,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(permission);
+		Map<String, Object> respMap=new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+			Token tokenObj = (Token) httpSession.getAttribute("token");
+//			permission.setHierarchy(tokenObj.getHierarchy());
+			RolePermissionCompound cb = rolePermissionServices.addPermissionsForUsers(permission);
+
+			if (cb != null){
+				respMap.put("status", 200);
+				respMap.put("message", "Success");
+				
+			}else{
+				respMap.put("status", 400);
+				respMap.put("message", "Permissions are Already Present for the role "+permission.get(0).getRole());
+				
+			}
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+
+	}
+
 
 }

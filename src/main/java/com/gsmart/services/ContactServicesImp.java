@@ -63,7 +63,7 @@ public class ContactServicesImp implements ContactServices {
 	}
 	
 	@Override
-	public boolean teacherToStudent(MessageDetails details, String role) throws Exception {
+	public MessageDetails teacherToStudent(MessageDetails details, String role) throws Exception {
 		return dao.teacherToStudent(details,role);
 	}
 	

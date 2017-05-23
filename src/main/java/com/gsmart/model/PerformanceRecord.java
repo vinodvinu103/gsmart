@@ -32,7 +32,22 @@ public class PerformanceRecord {
 	@Column(name = "RATINGS")
 	private String ratings;
 	
+	@Column(name = "FIRST_NAME")
+	private String firstName;
 	
+	
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+
 
 	@Id
 	@Column(name = "ENTRY_TIME")

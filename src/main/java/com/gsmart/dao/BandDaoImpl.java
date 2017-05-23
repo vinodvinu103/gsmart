@@ -37,7 +37,7 @@ import com.gsmart.util.Loggers;
  */
 @Repository
 @Transactional
-public class BandDaoImpl implements BandDao {
+ public class BandDaoImpl implements BandDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -54,7 +54,7 @@ public class BandDaoImpl implements BandDao {
 	public List<Band> search(Band band, Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 
-		List<Band> bandList;
+		List<Band> bandList=null;
 		try {
 			if (hierarchy == null) {
 
@@ -68,7 +68,13 @@ public class BandDaoImpl implements BandDao {
 
 			bandList = query.list();
 
-		} catch (Exception e) {
+		} catch (ConstraintViolationException e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
+			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
+		}catch (NullPointerException e) {
+			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+		}catch (Exception e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 
@@ -127,7 +133,7 @@ public class BandDaoImpl implements BandDao {
 	public CompoundBand addBand(Band band) throws GSmartDatabaseException {
 		CompoundBand cb = null;
 		try {
-			Session session=this.sessionFactory.getCurrentSession();
+			
 			
 
 			query = sessionFactory.getCurrentSession().createQuery(
@@ -139,6 +145,7 @@ public class BandDaoImpl implements BandDao {
 			Band oldBand = (Band) query.uniqueResult();
 			Loggers.loggerStart(oldBand);
 			if (oldBand == null) {
+			Session session=this.sessionFactory.getCurrentSession();
 				band.setEntryTime(CalendarCalculator.getTimeStamp());
 				band.setIsActive("Y");
 			
@@ -147,12 +154,22 @@ public class BandDaoImpl implements BandDao {
 			}
 			
 		} catch (ConstraintViolationException e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
-		} catch (Exception e) {
+		}catch (NullPointerException e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
+			e.printStackTrace();
+			e.printStackTrace();
+			throw new GSmartDatabaseException(Constants.NULL_PONITER);
+		}catch (Exception e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getCause());
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} 
+		}
 		Loggers.loggerEnd();
 		return cb;
 	}

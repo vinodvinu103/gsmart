@@ -23,7 +23,7 @@ public class RolePermissionCompound implements Serializable {
 	}
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
-	}
+	} 
 	public String getEntryTime() {
 		return entryTime;
 	}

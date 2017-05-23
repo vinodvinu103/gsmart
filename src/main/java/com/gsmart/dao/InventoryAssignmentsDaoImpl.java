@@ -362,7 +362,7 @@ public class InventoryAssignmentsDaoImpl implements InventoryAssignmentsDao {
 						int updateQuntity=numQuntity-oldQuntity;
 						inv.setLeftQuantity(numOfLeftQuntity + updateQuntity);
 					}
-					else if (oldQuntity > numQuntity);{
+					else if (oldQuntity > numQuntity){
 					int updateQuntity = oldQuntity-numQuntity;
 					inv.setLeftQuantity(numOfLeftQuntity + numQuntity1);
 					System.out.println("updateQutity"+ updateQuntity);

@@ -23,6 +23,8 @@ public interface PerformanceRecordDao {
 
 	public void addAppraisalRecordManager(PerformanceRecord appraisal)throws GSmartDatabaseException;
 
+	public Map<String, Object> getrating(String year, Long hid)throws GSmartDatabaseException;
+
 	
 		
 

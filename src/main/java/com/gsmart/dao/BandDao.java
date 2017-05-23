@@ -32,6 +32,8 @@ public interface BandDao {
 
 	public CompoundBand addBand(Band band) throws GSmartDatabaseException;
 	
+	
+	
 	/**
 	 * @param band instanceOf {@link Band}
 	 * @return Nothing

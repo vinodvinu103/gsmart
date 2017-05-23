@@ -61,17 +61,15 @@ import com.gsmart.util.Loggers;
 			HttpSession httpSession) throws GSmartBaseException {
 		
 		Loggers.loggerStart();
-		String tokenNumber = token.get("Authorization").get(0);
+		/*String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-	    str.length(); 
+	    str.length(); */
 	    
 	    List<Grades> list = null;
-	    Token tokenObj= tokenDao.getToken(tokenNumber);
-	    RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
+	    Token tokenObj = (Token) httpSession.getAttribute("token");
 	    
 		Map<String, Object> resultMap = new HashMap<>();
 		
-		resultMap.put("modulePermission",modulePermission);
 		
 		
 			list = gradesService.getGradesList(tokenObj.getHierarchy().getHid());
@@ -84,12 +82,12 @@ import com.gsmart.util.Loggers;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addGrades(@RequestBody Grades grades,@RequestHeader HttpHeaders token) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> addGrades(@RequestHeader HttpHeaders token,
+			HttpSession httpSession,@RequestBody Grades grades) throws GSmartBaseException {
 		Loggers.loggerStart(grades);
 		boolean flag=false;
-		String tokenNumber = token.get("Authorization").get(0);
 		
-		Token tokenObj= tokenDao.getToken(tokenNumber);
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 		String smartid=tokenObj.getSmartId();
 		 grades.setHierarchy(tokenObj.getHierarchy());
 		
@@ -120,10 +118,10 @@ import com.gsmart.util.Loggers;
 		boolean cb=false;
 		Map<String, Object> respMap=new HashMap<>();
 		
-		String tokenNumber = token.get("Authorization").get(0);
+		/*String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
-		str.length();
+		str.length();*/
 
 		    if(task.equals("edit")){
 		    	System.out.println("in side edit method>>>>>>>>>>>>>>>>>");

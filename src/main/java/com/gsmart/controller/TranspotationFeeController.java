@@ -166,11 +166,10 @@ public class TranspotationFeeController {
 		
 			unPaidStudentsList= transpotationFeeservice.getUnpaidStudentsList(hid, min, max);
 			Loggers.loggerEnd(unPaidStudentsList);
-			System.out.println(unPaidStudentsList.get("unpaidStudentsList"));
 			
 			List<TransportationFee>t=(List<TransportationFee>) unPaidStudentsList.get("unpaidStudentsList");
 			System.out.println("paid fee "+t.get(0).getPaidFee());
-			if (unPaidStudentsList != null) {
+			if (!unPaidStudentsList.isEmpty()) {
 			responseMap.put("unpaidList", unPaidStudentsList);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
