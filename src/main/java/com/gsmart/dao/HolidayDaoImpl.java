@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -294,5 +294,22 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 		
+	}
+
+	@Override
+	public List<Holiday> searchHoliday(Holiday holiday, Long hid) throws GSmartDatabaseException {
+		List<Holiday> searchHoliday = null;
+		try{
+			if(hid!=null){
+			query = sessionFactory.getCurrentSession().createQuery("from Holiday where description like '%"+ holiday.getDescription() +"%' and isActive = 'Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hid);
+			}else{
+				query = sessionFactory.getCurrentSession().createQuery("from Holiday where description like '%"+ holiday.getDescription() +"%' and isActive = 'Y'");
+			}
+			searchHoliday = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return searchHoliday;
 	}
 }

@@ -1,6 +1,9 @@
 package com.gsmart.services;
 
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +122,10 @@ private HolidayDao holidayDao;
 		}
 		Loggers.loggerEnd();
 
+	}
+	@Override
+	public List<Holiday> searchHoliday(Holiday holiday, Long hid) throws GSmartServiceException {
+			return holidayDao.searchHoliday(holiday, hid);	
 	}
 
 	
