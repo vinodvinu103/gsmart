@@ -462,9 +462,10 @@ public class ProfileDaoImp implements ProfileDao {
 		try {
 
 			query = sessionFactory.getCurrentSession()
-					.createQuery("UPDATE Profile set   role=:role WHERE entryTime = :entryTime");
+					.createQuery("UPDATE Profile set   role=:role WHERE smartId=:smartId and entryTime = :entryTime");
 			query.setParameter("entryTime", profile.getEntryTime());
 			query.setParameter("role", profile.getRole());
+			query.setParameter("smartId", profile.getSmartId());
 			query.executeUpdate();
 
 		} catch (ConstraintViolationException e) {
