@@ -1,5 +1,6 @@
 package com.gsmart.controller;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.TimeTableDao;
 import com.gsmart.model.CompoundTimeTable;
-import com.gsmart.model.ReportCard;
 import com.gsmart.model.TimeTable;
 import com.gsmart.model.Token;
 import com.gsmart.services.TimeTableService;
@@ -41,6 +41,26 @@ public class TimeTableController {
 	
 	@Autowired
 	TimeTableDao tableDao;
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<Map<String, String>> cal(@RequestHeader HttpHeaders token,HttpSession httpSession){
+		Calendar now = Calendar.getInstance();
+	    int month=now.get(Calendar.MONTH)+1;
+	    int year=now.get(Calendar.YEAR);
+	    String academicYear=null;
+	    int incYear=1+year;
+	    int decYear=year-1;
+	    if(month>=6){
+	    	academicYear=year+"-"+incYear;
+	    }
+	    else{
+	    	academicYear=decYear+"-"+year;
+	    }
+	    Map<String, String> ac=new HashMap<>();
+	    ac.put("academicYear", academicYear);
+	    System.out.println("academicYear   "+academicYear);
+		return new ResponseEntity<Map<String,String>>(ac, HttpStatus.OK);
+	}
 
 	@RequestMapping(value="/teacherView/{academicYear}/{day}",method=RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> teacherView(@RequestHeader HttpHeaders token,
@@ -139,7 +159,7 @@ public class TimeTableController {
 				} else if (task.equals("delete")) {
 					tableDao.deleteTimeTable(timeTable);
 				}
-			
+			Loggers.loggerEnd(response);
 		return new ResponseEntity<IAMResponse>(response, HttpStatus.OK);
 	}
 	

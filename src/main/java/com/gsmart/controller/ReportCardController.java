@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Fee;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
@@ -70,6 +71,7 @@ public class ReportCardController {
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		List<ReportCard> list =null;
+		Fee fee=null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -77,14 +79,21 @@ public class ReportCardController {
 		Token tokenObj=(Token) httpSession.getAttribute("token");
 		Map<String, Object> permission = new HashMap<>();
 			// String teacherSmartId=smartId.getSmartId();
-			Loggers.loggerStart();
-				list = reportCardService.search(tokenObj,academicYear,examName);
-				permission.put("reportCard", list);
-				double per=reportCardService.calculatPercentage(tokenObj.getSmartId(), list);
-				String percentage=reportCardService.grade(per,tokenObj.getHierarchy().getHid());
-				ReportCard rpcd=new ReportCard();
-				rpcd.setTotalGrade(percentage);
-				permission.put("totalGrade", rpcd);
+				Loggers.loggerStart();
+				fee=reportCardDao.studentFee(tokenObj.getSmartId(), academicYear);
+				if(fee.getFeeStatus().equalsIgnoreCase("paid")){
+					permission.put("message","success");
+					list = reportCardService.search(tokenObj,academicYear,examName);
+					permission.put("reportCard", list);
+					double per=reportCardService.calculatPercentage(tokenObj.getSmartId(), list);
+					String percentage=reportCardService.grade(per,tokenObj.getHierarchy().getHid());
+					ReportCard rpcd=new ReportCard();
+					rpcd.setTotalGrade(percentage);
+					permission.put("totalGrade", rpcd);
+				}
+				else{
+				permission.put("message", "PLEASE PAY SCHOOL PENDING FEE.");
+				}
 		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 
 	}
