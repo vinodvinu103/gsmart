@@ -69,7 +69,7 @@ public class CommonMail {
 				+ "</font><br><br>"
 				+ "Your G-Smart account has been activated, Login id is : "+id
 				+ "<br><br> Please click on the below link to set password to your account " 
-				+ "<br><br>http://172.104.60.94:8080/gsmart-js/#/setPassword/"+smartId
+				+ "<br><br>http://localhost:8080/gsmart-js/#/setPassword/"+smartId
 				+ "<br><br><br><br><font color=#999999>*** Please do not reply to this message.Replies to this message are undeliverable. *** </font>"
 				+ "<br><br><br>Gowdanar Technologies Team");
 		String subject = "Your Account Details";
