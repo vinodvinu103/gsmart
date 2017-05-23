@@ -84,17 +84,18 @@ public class TimeTableDoaImpl implements TimeTableDao {
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			query = sessionFactory.getCurrentSession().createQuery(
-					"from TimeTable where time=:time and day=:day and standard=:standard and section=:section and "
+					"from TimeTable where isActive='Y' and time=:time and day=:day and standard=:standard and teacherName=:teacherName and section=:section and "
 							+ "hid=:hierarchy and role=:role");
 			query.setParameter("time", timeTable.getTime());
 			query.setParameter("day", timeTable.getDay());
 			query.setParameter("standard", timeTable.getStandard());
 			query.setParameter("section", timeTable.getSection());
-			//query.setParameter("subject", timeTable.getSubject());
+			query.setParameter("teacherName", timeTable.getTeacherName()	);
 			query.setParameter("hierarchy", tokenObjt.getHierarchy().getHid());
 			query.setParameter("role", timeTable.getRole());
 			table = (TimeTable) query.uniqueResult();
 			if (table == null) {
+				System.out.println("<<<<<<  in side add method >>>>>>>>");
 				timeTable.setEntryTime(CalendarCalculator.getTimeStamp());
 				timeTable.setIsActive("Y");
 				timeTable.setHierarchy(tokenObjt.getHierarchy());
@@ -115,9 +116,12 @@ public class TimeTableDoaImpl implements TimeTableDao {
 			TimeTable oldTT=getTT(timeTable.getEntryTime());
 			table = updateTT(oldTT, timeTable);
 			if (table != null){
-				addTTable(timeTable, tokenObjt);
-			Loggers.loggerEnd(table);
-			return table;
+				
+				if(addTTable(timeTable, tokenObjt)!=null){
+					return table;
+				}
+				else
+					table=null;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

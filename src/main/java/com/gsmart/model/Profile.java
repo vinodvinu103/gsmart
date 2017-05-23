@@ -12,9 +12,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Index;
-
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "PROFILE_MASTER")
 public class Profile {
@@ -211,7 +208,7 @@ public class Profile {
 	@Column(name = "REPORTING_MANAGER_ID")
 	private String reportingManagerId;
 
-	// FINANCE REPORTING DETAILS
+	/*// FINANCE REPORTING DETAILS
 	@Column(name = "FINANCE_MANAGER_NAME")
 	private String financeManagerName;
 
@@ -223,7 +220,7 @@ public class Profile {
 	private String hrManagerName;
 
 	@Column(name = "HR_MANAGER_ID")
-	private String hrManagerId;
+	private String hrManagerId;*/
 	
 
 	@Column(name = "COUNTER_SIGNING_MANAGER_NAME")
@@ -825,7 +822,7 @@ public class Profile {
 		this.reportingManagerId = reportingManagerId;
 	}
 	
-	public String getFinanceManagerName() {
+	/*public String getFinanceManagerName() {
 		return financeManagerName;
 	}
 
@@ -855,7 +852,7 @@ public class Profile {
 
 	public void setHrManagerId(String hrManagerId) {
 		this.hrManagerId = hrManagerId;
-	}
+	}*/
 
 	public String getCounterSigningManagerName() {
 		return counterSigningManagerName;
