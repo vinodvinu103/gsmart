@@ -375,6 +375,27 @@ public class RegistrationController {
 
 	}
 	
+	@RequestMapping(value = "/searchstu", method= RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchstudent(@RequestBody Profile profile, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenobj = (Token) httpSession.getAttribute("token");
+		Long hid = null;
+		if(tokenobj.getHierarchy()==null){
+			hid = profile.getHierarchy().getHid();
+		}else {
+			hid = tokenobj.getHierarchy().getHid();
+		}
+		List<Profile> studlist = null;
+		studlist = profileServices.searchstudent(profile, hid);
+		Map<String, Object> slist = new HashMap<>();
+		slist.put("studlist", studlist);
+		return new ResponseEntity<>(slist, HttpStatus.OK);
+		
+	}
+	
 	@RequestMapping(value = "/searchemp1", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> searchemp(@RequestBody Profile profile, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
@@ -383,9 +404,15 @@ public class RegistrationController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid  = null;
+		if(tokenObj.getHierarchy()==null){
+			hid = profile.getHierarchy().getHid();
+		}else {
+			hid = tokenObj.getHierarchy().getHid();
+		}
 		List<Profile> emplist = null;
 		Map<String, Object> emplistMap = new HashMap<>();
-		emplist = profileServices.searchemp(profile, tokenObj.getHierarchy());
+		emplist = profileServices.searchemp(profile, hid);
 		emplistMap.put("searchlist", emplist);
 		Loggers.loggerEnd(emplistMap);
 		return new ResponseEntity<Map<String, Object>>(emplistMap, HttpStatus.OK);

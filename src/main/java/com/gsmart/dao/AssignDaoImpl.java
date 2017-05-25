@@ -285,4 +285,23 @@ public class AssignDaoImpl implements AssignDao {
 		Loggers.loggerEnd(assignList);
 		return assignList;
 	}
+
+	@Override
+	public List<Assign> searchassign(Assign assign, Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<Assign> assignList = null;
+		try{
+			if(hid !=null){
+				query= sessionFactory.getCurrentSession().createQuery("from Assign where standard like '%"+assign.getStandard()+"%' and isActive='Y' and hierarchy.hid = :hierarchy");
+				query.setParameter("hierarchy", hid);
+			}else{
+				query = sessionFactory.getCurrentSession().createQuery("from Assign where standard like '%"+assign.getStandard()+"%' and isActive='Y'");
+			}
+			assignList = query.list();
+			Loggers.loggerEnd(assignList);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return assignList;
+	}
 }
