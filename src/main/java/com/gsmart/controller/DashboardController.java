@@ -258,7 +258,6 @@ public class DashboardController {
 		}
 		else{
 			attendanceList=attendanceService.getAttendanceByhierarchy(tokenObj.getSmartId(), date, hierarchyList);
-			System.out.println("attendanceList/////////////////"+attendanceList);
 		}
 		
 		responseMap.put("message", "success");

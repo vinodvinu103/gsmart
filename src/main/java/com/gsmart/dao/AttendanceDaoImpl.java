@@ -87,7 +87,6 @@ public class AttendanceDaoImpl implements AttendanceDao {
 			query.setParameter("endDate", endDate);
 			query.setParameter("status", "PRESENT");
 			attendanceList = query.list();
-			System.out.println("attendanceList-dao.........."+attendanceList);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
