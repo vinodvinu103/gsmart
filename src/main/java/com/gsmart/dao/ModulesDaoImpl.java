@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gsmart.model.CompoundModules;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Modules;
+import com.gsmart.model.RolePermission;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -71,13 +72,14 @@ public class ModulesDaoImpl implements ModulesDao{
 			Modules oldmodules = (Modules) query.uniqueResult();
 			Loggers.loggerStart(oldmodules);*/
 			
-			if (modules.getSubModules()==null) {
+			if (modules.getSubModuleName()==null) {
 				 Modules module3=fetch1(modules);
 				 if (module3 == null) {
 						
 						modules.setEntryTime(CalendarCalculator.getTimeStamp());
 						modules.setIsActive("Y");
 						cb = (CompoundModules) session.save(modules);
+						addModuleToPermission(modules);
 						Loggers.loggerEnd(module3);
 					}
 				 else {
@@ -115,6 +117,35 @@ public class ModulesDaoImpl implements ModulesDao{
 		transaction = session.beginTransaction();
 
 	}*/
+
+
+
+	@SuppressWarnings("unchecked")
+	private void addModuleToPermission(Modules modules) {
+		try {
+			Session session=this.sessionFactory.getCurrentSession();
+			 query=session.createQuery("select DISTINCT role from RolePermission");
+				 List<String> role= query.list();
+				 int i=0;
+				 for(String eachRole:role){
+					 RolePermission rolePermission=new RolePermission();
+					 rolePermission.setRole(eachRole);
+					 rolePermission.setModuleName(modules.getModuleName());
+					 rolePermission.setSubModuleName(modules.getSubModuleName());
+					 rolePermission.setIsActive("Y");
+					String entryTime=CalendarCalculator.getTimeStamp().substring(0, CalendarCalculator.getTimeStamp().length()-1);
+					 rolePermission.setEntryTime(entryTime+(i++));
+					 session.save(rolePermission);
+				 }
+			
+		} catch (Exception e) {
+			sessionFactory.getCurrentSession().getTransaction().rollback();
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
 
 
 
@@ -156,11 +187,11 @@ public class ModulesDaoImpl implements ModulesDao{
 		Modules ch=null;
 		Session session=this.sessionFactory.getCurrentSession();
 		
-		Loggers.loggerStart(modules.getSubModules());
+		Loggers.loggerStart(modules.getSubModuleName());
 		
 	      try{
 	    	  
-	    	  if ( modules.getSubModules()==null) {
+	    	  if ( modules.getSubModuleName()==null) {
 	    		  Modules module3=fetch1(modules);
 	    		  Loggers.loggerStart(module3);
 	    		  if (module3==null) {
@@ -202,8 +233,8 @@ public class ModulesDaoImpl implements ModulesDao{
 		Modules moduleslist=null;
 		try {
 		query = sessionFactory.getCurrentSession().createQuery(
-				"FROM Modules WHERE modules=:modules AND isActive=:isActive");
-		query.setParameter("modules", modules.getModules());
+				"FROM Modules WHERE moduleName=:modules AND isActive=:isActive");
+		query.setParameter("modules", modules.getModuleName());
 		
 		query.setParameter("isActive", "Y");
 		 moduleslist = (Modules) query.uniqueResult();
@@ -224,9 +255,9 @@ public class ModulesDaoImpl implements ModulesDao{
 		Modules moduleslist=null;
 		try {
 		query = sessionFactory.getCurrentSession().createQuery(
-				"FROM Modules WHERE subModules=:subModules and modules=:modules AND isActive=:isActive");
-		query.setParameter("modules", modules.getModules());
-		query.setParameter("subModules", modules.getSubModules());
+				"FROM Modules WHERE subModuleName=:subModules and moduleName=:modules AND isActive=:isActive");
+		query.setParameter("modules", modules.getModuleName());
+		query.setParameter("subModules", modules.getSubModuleName());
 		query.setParameter("isActive", "Y");
 		 moduleslist = (Modules) query.uniqueResult();
 	

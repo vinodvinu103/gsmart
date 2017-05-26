@@ -16,28 +16,18 @@ import org.hibernate.annotations.Index;
 @Table(name = "MODULES")
 @IdClass(com.gsmart.model.CompoundModules.class)
 public class Modules {
-	public String getModules() {
-		return modules;
-	}
-	public void setModules(String modules) {
-		this.modules = modules;
-	}
+	
 	public String getEntryTime() {
 		return entryTime;
 	}
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
 	}
-	public String getSubModules() {
-		return subModules;
-	}
-	public void setSubModules(String subModules) {
-		this.subModules = subModules;
-	}
+	
 	@Id
-	@Column(name = "MODULE")
+	@Column(name = "MODULE_NAME")
 //	@Index(name = "modules")
-	private String modules;
+	private String moduleName;
 	
 	@Id
 	@Column(name = "ENTRY_TIME")
@@ -71,15 +61,23 @@ public class Modules {
 	public void setExitTime(String exitTime) {
 		this.exitTime = exitTime;
 	}
-	@Column(name = "SUB_MODULE")
-	private String subModules;
+	@Column(name = "SUB_MODULE_NAME")
+	private String subModuleName;
 	
-	@Override
-	public String toString() {
-		return "Modules [modules=" + modules + ", entryTime=" + entryTime + ", isActive=" + isActive + ", updateTime="
-				+ updateTime + ", exitTime=" + exitTime + ", subModules=" + subModules + ", hierarchy=" + hierarchy
-				+ "]";
+	
+	public String getModuleName() {
+		return moduleName;
 	}
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+	public String getSubModuleName() {
+		return subModuleName;
+	}
+	public void setSubModuleName(String subModuleName) {
+		this.subModuleName = subModuleName;
+	}
+
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
