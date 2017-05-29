@@ -237,12 +237,11 @@ public class RolePermissionController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
+		boolean status=false;
 
-			Token tokenObj = (Token) httpSession.getAttribute("token");
-//			permission.setHierarchy(tokenObj.getHierarchy());
-			RolePermissionCompound cb = rolePermissionServices.addPermissionsForUsers(permission);
+		status= rolePermissionServices.addPermissionsForUsers(permission);
 
-			if (cb != null){
+			if (status){
 				respMap.put("status", 200);
 				respMap.put("message", "Success");
 				
@@ -255,6 +254,34 @@ public class RolePermissionController {
 			return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
 
 	}
+	@RequestMapping(value="/getpermissionByRole",method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addPermissionForUsers(@RequestBody String role,@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(role);
+		Map<String, Object> respMap=new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		List<RolePermission> rolePermission=rolePermissionServices.getPermissionForRole(role);
+
+			if (!rolePermission.isEmpty()){
+				respMap.put("status", 200);
+				respMap.put("message", "Success");
+				respMap.put("data", rolePermission);
+				
+			}else{
+				respMap.put("status", 400);
+				respMap.put("message", "bad request");
+				
+			}
+			
+			Loggers.loggerEnd();
+			return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+
+	}
+
 
 
 }

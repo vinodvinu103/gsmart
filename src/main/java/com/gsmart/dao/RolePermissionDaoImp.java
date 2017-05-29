@@ -451,40 +451,64 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 	}
 
 	@Override
-	public RolePermissionCompound addPermissionsForUsers(List<RolePermission> permissionList)
+	public boolean addPermissionsForUsers(List<RolePermission> permissionList)
 			throws GSmartDatabaseException {
+		boolean staus=false;
 		Loggers.loggerStart();
-		RolePermissionCompound cb = null;
 		try {
-
+/*
 			query = sessionFactory.getCurrentSession()
 					.createQuery("SELECT DISTINCT role from RolePermission where role=:role and isActive='Y'");
 			query.setParameter("role", permissionList.get(0).getRole());
 			String role = (String) query.uniqueResult();
 
-			if (role == null) {
+			if (role == null) {*/
 				Session session = this.sessionFactory.getCurrentSession();
 				int i = 0;
+				String entryTime=null;
 
 				for (RolePermission rolePermission : permissionList) {
 
 					rolePermission.setIsActive("Y");
-					rolePermission.setEntryTime(CalendarCalculator.getTimeStamp() + (i++));
-					cb = (RolePermissionCompound) session.save(rolePermission);
-
-				}
+					if(rolePermission.getEntryTime()==null){
+						entryTime=CalendarCalculator.getTimeStamp().substring(0, CalendarCalculator.getTimeStamp().length()-1);
+						if(i>9){
+							entryTime=CalendarCalculator.getTimeStamp().substring(0, CalendarCalculator.getTimeStamp().length()-2);
+						}
+						rolePermission.setEntryTime(entryTime+(i++));
+					}
+					
+					 session.saveOrUpdate(rolePermission);
+					 staus=true;
+/*
+				}*/
 			}
 
 		} catch (ConstraintViolationException e) {
+			 staus=false;
 			e.printStackTrace();
 			throw new GSmartDatabaseException(Constants.CONSTRAINT_VIOLATION);
 		} catch (Exception e) {
+			 staus=false;
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
 		}
 
 		Loggers.loggerEnd();
-		return cb;
+		return staus;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RolePermission> getPermissionForRole(String role) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<RolePermission> rolePermission=null;
+		query = sessionFactory.getCurrentSession()
+				.createQuery("from RolePermission where role=:role and isActive='Y'");
+		query.setParameter("role", role);
+		rolePermission=query.list();
+		
+		return rolePermission;
 	}
 
 }
