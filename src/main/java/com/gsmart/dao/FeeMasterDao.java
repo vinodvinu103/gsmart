@@ -1,5 +1,6 @@
 package com.gsmart.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.CompoundFeeMaster;
@@ -50,6 +51,8 @@ public interface FeeMasterDao {
 	public void deleteFee(FeeMaster feeMaster) throws GSmartDatabaseException;
 
 	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartDatabaseException ;
+
+	public List<FeeMaster> searchfeemaster(FeeMaster feemaster, Long hid)throws GSmartDatabaseException;
 
 	/*public void fileUpload(FileUpload fileUpload) throws GSmartDatabaseException;*/
 

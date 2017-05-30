@@ -7,6 +7,7 @@ import java.util.Map;
 import com.gsmart.model.CompoundInventory;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Inventory;
+import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
 /**
  * Provides services for {@link InventoryController}
@@ -49,6 +50,9 @@ public interface InventoryServices {
 	 * @throws user define Exception
 	 */
 	public void deleteInventory(Inventory inventory) throws GSmartServiceException;
+
+
+	public List<Inventory> searchinventory(Inventory inventory, Long hid)throws GSmartBaseException;
 	
 	
 	

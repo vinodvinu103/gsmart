@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +126,11 @@ public class FeeMasterServicesImpl implements FeeMasterServices {
 		
 	}
 	
+	}
+
+	@Override
+	public List<FeeMaster> searchfeemaster(FeeMaster feemaster, Long hid) throws GSmartServiceException {
+		return feeMasterDao.searchfeemaster(feemaster, hid);
 	}
 
 	/*@Override

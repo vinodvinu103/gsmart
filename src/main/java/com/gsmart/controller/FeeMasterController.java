@@ -60,6 +60,27 @@ public class FeeMasterController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchfeemaster(@RequestBody FeeMaster feemaster, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid = null;
+		if(tokenObj.getHierarchy()==null){
+			hid = feemaster.getHierarchy().getHid();
+		}else{
+			hid = tokenObj.getHierarchy().getHid();
+		}
+		List<FeeMaster> searchfee = null;
+		searchfee = feeMasterServices.searchfeemaster(feemaster, hid);
+		Map<String, Object> feelist = new HashMap<>();
+		feelist.put("feelist", searchfee);
+		return new ResponseEntity<>(feelist, HttpStatus.OK);
+		
+	}
+	
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getFee(@PathVariable("min") int min, @PathVariable("hierarchy") Long hierarchy,@PathVariable("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession ) throws GSmartBaseException {
 		Loggers.loggerStart();
