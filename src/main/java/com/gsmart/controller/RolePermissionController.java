@@ -127,7 +127,29 @@ public class RolePermissionController {
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		System.out.println("Token object" + tokenObj);
-		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole());
+		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(),"maintenance");
+		System.out.println("submodule ::" + subModules);
+
+		return new ResponseEntity<List<RolePermission>>(subModules, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/InssubModules", method = RequestMethod.GET)
+	public ResponseEntity<List<RolePermission>> getInsSubModels(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
+		Loggers.loggerStart(httpSession);
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+
+		str.length();
+
+		List<RolePermission> subModules = null;
+
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		System.out.println("Token object" + tokenObj);
+		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(),"institution maintenance");
 		System.out.println("submodule ::" + subModules);
 
 		return new ResponseEntity<List<RolePermission>>(subModules, HttpStatus.OK);

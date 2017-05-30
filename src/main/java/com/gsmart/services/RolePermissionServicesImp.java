@@ -130,12 +130,12 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 	}
 	
 	@Override
-	public List<RolePermission> getSubModuleNames(String role) throws GSmartServiceException {
+	public List<RolePermission> getSubModuleNames(String role,String moduleName) throws GSmartServiceException {
 
 		List<RolePermission> list = null;
 		
 		try{
-			list = rolePermissionDao.getSubModuleNames(role);
+			list = rolePermissionDao.getSubModuleNames(role,moduleName);
 			
 			for (RolePermission rolePermission : list) {
 				
