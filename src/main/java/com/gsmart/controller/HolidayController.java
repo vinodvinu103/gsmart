@@ -51,7 +51,7 @@ public class HolidayController {
 
 	@Autowired
 	private HierarchyDao hierarchyDao;
-	
+	 
 
 	/**
 	 * to view {@link Holiday} details.
@@ -62,6 +62,30 @@ public class HolidayController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchholiday( @RequestBody Holiday holiday, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=holiday.getHierarchy().getHid();
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		List<Holiday> searchHoliday = null;
+		
+		searchHoliday = holidayServices.searchHoliday(holiday, hid);
+		Map<String, Object> hl= new HashMap<>();
+		hl.put("searchHoliday", searchHoliday);
+		
+		
+		return new ResponseEntity<>(hl, HttpStatus.OK);
+		
+	}
+	
 	@RequestMapping(value = "/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String,Object>> getHoliday(@PathVariable ("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
