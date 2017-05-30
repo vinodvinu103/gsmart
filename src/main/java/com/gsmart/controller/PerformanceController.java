@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.HierarchyDao;
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.model.Profile;
@@ -91,8 +92,8 @@ public class PerformanceController {
 			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 		
 	}
-	@RequestMapping(value = "/om",method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> addAppraisal(@RequestBody PerformanceAppraisal  performanceAppraisal,
+	@RequestMapping(value = "/om/{hierarchy}",method = RequestMethod.POST)
+	public ResponseEntity<IAMResponse> addAppraisal( @PathVariable("hierarchy") Long hierarchy,@RequestBody PerformanceAppraisal  performanceAppraisal,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 
 	    Loggers.loggerStart( performanceAppraisal);
@@ -102,14 +103,22 @@ public class PerformanceController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getauthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		Token tokenObj=(Token) httpSession.getAttribute("token");
+	
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=hierarchy;
+			 performanceAppraisal.setHierarchy(hierarchyDao.getHierarchyByHid(hid));
+		}else{
+			
+			 performanceAppraisal.setHierarchy(tokenObj.getHierarchy());
+		}
 		
 	
 		
-	
-			Token tokenObj=(Token) httpSession.getAttribute("token");
 			String smartId = tokenObj.getSmartId();
 			 performanceAppraisal.setReportingManagerID(smartId);
-			performanceAppraisal.setHierarchy(tokenObj.getHierarchy());
+			
 			appraisalservice.addAppraisal( performanceAppraisal);
 			resp.setMessage("success");
 		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
