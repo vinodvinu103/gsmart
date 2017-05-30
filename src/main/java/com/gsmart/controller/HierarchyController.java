@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -59,6 +60,17 @@ public class HierarchyController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
+	
+	@RequestMapping(value="/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchhierarchy(@RequestBody Hierarchy hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		Map<String, Object> searchhierar = new HashMap<>();
+		List<Hierarchy> searchHier = null;
+		searchHier = hierarchyServices.searchhierarchy(hierarchy);
+		searchhierar.put("searchlist", searchHier);
+		return new ResponseEntity<>(searchhierar, HttpStatus.OK);
+		
+	}
 
 	/* String name=Loggers.moduleName(); */
 

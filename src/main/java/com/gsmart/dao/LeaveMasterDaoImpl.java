@@ -246,4 +246,23 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 		return masterList;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<LeaveMaster> searchLeaveMaster(LeaveMaster leavemaster, Long hid) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<LeaveMaster> ls = null;
+		try{
+			if(hid != null){
+				query = sessionFactory.getCurrentSession().createQuery("from LeaveMaster where leaveType like '%"+leavemaster.getLeaveType()+"%' and isActive = 'Y' and hierarchy.hid=:hierarchy");
+				query.setParameter("hierarchy", hid);
+			}else{
+				query = sessionFactory.getCurrentSession().createQuery("from LeaveMaster where leaveType like '%"+leavemaster.getLeaveType()+"%' and isActive = 'Y'");
+			}
+			ls = query.list();
+		}catch(Exception e){
+			e.printStackTrace();;
+		}
+		return ls;
+	}
+	
 }

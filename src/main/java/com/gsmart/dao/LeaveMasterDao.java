@@ -20,4 +20,6 @@ public interface LeaveMasterDao {
 	public LeaveMaster getLeaveMasterByType(String role,Hierarchy hierarchy,String leaveType);
 
 	public List<LeaveMaster> getLeaveMasterListForApplyLeave(Long hid) throws GSmartDatabaseException;
+
+	public List<LeaveMaster> searchLeaveMaster(LeaveMaster leavemaster, Long hid)throws GSmartDatabaseException;
 }

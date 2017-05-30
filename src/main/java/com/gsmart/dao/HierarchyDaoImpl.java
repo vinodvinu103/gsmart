@@ -311,6 +311,20 @@ public class HierarchyDaoImpl implements HierarchyDao {
 
 	}
 
+
+	@Override
+	public List<Hierarchy> searchhierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<Hierarchy> searchlist = null;
+		try{
+		query = sessionFactory.getCurrentSession().createQuery("from Hierarchy where school like '%"+hierarchy.getSchool()+"%' and isActive = 'Y'");
+		searchlist = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return searchlist;
+	}
+
 	/*@Override
 	public List<Hierarchy> getAllHierarchy() {
 		getConnection();

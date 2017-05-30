@@ -51,6 +51,8 @@ public interface HierarchyServices {
 	
 	public Hierarchy getHierarchyByHid(Long hid)throws GSmartServiceException;
 	public List<Hierarchy> getAllHierarchy();
+
+	public List<Hierarchy> searchhierarchy(Hierarchy hierarchy)throws GSmartServiceException;
 	
 	
 	

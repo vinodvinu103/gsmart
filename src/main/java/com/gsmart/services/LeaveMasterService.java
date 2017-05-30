@@ -19,4 +19,6 @@ public interface LeaveMasterService {
 	
 	public List<LeaveMaster> getLeaveMasterInfo(Long hid) throws GSmartServiceException;
 
+	public List<LeaveMaster> searchLeaveMaster(LeaveMaster leavemaster, Long hid)throws GSmartServiceException;
+
 }

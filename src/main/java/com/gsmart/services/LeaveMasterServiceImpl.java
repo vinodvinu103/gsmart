@@ -97,4 +97,10 @@ public class LeaveMasterServiceImpl implements LeaveMasterService {
 			throw new GSmartServiceException(e.getMessage());
 		}
 	}
+
+	@Override
+	public List<LeaveMaster> searchLeaveMaster(LeaveMaster leavemaster, Long hid) throws GSmartServiceException {
+
+		return leavemasterdao.searchLeaveMaster(leavemaster, hid);
+	}
 }
