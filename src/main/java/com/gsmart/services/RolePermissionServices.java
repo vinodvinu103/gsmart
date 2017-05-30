@@ -52,7 +52,7 @@ public interface RolePermissionServices {
 
 	public Map<String, Object> getPermission(String role) throws GSmartServiceException;
 	
-	public List<RolePermission> getSubModuleNames(String role) throws GSmartServiceException;
+	public List<RolePermission> getSubModuleNames(String role,String moduleName) throws GSmartServiceException;
 	
 	public List<Roles> getRoles()throws GSmartServiceException;
 	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy)throws GSmartServiceException;

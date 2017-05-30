@@ -339,7 +339,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 				 * Loggers.loggerValue("given moduleName is : ", moduleName);
 				 */
 
-				if (moduleName.equalsIgnoreCase("maintenance")) {
+				if (moduleName.equalsIgnoreCase("maintenance") || moduleName.equalsIgnoreCase("institution maintenance") ) {
 					permission.setModuleName(moduleName);
 					rolePermissions.put(moduleName, permission);
 				} else {
@@ -380,15 +380,15 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RolePermission> getSubModuleNames(String role) throws GSmartDatabaseException {
+	public List<RolePermission> getSubModuleNames(String role,String moduleName) throws GSmartDatabaseException {
 		Loggers.loggerStart(role);
 		List<RolePermission> rolePermissions = null;
 		try {
 			query = sessionFactory.getCurrentSession().createQuery(
-					"from RolePermission where role=:role and lower(moduleName)=:moduleName and isActive=:isActive and view='true'");
+					"from RolePermission where role=:role and lower(moduleName)=:moduleName  and isActive=:isActive and view='true'");
 			query.setParameter("role", role);
 			query.setParameter("isActive", "Y");
-			query.setParameter("moduleName", "maintenance");
+			query.setParameter("moduleName", moduleName);
 			rolePermissions = (List<RolePermission>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
