@@ -263,12 +263,17 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	public FeeMaster getFeeStructure(String standard,Long hid) throws GSmartDatabaseException  {
 		try {
 			
-				query = sessionFactory.getCurrentSession().createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy.hid=:hierarchy");
-				query.setParameter("hierarchy", hid);
-				
+				if(standard!=null){
+			query = sessionFactory.getCurrentSession().createQuery("from FeeMaster where standard='" + standard + "'  and isActive='Y' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hid);
 			
-			FeeMaster fee = (FeeMaster) query.list().get(0);
-			return fee;
+		
+		FeeMaster fee = (FeeMaster) query.list().get(0);
+		return fee;
+			
+		}else{
+			return null;
+		}
 		} catch (Exception e) {
 			e.printStackTrace();
 			Loggers.loggerException(e.getMessage());
