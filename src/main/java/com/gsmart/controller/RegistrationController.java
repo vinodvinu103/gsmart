@@ -178,6 +178,12 @@ public class RegistrationController {
 					profile.setInstitution(tokenObj.getHierarchy().getInstitution());
 
 				}
+			FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
+			if(feeMaster==null){
+				jsonMap.put("status", 500);
+				jsonMap.put("message", "Standard or Section Cannot be Null");
+				return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+			}
 
 				 
 			}
@@ -194,7 +200,6 @@ public class RegistrationController {
 				passwordServices.setPassword(login, profile.getHierarchy());
 				
 				if (profile.getRole().equalsIgnoreCase("student")) {
-					FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
 					Fee fee = new Fee();
 					fee.setSmartId(profile.getSmartId());
 					fee.setName(profile.getFirstName());
