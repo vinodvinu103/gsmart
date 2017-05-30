@@ -156,6 +156,7 @@ public class RegistrationController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		FeeMaster feeMaster =null;
 		Map<String, Object> jsonMap = new HashMap<>();
 
 			Token tokenObj = (Token) httpSession.getAttribute("token");
@@ -178,7 +179,7 @@ public class RegistrationController {
 					profile.setInstitution(tokenObj.getHierarchy().getInstitution());
 
 				}
-			FeeMaster feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
+			feeMaster= feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
 			if(feeMaster==null){
 				jsonMap.put("status", 500);
 				jsonMap.put("message", "Standard or Section Cannot be Null");
