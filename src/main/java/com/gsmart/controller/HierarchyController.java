@@ -74,8 +74,8 @@ public class HierarchyController {
 
 	/* String name=Loggers.moduleName(); */
 
-	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable ("min") Integer min,@PathVariable ("hierarchy") Long hierarchy, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
