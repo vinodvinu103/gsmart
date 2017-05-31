@@ -3,6 +3,7 @@ package com.gsmart.dao;
 import java.util.List;
 
 import com.gsmart.model.CompoundTimeTable;
+import com.gsmart.model.Profile;
 import com.gsmart.model.TimeTable;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;
@@ -21,6 +22,6 @@ public interface TimeTableDao {
 
 	public void deleteTimeTable(TimeTable timeTable)throws GSmartDatabaseException;
 
-	public List<TimeTable> hodViewForStudent(String day, String academicYear, Token tokenObj, String standard,
-			String section) throws GSmartDatabaseException;
+	public List<TimeTable> getChildTeacher(TimeTable timeTable, Token tokenObj)throws GSmartDatabaseException;
+
 }

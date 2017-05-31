@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.TimeTableDao;
 import com.gsmart.model.CompoundTimeTable;
+import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.TimeTable;
 import com.gsmart.model.Token;
@@ -59,9 +60,9 @@ public class TimeTableDoaImpl implements TimeTableDao {
 		try {
 			Session session = this.sessionFactory.getCurrentSession();
 			query = session.createQuery(
-					"from TimeTable where isActive='Y' and standard=:standard and section=:section and day=:day and academicYear=:academicYear and "
-							+ "hid=:hierarchy order by time");
-			query.setParameter("day", day);
+					"from TimeTable where isActive='Y' and standard=:standard and section=:section and academicYear=:academicYear and "
+							+ "hid=:hierarchy order by period");
+			//query.setParameter("day", day);
 			query.setParameter("standard", standard);
 			query.setParameter("section", section);
 			query.setParameter("academicYear", academicYear);
@@ -226,28 +227,26 @@ public class TimeTableDoaImpl implements TimeTableDao {
 		return teacherList;
 	}
 	
-@Override
-	public List<TimeTable> hodViewForStudent(String day, String academicYear, Token tokenObj, String standard,
-			String section) throws GSmartDatabaseException {
-	Loggers.loggerStart(day);
-	List<TimeTable> studentList = new ArrayList<>();
-	try {
-		Session session = this.sessionFactory.getCurrentSession();
-		query = session.createQuery(
-				"from TimeTable where isActive='Y' and standard=:standard and section=:section and day=:day and academicYear=:academicYear and hid=:hierarchy "
-				+ "order by time");
-		query.setParameter("standard", standard);
-		query.setParameter("section", section);
-		query.setParameter("day", day);
-		query.setParameter("academicYear", academicYear);
-		//query.setParameter("role", "STUDENT");
-		query.setParameter("hierarchy", tokenObj.getHierarchy().getHid());
-		studentList = query.list();
-	} catch (Exception e) {
-		e.printStackTrace();
+	@Override
+	public List<TimeTable> getChildTeacher(TimeTable timeTable, Token tokenObj) throws GSmartDatabaseException {
+		Loggers.loggerStart();
+		List<TimeTable> list=null;
+		try {
+			Session session = this.sessionFactory.getCurrentSession();
+			query=session.createQuery("from TimeTable where isActive='Y' and day=:day "
+					+ "and time=:time and hid=:hierarchy");
+			query.setParameter("time", timeTable.getTime());
+			query.setParameter("day", timeTable.getDay());
+			query.setParameter("hierarchy", tokenObj.getHierarchy().getHid());
+			list=query.list();
+			Loggers.loggerEnd(list);
+			return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd();
+		return list;
 	}
-	Loggers.loggerEnd(studentList);
-	return studentList;
-	}
+
 
 }

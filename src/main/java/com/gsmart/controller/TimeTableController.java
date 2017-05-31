@@ -1,5 +1,6 @@
 package com.gsmart.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.TimeTableDao;
 import com.gsmart.model.CompoundTimeTable;
+import com.gsmart.model.Profile;
 import com.gsmart.model.TimeTable;
 import com.gsmart.model.Token;
 import com.gsmart.services.TimeTableService;
@@ -98,23 +100,27 @@ public class TimeTableController {
 		String tokenNumber=token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		List<TimeTable> studentList = null;
+		List<TimeTable> studentList = new ArrayList<>();
 		Token tokenObj=(Token) httpSession.getAttribute("token");
 
 		Map<String, Object> permissions = new HashMap<>();
-		
-		studentList=timeTableService.studentView(day, academicYear, tokenObj);
-		
-		if(studentList!=null){
-			permissions.put("status", 200);
-			permissions.put("message", "success");
-			permissions.put("studentList",studentList);
+		try {
+			studentList=timeTableService.studentView(day, academicYear, tokenObj);
+			if(studentList!=null){
+				permissions.put("status", 200);
+				permissions.put("message", "success");
+				permissions.put("studentList",studentList);
+				
+			}else{
+				permissions.put("status", 404);
+				permissions.put("message", "No Data Is Present");
+				
+			}
 			
-		}else{
-			permissions.put("status", 404);
-			permissions.put("message", "No Data Is Present");
-			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
 		
 		Loggers.loggerEnd();
 		return new  ResponseEntity<Map<String,Object>>(permissions, HttpStatus.OK); 
@@ -206,9 +212,32 @@ public class TimeTableController {
 
 		Map<String, Object> permissions = new HashMap<>();
 		
-		hodToStudent=tableDao.hodViewForStudent(day, academicYear, tokenObj,standard,section);
-		
+		//hodToStudent=tableDao.hodViewForStudent(day, academicYear, tokenObj,standard,section);
+		hodToStudent=	tableDao.studentView(day, academicYear, tokenObj, standard, section);
 		if(hodToStudent!=null){
+			for (TimeTable timeTable : hodToStudent) {
+				System.out.println("in side foreach condition1111 ");
+				String day1=timeTable.getDay();
+				if(timeTable.getDay().equalsIgnoreCase("monday"))
+				{
+					System.out.println("in side if condition 2222 "+day1);
+					int i=1;
+					do{  
+						System.out.println("in side do-while condition 333 ");
+						if(i==timeTable.getPeriod()){
+							System.out.println("in side do-while-if condition 444 "+timeTable.getPeriod());
+							i++;
+						}else{
+							System.out.println(" in side do-while-else condition 555");
+							timeTable.setDay("MONDAY");
+							timeTable.setSubject("---");
+							timeTable.setPeriod(i);
+						}
+				    }while(i<=7); 
+					hodToStudent.add(timeTable);
+				}
+			}
+			System.out.println("final out put "+hodToStudent);
 			permissions.put("status", 200);
 			permissions.put("message", "success");
 			permissions.put("hodToStudent",hodToStudent);
@@ -221,6 +250,23 @@ public class TimeTableController {
 		
 		Loggers.loggerEnd();
 		return new  ResponseEntity<Map<String,Object>>(permissions, HttpStatus.OK); 
+	}
+	
+	@RequestMapping(value="/teacher",method=RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> getTeacher(@RequestBody TimeTable timeTable, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber=token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		List<Profile> childTeacher = null;
+		Token tokenObj=(Token) httpSession.getAttribute("token");
+		
+		Map<String, Object> teacher=new HashMap<>();
+		
+		childTeacher=timeTableService.getChildTeacher(timeTable,tokenObj);
+		teacher.put("chilTeach", childTeacher);
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String,Object>>(teacher, HttpStatus.OK);
 	}
 	
 }

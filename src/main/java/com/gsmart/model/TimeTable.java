@@ -57,6 +57,9 @@ public class TimeTable {
 	
 	@Column(name="ROLE")
 	private String role;
+	
+	@Column(name="PERIOD")
+	private int period;
 
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -174,11 +177,20 @@ public class TimeTable {
 		this.role = role;
 	}
 
+	public int getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(int period) {
+		this.period = period;
+	}
+
 	@Override
 	public String toString() {
 		return "TimeTable [academicYear=" + academicYear + ", standard=" + standard + ", entryTime=" + entryTime
 				+ ", section=" + section + ", day=" + day + ", time=" + time + ", subject=" + subject + ", smartId="
-				+ smartId + ", teacherName=" + teacherName + ", hierarchy=" + hierarchy + ", role "+role+"]";
+				+ smartId + ", teacherName=" + teacherName + ", isActive=" + isActive + ", updateTime=" + updateTime
+				+ ", exitTime=" + exitTime + ", role=" + role + ", period=" + period + ", hierarchy=" + hierarchy + "]";
 	}
 	
 	
