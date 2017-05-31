@@ -60,9 +60,9 @@ public class TimeTableDoaImpl implements TimeTableDao {
 		try {
 			Session session = this.sessionFactory.getCurrentSession();
 			query = session.createQuery(
-					"from TimeTable where isActive='Y' and standard=:standard and section=:section and academicYear=:academicYear and "
+					"from TimeTable where isActive='Y' and day=:day and standard=:standard and section=:section and academicYear=:academicYear and "
 							+ "hid=:hierarchy order by period");
-			//query.setParameter("day", day);
+			query.setParameter("day", day);
 			query.setParameter("standard", standard);
 			query.setParameter("section", section);
 			query.setParameter("academicYear", academicYear);

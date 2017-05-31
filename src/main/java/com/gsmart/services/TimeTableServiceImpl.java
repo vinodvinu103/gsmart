@@ -38,9 +38,59 @@ public class TimeTableServiceImpl implements TimeTableService {
 		Profile profile=profileDao.getProfileDetails(token.getSmartId());
 		String standard=profile.getStandard();
 		String section=profile.getSection();
-		sutdentTTList=timetableDao.studentView(day, academicYear, token,standard,section);
+		List<String> days=new ArrayList<>();
+		
+		List<Integer> numOfPeriods= new ArrayList<>();
+		numOfPeriods.add(1);
+		numOfPeriods.add(2);
+		numOfPeriods.add(3);
+		numOfPeriods.add(4);
+		numOfPeriods.add(5);
+		numOfPeriods.add(6);
+		numOfPeriods.add(7);
+		List<TimeTable> studentTable=new ArrayList<>();
+		
+		days.add("MONDAY");
+		days.add("TUESDAY");
+		days.add("WEDNESDAY");
+		days.add("THURSDAY");
+		days.add("FRIDAY");
+		days.add("SATURDAY");
+//		sutdentTTList=timetableDao.studentView(day, academicYear, token,standard,section);
 		try {
-			for (TimeTable timeTable : sutdentTTList) {
+			
+			for (String dayz : days) {
+				List<Integer> periods=new ArrayList<>();
+				sutdentTTList=timetableDao.studentView(dayz, academicYear, token,standard,section);
+				for(TimeTable tt:sutdentTTList){
+					
+					periods.add(tt.getPeriod());
+					studentTable.add(tt);
+					
+				}
+				for(Integer singlePeriod:numOfPeriods){
+					if(!periods.contains(singlePeriod)){
+						tm=new TimeTable();
+						tm.setDay(dayz);
+						tm.setStandard(standard);
+						tm.setSection(section);
+						tm.setAcademicYear(academicYear);
+						tm.setSubject("FREE");
+						tm.setPeriod(singlePeriod);
+						studentTable.add(tm);
+						
+					}
+				}
+				
+				
+			}
+			/*for (TimeTable timeTable : sutdentTTList) {
+				
+				for(String dayz:days){
+					if(dayz.equalsIgnoreCase(timeTable.getDay())){
+						
+					}
+				}
 				System.out.println(" in side foreach condition1111 ");
 				if(timeTable.getDay().equalsIgnoreCase("monday"))
 				{
@@ -61,14 +111,14 @@ public class TimeTableServiceImpl implements TimeTableService {
 				System.out.println(" in side do-while-else condition 555 ");
 				sutdentTTList.add(tm);
 				System.out.println("112233 "+sutdentTTList);
-			}
-			System.out.println(map);
+			}*/
+			System.out.println(studentTable);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		Loggers.loggerEnd();
-		return sutdentTTList;
+		Loggers.loggerEnd("sizwe of list "+studentTable.size());
+		return studentTable;
 	}
 	
 	@Override
