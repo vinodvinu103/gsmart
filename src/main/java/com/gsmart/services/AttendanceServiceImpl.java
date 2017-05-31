@@ -104,11 +104,16 @@ public class AttendanceServiceImpl implements AttendanceService {
 				// Date dateObj = new Date(date * 1000);
 				int year = Calendar.getInstance().get(Calendar.YEAR);
 				Map<String, Profile> profileMap = new HashMap<>();
+				List<Profile> emplistWithNullHierarchy=profileDao.getProfilesOfNullHierarchy(year + "-" + (year + 1));
 				List<Profile> profileList = profileDao.getProfileByHierarchyAndYear(hierarchy, year + "-" + (year + 1));
 				Loggers.loggerStart(profileList);
 				for (Profile profile : profileList) {
 					profileMap.put(profile.getSmartId(), profile);
 				}
+				for (Profile profile2 : emplistWithNullHierarchy) {
+					profileMap.put(profile2.getSmartId(), profile2);
+				}
+				profileMap.remove(smartId);
 				ArrayList<Profile> childsList = searchService.getAllChildSmartIdForDashboard(smartId, profileMap);
 				Loggers.loggerStart(childsList);
 				totalCount = childsList.size();
