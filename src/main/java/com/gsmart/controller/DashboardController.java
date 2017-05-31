@@ -279,7 +279,7 @@ public class DashboardController {
 		int totalPaidFees=0;
 		int totalFees=0;
 		List<Map<String, Object>> responseList = new ArrayList<>();
-
+		List<Profile> emplistWithNullHierarchy=profileDao.getProfilesOfNullHierarchy(academincYear);
 		Map<String, Object> responseMap = new HashMap<>();
 		
 		if (tokenObj.getHierarchy() == null) {
@@ -292,8 +292,11 @@ public class DashboardController {
 				Map<String, Profile> allProfiles = searchService.getAllProfiles(academincYear,
 						hierarchy.getHid());
 
+				for(Profile profile:emplistWithNullHierarchy){
+					allProfiles.put(profile.getSmartId(), profile);
+					}
 				List<String> childList = searchService.getAllChildSmartId(tokenObj.getSmartId(), allProfiles);
-				childList.add(tokenObj.getSmartId());
+				
 				totalPaidFees = feeServices.getTotalFeeDashboard(academincYear, hierarchy.getHid(), childList);
 				totalFees = feeServices.getPaidFeeDashboard(academincYear, hierarchy.getHid(), childList);
 				dataMap.put("totalPaidFees", totalPaidFees);
