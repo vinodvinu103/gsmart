@@ -64,10 +64,10 @@ public class TimeTableController {
 		return new ResponseEntity<Map<String,String>>(ac, HttpStatus.OK);
 	}
 
-	@RequestMapping(value="/teacherView/{academicYear}/{day}",method=RequestMethod.GET)
+	@RequestMapping(value="/teacherView/{academicYear}",method=RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> teacherView(@RequestHeader HttpHeaders token,
-			HttpSession httpSession,@PathVariable("day") String day,@PathVariable("academicYear") String academicYear)throws GSmartBaseException{
-		Loggers.loggerStart(day);
+			HttpSession httpSession,@PathVariable("academicYear") String academicYear)throws GSmartBaseException{
+		Loggers.loggerStart();
 		String tokenNumber=token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -76,7 +76,7 @@ public class TimeTableController {
 
 		Map<String, Object> permissions = new HashMap<>();
 		
-		teacherList=tableDao.teacherView(day, academicYear, tokenObj);
+		teacherList=timeTableService.teacherView( academicYear, tokenObj);
 		
 		if(teacherList!=null){
 			permissions.put("status", 200);
@@ -93,10 +93,10 @@ public class TimeTableController {
 		return new  ResponseEntity<Map<String,Object>>(permissions, HttpStatus.OK); 
 	}
 	
-	@RequestMapping(value="/studentView/{academicYear}/{day}",method=RequestMethod.GET)
+	@RequestMapping(value="/studentView/{academicYear}",method=RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> studentView(@RequestHeader HttpHeaders token,
-			HttpSession httpSession,@PathVariable("day") String day,@PathVariable("academicYear") String academicYear)throws GSmartBaseException{
-		Loggers.loggerStart(day);
+			HttpSession httpSession,@PathVariable("academicYear") String academicYear)throws GSmartBaseException{
+		Loggers.loggerStart();
 		String tokenNumber=token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
@@ -105,7 +105,7 @@ public class TimeTableController {
 
 		Map<String, Object> permissions = new HashMap<>();
 		try {
-			studentList=timeTableService.studentView(day, academicYear, tokenObj);
+			studentList=timeTableService.studentView(academicYear, tokenObj);
 			if(studentList!=null){
 				permissions.put("status", 200);
 				permissions.put("message", "success");
