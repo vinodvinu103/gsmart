@@ -873,5 +873,21 @@ public class ProfileDaoImp implements ProfileDao {
 		Loggers.loggerEnd(studlist);
 		return studlist;
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Profile> getProfilesOfNullHierarchy(String academicYear) {
+		List<Profile> emplistWithNullHierarchy = null;
+		Loggers.loggerStart();
+		query = sessionFactory.getCurrentSession().createQuery("from Profile where academicYear=:academicYear and hierarchy.hid is null  and isActive='Y'");
+		query.setParameter("academicYear", academicYear);
+		emplistWithNullHierarchy = (List<Profile>) query.list(); 
+		
+		Loggers.loggerEnd(emplistWithNullHierarchy);
+		return emplistWithNullHierarchy;
+
+		
+	}
 
 }

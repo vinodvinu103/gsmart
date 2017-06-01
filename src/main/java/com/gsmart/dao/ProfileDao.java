@@ -122,4 +122,7 @@ public interface ProfileDao {
 
 	public List<Profile> searchstudent(Profile profile, Long hid)throws GSmartDatabaseException;
 
+
+	public List<Profile> getProfilesOfNullHierarchy(String string);
+
 }
