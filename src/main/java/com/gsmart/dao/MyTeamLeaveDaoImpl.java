@@ -1,6 +1,7 @@
 package com.gsmart.dao;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
@@ -176,5 +177,22 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
+	}
+
+	@Override
+	public List<Leave> searchmyteamleave(Leave leave, Long hid) throws GSmartDatabaseException {
+		List<Leave> leavelist = null;
+		try{
+			if(hid!=null){
+			query = sessionFactory.getCurrentSession().createQuery("from Leave where isActive = 'Y' and fullName like '%"+leave.getFullName()+"%' and hierarchy.hid = :hierarchy ");
+			query.setParameter("hierarchy", hid);
+			}else{
+				query = sessionFactory.getCurrentSession().createQuery("from Leave where isActive = 'Y' and fullName like '%"+leave.getFullName()+"%'");
+			}
+			leavelist = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return leavelist;
 	}
 }

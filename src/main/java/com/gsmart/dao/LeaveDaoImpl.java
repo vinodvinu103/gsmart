@@ -213,4 +213,20 @@ public class LeaveDaoImpl implements LeaveDao {
 		return leaveAddList;
 	}
 
+	@Override
+	public List<Leave> searchleave(Leave leave, Long hid) throws GSmartDatabaseException {
+		List<Leave> list = null;
+		try {
+			System.out.println("ghjkldscgvvvvvvvv================================="+hid);
+			Loggers.loggerStart(hid);
+			query = sessionFactory.getCurrentSession().createQuery("from Leave where isActive='Y' and leaveType like '%"+leave.getLeaveType()+"%' and hierarchy.hid=:hierarchy");
+			query.setParameter("hierarchy", hid);
+			list = query.list();
+			Loggers.loggerEnd(list);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 }

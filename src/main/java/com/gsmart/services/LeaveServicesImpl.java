@@ -283,4 +283,9 @@ public class LeaveServicesImpl implements LeaveServices {
 		Loggers.loggerEnd();
 		return cpl;
 	}
+
+	@Override
+	public List<Leave> searchleave(Leave leave, Long hid) throws GSmartServiceException {
+		return leaveDao.searchleave(leave, hid);
+	}
 }

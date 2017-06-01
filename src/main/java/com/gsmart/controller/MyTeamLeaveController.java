@@ -2,6 +2,7 @@
 package com.gsmart.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Leave;
@@ -40,6 +42,27 @@ public class MyTeamLeaveController {
 	
 	@Autowired
 	private ProfileDao profileDao;
+	
+	@RequestMapping(value= "/searchmyteamleave", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchmyteamleave(@RequestBody Leave leave, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenobj = (Token) httpSession.getAttribute("token");
+		Long hid = null;
+		if(tokenobj.getHierarchy()==null){
+			hid = leave.getHierarchy().getHid();
+		}else{
+			hid = tokenobj.getHierarchy().getHid();
+		}
+		List<Leave> sleave = null;
+		sleave = myteamleaveServices.searchmyteamleave(leave, hid);
+		Map<String, Object> searchmap = new HashMap<>();
+		searchmap.put("sleave", sleave);
+		
+		return new ResponseEntity<>(searchmap, HttpStatus.OK);
+		
+	}
 
 	@RequestMapping(value="/{min}/{max}/{hierarchy}",method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getLeave(@PathVariable ("hierarchy") Long hierarchy,@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token, HttpSession httpSession)

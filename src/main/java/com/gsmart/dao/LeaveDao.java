@@ -22,4 +22,6 @@ public interface LeaveDao {
 	public List<Leave> getLeaves(String role,Hierarchy hierarchy,String smartId,String leaveType);
 	
 	public List<Leave> leaveForAdding(Leave leave,Long hid)throws GSmartDatabaseException;
+
+	public List<Leave> searchleave(Leave leave, Long hid)throws GSmartDatabaseException;
 }

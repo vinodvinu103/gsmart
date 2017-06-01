@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.CompoundLeave;
@@ -18,5 +19,7 @@ public interface LeaveServices {
 	public void deleteLeave(Leave leave) throws GSmartServiceException;
 	
 	public Map<String,Object> getLeftLeaves(String role,Hierarchy hierarchy,String smartId,String leaveType);
+
+	public List<Leave> searchleave(Leave leave, Long hid)throws GSmartServiceException;
 
 }
