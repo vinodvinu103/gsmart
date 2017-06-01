@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
@@ -45,6 +46,9 @@ public class FeeController {
 
 	@Autowired
 	private SearchService searchService;
+	
+	@Autowired
+	private ProfileDao profileDao;
 
 	@Autowired
 	private GetAuthorization getAuthorization;
@@ -197,6 +201,14 @@ public class FeeController {
 
 			Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear,
 					hid);
+			List<Profile> profilesOfNullHierarchy=	profileDao.getProfilesOfNullHierarchy(academicYear);
+			if(profilesOfNullHierarchy.contains(profile));{
+				for (Profile profile2 : profilesOfNullHierarchy) {
+					profiles.put(profile2.getSmartId(), profile2);
+					
+				}
+				
+			}
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 
@@ -223,13 +235,16 @@ public class FeeController {
 				for (String j : key) {
 
 					Profile p = (Profile) profiles.get(j);
-					if (p.getReportingManagerId().equals(fees.get(i).getSmartId())) {
+					if(p.getReportingManagerId()!=null){
+						if (p.getReportingManagerId().equals(fees.get(i).getSmartId())) {
 
-						if (!(p.getSmartId().equals(fees.get(i).getSmartId()))) {
-							fees.get(i).setChildFlag(true);
+							if (!(p.getSmartId().equals(fees.get(i).getSmartId()))) {
+								fees.get(i).setChildFlag(true);
 
+							}
 						}
 					}
+					
 				}
 				if (fees.get(i).getReportingManagerId().equals(smartId)) {
 					childs.add(fees.get(i));
