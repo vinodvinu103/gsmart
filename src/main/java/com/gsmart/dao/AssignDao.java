@@ -23,4 +23,6 @@ public Map<String, Object> getAssignReportee(Long hid, Integer min, Integer max)
 	public List<Assign> getAssignList(Long hid) throws GSmartDatabaseException;
 	
 	public boolean searchStandardFeeDao(String standard,Long hid) throws GSmartDatabaseException;
+
+	public List<Assign> searchassign(Assign assign, Long hid)throws GSmartDatabaseException;
 }

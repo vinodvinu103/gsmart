@@ -269,12 +269,17 @@ public class ProfileServicesImp implements ProfileServices {
 	}
 
 	@Override
-	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy)throws GSmartServiceException {
+	public List<Profile> searchemp(Profile profile, Long hid)throws GSmartServiceException {
 		try {
-			return profileDao.searchemp(profile, hierarchy);
+			return profileDao.searchemp(profile, hid);
 		} catch (GSmartBaseException e) {
 			throw new GSmartServiceException(e.getMessage());
 		}
+	}
+
+	@Override
+	public List<Profile> searchstudent(Profile profile, Long hid) throws GSmartServiceException {
+		return profileDao.searchstudent(profile, hid);
 	}
 
 }
