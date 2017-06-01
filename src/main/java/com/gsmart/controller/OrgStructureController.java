@@ -2,6 +2,7 @@ package com.gsmart.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.model.Token;
@@ -37,6 +39,9 @@ public class OrgStructureController {
 
 	@Autowired
 	private ProfileServices profileServices;
+	
+	@Autowired
+	private ProfileDao profileDao;
 
 	@Autowired
 	private GetAuthorization getAuthorization;
@@ -63,7 +68,18 @@ public class OrgStructureController {
 		}
 
 			Profile profile = profileServices.getProfileDetails(smartId);
+		
 			Map<String, Profile> profiles = searchService.getAllProfiles(academicYear,hid);
+			List<Profile> profilesOfNullHierarchy=	profileDao.getProfilesOfNullHierarchy(academicYear);
+			if(profilesOfNullHierarchy.contains(profile));{
+				for (Profile profile2 : profilesOfNullHierarchy) {
+					profiles.put(profile2.getSmartId(), profile2);
+					
+				}
+				
+			}
+			
+		
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			if (childList.size() != 0) {
 				profile.setChildFlag(true);
@@ -72,12 +88,15 @@ public class OrgStructureController {
 			for (int i = 0; i < childList.size(); i++) {
 				for (String j : key) {
 					Profile p = (Profile) profiles.get(j);
-					if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
+					if(p.getReportingManagerId()!=null){
+						if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
 
-						if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
-							childList.get(i).setChildFlag(true);
+							if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
+								childList.get(i).setChildFlag(true);
+							}
 						}
 					}
+					
 				}
 			}
 			resultmap.put("selfProfile", profile);

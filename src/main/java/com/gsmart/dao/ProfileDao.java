@@ -120,6 +120,6 @@ public interface ProfileDao {
 	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy)throws GSmartDatabaseException;
 
 
-	public List<Profile> getProfilesOfNullHierarchy(String string);
+	public List<Profile> getProfilesOfNullHierarchy(String academicYear);
 
 }
