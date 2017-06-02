@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.TransportationFee;
@@ -23,6 +24,9 @@ public ArrayList<TransportationFee> getTransportationFeeList(TransportationFee t
 
 public ArrayList<TransportationFee> getStudentUnpaidFeeList(TransportationFee transportationFee, Long hid)throws GSmartServiceException;
 
+public List<TransportationFee> searchpaidtrans(TransportationFee trans, Long hid)throws GSmartServiceException;
+
+public List<TransportationFee> searchunpaidtrans(TransportationFee trans, Long hid)throws GSmartServiceException;
 
 
 

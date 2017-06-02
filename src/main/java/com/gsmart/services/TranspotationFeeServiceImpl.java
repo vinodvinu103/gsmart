@@ -1,6 +1,7 @@
 package com.gsmart.services;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +135,17 @@ public class TranspotationFeeServiceImpl implements TranspotationFeeservice {
 		}
 		Loggers.loggerEnd();
 		return StudentUnpaidfeeList;
+	}
+
+
+	@Override
+	public List<TransportationFee> searchpaidtrans(TransportationFee trans, Long hid) throws GSmartServiceException {
+		return transpotationdao.searchpaidtrans(trans, hid);
+	}
+	
+	@Override
+	public List<TransportationFee> searchunpaidtrans(TransportationFee trans, Long hid) throws GSmartServiceException {
+		return transpotationdao.searchunpaidtrans(trans, hid);
 	}
 
 }
