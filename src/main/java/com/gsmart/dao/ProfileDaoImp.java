@@ -22,6 +22,7 @@ import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
+import com.gsmart.model.TransportationFee;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -888,6 +889,32 @@ public class ProfileDaoImp implements ProfileDao {
 		return emplistWithNullHierarchy;
 
 		
+	}
+
+	@Override
+	public List<Profile> searchwithrfid(Profile profile, Long hid) throws GSmartDatabaseException {
+		List<Profile> list = null;
+		try{
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y' and hierarchy.hid=:hierarchy and rfId!=null and firstName like '%"+profile.getFirstName()+"%'");
+			query.setParameter("hierarchy", hid);
+			list = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	@Override
+	public List<Profile> searchwithoutrfid(Profile profile, Long hid) throws GSmartDatabaseException {
+		List<Profile> list = null;
+		try{
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y' and hierarchy.hid=:hierarchy and rfId=null and firstName like '%"+profile.getFirstName()+"%'");
+			query.setParameter("hierarchy", hid);
+			list = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 }

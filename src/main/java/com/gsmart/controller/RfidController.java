@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
+import com.gsmart.model.TransportationFee;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -37,6 +38,53 @@ public class RfidController {
 	@Autowired
 	private GetAuthorization getAuthorization;
 	
+	@RequestMapping(value = "/searchwithrfid", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchwithrfid(@RequestBody Profile profile, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=profile.getHierarchy().getHid();
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		List<Profile> searchrfid = null;
+		
+		searchrfid = profileServices.searchwithrfid(profile, hid);
+		Map<String, Object> hl= new HashMap<>();
+		hl.put("searchrfid", searchrfid);
+		
+		
+		return new ResponseEntity<>(hl, HttpStatus.OK);
+		
+	}
+	
+	@RequestMapping(value = "/searchwithoutrfid", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchwithoutrfid(@RequestBody Profile profile, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=profile.getHierarchy().getHid();
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		List<Profile> searchrfid = null;
+		
+		searchrfid = profileServices.searchwithoutrfid(profile, hid);
+		Map<String, Object> hl= new HashMap<>();
+		hl.put("searchrfid", searchrfid);
+		
+		
+		return new ResponseEntity<>(hl, HttpStatus.OK);
+		
+	}
 
 	@RequestMapping(value = "/ProfilesWithRfid/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getProfilesWithRfid(@PathVariable("min") Integer min,

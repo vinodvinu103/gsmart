@@ -12,6 +12,7 @@ import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.model.TransportationFee;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -280,6 +281,16 @@ public class ProfileServicesImp implements ProfileServices {
 	@Override
 	public List<Profile> searchstudent(Profile profile, Long hid) throws GSmartServiceException {
 		return profileDao.searchstudent(profile, hid);
+	}
+
+	@Override
+	public List<Profile> searchwithrfid(Profile profile, Long hid) throws GSmartServiceException {
+		return profileDao.searchwithrfid(profile, hid);
+	}
+	
+	@Override
+	public List<Profile> searchwithoutrfid(Profile profile, Long hid) throws GSmartServiceException {
+		return profileDao.searchwithoutrfid(profile, hid);
 	}
 
 }
