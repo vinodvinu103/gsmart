@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.gsmart.dao.GradesDao;
 import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Fee;
 import com.gsmart.model.Grades;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
@@ -38,8 +39,6 @@ public class ReportCardServiceImpl implements ReportCardService {
 
 	@Autowired
 	private ReportCardDao reportCardDao;
-
-	
 
 	@Autowired
 	private GradesDao gradeDao;
@@ -323,5 +322,26 @@ public class ReportCardServiceImpl implements ReportCardService {
 		}
 		Loggers.loggerEnd();
 		return totalGrade;
+	}
+	
+	@Override
+	public Fee studentFee(String smartId, String academicYear) throws GSmartServiceException {
+		Loggers.loggerStart();
+		Fee fee=null;
+		try {
+			fee= reportCardDao.studentFee(smartId, academicYear);
+			int monthInt=Integer.parseInt(fee.getDate().substring(5, 7));
+			if(monthInt>=3&&monthInt<=6&&fee.getFeeStatus().equalsIgnoreCase("paid")){
+				Loggers.loggerEnd();
+				return fee;
+			}
+			else if(monthInt>=3&&monthInt<=6&&fee.getFeeStatus().equalsIgnoreCase("unpaid")){
+				Loggers.loggerEnd();
+				return fee=null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fee;
 	}
 }

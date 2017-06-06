@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gsmart.model.CompoundReportCard;
+import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
@@ -31,4 +32,6 @@ public interface ReportCardService {
 	public Document downloadPdf(Token tokenDetail,String academicYear,String examName)throws GSmartServiceException;
 	 
 	public String grade(Double precentage,Long hid);
+
+	public Fee studentFee(String smartId, String academicYear)throws GSmartServiceException;
 }
