@@ -836,13 +836,13 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy) throws GSmartDatabaseException{
+	public List<Profile> searchemp(Profile profile, Long hid) throws GSmartDatabaseException{
 		List<Profile> emplist = null;
-		Loggers.loggerStart(hierarchy);
+		Loggers.loggerStart();
 		try {
-		if(hierarchy != null){
-			query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%"+ profile.getFirstName() +"%' and isActive = 'Y' and role!='STUDENT' and hierarchy = :hierarchy");
-			query.setParameter("hierarchy", hierarchy.getHid());
+		if(hid != null){
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%"+ profile.getFirstName() +"%' and isActive = 'Y' and role!='STUDENT' and hierarchy.hid = :hierarchy");
+			query.setParameter("hierarchy", hid);
 		}else{
 			query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%"+ profile.getFirstName() +"%' and isActive = 'Y' and role!='STUDENT'");
 		}
@@ -854,6 +854,27 @@ public class ProfileDaoImp implements ProfileDao {
 				return emplist;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Profile> searchstudent(Profile profile, Long hid) throws GSmartDatabaseException {
+		List<Profile> studlist = null;
+		Loggers.loggerStart();
+		try {
+		if(hid != null){
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%"+ profile.getFirstName() +"%' and isActive = 'Y' and role='STUDENT' and hierarchy.hid = :hierarchy");
+			query.setParameter("hierarchy", hid);
+		}else{
+			query = sessionFactory.getCurrentSession().createQuery("from Profile where firstName like '%"+ profile.getFirstName() +"%' and isActive = 'Y' and role='STUDENT'");
+		}
+		studlist = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Loggers.loggerEnd(studlist);
+		return studlist;
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> getProfilesOfNullHierarchy(String academicYear) {

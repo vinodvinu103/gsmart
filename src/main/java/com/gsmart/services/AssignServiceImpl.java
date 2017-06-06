@@ -99,6 +99,11 @@ public class AssignServiceImpl implements AssignService{
 		Loggers.loggerEnd();
 		return assignList;
 	}
+
+	@Override
+	public List<Assign> searchassign(Assign assign, Long hid) throws GSmartServiceException {
+		return assignDao.searchassign(assign, hid);
+	}
 	
 	
 	

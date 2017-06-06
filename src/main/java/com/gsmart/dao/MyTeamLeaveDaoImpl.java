@@ -36,12 +36,14 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	}*/
 
 	@Override
-public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy,Integer min,Integer max) throws GSmartDatabaseException {
+	public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy, Integer min, Integer max)
+			throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		Map<String, Object> leavelist =new HashMap<>();
+		Map<String, Object> leavelist = new HashMap<>();
+		Criteria criteriaCount = null;
 		try {
 			String role = profileInfo.getRole();
-			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director")||role.equalsIgnoreCase("hr")) {
+			if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("director") || role.equalsIgnoreCase("hr")) {
 				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class);
 				criteria.add(Restrictions.eq("isActive", "Y"));
 				criteria.addOrder(Order.asc("fullName"));
@@ -50,10 +52,11 @@ public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy,Inte
 				criteria.setMaxResults(max);
 				criteria.addOrder(Order.desc("entryTime"));
 				leavelist.put("myTeamLeaveList", criteria.list());
-				
-				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class).add(Restrictions.eq("isActive", "Y"))
+
+				criteriaCount = sessionFactory.getCurrentSession().createCriteria(Leave.class)
+						.add(Restrictions.eq("isActive", "Y")).add(Restrictions.eq("hierarchy.hid", hierarchy))
 						.setProjection(Projections.rowCount());
-				Long count = (Long) criteria.uniqueResult();
+				Long count = (Long) criteriaCount.uniqueResult();
 				leavelist.put("totalListCount", count);
 			} else {
 				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class);
@@ -65,12 +68,12 @@ public Map<String, Object> getLeavelist(Profile profileInfo, Long hierarchy,Inte
 				criteria.setFirstResult(min);
 				criteria.setMaxResults(max);
 				leavelist.put("myTeamLeaveList", criteria.list());
-				
-				criteria = sessionFactory.getCurrentSession().createCriteria(Leave.class).add(Restrictions.eq("isActive", "Y"))
+
+				criteriaCount = sessionFactory.getCurrentSession().createCriteria(Leave.class)
+						.add(Restrictions.eq("isActive", "Y"))
 						.add(Restrictions.eq("reportingManagerId", profileInfo.getSmartId()))
 						.add(Restrictions.ne("leaveStatus", "Rejected*").ignoreCase())
-						.add(Restrictions.eq("hierarchy.hid", hierarchy))
-						.setProjection(Projections.rowCount());
+						.add(Restrictions.eq("hierarchy.hid", hierarchy)).setProjection(Projections.rowCount());
 				Long count = (Long) criteria.uniqueResult();
 				leavelist.put("totalListCount", count);
 			}

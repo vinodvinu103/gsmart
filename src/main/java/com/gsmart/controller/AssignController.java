@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gsmart.dao.HierarchyDao;
 import com.gsmart.model.Assign;
@@ -45,6 +46,27 @@ public class AssignController {
 
 	@Autowired
 	private ProfileServices profileServices;
+	
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchassign(@RequestBody Assign assign, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid = null;
+		if(tokenObj.getHierarchy()==null){
+			hid = assign.getHierarchy().getHid();
+		}else{
+			hid = tokenObj.getHierarchy().getHid();
+		}
+		List<Assign> searchAssign = null;
+		searchAssign = assignService.searchassign(assign, hid);
+		Map<String, Object> assignlist = new HashMap<>();
+		assignlist.put("searchassign", searchAssign);
+		return new ResponseEntity<>(assignlist, HttpStatus.OK);
+		
+	}
 
 	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAssigningReportee(@PathVariable ("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,

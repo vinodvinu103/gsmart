@@ -75,6 +75,8 @@ public interface ProfileServices{
 	 */
 	public void deleteBanner(Banners banner)throws GSmartServiceException;
 
-	public List<Profile> searchemp(Profile profile, Hierarchy hierarchy)throws GSmartServiceException;
+	public List<Profile> searchemp(Profile profile, Long hid)throws GSmartServiceException;
+
+	public List<Profile> searchstudent(Profile profile, Long hid)throws GSmartServiceException;
 
 }

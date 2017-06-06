@@ -24,4 +24,6 @@ public interface AssignService {
 	
 	public List<Assign> getAssignList(Long hid) throws GSmartServiceException;
 
+	public List<Assign> searchassign(Assign assign, Long hid)throws GSmartServiceException;
+
 }
