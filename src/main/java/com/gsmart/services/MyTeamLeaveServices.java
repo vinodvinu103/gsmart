@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.Hierarchy;
@@ -12,4 +13,5 @@ public interface MyTeamLeaveServices {
 	public void rejectleave(Leave leave) throws GSmartServiceException;
 	public void sactionleave(Leave leave) throws GSmartServiceException;
 	public void cancelSanctionLeave(Leave leave)throws GSmartServiceException;
+	public List<Leave> searchmyteamleave(Leave leave, Long hid)throws GSmartServiceException;
 }

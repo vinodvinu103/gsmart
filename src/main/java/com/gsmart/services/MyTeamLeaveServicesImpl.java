@@ -1,5 +1,6 @@
 package com.gsmart.services;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +94,11 @@ Loggers.loggerStart();
 			throw new GSmartServiceException(e.getMessage());
 		}
 		 
+	}
+
+	@Override
+	public List<Leave> searchmyteamleave(Leave leave, Long hid) throws GSmartServiceException {
+		return myteamleaveDao.searchmyteamleave(leave, hid);
 	}
 
 }
