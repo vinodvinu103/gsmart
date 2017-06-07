@@ -348,4 +348,30 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 		return StudentUnpaidfeeList;
 	}
 
+	@Override
+	public List<TransportationFee> searchpaidtrans(TransportationFee trans, Long hid) throws GSmartDatabaseException {
+		List<TransportationFee> list = null;
+		try{
+			query = sessionFactory.getCurrentSession().createQuery("from TransportationFee where isActive = 'Y' and hierarchy.hid=:hierarchy and name like '%"+trans.getName()+"%' and feeStatus='paid'");
+			query.setParameter("hierarchy", hid);
+			list = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	@Override
+	public List<TransportationFee> searchunpaidtrans(TransportationFee trans, Long hid) throws GSmartDatabaseException {
+		List<TransportationFee> list = null;
+		try{
+			query = sessionFactory.getCurrentSession().createQuery("from TransportationFee where isActive = 'Y' and hierarchy.hid=:hierarchy and name like '%"+trans.getName()+"%' and feeStatus='unpaid'");
+			query.setParameter("hierarchy", hid);
+			list = query.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 }
