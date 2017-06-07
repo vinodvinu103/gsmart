@@ -80,8 +80,8 @@ public class ReportCardController {
 		Map<String, Object> permission = new HashMap<>();
 			// String teacherSmartId=smartId.getSmartId();
 				Loggers.loggerStart();
-				fee=reportCardDao.studentFee(tokenObj.getSmartId(), academicYear);
-				if(fee.getFeeStatus().equalsIgnoreCase("paid")){
+				fee=reportCardService.studentFee(tokenObj.getSmartId(), academicYear);
+				if(fee!=null){
 					permission.put("message","success");
 					list = reportCardService.search(tokenObj,academicYear,examName);
 					permission.put("reportCard", list);
@@ -94,6 +94,7 @@ public class ReportCardController {
 				else{
 				permission.put("message", "PLEASE PAY SCHOOL PENDING FEE.");
 				}
+				Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(permission, HttpStatus.OK);
 
 	}
