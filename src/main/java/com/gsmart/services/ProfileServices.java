@@ -78,4 +78,8 @@ public interface ProfileServices{
 
 	public List<Profile> searchstudent(Profile profile, Long hid)throws GSmartServiceException;
 
+	public List<Profile> searchwithrfid(Profile profile, Long hid)throws GSmartServiceException;
+	
+	public List<Profile> searchwithoutrfid(Profile profile, Long hid)throws GSmartServiceException;
+
 }

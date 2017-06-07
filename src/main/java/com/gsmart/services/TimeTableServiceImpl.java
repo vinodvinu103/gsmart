@@ -75,8 +75,6 @@ public class TimeTableServiceImpl implements TimeTableService {
 						
 					}
 				}
-				
-				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.gsmart.controller;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -39,6 +40,27 @@ public class LeaveController {
 	
 	@Autowired
 	ProfileDao profileDao;
+	
+	@RequestMapping(value= "/searchleave", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchleave(@RequestBody Leave leave, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		String tokenNumber = token.get("Authorization").get(0);
+		String  str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenobjec = (Token) httpSession.getAttribute("token");
+		Long hid = null;
+		if(tokenobjec.getHierarchy()==null){
+			hid = leave.getHierarchy().getHid();
+		}else{
+			hid = tokenobjec.getHierarchy().getHid();
+		}
+		List<Leave> searchleave = null;
+		searchleave = leaveServices.searchleave(leave, hid);
+		Map<String, Object> list = new HashMap<>();
+		list.put("searchleave", searchleave);
+		return new ResponseEntity<>(list, HttpStatus.OK);
+		
+	}
+	
 	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String,Object>> getLeave(@PathVariable ("min") int min, @PathVariable ("max") int max, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {

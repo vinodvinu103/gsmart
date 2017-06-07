@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Token;
+import com.gsmart.model.Transportation;
 import com.gsmart.model.TransportationFee;
 import com.gsmart.services.TranspotationFeeservice;
 import com.gsmart.util.Constants;
@@ -36,6 +37,54 @@ public class TranspotationFeeController {
 	
 	@Autowired
 	private GetAuthorization getAuthorization;
+	
+	@RequestMapping(value = "/searchpaid", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchpaidtrans( @RequestBody TransportationFee trans, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=trans.getHierarchy().getHid();
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		List<TransportationFee> searchtrans = null;
+		
+		searchtrans = transpotationFeeservice.searchpaidtrans(trans, hid);
+		Map<String, Object> hl= new HashMap<>();
+		hl.put("searchtrans", searchtrans);
+		
+		
+		return new ResponseEntity<>(hl, HttpStatus.OK);
+		
+	}
+	
+	@RequestMapping(value = "/searchunpaid", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchunpaidtrans( @RequestBody TransportationFee trans, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Long hid=null;
+		if(tokenObj.getHierarchy()==null){
+			hid=trans.getHierarchy().getHid();
+		}else{
+			hid=tokenObj.getHierarchy().getHid();
+		}
+		List<TransportationFee> searchtrans = null;
+		
+		searchtrans = transpotationFeeservice.searchunpaidtrans(trans, hid);
+		Map<String, Object> hl= new HashMap<>();
+		hl.put("searchtrans", searchtrans);
+		
+		
+		return new ResponseEntity<>(hl, HttpStatus.OK);
+		
+	}
 	
 	@RequestMapping(value="/addfee",method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> addFee(@RequestBody TransportationFee taranspotationfee, @RequestHeader HttpHeaders token,

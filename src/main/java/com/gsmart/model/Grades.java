@@ -42,7 +42,8 @@ public class Grades {
 	@Column(name="ISACTIVE")
 //	@Index(name = "isActive")
 	private String isActive;
-
+	
+	@Id
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
 	

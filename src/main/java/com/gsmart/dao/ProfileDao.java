@@ -122,4 +122,8 @@ public interface ProfileDao {
 
 	public List<Profile> getProfilesOfNullHierarchy(String academicYear);
 
+
+	public List<Profile> searchwithrfid(Profile profile, Long hid)throws GSmartDatabaseException;
+	
+	public List<Profile> searchwithoutrfid(Profile profile, Long hid)throws GSmartDatabaseException;
 }

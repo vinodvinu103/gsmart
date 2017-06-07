@@ -12,5 +12,6 @@ public interface MyTeamLeaveDao {
 	public void rejectleave(Leave leave)throws GSmartDatabaseException;
 	public void sactionleave(Leave leave)throws GSmartDatabaseException;
 	public void cancelSanctionLeave(Leave leave) throws GSmartDatabaseException;
+	public List<Leave> searchmyteamleave(Leave leave, Long hid)throws GSmartDatabaseException;
 
 }
