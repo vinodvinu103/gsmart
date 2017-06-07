@@ -1,10 +1,8 @@
 package com.gsmart.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.MessageDetails;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartServiceException;

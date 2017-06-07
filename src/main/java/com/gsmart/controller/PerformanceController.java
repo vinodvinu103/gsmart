@@ -20,16 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.HierarchyDao;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.PerformanceAppraisalService;
 import com.gsmart.services.PerformanceRecordService;
-import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
@@ -46,17 +43,13 @@ public class PerformanceController {
 	@Autowired
 	private GetAuthorization getauthorization;
 	@Autowired
-	TokenService tokenService;
-	@Autowired
-	PerformanceRecordService performancerecord;
+	private PerformanceRecordService performancerecord;
 
 	@Autowired
-	SearchService searchService;
+	private SearchService searchService;
 	@Autowired
 	private HierarchyDao hierarchyDao;
 
-	@Autowired
-	ProfileServices profileServices;
 
 	@RequestMapping(value = "/{year}/{smartId}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> performance(@PathVariable("year") String year,
@@ -176,7 +169,6 @@ public class PerformanceController {
 		}
 
 
-			Profile profile = profileServices.getProfileDetails(smartId);
 			Map<String, Profile> profiles = searchService.getAllProfiles("2017-2018",hid);
 
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
@@ -301,7 +293,6 @@ public class PerformanceController {
 		
 			Token tokenObj=(Token) httpSession.getAttribute("token");
 			Loggers.loggerStart(appraisal);
-			Long hid=null;
 			if(tokenObj.getHierarchy()==null){
 				appraisal.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
 			}else{

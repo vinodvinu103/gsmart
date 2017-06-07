@@ -284,6 +284,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<FeeMaster> searchfeemaster(FeeMaster feemaster, Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();

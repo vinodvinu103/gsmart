@@ -1,18 +1,12 @@
 package com.gsmart.services;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gsmart.dao.TransportationDao;
-import com.gsmart.model.Band;
-import com.gsmart.model.CompoundBand;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Transportation;
-import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;

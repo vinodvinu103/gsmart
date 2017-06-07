@@ -6,9 +6,7 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -43,7 +41,7 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	@Override
 	public Map<String, Object> getSalaryStructure(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
-		List<SalaryStructure> salaryStructureList = null;
+		List<SalaryStructure> salaryStructureList=null;
 		
 		Map<String, Object> salaryStructureMap = new HashMap<>();
 		
@@ -59,6 +57,7 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 			criteriaCount.setProjection(Projections.rowCount());
 			 count= (Long) criteriaCount.uniqueResult();
 			 salaryStructureMap.put("totalSalaryStructure", count);
+			 salaryStructureMap.put("salaryStructureList", salaryStructureList);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

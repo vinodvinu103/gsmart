@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.model.PerformanceRecord;
 import com.gsmart.util.CalendarCalculator;
@@ -68,6 +66,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		return recordobject;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<PerformanceRecord> getRecord(String reportingId, String smartId, String year, Long hid) {
 		List<PerformanceRecord> performancerecordList11 = null;
 		Loggers.loggerStart();
@@ -97,6 +96,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		return performancerecordList11;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getPerformanceRecordManager(String reportingManagerId, String smartId, String year,
 			Long hid) throws GSmartDatabaseException {
@@ -132,6 +132,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<PerformanceRecord> getManagerRecord(String reportingManagerId, String smartId, String year, Long hid) {
 		List<PerformanceRecord> performancerecordList1 = null;
 		Loggers.loggerStart();
@@ -258,6 +259,7 @@ public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 		Loggers.loggerEnd();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getrating(String year, Long hid) throws GSmartDatabaseException {
 		Map<String, Object> rating= new HashMap<>();

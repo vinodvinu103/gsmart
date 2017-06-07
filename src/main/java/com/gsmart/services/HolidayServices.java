@@ -4,10 +4,8 @@ package com.gsmart.services;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 
 import com.gsmart.model.CompoundHoliday;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.util.GSmartServiceException;
 /**

@@ -188,6 +188,7 @@ public class ReportCardController {
 		Loggers.loggerValue("tokenNumber", tokenNumber);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		int flag=0;
 
 		Token tokenObj=(Token) httpSession.getAttribute("token");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
@@ -227,10 +228,11 @@ public class ReportCardController {
 			//HashMap<String, ArrayList<ReportCard>> childOfChild = new HashMap<String, ArrayList<ReportCard>>();
 			Set<String> key = profiles.keySet();
 			ArrayList<ReportCard> childOfChildReport = null;
-			int flag = 0;
+			
 
 			for (int i = 0; i < childList.size(); i++) {
 				childOfChildReport = new ArrayList<ReportCard>();
+				
 				for (String j : key) {
 					Profile p = (Profile) profiles.get(j);
 					if (p != null && p.getReportingManagerId() != null)

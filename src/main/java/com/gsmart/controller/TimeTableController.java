@@ -39,10 +39,10 @@ public class TimeTableController {
 	private GetAuthorization getAuthorization;
 	
 	@Autowired
-	TimeTableService timeTableService;
+	private TimeTableService timeTableService;
 	
 	@Autowired
-	TimeTableDao tableDao;
+	private TimeTableDao tableDao;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<Map<String, String>> cal(@RequestHeader HttpHeaders token,HttpSession httpSession){

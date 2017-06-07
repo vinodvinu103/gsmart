@@ -20,20 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.gsmart.dao.ContactDao;
-import com.gsmart.model.Fee;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.MessageDetails;
-import com.gsmart.model.Notice;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
-import com.gsmart.services.BeanFactory;
 import com.gsmart.services.ContactServices;
-import com.gsmart.services.TokenService;
-import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.GetAuthorization;
-import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
 
 
@@ -44,17 +35,11 @@ public class ContactTeacherController {
 	@Autowired
 	private ContactServices contactServices;
 
-	@Autowired
-	BeanFactory employeeBeanFactory;
+
 
 	@Autowired
-    	GetAuthorization getAuthorization;
+	private GetAuthorization getAuthorization;
 
-	@Autowired
-	TokenService tokenService;
-	
-	@Autowired
-	ContactDao contactDao;
 
 	@RequestMapping(value = "/studentToTeacher", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> studentToTeacher(@RequestBody MessageDetails details,
@@ -188,7 +173,6 @@ public class ContactTeacherController {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/studentChat", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> studentView(@RequestBody MessageDetails details, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartServiceException {

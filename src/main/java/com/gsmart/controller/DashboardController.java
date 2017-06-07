@@ -26,21 +26,17 @@ import com.gsmart.dao.AttendanceDao;
 import com.gsmart.dao.DashboardDao;
 import com.gsmart.dao.HolidayDao;
 import com.gsmart.dao.ProfileDao;
-import com.gsmart.dao.ReportCardDao;
 import com.gsmart.model.Fee;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Holiday;
 import com.gsmart.model.Inventory;
-import com.gsmart.model.InventoryAssignments;
 import com.gsmart.model.Profile;
 import com.gsmart.model.ReportCard;
 import com.gsmart.model.Token;
 import com.gsmart.services.AttendanceService;
 import com.gsmart.services.FeeServices;
 import com.gsmart.services.HierarchyServices;
-import com.gsmart.services.InventoryAssignmentsServices;
 import com.gsmart.services.InventoryServices;
-import com.gsmart.services.ProfileServices;
 import com.gsmart.services.SearchService;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -63,21 +59,17 @@ public class DashboardController {
 	@Autowired
 	private SearchService searchService;
 	@Autowired
-	FeeServices feeServices;
+	private FeeServices feeServices;
+	
 	@Autowired
-	ProfileServices profileServices;
+	private DashboardDao dashboardDao;
 	@Autowired
-	ReportCardDao reportDao;
-	@Autowired
-	DashboardDao dashboardDao;
-	@Autowired
-	HolidayDao holidayDao;
+	private HolidayDao holidayDao;
 	@Autowired
 	private AttendanceDao attendancedao;
 	@Autowired
 	private ProfileDao profileDao;
-	@Autowired
-	private InventoryAssignmentsServices inventoryAssignmentServices;
+	
 
 	
 	/*@RequestMapping(value = "/inventory/{academicYear}", method = RequestMethod.GET)

@@ -1,32 +1,24 @@
 package com.gsmart.dao;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gsmart.model.Details;
-import com.gsmart.model.Fee;
 import com.gsmart.model.MessageDetails;
-import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
-import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;
 
@@ -160,7 +152,6 @@ public class ContactDaoImp implements ContactDao {
 	@Override
 	public Map<String, Object> studentView(Token token, Integer min, Integer max) throws Exception {
 		Loggers.loggerStart();
-		List<MessageDetails> msgs=null;
 		List<MessageDetails> messages = null;
 		Map<String, Object> msgMap = new HashMap<>();
 		int count=0;

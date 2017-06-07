@@ -23,7 +23,6 @@ import com.gsmart.model.Token;
 import com.gsmart.services.PasswordServices;
 import com.gsmart.model.Profile;
 import com.gsmart.util.CommonMail;
-import com.gsmart.util.Encrypt;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartServiceException;
 import com.gsmart.util.Loggers;

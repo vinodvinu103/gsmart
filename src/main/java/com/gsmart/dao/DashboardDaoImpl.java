@@ -72,6 +72,7 @@ public class DashboardDaoImpl implements DashboardDao {
 	 * 
 	 * tx.commit(); session.close(); return totalCOunt; }
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Fee> academicYear(Token tokenDetail, String smartId) throws GSmartDatabaseException {
 		Loggers.loggerStart();
@@ -110,6 +111,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		return academicyear;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<ReportCard> examName(Token tokenDetail, String smartId, String academicYear)
 			throws GSmartDatabaseException {
@@ -237,6 +239,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> studentProfile(Token token, Hierarchy hierarchy) {
 		List<Profile> studentProfile = null;

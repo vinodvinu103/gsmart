@@ -1,8 +1,6 @@
 package com.gsmart.dao;
 
 import java.util.List;
-import com.gsmart.model.CompoundPerformanceAppraisal;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.util.GSmartDatabaseException;
 

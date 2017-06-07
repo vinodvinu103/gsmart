@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Index;
 
 /**
  * class-name: Holiday.java 
@@ -23,7 +22,6 @@ import org.hibernate.annotations.Index;
  * @since 2016-08-01
  *
  */
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "HOLIDAY_MASTER")
 @IdClass(com.gsmart.model.CompoundHoliday.class)

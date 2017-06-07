@@ -161,7 +161,7 @@ public class AttendanceController {
 			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
 			Loggers.loggerValue("child is", childList);
 			
-			List<String> childListForAttendance = searchService.getAllChildSmartId(tokenObj.getSmartId(), profiles);
+//			List<String> childListForAttendance = searchService.getAllChildSmartId(tokenObj.getSmartId(), profiles);
 
 //			resultmap.put("attendanceCount", attendanceService.getAttendanceCount(childListForAttendance));
 			if (childList.size() != 0) {
@@ -205,7 +205,7 @@ Loggers.loggerStart();
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
-		Long hid=null;
+//		Long hid=null;
 		/*if(tokenObj.getHierarchy()==null){
 			hid=hierarchy;
 		}else{

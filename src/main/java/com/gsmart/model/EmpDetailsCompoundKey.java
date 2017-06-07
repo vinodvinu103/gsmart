@@ -1,7 +1,6 @@
 package com.gsmart.model;
 
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @SuppressWarnings("serial")

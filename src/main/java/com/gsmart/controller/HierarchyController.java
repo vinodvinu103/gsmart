@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -72,7 +71,6 @@ public class HierarchyController {
 		
 	}
 
-	/* String name=Loggers.moduleName(); */
 
 	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)

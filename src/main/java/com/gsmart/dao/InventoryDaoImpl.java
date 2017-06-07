@@ -92,7 +92,6 @@ public class InventoryDaoImpl implements InventoryDao {
 	public CompoundInventory addInventory(Inventory inventory) throws GSmartDatabaseException {
 
 		Loggers.loggerStart();
-		Inventory inventoryassign = null;
 		Session session=this.sessionFactory.getCurrentSession();
 
 		CompoundInventory cb = null;
@@ -130,7 +129,6 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	public Inventory fetch(Inventory inventory) {
 		Inventory inventory2 = null;
-		Inventory inve =null;
 		try {
 			System.out.println("i am going "+ inventory);
 			Hierarchy hierarchy = inventory.getHierarchy();
@@ -332,6 +330,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		return inventory;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Inventory> searchinventory(Inventory inventory, Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();

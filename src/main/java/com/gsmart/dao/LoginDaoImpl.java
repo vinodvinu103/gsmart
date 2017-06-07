@@ -1,6 +1,5 @@
 package com.gsmart.dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +37,10 @@ public class LoginDaoImpl implements LoginDao {
 			int attempt = 0;
 			Query query = sessionFactory.getCurrentSession().createQuery("from Login where smartId = :smartId");
 			query.setParameter("smartId", loginDetails.getSmartId());
-			@SuppressWarnings("unchecked")
-			ArrayList<Login> loginarray = (ArrayList<Login>) query.list();
+			Login login =  (Login) query.uniqueResult();
 
-			if (!loginarray.isEmpty()) {
+			if (login!=null) {
 
-				Login login = loginarray.get(0);
 			
 				authMap.put("login", login);
 				if ((Encrypt.md5(loginDetails.getPassword()).equals(login.getPassword())) && login.getAttempt() >= 4)

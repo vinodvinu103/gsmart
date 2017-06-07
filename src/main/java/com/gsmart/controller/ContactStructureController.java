@@ -1,4 +1,4 @@
-package com.gsmart.controller;
+/*package com.gsmart.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +66,7 @@ public class ContactStructureController {
 			Map<String, ArrayList<MessageDetails>> msgMap=new HashMap<>();
 			msgMap.put(smartId, childMessage);
 
-			/*HashMap<String, ArrayList<MessageDetails>> childofchild = new HashMap<String, ArrayList<MessageDetails>>();
+			HashMap<String, ArrayList<MessageDetails>> childofchild = new HashMap<String, ArrayList<MessageDetails>>();
 			Set<String> key = beanFactory1.keySet();
 			ArrayList<MessageDetails> checking = null;
 			int flag = 0;
@@ -100,7 +100,7 @@ public class ContactStructureController {
 					flag = 0; 
 				}
 			}
-*/
+
 			Map<String, Object> parentInfo = searchService.getParentInfo(smartId);
 			if (parentInfo.get("parentProfile") != null && parentInfo.get("reportingProfiles") != null) {
 				profile.setParentFlag(true);
@@ -124,3 +124,4 @@ public class ContactStructureController {
 		}
 	}
 }
+*/

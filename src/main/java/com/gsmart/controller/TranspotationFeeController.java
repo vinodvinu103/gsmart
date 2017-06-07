@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.gsmart.model.Fee;
 import com.gsmart.model.Token;
 import com.gsmart.model.TransportationFee;
 import com.gsmart.services.TranspotationFeeservice;
@@ -46,7 +45,6 @@ public class TranspotationFeeController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		IAMResponse myResponse;
 		Map<String, Object> respMap=new HashMap<>();
 			
 			try {

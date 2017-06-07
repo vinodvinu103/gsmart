@@ -285,7 +285,7 @@ public class AssignDaoImpl implements AssignDao {
 		Loggers.loggerEnd(assignList);
 		return assignList;
 	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Assign> searchassign(Assign assign, Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart();

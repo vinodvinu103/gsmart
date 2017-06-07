@@ -19,17 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.dao.ProfileDao;
-import com.gsmart.dao.TokenDao;
 import com.gsmart.model.Grades;
 import com.gsmart.model.Profile;
-import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
 
 import com.gsmart.services.GradesService;
 
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
-import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.IAMResponse;
 import com.gsmart.util.Loggers;
 
@@ -41,8 +38,6 @@ import com.gsmart.util.Loggers;
     @RequestMapping(Constants.GRADES)
     public class GradesController {
 	
-	@Autowired
-	private GetAuthorization getAuthorization;
 	
 	@Autowired
 	private GradesService gradesService;
@@ -50,8 +45,6 @@ import com.gsmart.util.Loggers;
 	@Autowired
 	private ProfileDao profileDao;
 	
-	@Autowired
-	private TokenDao tokenDao;
 	
 	
 	

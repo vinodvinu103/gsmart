@@ -12,9 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Index;
 
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "notice")
 public class Notice {
