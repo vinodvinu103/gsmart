@@ -6,6 +6,7 @@ import java.util.Map;
 import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
+import com.gsmart.model.TransportationFee;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.GSmartServiceException;
@@ -78,5 +79,9 @@ public interface ProfileServices{
 	public List<Profile> searchemp(Profile profile, Long hid)throws GSmartServiceException;
 
 	public List<Profile> searchstudent(Profile profile, Long hid)throws GSmartServiceException;
+
+	public List<Profile> searchwithrfid(Profile profile, Long hid)throws GSmartServiceException;
+	
+	public List<Profile> searchwithoutrfid(Profile profile, Long hid)throws GSmartServiceException;
 
 }

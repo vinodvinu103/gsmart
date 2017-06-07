@@ -29,6 +29,7 @@ import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
 import com.gsmart.model.Token;
+import com.gsmart.model.TransportationFee;
 import com.gsmart.util.GSmartBaseException;
 //import com.gsmart.model.Search;
 import com.gsmart.util.GSmartDatabaseException;
@@ -125,4 +126,8 @@ public interface ProfileDao {
 
 	public List<Profile> getProfilesOfNullHierarchy(String academicYear);
 
+
+	public List<Profile> searchwithrfid(Profile profile, Long hid)throws GSmartDatabaseException;
+	
+	public List<Profile> searchwithoutrfid(Profile profile, Long hid)throws GSmartDatabaseException;
 }
