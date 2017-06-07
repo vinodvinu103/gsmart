@@ -13,6 +13,16 @@ public class CompoundGrades implements Serializable{
 	private String institution;
 	
 	private String grade;
+	
+	private String entryTime;
+
+	public String getEntryTime() {
+		return entryTime;
+	}
+
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
 
 	public String getSchool() {
 		return school;
