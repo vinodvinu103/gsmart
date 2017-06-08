@@ -7,9 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Index;
 
-@SuppressWarnings({ "serial", "deprecation" })
+@SuppressWarnings({ "serial" })
 @Entity
 @Table(name = "EMP_DETAILS")
 @IdClass(com.gsmart.model.EmpDetailsCompoundKey.class)

@@ -9,7 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Index;
 
 /**
  * class-name: FeeMaster.java Assigning fee for students who enrolled in the
@@ -20,7 +19,6 @@ import org.hibernate.annotations.Index;
  * @since 2016-08-01
  *
  */
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "FEE_MASTER")
 @IdClass(com.gsmart.model.CompoundFeeMaster.class)

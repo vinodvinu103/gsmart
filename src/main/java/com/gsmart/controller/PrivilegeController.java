@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.gsmart.dao.ProfileDao;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.services.ProfileServices;
@@ -49,8 +48,6 @@ public class PrivilegeController {
 	@Autowired
 	private GetAuthorization getAuthorization;
 	
-	@Autowired
-	private ProfileDao profileDao;
 	
 	
 	

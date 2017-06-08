@@ -10,11 +10,9 @@ import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Index;
 
 
 
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "banners")
 @IdClass(com.gsmart.model.CompoundBanner.class)

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.gsmart.model.Notice;
-import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartServiceException;
 
@@ -33,7 +32,6 @@ public interface NoticeService {
 	
 	public Map<String, Object> getParentInfo(String empSmartId)throws GSmartServiceException;
 	
-	public Profile getProfileDetails(String empSmartId);
  
 
 //    public List<Notice> viewSpecificNotice(Integer smart_id)throws Exception;

@@ -161,7 +161,8 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 
 	String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
 
-	  public String getinvoice(Hierarchy hierarchy,String schoolname) {
+	  @SuppressWarnings("unchecked")
+	public String getinvoice(Hierarchy hierarchy,String schoolname) {
 	  	Loggers.loggerStart();
 	  	try {
 	  	query = sessionFactory.getCurrentSession()
@@ -223,6 +224,7 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 
 		}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getPaidStudentsList(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
 		
@@ -260,6 +262,7 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 		return paidfeeMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getUnpaidStudentsList(Long hid, Integer min, Integer max)
 			throws GSmartDatabaseException {
@@ -296,6 +299,7 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 		return unpaidfeeMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<TransportationFee> getTransportationFeeList(TransportationFee transportationFee, Long hid)
 			throws GSmartDatabaseException {
@@ -322,6 +326,7 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 		return feeList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<TransportationFee> getStudentUnpaidFeeList(TransportationFee transportationFee, Long hid)
 			throws GSmartDatabaseException {

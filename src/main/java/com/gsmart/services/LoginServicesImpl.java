@@ -134,7 +134,7 @@ public class LoginServicesImpl implements LoginServices{
 			tokenService.saveToken(token, loginObj);
 		} catch (GSmartDatabaseException exception) {
 			exception.printStackTrace();
-			issueToken(smartId, role, loginObj,reportingId);
+//			issueToken(smartId, role, loginObj,reportingId);
 		} catch (Exception e) {
 			throw new GSmartServiceException(e.getMessage());
 		}

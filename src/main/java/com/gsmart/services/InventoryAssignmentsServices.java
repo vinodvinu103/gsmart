@@ -13,9 +13,7 @@ import com.gsmart.util.GSmartServiceException;
 
 public interface InventoryAssignmentsServices {
 
-	public Map<String, Object> getInventoryList(String role, Long hid, Integer min, Integer max)
-			throws GSmartServiceException;
-
+	
 	public Map<String, Object> getInventoryAssignList(Token tokenObj, Long hid, Integer min, Integer max)
 			throws GSmartServiceException;
 

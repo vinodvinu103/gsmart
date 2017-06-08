@@ -153,11 +153,7 @@ public class NoticeServiceImpl implements NoticeService
 		return parentInfo;
 	}
 
-	@Override
-	public Profile getProfileDetails(String empSmartId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	
 

@@ -3,7 +3,6 @@ package com.gsmart.dao;
 import java.util.List;
 
 import com.gsmart.model.CompoundTimeTable;
-import com.gsmart.model.Profile;
 import com.gsmart.model.TimeTable;
 import com.gsmart.model.Token;
 import com.gsmart.util.GSmartDatabaseException;

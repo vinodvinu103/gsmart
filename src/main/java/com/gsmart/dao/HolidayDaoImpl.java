@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -296,6 +295,7 @@ private Holiday updateHoliday(Holiday oldholiday, Holiday holiday) throws GSmart
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Holiday> searchHoliday(Holiday holiday, Long hid) throws GSmartDatabaseException {
 		List<Holiday> searchHoliday = null;

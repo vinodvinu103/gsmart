@@ -36,19 +36,6 @@ public class BannerController {
 	@Autowired
 	private ProfileServices profileServices;
 	
-	/*@RequestMapping(value="/product/show",method= RequestMethod.GET)
-    public String listProducts(@ModelAttribute("product") ProductBasic productBasic,Model model)   {
-    User user = userService.getCurrentlyAuthenticatedUser();
-    model.addAttribute("product", new ProductBasic());
-    model.addAttribute("listProducts",this.productBasicService.listProduct(user));
-    BASE64Encoder base64Encoder = new BASE64Encoder();
-    StringBuilder imageString = new StringBuilder();
-    imageString.append("data:image/png;base64,");
-    imageString.append(base64Encoder.encode(bytes)); 
-    String image = imageString.toString();
-    modelView.put("imagetoDisplay",image);
-    return "product";
-}*/
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getBanner(@RequestHeader HttpHeaders token, HttpSession httpSession)
@@ -122,23 +109,5 @@ public class BannerController {
 
 	}
 
-	/*@RequestMapping(value = "/upload/{updSmartId}", method = RequestMethod.POST)
-	public ResponseEntity<IAMResponse> upload(@PathVariable("updSmartId") String updSmartId,
-			@RequestParam(value = "file") MultipartFile file) throws GSmartBaseException, IOException {
-		Loggers.loggerStart();
-
-		FileUpload fileUpload = new FileUpload();
-		fileUpload.setTitle("title");
-
-		byte[] byteArr = file.getBytes();
-		fileUpload.setFile(byteArr);
-		profileServices.fileUpload(fileUpload);
-
-		IAMResponse myResponse;
-		myResponse = new IAMResponse("success");
-		Loggers.loggerEnd();
-		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-
-	}*/
 
 }

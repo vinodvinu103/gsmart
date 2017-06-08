@@ -19,10 +19,7 @@ import javax.persistence.ManyToMany;*/
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Index;
-import org.springframework.web.multipart.MultipartFile;
 
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name="REPORT_CARD")
 @IdClass(com.gsmart.model.CompoundReportCard.class)

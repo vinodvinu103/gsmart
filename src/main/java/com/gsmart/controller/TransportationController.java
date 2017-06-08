@@ -17,20 +17,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.gsmart.dao.HierarchyDao;
-import com.gsmart.dao.TransportationDao;
-import com.gsmart.model.Band;
-import com.gsmart.model.Hierarchy;
-import com.gsmart.model.Inventory;
-import com.gsmart.model.InventoryAssignments;
-import com.gsmart.model.InventoryAssignmentsCompoundKey;
 import com.gsmart.model.Token;
 import com.gsmart.model.Transportation;
 import com.gsmart.services.TransportationService;
-import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
-import com.gsmart.util.IAMResponse;
 //import com.gsmart.util.Loggers;
 import com.gsmart.util.Loggers;
 
@@ -42,13 +33,9 @@ import com.gsmart.util.Loggers;
 public class TransportationController {
 	
 	@Autowired
-	HierarchyDao hierarchyDao;
-	@Autowired
-	GetAuthorization getAuthorization;
-	@Autowired
-	TransportationDao transportationDao;
+	private GetAuthorization getAuthorization;
 	@Autowired 
-	TransportationService transportationService;
+	private TransportationService transportationService;
 	
 	
 	@RequestMapping(value= "/{hierarchy}", method = RequestMethod.GET)

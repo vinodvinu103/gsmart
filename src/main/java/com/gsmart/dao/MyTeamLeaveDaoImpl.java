@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
-import com.gsmart.model.ReportCard;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.GSmartDatabaseException;
 import com.gsmart.util.Loggers;

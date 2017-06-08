@@ -1,10 +1,6 @@
 package com.gsmart.services;
 
 import java.util.List;
-import java.util.Map;
-
-import com.gsmart.model.CompoundPerformanceAppraisal;
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.PerformanceAppraisal;
 import com.gsmart.util.GSmartServiceException;
 

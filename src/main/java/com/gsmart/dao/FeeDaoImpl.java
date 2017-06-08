@@ -14,7 +14,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
-import org.postgresql.largeobject.LargeObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,6 +87,7 @@ public class FeeDaoImpl implements FeeDao {
 		return feeList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Fee> getStudentUnpaidFeeList(Fee fee, Long hid) throws GSmartDatabaseException {
 		Loggers.loggerStart(fee.getAcademicYear());
@@ -318,6 +318,7 @@ public class FeeDaoImpl implements FeeDao {
 	}
 	  String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
 
+@SuppressWarnings("unchecked")
 public String getinvoice(Hierarchy hierarchy,String schoolname) {
 	Loggers.loggerStart();
 	try {

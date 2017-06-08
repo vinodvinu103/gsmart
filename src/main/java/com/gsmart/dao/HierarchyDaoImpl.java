@@ -312,6 +312,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Hierarchy> searchhierarchy(Hierarchy hierarchy) throws GSmartDatabaseException {
 		Loggers.loggerStart();

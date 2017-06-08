@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gsmart.dao.TimeTableDao;
 import com.gsmart.model.CompoundTimeTable;
-import com.gsmart.model.Profile;
-import com.gsmart.model.ReportCard;
 import com.gsmart.model.TimeTable;
 import com.gsmart.model.Token;
 import com.gsmart.util.CalendarCalculator;
@@ -28,6 +26,7 @@ public class TimeTableDoaImpl implements TimeTableDao {
 	private SessionFactory sessionFactory;
 	Query query;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TimeTable> teacherView(String day, String academicYear, Token token) throws GSmartDatabaseException {
 		Loggers.loggerStart(day);
@@ -48,6 +47,7 @@ public class TimeTableDoaImpl implements TimeTableDao {
 		return teacherList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TimeTable> studentView(String day, String academicYear, Token token, String standard, String section)
 			throws GSmartDatabaseException {
@@ -205,6 +205,7 @@ public class TimeTableDoaImpl implements TimeTableDao {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TimeTable> hodViewForTeacher(String day, String academicYear, Token tokenObj, String smartId) {
 		Loggers.loggerStart(day);
@@ -227,6 +228,7 @@ public class TimeTableDoaImpl implements TimeTableDao {
 		return teacherList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TimeTable> getChildTeacher(TimeTable timeTable, Token tokenObj) throws GSmartDatabaseException {
 		Loggers.loggerStart();

@@ -99,7 +99,8 @@ public class HierarchyServicesImpl implements HierarchyServices {
 
 	@Override
 	public Hierarchy getHierarchyByHid(Long hid) throws GSmartServiceException {
-		return getHierarchyByHid(hid);
+		
+		return hierarchyDao.getHierarchyByHid(hid);
 	}
 
 	@Override

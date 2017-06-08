@@ -9,9 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Index;
 
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "LEAVEMASTER")
 @IdClass(com.gsmart.model.CompoundLeaveMaster.class)

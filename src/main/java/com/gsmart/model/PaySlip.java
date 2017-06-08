@@ -5,10 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Index;
 
 
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name="PAY_SLIP")
 public class PaySlip {

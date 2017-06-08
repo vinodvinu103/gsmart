@@ -6,7 +6,6 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Index;
 
 /**
  * class-name: Band.java 
@@ -18,7 +17,6 @@ import org.hibernate.annotations.Index;
  * @since 2016-02-23
  *
  */
-@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "BAND_MASTER")
 @IdClass(com.gsmart.model.CompoundBand.class)

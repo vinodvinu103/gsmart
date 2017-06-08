@@ -3,7 +3,6 @@ package com.gsmart.services;
 import java.util.List;
 import java.util.Map;
 
-import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Leave;
 import com.gsmart.model.Profile;
 import com.gsmart.util.GSmartServiceException;
