@@ -39,7 +39,7 @@ public class LeaveController {
 	private GetAuthorization getAuthorization;
 
 	@Autowired
-	ProfileDao profileDao;
+	private ProfileDao profileDao;
 
 	@RequestMapping(value = "/searchleave", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> searchleave(@RequestBody Leave leave, @RequestHeader HttpHeaders token,

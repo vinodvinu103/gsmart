@@ -2,7 +2,6 @@ package com.gsmart.util;
 
 import java.util.Properties;
 
-import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -26,7 +25,7 @@ public class CommonMail {
 		message.setFrom(new InternetAddress(fromAddress));
 		message.addRecipient(Message.RecipientType.TO, new InternetAddress(toAddress));
 
-		sendMessage(transport, message, message.getRecipients(Message.RecipientType.TO));
+		sendMessage(transport, message);
 	}
 
 	private Session msgGetDefaultInstance() {
@@ -43,7 +42,7 @@ public class CommonMail {
 		return mailSession;
 	}
 
-	private void sendMessage(Transport transport, MimeMessage message, Address[] recipients) throws Exception  {
+	private void sendMessage(Transport transport, MimeMessage message) throws Exception  {
 			transport.connect();
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();

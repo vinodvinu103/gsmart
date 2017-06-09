@@ -162,11 +162,11 @@ public class Notice {
 		this.message = message;
 	}
 
-	public String getUpdate_time() {
+	public String getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdate_time(String update_time) {
+	public void setUpdateTime(String update_time) {
 		this.updateTime = update_time;
 	}
 	

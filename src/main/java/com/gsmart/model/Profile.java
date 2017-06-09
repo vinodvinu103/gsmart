@@ -18,12 +18,6 @@ public class Profile {
 
 	
 
-	@Override
-	public String toString() {
-		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", institution=" + institution + ", school="
-				+ school + ", band=" + band + ", role=" + role + ", academicYear=" + academicYear + ", hierarchy="
-				+ hierarchy + "]";
-	}
 
 	@Id
     @Column(name = "SMART_ID")
@@ -1144,6 +1138,13 @@ public class Profile {
 
 	public void setBalanceAmount(double balanceAmount) {
 		this.balanceAmount = balanceAmount;
+	}
+
+	@Override
+	public String toString() {
+		return "Profile [smartId=" + smartId + ", firstName=" + firstName + ", institution=" + institution + ", school="
+				+ school + ", band=" + band + ", role=" + role + ", academicYear=" + academicYear + ", hierarchy="
+				+ hierarchy + "]";
 	}
 
 }

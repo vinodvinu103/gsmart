@@ -217,7 +217,7 @@ public class InventoryAssignmentsController {
 			} else {
 				myResponse = new IAMResponse("DATA IS ALREADY EXIST");
 			}
-		} else if (task.equals("delete")) {
+		} else {
 			inventoryassignmentdao.deleteInventoryStudentDetails(inventoryAssignmentsStudent);
 			myResponse = new IAMResponse("success");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
@@ -238,7 +238,7 @@ public class InventoryAssignmentsController {
 		str.length();
 		InventoryAssignments ch = null;
 
-		if (task.equals("edit")) {
+		if ("edit".equals(task)) {
 			ch = inventoryAssignmentsServices.editInventoryDetails(inventoryAssignments);
 			if (ch != null) {
 				myResponse = new IAMResponse("success");
@@ -246,7 +246,7 @@ public class InventoryAssignmentsController {
 				myResponse = new IAMResponse("DATA IS ALREADY EXIST");
 
 			}
-		} else if (task.equals("delete")) {
+		} else{
 			inventoryAssignmentsServices.deleteInventoryDetails(inventoryAssignments);
 			myResponse = new IAMResponse("success");
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
