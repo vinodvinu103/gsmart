@@ -42,8 +42,8 @@ import com.gsmart.util.Loggers;
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
-	Criteria criteria = null;
+	private Query query;
+	private Criteria criteria = null;
 
 	/**
 	 * to view the list of records available in {@link Band} table

@@ -38,7 +38,7 @@ public class InventoryDaoImpl implements InventoryDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
+	private Query query;
 
 	/**
 	 * to view the list of records available in {@link Inventory} table
@@ -276,7 +276,7 @@ public class InventoryDaoImpl implements InventoryDao {
 	}*/
 
 	@SuppressWarnings("unused")
-	private String InventoryCount() {
+	private String inventoryCount() {
 		Loggers.loggerStart();
 		try {
 			query = sessionFactory.getCurrentSession().createQuery("from Inventory where isactive='Y' and quantity=quantity");

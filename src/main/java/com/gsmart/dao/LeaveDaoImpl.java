@@ -34,7 +34,7 @@ public class LeaveDaoImpl implements LeaveDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
+	private Query query;
 
 	@SuppressWarnings("unchecked")
 	@Override

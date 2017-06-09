@@ -14,7 +14,6 @@ public	TransportationFee addTranspotationFee(TransportationFee taranspotationfee
 
 public void editTranspotationFee(TransportationFee transpotationfee)throws GSmartServiceException;
 
-public void deleteFee(TransportationFee transpotationfee) throws GSmartServiceException;
 
 public Map<String, Object> getPaidStudentsList(Long hid, Integer min, Integer max)throws GSmartServiceException;
 

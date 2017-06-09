@@ -15,12 +15,7 @@ import javax.persistence.Table;
 @IdClass(com.gsmart.model.CompoundModules.class)
 public class Modules {
 	
-	public String getEntryTime() {
-		return entryTime;
-	}
-	public void setEntryTime(String entryTime) {
-		this.entryTime = entryTime;
-	}
+	
 	
 	@Id
 	@Column(name = "MODULE_NAME")
@@ -31,6 +26,10 @@ public class Modules {
 	@Column(name = "ENTRY_TIME")
 	private String entryTime;
 	
+	@Column(name = "SUB_MODULE_NAME")
+	private String subModuleName;
+	
+	
 	@Column(name = "IS_ACTIVE")
 //	@Index(name = "isActive")
 	private String isActive;
@@ -40,6 +39,10 @@ public class Modules {
 	
 	@Column(name = "EXIT_TIME")
 	private String exitTime;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
 	
 	public String getIsActive() {
 		return isActive;
@@ -59,8 +62,13 @@ public class Modules {
 	public void setExitTime(String exitTime) {
 		this.exitTime = exitTime;
 	}
-	@Column(name = "SUB_MODULE_NAME")
-	private String subModuleName;
+	
+	public String getEntryTime() {
+		return entryTime;
+	}
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
 	
 	
 	public String getModuleName() {
@@ -76,9 +84,7 @@ public class Modules {
 		this.subModuleName = subModuleName;
 	}
 
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
+	
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;

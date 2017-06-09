@@ -24,7 +24,7 @@ public class PasswordDaoImpl implements PasswordDao {
 	private SessionFactory sessionFactory;
 
 
-	Query query;
+	private Query query;
 
 	/*public void getConnection() {
 		session = sessionFactory.openSession();

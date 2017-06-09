@@ -35,17 +35,7 @@ public class Holiday {
 //	@Index(name = "holidayDate")
 	private Date holidayDate;
 	
-	public Date getHolidayDate() {
-		return holidayDate;
-	}
-
-	public void setHolidayDate(Date holidayDate) {
-		this.holidayDate = holidayDate;
-	}
-
-	/**
-	 * description of holiday
-	 */
+	
 	
 	@Column(name="DESCRIPTION")
 	private String description;
@@ -67,6 +57,18 @@ public class Holiday {
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
+	
+	public Date getHolidayDate() {
+		return holidayDate;
+	}
+
+	public void setHolidayDate(Date holidayDate) {
+		this.holidayDate = holidayDate;
+	}
+
+	/**
+	 * description of holiday
+	 */
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;

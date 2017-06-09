@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GSmartExceptionHandler{
 	
-	final Logger logger = Logger.getLogger(GSmartExceptionHandler.class);
+	private final Logger logger = Logger.getLogger(GSmartExceptionHandler.class);
 	
 	@ExceptionHandler(value=GSmartServiceException.class)
 	public ResponseEntity<IAMResponse> handleGSmartServiceException(HttpServletRequest request, Exception ex){

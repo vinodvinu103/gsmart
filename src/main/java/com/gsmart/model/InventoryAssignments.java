@@ -47,22 +47,6 @@ public class InventoryAssignments
 	@Column(name="TEACHER_ID")
 	private String teacherId;
 	
-	
-	public String getTeacherId() {
-		return teacherId;
-	}
-
-	public void setTeacherId(String teacherId) {
-		this.teacherId = teacherId;
-	}
-
-	public Integer getLeftQuantity() {
-		return leftQuantity;
-	}
-
-	public void setLeftQuantity(Integer leftQuantity) {
-		this.leftQuantity = leftQuantity;
-	}
 	@Transient
 	private int totalQuantity;
 	
@@ -70,13 +54,6 @@ public class InventoryAssignments
 	@Column(name="ENTRY_TIME")
 	private String entryTime;
 	
-	public String getEntryTime() {
-		return entryTime;
-	}
-
-	public void setEntryTime(String entryTime) {
-		this.entryTime = entryTime;
-	}
 	@Column (name="UPDATED_TIME")
 	private String updatedTime;
 	
@@ -93,6 +70,41 @@ public class InventoryAssignments
 	@Column(name="RETURN")
 	private Integer invreturn;
 	
+	@Transient
+	private int childFlag;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+
+	
+	
+	public String getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(String teacherId) {
+		this.teacherId = teacherId;
+	}
+
+	public Integer getLeftQuantity() {
+		return leftQuantity;
+	}
+
+	public void setLeftQuantity(Integer leftQuantity) {
+		this.leftQuantity = leftQuantity;
+	}
+
+	
+	public String getEntryTime() {
+		return entryTime;
+	}
+
+	public void setEntryTime(String entryTime) {
+		this.entryTime = entryTime;
+	}
+	
+	
 	public Integer getInvreturn() {
 		return invreturn;
 	}
@@ -100,12 +112,6 @@ public class InventoryAssignments
 	public void setInvreturn(Integer invreturn) {
 		this.invreturn = invreturn;
 	}
-	@Transient
-	int childFlag;
-	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;

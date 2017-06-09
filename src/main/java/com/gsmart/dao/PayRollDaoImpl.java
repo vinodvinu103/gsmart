@@ -18,10 +18,10 @@ import com.gsmart.util.Loggers;
 public class PayRollDaoImpl implements PayRollDao {
 
 	@Autowired
-	SessionFactory sessionfactory;
-	Session session;
-	Transaction tx;
-	Query query;
+	private SessionFactory sessionfactory;
+	private Session session;
+	private Transaction tx;
+	private Query query;
 	
 	public void getConnection(){
 		session=sessionfactory.openSession();

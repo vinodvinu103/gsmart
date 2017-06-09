@@ -48,15 +48,6 @@ public class Attendance {
 	@Transient
 	private Date date;
 	
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
@@ -75,6 +66,17 @@ public class Attendance {
 	
 	@Column(name="DEVICE_TOKEN")
 	private String finalToken;
+	
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+
+	
 
 	public String getFinalToken() {
 		return finalToken;

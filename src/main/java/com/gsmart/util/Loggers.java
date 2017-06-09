@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 
 public class Loggers {
 
-	final static Logger logger = Logger.getLogger(Loggers.class);
+	private final static Logger logger = Logger.getLogger(Loggers.class);
 
 	public static void loggerStart() {
 
@@ -84,6 +84,7 @@ public class Loggers {
 				logger.info(stmt + (ArrayList<?>) value);
 				break;
 				default: logger.info(value);
+				break;
 			}
 		}
 	}

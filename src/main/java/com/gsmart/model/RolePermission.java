@@ -57,22 +57,7 @@ public class RolePermission {
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
-
-	public Hierarchy getHierarchy() {
-		return hierarchy;
-	}
-
-	public void setHierarchy(Hierarchy hierarchy) {
-		this.hierarchy = hierarchy;
-	}
-
-	public String getSubModuleName() {
-		return subModuleName;
-	}
-
-	public void setSubModuleName(String subModuleName) {
-		this.subModuleName = subModuleName;
-	}
+	
 
 	@Column(name = "P_ADD")
 	private boolean add;
@@ -105,6 +90,23 @@ public class RolePermission {
 
 	@Transient
 	private String icon;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	public String getSubModuleName() {
+		return subModuleName;
+	}
+
+	public void setSubModuleName(String subModuleName) {
+		this.subModuleName = subModuleName;
+	}
+
 
 	public String getEntryTime() {
 		return entryTime;

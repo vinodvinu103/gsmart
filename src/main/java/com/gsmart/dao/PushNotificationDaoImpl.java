@@ -35,7 +35,7 @@ public class PushNotificationDaoImpl implements PushNotificationDao{
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	Query query;
+	private Query query;
 
 	
 

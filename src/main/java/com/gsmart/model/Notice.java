@@ -28,7 +28,7 @@ public class Notice {
 	@Column(name = "EXIT_TIME")
 	private String exitTime;
 	@Column(name = "UPDATE_TIME")
-	private String update_time;
+	private String updateTime;
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
@@ -36,6 +36,28 @@ public class Notice {
      
 	@Column(name = "MESSAGE_Sub")
 	private String messagesubject;
+	
+	@Lob
+	@Column(name = "Image")
+//	@Index(name = "image")
+	private byte[] image;
+	
+	@Column(name = "IS_ACTIVE")
+	private String isActive;
+	@Column(name = "TYPE")
+	private String type;
+	@Column(name = "CHILD_FLAG")
+	@Transient
+	private boolean childFlag;
+	@Column(name = "UPDATED_ID")
+	private String updatedId;
+	
+	@Column(name= "Format")
+	private String format;
+
+	@Column(name = "ROLE")
+	private String role;
+
 	
 	public Hierarchy getHierarchy() {
 		return hierarchy;
@@ -45,10 +67,7 @@ public class Notice {
 		this.hierarchy = hierarchy;
 	}
 	
-	@Lob
-	@Column(name = "Image")
-//	@Index(name = "image")
-	private byte[] image;
+
 	
 	
 	public byte[] getImage() {
@@ -67,11 +86,7 @@ public class Notice {
 		this.format = format;
 	}
 
-	@Column(name= "Format")
-	private String format;
-
-	@Column(name = "ROLE")
-	private String role;
+	
 
 	public String getEntryTime() {
 		return entryTime;
@@ -121,15 +136,6 @@ public class Notice {
 		this.updatedId = updatedId;
 	}
 
-	@Column(name = "IS_ACTIVE")
-	private String isActive;
-	@Column(name = "TYPE")
-	private String type;
-	@Column(name = "CHILD_FLAG")
-	@Transient
-	private boolean childFlag;
-	@Column(name = "UPDATED_ID")
-	private String updatedId;
 
 	public boolean isChildFlag() {
 		return childFlag;
@@ -157,11 +163,11 @@ public class Notice {
 	}
 
 	public String getUpdate_time() {
-		return update_time;
+		return updateTime;
 	}
 
 	public void setUpdate_time(String update_time) {
-		this.update_time = update_time;
+		this.updateTime = update_time;
 	}
 	
 	
@@ -177,7 +183,7 @@ public class Notice {
 	@Override
 	public String toString() {
 		return "Notice [entryTime=" + entryTime + ", smartId=" + smartId + ", message=" + message + ", exitTime="
-				+ exitTime + ", update_time=" + update_time + ", hierarchy=" + hierarchy + ", messagesubject="
+				+ exitTime  + ", hierarchy=" + hierarchy + ", messagesubject="
 				+ messagesubject + ", image=" + Arrays.toString(image) + ", format=" + format + ", role=" + role
 				+ ", isActive=" + isActive + ", type=" + type + ", childFlag=" + childFlag + ", updatedId=" + updatedId
 				+ "]";

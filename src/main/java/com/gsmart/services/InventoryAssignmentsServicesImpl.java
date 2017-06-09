@@ -97,8 +97,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 			int totalQuantity = 0;
 			for (int j = 0; j < inventoryAssignmentList.size(); j++) {
 				Loggers.loggerStart("inventoryAssignmentList loop : " + j);
-				if (inventory.get(i).getCategory().equalsIgnoreCase(inventoryAssignmentList.get(j).getCategory())) {
-					if (inventory.get(i).getItemType().equalsIgnoreCase(inventoryAssignmentList.get(j).getItemType())) {
+				if (inventory.get(i).getCategory().equalsIgnoreCase(inventoryAssignmentList.get(j).getCategory()) && inventory.get(i).getItemType().equalsIgnoreCase(inventoryAssignmentList.get(j).getItemType())) {
 						Loggers.loggerStart("inAssignments adding inventory : " + inventory.get(i).getItemType());
 						inAssignments.setCategory(inventory.get(i).getCategory());
 						inAssignments.setItemType(inventory.get(i).getItemType());
@@ -106,7 +105,7 @@ public class InventoryAssignmentsServicesImpl implements InventoryAssignmentsSer
 						inAssignments.setQuantity(totalQuantity);
 						inAssignments.setTotalQuantity(inventory.get(i).getQuantity());
 						System.out.println("inAssignments"+inAssignments);
-					}
+					
 				}
 			}
 			if (inAssignments.getCategory() != null) {

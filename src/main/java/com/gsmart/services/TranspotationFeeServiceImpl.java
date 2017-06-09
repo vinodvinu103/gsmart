@@ -60,11 +60,6 @@ public class TranspotationFeeServiceImpl implements TranspotationFeeservice {
 	}
 
 
-	@Override
-	public void deleteFee(TransportationFee transpotationfee)throws GSmartServiceException {
-	
-		
-	}
 
 
 	@Override

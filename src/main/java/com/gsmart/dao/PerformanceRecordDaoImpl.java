@@ -23,7 +23,7 @@ import com.gsmart.util.Loggers;
 public class PerformanceRecordDaoImpl implements PerformanceRecordDao {
 	@Autowired
 	SessionFactory sessionFactory;
-	Query query;
+	private Query query;
 
 	@SuppressWarnings("unchecked")
 	@Override

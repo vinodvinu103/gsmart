@@ -24,6 +24,24 @@ public class Banners {
 	@Column(name = "IMAGE",length = 400000)
 //	@Index(name = "image")
 	private byte[] image;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	private int imageId;
+	
+	@Id
+	@Column(name = "ENTRY_TIME")
+	private String entryTime;
+
+	@Column(name = "EXIT_TIME")
+	private String exitTime;
+
+	@Column(name = "UPDATED_TIME")
+	private String updatedTime;
+
+	@Column(name = "IS_ACTIVE")
+//	@Index(name = "isActive")
+	private String isActive;
 
 	/*public String getTitle() {
 		return title;
@@ -41,9 +59,7 @@ public class Banners {
 		this.image = image;
 	}
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private int imageId;
+
 	
 	public int getImageId() {
 		return imageId;
@@ -53,19 +69,7 @@ public class Banners {
 		this.imageId = imageId;
 	}
 
-	@Id
-	@Column(name = "ENTRY_TIME")
-	private String entryTime;
 
-	@Column(name = "EXIT_TIME")
-	private String exitTime;
-
-	@Column(name = "UPDATED_TIME")
-	private String updatedTime;
-
-	@Column(name = "IS_ACTIVE")
-//	@Index(name = "isActive")
-	private String isActive;
 
 	public String getEntryTime() {
 		return entryTime;

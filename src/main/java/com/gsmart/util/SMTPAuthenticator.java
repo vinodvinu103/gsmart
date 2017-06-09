@@ -5,11 +5,12 @@ import javax.mail.PasswordAuthentication;
 
 public class SMTPAuthenticator extends Authenticator {
 
-	private  String username;
-	private  String password;
+	
 	//private static final Logger logger = Logger.getLogger(SMTPAuthenticator.class);
 
 	public PasswordAuthentication getPasswordAuthentication() {
+		 String username;
+		 String password;
 
 //		username = "vinod@gowdanar.com";
 

@@ -33,7 +33,7 @@ public class DashboardDaoImpl implements DashboardDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
+	private Query query;
 
 	/*
 	 * public void getConnection() { session = sessionfactory.openSession(); tx
@@ -121,10 +121,6 @@ public class DashboardDaoImpl implements DashboardDao {
 		ArrayList<ReportCard> examName = new ArrayList<>();
 		Hierarchy hierarchy = tokenDetail.getHierarchy();
 		String role = tokenDetail.getRole();
-		System.out.println("role is>>>>"+role);
-		System.out.println(role.equals("ADMIN"));
-		System.out.println(!role.equals("ADMIN"));
-		System.out.println(!role.equals("DIRECTOR"));
 		try {
 			if (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("DIRECTOR")) {
 				System.out.println(" in side if its for principal>>>>>>>>>>>>>>>>>>>>>>>>>>");

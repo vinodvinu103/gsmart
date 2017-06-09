@@ -35,6 +35,33 @@ public class PerformanceRecord {
 	@Column(name = "FIRST_NAME")
 	private String firstName;
 	
+
+	@Id
+	@Column(name = "ENTRY_TIME")
+	private Long entryTime;
+	
+
+	
+	@Column(name = "COMMENTS")
+	private String comments;
+	  
+	@Column(name = "UPDATE_TIME")
+	private Long updateTime;
+	
+
+	@Column(name = "ROLE")
+	private String role;
+
+	  
+
+
+	@Column(name = "ISACTIVE")
+	private String isActive;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+	
 	
 
 	public String getFirstName() {
@@ -49,26 +76,6 @@ public class PerformanceRecord {
 
 
 
-	@Id
-	@Column(name = "ENTRY_TIME")
-	private Long entryTime;
-	
-
-	
-	@Column(name = "COMMENTS")
-	private String comments;
-	  
-	@Column(name = "UPDATE_TIME")
-	private Long updateTime;
-	  
-
-
-	@Column(name = "ISACTIVE")
-	private String isActive;
-	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
 
 	
 	
@@ -80,9 +87,6 @@ public class PerformanceRecord {
 	}
 
 
-
-	@Column(name = "ROLE")
-	private String role;
 
 
 

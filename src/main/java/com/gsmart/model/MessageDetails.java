@@ -26,26 +26,26 @@ public class MessageDetails
 	@Id
 	@Column(name = "SMART_ID")
 //	@Index(name = "smartId")
-	String smartId;
+	private String smartId;
 	
 	@Column(name = "ENTRY_TIME")
-	String entryTime;
+	private String entryTime;
 
 	@Column(name="REPORTING_MANAGER_ID")
-	String reportingManagerId;
+	private String reportingManagerId;
 	
 	@Column(name="READBY_TEACHER")
-	String readByTeacher;
+	private String readByTeacher;
 	
 	@Transient
-	int childFlag;
+	private int childFlag;
 	
 	@Column(name = "POSTED_BY")
 //	@Index(name = "postedBy")
-	String postedBy;
+	private String postedBy;
 	
 	@Column(name = "POSTED_TO")
-	String postedTo;
+	private String postedTo;
 	
 	@Column(name = "ACADEMIC_YEAR")
 	private String academicYear;
@@ -61,19 +61,19 @@ public class MessageDetails
 	@Id
 	@Lob
 	@Column(name = "MESSAGE",length=512)
-	String message;
+	private String message;
 	
 	@Column(name= "READBY_STUDENT")
-	String readByStudent;
+	private String readByStudent;
 	
 	@Column(name="STUDENT_NAME")
-	String studentName;
+	private String studentName;
 	
 	@Column(name="FORMAT")
-	String format;
+	private String format;
 	
 	@Column(name="STUDENT_ID")
-	String studentId;
+	private String studentId;
 	
 	@Column(name = "IMAGE", length = 400000)
     @Lob

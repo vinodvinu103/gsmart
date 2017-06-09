@@ -36,8 +36,10 @@ public class FeeDaoImpl implements FeeDao {
 
 
 	
-	Query query;
-	Criteria criteria = null;
+	private Query query;
+	private Criteria criteria = null;
+	
+	private String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -310,13 +312,11 @@ public class FeeDaoImpl implements FeeDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			// session.close();
 		}
 		Loggers.loggerEnd();
 
 	}
-	  String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
+	  
 
 @SuppressWarnings("unchecked")
 public String getinvoice(Hierarchy hierarchy,String schoolname) {

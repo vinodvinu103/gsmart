@@ -51,7 +51,6 @@ public class HolidayController {
 
 	@Autowired
 	private HierarchyDao hierarchyDao;
-	 
 
 	/**
 	 * to view {@link Holiday} details.
@@ -63,32 +62,33 @@ public class HolidayController {
 	 * @throws GSmartBaseException
 	 */
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> searchholiday( @RequestBody Holiday holiday, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+	public ResponseEntity<Map<String, Object>> searchholiday(@RequestBody Holiday holiday,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
-		Long hid=null;
-		if(tokenObj.getHierarchy()==null){
-			hid=holiday.getHierarchy().getHid();
-		}else{
-			hid=tokenObj.getHierarchy().getHid();
+		Long hid = null;
+		if (tokenObj.getHierarchy() == null) {
+			hid = holiday.getHierarchy().getHid();
+		} else {
+			hid = tokenObj.getHierarchy().getHid();
 		}
 		List<Holiday> searchHoliday = null;
-		
+
 		searchHoliday = holidayServices.searchHoliday(holiday, hid);
-		Map<String, Object> hl= new HashMap<>();
+		Map<String, Object> hl = new HashMap<>();
 		hl.put("searchHoliday", searchHoliday);
-		
-		
+
 		return new ResponseEntity<>(hl, HttpStatus.OK);
-		
+
 	}
-	
+
 	@RequestMapping(value = "/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> getHoliday(@PathVariable ("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> getHoliday(@PathVariable("min") Integer min,
+			@PathVariable("hierarchy") Long hierarchy, @PathVariable("max") Integer max,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		String tokenNumber = token.get("Authorization").get(0);
@@ -100,28 +100,27 @@ public class HolidayController {
 		Map<String, Object> holidayList = null;
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> permissions = new HashMap<>();
-		Long hid=null;
-		if(tokenObj.getHierarchy()==null){
-			hid=hierarchy;
-		}else{
-			hid=tokenObj.getHierarchy().getHid();
+		Long hid = null;
+		if (tokenObj.getHierarchy() == null) {
+			hid = hierarchy;
+		} else {
+			hid = tokenObj.getHierarchy().getHid();
 		}
-			holidayList = holidayServices.getHolidayList(hid, min, max);
-			if(holidayList!=null){
-				permissions.put("status", 200);
-				permissions.put("message", "success");
-				permissions.put("holidayList",holidayList);
-				
-			}else{
-				permissions.put("status", 404);
-				permissions.put("message", "No Data Is Present");
-				
-			}
-			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		holidayList = holidayServices.getHolidayList(hid, min, max);
+		if (holidayList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("holidayList", holidayList);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 
 	}
-	
 
 	/**
 	 * provides the access to persist a new holiday entity Sets the
@@ -132,34 +131,34 @@ public class HolidayController {
 	 * @return persistence status (success/error) in JSON format
 	 * @see IAMResponse
 	 */
-	@RequestMapping(value="/hierarchy/{hierarchy}",method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addHoliday(@PathVariable("hierarchy") Long hierarchy,@RequestBody Holiday holiday, @RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(value = "/hierarchy/{hierarchy}", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addHoliday(@PathVariable("hierarchy") Long hierarchy,
+			@RequestBody Holiday holiday, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart(holiday);
 
-		Map<String, Object> respMap=new HashMap<>();
+		Map<String, Object> respMap = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-			Token tokenObj = (Token) httpSession.getAttribute("token");
-			if(tokenObj.getHierarchy()==null){
-				holiday.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
-			}else{
-				holiday.setHierarchy(tokenObj.getHierarchy());
-			}
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		if (tokenObj.getHierarchy() == null) {
+			holiday.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
+		} else {
+			holiday.setHierarchy(tokenObj.getHierarchy());
+		}
 
-			
-			CompoundHoliday ch = holidayServices.addHoliday(holiday);
+		CompoundHoliday ch = holidayServices.addHoliday(holiday);
 
-			if (ch != null){
-				respMap.put("status", 200);
-        	respMap.put("message", "Saved Successfully");
-			}else{
-				respMap.put("status", 400);
-	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
-			}
+		if (ch != null) {
+			respMap.put("status", 200);
+			respMap.put("message", "Saved Successfully");
+		} else {
+			respMap.put("status", 400);
+			respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+		}
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
@@ -174,32 +173,33 @@ public class HolidayController {
 	 * @see IAMResponse
 	 */
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<Map<String, Object>> editHoliday(@RequestBody Holiday holiday, @PathVariable("task") String task,
-			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> editHoliday(@RequestBody Holiday holiday,
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Holiday ch = null;
 		Loggers.loggerStart(holiday);
 
-		Map<String, Object> respMap=new HashMap<>();
+		Map<String, Object> respMap = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-			if (task.equals("edit")) {
-				ch = holidayServices.editHoliday(holiday);
-				if (ch != null) {
-					respMap.put("status", 200);
-		        	respMap.put("message", "Upadted Successfully");
-
-				} else {
-					respMap.put("status", 400);
-		        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
-				}
-			} else if (task.equals("delete")) {
-				holidayServices.deleteHoliday(holiday);
+		if ("edit".equals(task)) {
+			ch = holidayServices.editHoliday(holiday);
+			if (ch != null) {
 				respMap.put("status", 200);
-	        	respMap.put("message", "Deleted Successfully");
+				respMap.put("message", "Upadted Successfully");
+
+			} else {
+				respMap.put("status", 400);
+				respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
+		} else {
+			holidayServices.deleteHoliday(holiday);
+			respMap.put("status", 200);
+			respMap.put("message", "Deleted Successfully");
+		}
 
 		Loggers.loggerEnd(respMap);
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
@@ -213,7 +213,5 @@ public class HolidayController {
 	 * @return deletion status (success/error) in JSON format
 	 * @see IAMResponse
 	 */
-
-	
 
 }

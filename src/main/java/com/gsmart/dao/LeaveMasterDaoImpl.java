@@ -34,7 +34,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 	private SessionFactory sessionFactory;
 
 	
-	Query query;
+	private Query query;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -260,7 +260,7 @@ public class LeaveMasterDaoImpl implements LeaveMasterDao {
 			}
 			ls = query.list();
 		}catch(Exception e){
-			e.printStackTrace();;
+			e.printStackTrace();
 		}
 		return ls;
 	}

@@ -24,12 +24,12 @@ import com.gsmart.util.Loggers;
 public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
 	Query query;
-	Criteria criteria = null;
-	Criteria criteriaCount=null;
-	Long count=null;
+	private Criteria criteria = null;
+	private Criteria criteriaCount=null;
+	
 	
 	/*public void getConnection() {
 		session = sessionFactory.openSession();
@@ -41,6 +41,7 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	@Override
 	public Map<String, Object> getSalaryStructure(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		Long count=null;
 		List<SalaryStructure> salaryStructureList=null;
 		
 		Map<String, Object> salaryStructureMap = new HashMap<>();

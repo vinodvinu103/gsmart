@@ -33,10 +33,10 @@ public class AssignDaoImpl implements AssignDao {
 	private SessionFactory sessionFactory;
 
 
-	Query query;
-	Criteria criteria = null;
-	Criteria criteriaCount=null;
-	Long count=null;
+	private Query query;
+	private Criteria criteria = null;
+	private Criteria criteriaCount=null;
+	private Long count=null;
 	
 	/*public void getConnection() {
 		session = sessionFactory.openSession();

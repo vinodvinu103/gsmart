@@ -36,6 +36,70 @@ public class Fee {
 	@Column(name="IN_VOICE")
 	private String inVoice;
 	
+	@Column(name="SPORTS_FEE")
+	private Integer sportsFee;
+	
+	@Column(name="TUITION_FEE")
+	private Integer tuitionFee;
+	
+	@Column(name="ID_CARD_FEE")
+	private Integer idCardFee;
+	
+	@Column(name="MISCELLANEOUS_FEE")
+	private Integer miscellaneousFee;
+	
+	@Column(name = "TRANSPORTATION_FEE")
+	private Integer transportationFee;
+	
+	@Column(name="UPDATEDTIME")
+	private String UpdatedTime;
+	
+	@Column(name="EXITTIME")
+	private String ExitTime;
+	
+	@Column(name="PARENT_NAME")
+	private String parentName;
+	
+	@Column(name="DATE")
+	private String date;
+	
+	@Column(name="STANDARD")
+	private String standard;
+	
+	@Column(name="MODE_OF_PAYMENT")
+	private String modeOfPayment;
+	
+	@Column(name="CHEQUE_NUMBER")
+	private Integer chequeNumber;
+	
+	@Column(name="BANK_NAME")
+	private String bankName;
+	
+	@Column(name="BALANCE_FEE")
+	private Integer balanceFee;
+	
+	@Column(name="PAID_FEE")
+	private Integer paidFee;
+	
+	@Column(name="TOATL_FEE")
+	private Integer totalFee;
+	
+	@Column(name="FEE_STATUS")
+	private String feeStatus;
+	
+	@Column(name="REPORTING_MANAGER_ID")
+	private String reportingManagerId;
+	
+	@Transient
+	private boolean childFlag;
+	
+	@Transient
+	private boolean parentFlag;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+	
 	public String getInVoice() {
 		return inVoice;
 	}
@@ -72,11 +136,7 @@ public class Fee {
 		UpdatedTime = updatedTime;
 	}
 
-	@Column(name="UPDATEDTIME")
-	private String UpdatedTime;
-	
-	@Column(name="EXITTIME")
-	private String ExitTime;
+
 	
 	public String getExitTime() {
 		return ExitTime;
@@ -88,22 +148,7 @@ public class Fee {
 
 
 
-	@Column(name="PARENT_NAME")
-	private String parentName;
 	
-	@Column(name="DATE")
-	private String date;
-	
-	@Column(name="STANDARD")
-	private String standard;
-	
-	@Column(name="MODE_OF_PAYMENT")
-	private String modeOfPayment;
-	@Column(name="CHEQUE_NUMBER")
-	private Integer chequeNumber;
-	
-	@Column(name="BANK_NAME")
-	private String bankName;
 	
 	public Integer getChequeNumber() {
 		return chequeNumber;
@@ -121,24 +166,7 @@ public class Fee {
 		this.bankName = bankName;
 	}
 
-	@Column(name="SPORTS_FEE")
-	private Integer sportsFee;
 	
-	@Column(name="TUITION_FEE")
-	private Integer tuitionFee;
-	
-	@Column(name="ID_CARD_FEE")
-	private Integer idCardFee;
-	
-	@Column(name="MISCELLANEOUS_FEE")
-	private Integer miscellaneousFee;
-	
-	@Column(name = "TRANSPORTATION_FEE")
-	private Integer transportationFee;
-	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;
@@ -156,26 +184,7 @@ public class Fee {
 		this.transportationFee = transportationFee;
 	}
 
-	@Column(name="BALANCE_FEE")
-	private Integer balanceFee;
 	
-	@Column(name="PAID_FEE")
-	private Integer paidFee;
-	
-	@Column(name="TOATL_FEE")
-	private Integer totalFee;
-	
-	@Column(name="FEE_STATUS")
-	private String feeStatus;
-	
-	@Column(name="REPORTING_MANAGER_ID")
-	private String reportingManagerId;
-	
-	@Transient
-	private boolean childFlag;
-	
-	@Transient
-	private boolean parentFlag;
 	
 
 	public String getSmartId() {

@@ -21,7 +21,7 @@ public class TokenDaoImpl implements TokenDao{
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
+	private Query query;
 
 	public void saveToken(Token token, Login loginObj) throws GSmartDatabaseException {
 		Loggers.loggerStart(token);

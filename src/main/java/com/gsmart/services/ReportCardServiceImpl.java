@@ -43,20 +43,9 @@ public class ReportCardServiceImpl implements ReportCardService {
 	@Autowired
 	private GradesDao gradeDao;
 
-	Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+	private Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 
-	@Override
-	public List<ReportCard> reportCardList() throws GSmartServiceException {
-		Loggers.loggerStart();
-		List<ReportCard> list = null;
-		try {
-			// list = reportCardDao.reportCardList();
-
-		} catch (Exception e) {
-			throw new GSmartServiceException(e.getMessage());
-		}
-		return list;
-	}
+	
 
 	@Override
 	public CompoundReportCard addReportCard(ReportCard card) throws GSmartServiceException {
@@ -337,7 +326,7 @@ public class ReportCardServiceImpl implements ReportCardService {
 			}
 			else if(monthInt>=3&&monthInt<=6&&fee.getFeeStatus().equalsIgnoreCase("unpaid")){
 				Loggers.loggerEnd();
-				return fee=null;
+				return fee;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

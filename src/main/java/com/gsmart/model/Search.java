@@ -5,16 +5,16 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Search implements Serializable {
 
-	String name;
+	private String name;
 
 	String school;
 	
-	int band;
+	private int band;
 	
-	String teacherId;
+	/*private String teacherId;
 	
-	String studentId;
-
+	private String studentId;
+*/
 	public String getName() {
 		return name;
 	}

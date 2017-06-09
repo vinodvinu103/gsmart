@@ -22,7 +22,7 @@ public class GradesDaoImpl implements GradesDao{
 	private SessionFactory sessionFactory;
 
 	
-	Query query;
+	private Query query;
 
 	// get
 	@SuppressWarnings("unchecked")

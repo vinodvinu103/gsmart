@@ -47,7 +47,6 @@ public class BandController {
 	@Autowired
 	private BandServices bandServices;
 
-
 	/**
 	 * to view {@link Band} details.
 	 * 
@@ -60,161 +59,161 @@ public class BandController {
 	// String module=getAuthorization.getModuleName();
 
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> search(@RequestBody Band band,@RequestHeader HttpHeaders token,
+	public ResponseEntity<Map<String, Object>> search(@RequestBody Band band, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
-		
+
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		List<Band> bandList = null;
-		
+
 		Map<String, Object> privilege = new HashMap<>();
-			bandList = bandServices.search(band, tokenObj.getHierarchy());
-			privilege.put("bandList", bandList);
-			
-			Loggers.loggerEnd(bandList);
-		 return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
+		bandList = bandServices.search(band, tokenObj.getHierarchy());
+		privilege.put("bandList", bandList);
+
+		Loggers.loggerEnd(bandList);
+		return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
 	}
 
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min, @PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
-	throws GSmartBaseException {
+	@RequestMapping(value = "/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getBand(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-	    str.length();
-	    Map<String, Object> bandList = null;
-       
+		str.length();
+		Map<String, Object> bandList = null;
 
 		Map<String, Object> permissions = new HashMap<>();
-        
-			bandList = bandServices.getBandList(min, max);
-			if(bandList!=null){
-				permissions.put("status", 200);
-				permissions.put("message", "success");
-				permissions.put("bandList",bandList);
-				
-			}else{
-				permissions.put("status", 404);
-				permissions.put("message", "No Data Is Present");
-				
-			}
-			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		
+
+		bandList = bandServices.getBandList(min, max);
+		if (bandList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("bandList", bandList);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+
 		}
-	
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+
+	}
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getBand(@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-	    str.length();
+		str.length();
 
-	    List<Band>bandList=null;
+		List<Band> bandList = null;
 
 		Map<String, Object> permissions = new HashMap<>();
-        
+
 		bandList = bandServices.getBandList1();
-			if(bandList!=null){
-				permissions.put("status", 200);
-				permissions.put("message", "success");
-				permissions.put("bandList",bandList);
-				
-			}else{
-				permissions.put("status", 404);
-				permissions.put("message", "No Data Is Present");
-				
-			}
-			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		
+		if (bandList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("bandList", bandList);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+
+	}
+
+	/**
+	 * provides the access to persist a new band entity Sets the {@code timeStamp}
+	 * using {@link CalendarCalculator}
+	 * 
+	 * @param band
+	 *            is instance of {@link Band}
+	 * @return persistence status (success/error) in JSON format
+	 * @see IAMResponse
+	 */
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addBand(@RequestBody Band band, @RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(band);
+
+		Map<String, Object> respMap = new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		CompoundBand cb = bandServices.addBand(band);
+
+		if (cb != null) {
+			respMap.put("status", 200);
+			respMap.put("message", "Saved Successfully");
 		}
 
-	/**
-	 * provides the access to persist a new band entity 
-	 * Sets the {@code timeStamp} using {@link CalendarCalculator}
-	 * @param band is instance of {@link Band}
-	 * @return persistence status (success/error) in JSON format
-	 * @see IAMResponse
-	 */
-	
-	@RequestMapping( method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addBand(@RequestBody Band band,@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
-	    
-		Loggers.loggerStart(band);
+		else {
+			respMap.put("status", 400);
+			respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 
-		Map<String, Object> respMap=new HashMap<>();
-		String tokenNumber = token.get("Authorization").get(0);
-		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+		}
 
-		str.length();
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 
-		CompoundBand cb=bandServices.addBand(band);
-		
-	        if(cb!=null)
-	        {
-	        	respMap.put("status", 200);
-	        	respMap.put("message", "Saved Successfully");
-	        }
-	        	  
-		    else{
-		    	respMap.put("status", 400);
-	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
-		    	
-		    }
-		    
-	    	
-        Loggers.loggerEnd();
-        return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
-	     
 	}
 
 	/**
-	 * provide the access to update band entity 
-	 * @param band instance of {@link Band}
+	 * provide the access to update band entity
+	 * 
+	 * @param band
+	 *            instance of {@link Band}
 	 * @return persistence status (success/error) in JSON format
 	 * @see IAMResponse
 	 */
-	
-	@RequestMapping (value="/{task}",method=RequestMethod.PUT)
-    public ResponseEntity<Map<String, Object>> editDeleteBand(@RequestBody Band band ,@PathVariable("task") String task,
-    @RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException{
+
+	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
+	public ResponseEntity<Map<String, Object>> editDeleteBand(@RequestBody Band band, @PathVariable("task") String task,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(band);
-		Band cb=null;
-		Map<String, Object> respMap=new HashMap<>();
+		Band cb = null;
+		Map<String, Object> respMap = new HashMap<>();
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-		    if(task.equals("edit")){
-		    	cb=bandServices.editBand(band);
-		    	if(cb!=null){
-		    		respMap.put("status", 200);
-	        	respMap.put("message", "Updated Successfully");
-		    	}else{
-		    		respMap.put("status", 400);
-	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
-		    	}
-		    }
-		    else if (task.equals("delete")){
-		    	bandServices.deleteBand(band);
-		    	respMap.put("status", 200);
-	        	respMap.put("message", "Deleted Successfully");
-		    }
-		    
-		 Loggers.loggerEnd();
-	        
-	     return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+		if ("edit".equals(task)) {
+			cb = bandServices.editBand(band);
+			if (cb != null) {
+				respMap.put("status", 200);
+				respMap.put("message", "Updated Successfully");
+			} else {
+				respMap.put("status", 400);
+				respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+			}
+		} else {
+			bandServices.deleteBand(band);
+			respMap.put("status", 200);
+			respMap.put("message", "Deleted Successfully");
+		}
 
+		Loggers.loggerEnd();
+
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+
+	}
 }
-	}
-

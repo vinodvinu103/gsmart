@@ -22,7 +22,6 @@ import com.gsmart.model.Banners;
 import com.gsmart.model.Hierarchy;
 import com.gsmart.model.Profile;
 import com.gsmart.model.Search;
-import com.gsmart.model.TransportationFee;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartDatabaseException;
@@ -34,8 +33,8 @@ public class ProfileDaoImp implements ProfileDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	Query query;
-	Criteria criteria = null;
+	private Query query;
+	private Criteria criteria = null;
 	/* for registration */
 
 	@SuppressWarnings("unchecked")
@@ -57,7 +56,7 @@ public class ProfileDaoImp implements ProfileDao {
 				Loggers.loggerEnd();
 				return maxId.get(0);
 			} else {
-				return new String("DPS1000");
+				return "DPS1000";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -226,7 +225,7 @@ public class ProfileDaoImp implements ProfileDao {
 					.add(Restrictions.eq("isActive", "Y"));
 			criteria.add(Restrictions.eq("hierarchy.hid", hid));
 			criteriaCount.add(Restrictions.eq("hierarchy.hid", hid));
-			if (role.toLowerCase().equals("student")) {
+			if (role.equalsIgnoreCase("student")) {
 				criteria.add(Restrictions.eq("role", "student").ignoreCase());
 				Profile employeeId=getPreviousEmployeeId(role,hid);
 
@@ -703,7 +702,7 @@ public class ProfileDaoImp implements ProfileDao {
 			 * (CompoundBanner) session.save(banner);
 			 * Loggers.loggerEnd(oldBannner); }
 			 */
-		} catch (org.hibernate.exception.ConstraintViolationException e) {
+		} catch (ConstraintViolationException e) {
 		} catch (Throwable e) {
 			throw new GSmartDatabaseException(e.getMessage());
 		}
@@ -891,6 +890,7 @@ public class ProfileDaoImp implements ProfileDao {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> searchwithrfid(Profile profile, Long hid) throws GSmartDatabaseException {
 		List<Profile> list = null;
@@ -904,6 +904,7 @@ public class ProfileDaoImp implements ProfileDao {
 		return list;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Profile> searchwithoutrfid(Profile profile, Long hid) throws GSmartDatabaseException {
 		List<Profile> list = null;

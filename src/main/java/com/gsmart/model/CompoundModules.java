@@ -7,6 +7,10 @@ public class CompoundModules implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private String moduleName;
+	private String entryTime;
+	
 	public String getModules() {
 		return moduleName;
 	}
@@ -20,7 +24,6 @@ public class CompoundModules implements Serializable{
 		this.entryTime = entryTime;
 	}
 	
-	private String moduleName;
-	private String entryTime;
+	
 
 }

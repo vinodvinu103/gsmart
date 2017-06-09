@@ -39,24 +39,24 @@ public class AssignController {
 	@Autowired
 	private AssignService assignService;
 
-	
 	@Autowired
 	private HierarchyDao hierarchyDao;
 
 	@Autowired
 	private ProfileServices profileServices;
-	
+
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> searchassign(@RequestBody Assign assign, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+	public ResponseEntity<Map<String, Object>> searchassign(@RequestBody Assign assign,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Long hid = null;
-		if(tokenObj.getHierarchy()==null){
+		if (tokenObj.getHierarchy() == null) {
 			hid = assign.getHierarchy().getHid();
-		}else{
+		} else {
 			hid = tokenObj.getHierarchy().getHid();
 		}
 		List<Assign> searchAssign = null;
@@ -64,12 +64,13 @@ public class AssignController {
 		Map<String, Object> assignlist = new HashMap<>();
 		assignlist.put("searchassign", searchAssign);
 		return new ResponseEntity<>(assignlist, HttpStatus.OK);
-		
+
 	}
 
-	@RequestMapping(value="/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAssigningReportee(@PathVariable ("min") Integer min, @PathVariable("hierarchy") Long hierarchy,@PathVariable ("max") Integer max, @RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+	@RequestMapping(value = "/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAssigningReportee(@PathVariable("min") Integer min,
+			@PathVariable("hierarchy") Long hierarchy, @PathVariable("max") Integer max,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		Map<String, Object> permissions = new HashMap<>();
@@ -79,79 +80,76 @@ public class AssignController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		
-	
-		
-		Token tokenObj=(Token) httpSession.getAttribute("token");
 
-		Long hid=null;
-		
-		if(tokenObj.getHierarchy()==null){
-			hid=hierarchy;
-			
-		}else{
-			hid=tokenObj.getHierarchy().getHid();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+
+		Long hid = null;
+
+		if (tokenObj.getHierarchy() == null) {
+			hid = hierarchy;
+
+		} else {
+			hid = tokenObj.getHierarchy().getHid();
 		}
 
+		assignList = assignService.getAssignReportee(hid, min, max);
+		if (assignList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("assignList", assignList);
 
-          assignList = assignService.getAssignReportee(hid, min, max);
-			if(assignList!=null){
-				permissions.put("status", 200);
-				permissions.put("message", "success");
-				permissions.put("assignList",assignList);
-				
-			}else{
-				permissions.put("status", 404);
-				permissions.put("message", "No Data Is Present");
-				
-			}
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+
+		}
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+
 	}
-	@RequestMapping(value="/{hierarchy}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAssigningList( @PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+
+	@RequestMapping(value = "/{hierarchy}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getAssigningList(@PathVariable("hierarchy") Long hierarchy,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(hierarchy);
 
 		Map<String, Object> permissions = new HashMap<>();
 
-		List<Assign>assignList = null;
+		List<Assign> assignList = null;
 
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		
-		
-		Token tokenObj=(Token) httpSession.getAttribute("token");
 
-		Long hid=null;
-		
-		if(tokenObj.getHierarchy()==null){
-			hid=hierarchy;
-			
-		}else{
-			hid=tokenObj.getHierarchy().getHid();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+
+		Long hid = null;
+
+		if (tokenObj.getHierarchy() == null) {
+			hid = hierarchy;
+
+		} else {
+			hid = tokenObj.getHierarchy().getHid();
 		}
-            assignList = assignService.getAssignList(hid);
-			if(assignList!=null){
-				permissions.put("status", 200);
-				permissions.put("message", "success");
-				permissions.put("assignList",assignList);
-				
-			}else{
-				permissions.put("status", 404);
-				permissions.put("message", "No Data Is Present");
-				
-			}
-			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		assignList = assignService.getAssignList(hid);
+		if (assignList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("assignList", assignList);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 
 	}
-	
 
-	@RequestMapping(value="/hierarchy/{hierarchy}",method = RequestMethod.POST)
+	@RequestMapping(value = "/hierarchy/{hierarchy}", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> addAssigningReportee(@RequestBody Assign assign,
-			@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+			@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
 
 		Map<String, Object> respMap = new HashMap<>();
@@ -159,38 +157,34 @@ public class AssignController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		
-			Token tokenObj=(Token) httpSession.getAttribute("token");
-			if(tokenObj.getHierarchy()==null){
-				assign.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
-			}else{
-				assign.setHierarchy(tokenObj.getHierarchy());
-				
-			}
-			
-			
-			CompoundAssign cb = assignService.addAssigningReportee(assign);
-			if(cb!=null)
-	        {
-	        	respMap.put("status", 200);
-	        	respMap.put("message", "Saved Successfully");
-	        }
-	        	  
-		    else{
-		    	respMap.put("status", 400);
-	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
-		    	
-		    }
-		    
-	    	
-        
-        Loggers.loggerEnd();
-    	return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		if (tokenObj.getHierarchy() == null) {
+			assign.setHierarchy(hierarchyDao.getHierarchyByHid(hierarchy));
+		} else {
+			assign.setHierarchy(tokenObj.getHierarchy());
+
+		}
+
+		CompoundAssign cb = assignService.addAssigningReportee(assign);
+		if (cb != null) {
+			respMap.put("status", 200);
+			respMap.put("message", "Saved Successfully");
+		}
+
+		else {
+			respMap.put("status", 400);
+			respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+
+		}
+
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
-	public ResponseEntity<Map<String, Object>> editDeleteBand(@RequestBody Assign assign, @PathVariable("task") String task,
-			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> editDeleteBand(@RequestBody Assign assign,
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart();
 		Assign ch = null;
 		String tokenNumber = token.get("Authorization").get(0);
@@ -198,23 +192,23 @@ public class AssignController {
 
 		str.length();
 
-		Map<String, Object> respMap=new HashMap<>();
-		
-			if (task.equals("edit")) {
-				ch = assignService.editAssigningReportee(assign);
-				if (ch != null) {
-					respMap.put("status", 200);
-		        	respMap.put("message", "Upadted Successfully");
+		Map<String, Object> respMap = new HashMap<>();
 
-				} else {
-					respMap.put("status", 400);
-		        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
-				}
-			} else if (task.equals("delete")) {
-				assignService.deleteAssigningReportee(assign);
+		if ("edit".equals(task)) {
+			ch = assignService.editAssigningReportee(assign);
+			if (ch != null) {
 				respMap.put("status", 200);
-	        	respMap.put("message", "Deleted Successfully");
+				respMap.put("message", "Upadted Successfully");
+
+			} else {
+				respMap.put("status", 400);
+				respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
+		} else {
+			assignService.deleteAssigningReportee(assign);
+			respMap.put("status", 200);
+			respMap.put("message", "Deleted Successfully");
+		}
 
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
@@ -228,35 +222,32 @@ public class AssignController {
 		Map<String, Object> response = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
-		str.length();		
-			response.put("staffList", profileServices.getProfileByHierarchy(hierarchy));
+		str.length();
+		response.put("staffList", profileServices.getProfileByHierarchy(hierarchy));
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}
-	
-	
-	@RequestMapping(value="/searchstandardfee/{hierarchy}/{standard}", method=RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> searchStandardFee(@PathVariable("standard") String standard,@PathVariable("hierarchy") Long hierarchy,@RequestHeader HttpHeaders token,HttpSession httpSession) throws GSmartBaseException{
+
+	@RequestMapping(value = "/searchstandardfee/{hierarchy}/{standard}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> searchStandardFee(@PathVariable("standard") String standard,
+			@PathVariable("hierarchy") Long hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 		Loggers.loggerStart(standard);
-		
-		String tokenNumber=token.get("Authorization").get(0);
-		String str =getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		Map<String,Object> jsonResult = new HashMap<>();
-		boolean result=assignService.searchStandardFeeService(standard,hierarchy);
-		if(result){
-		jsonResult.put("status",500);
-		jsonResult.put("message","Please.. fill FeeMaster before registering the student ");
-		}
-		else{
-			jsonResult.put("status",200);
-			jsonResult.put("message","success");
+		Map<String, Object> jsonResult = new HashMap<>();
+		boolean result = assignService.searchStandardFeeService(standard, hierarchy);
+		if (result) {
+			jsonResult.put("status", 500);
+			jsonResult.put("message", "Please.. fill FeeMaster before registering the student ");
+		} else {
+			jsonResult.put("status", 200);
+			jsonResult.put("message", "success");
 		}
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
-		
+
 	}
 
 }
-
-
-

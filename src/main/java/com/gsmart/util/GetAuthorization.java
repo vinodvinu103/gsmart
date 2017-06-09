@@ -5,28 +5,23 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.Token;
-import com.gsmart.services.TokenService;
 
 @Component
 public class GetAuthorization {
 
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
-	@Autowired
-	TokenService tokenService;
 
-	Session session;
-	Transaction tx;
-	Query query;
-	RolePermission permissions = null;
-	Token tokenObj=null;
+	private Session session;
+	private Query query;
+	private RolePermission permissions = null;
+	private Token tokenObj=null;
 
 	public RolePermission authorizationForGet(String tokenNumber, HttpSession httpSession) throws GSmartServiceException {
 

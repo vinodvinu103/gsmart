@@ -50,8 +50,8 @@ public class PaySlipServiceImpl implements PaySlipService {
 	@Autowired
 	private PaySlipDAO paySlipDAO;
 
-	Logger logger = Logger.getLogger(PaySlipServiceImpl.class);
-	Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+	private Logger logger = Logger.getLogger(PaySlipServiceImpl.class);
+	private Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 
 	@Override
 	public void download(PaySlip paySlip) {

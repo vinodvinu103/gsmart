@@ -16,6 +16,28 @@ public class Transportation {
 	@Id
 	@Column(name = "ENTRY_TIME")
 	private String entrytime;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+	
+	@Column(name = "IS_ACTIVE")
+	private String isactive;
+	
+	@Column(name = "UPDATED_TIME")
+	private String UpdatedTime;
+	
+
+	
+	@Column(name = "TRANSFEE")
+	private int transfee;
+	
+
+	@Column(name = "EXIT_TIME")
+	private String exittime;
+
+	@Column(name = "DISTANCE")
+	private String distance;
 
 	public String getEntrytime() {
 		return entrytime;
@@ -25,11 +47,6 @@ public class Transportation {
 		this.entrytime = entrytime;
 	}
 
-	@Column(name = "EXIT_TIME")
-	private String exittime;
-
-	@Column(name = "DISTANCE")
-	private String distance;
 	
 	
 
@@ -41,8 +58,7 @@ public class Transportation {
 		UpdatedTime = updatedTime;
 	}
 
-	@Column(name = "IS_ACTIVE")
-	private String isactive;
+	
 	
 	public String getIsactive() {
 		return isactive;
@@ -52,13 +68,7 @@ public class Transportation {
 		this.isactive = isactive;
 	}
 
-	@Column(name = "UPDATED_TIME")
-	private String UpdatedTime;
 	
-
-	
-	@Column(name = "TRANSFEE")
-	private int transfee;
 
 	
 
@@ -86,9 +96,7 @@ public class Transportation {
 		this.transfee = transfee;
 	}
 	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
+
 
 
 	public Hierarchy getHierarchy() {

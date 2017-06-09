@@ -22,7 +22,7 @@ public class PerformanceAppraisalDaoImpl implements PerformanceAppraisalDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
+	private Query query;
 
 	@SuppressWarnings("unchecked")
 	@Override

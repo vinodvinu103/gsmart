@@ -47,23 +47,6 @@ public class FeeMaster {
 //	@Index(name = "institution")
 	private String institution;
 	
-	
-	public String getInstitution() {
-		return institution;
-	}
-
-	public void setInstitution(String institution) {
-		this.institution = institution;
-	}
-
-	public String getSchool() {
-		return school;
-	}
-
-	public void setSchool(String school) {
-		this.school = school;
-	}
-
 	@Column(name = "SCHOOL")
 	private String school;
 	/**
@@ -103,6 +86,25 @@ public class FeeMaster {
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="hid")
 	private Hierarchy hierarchy;
+	
+	
+	public String getInstitution() {
+		return institution;
+	}
+
+	public void setInstitution(String institution) {
+		this.institution = institution;
+	}
+
+	public String getSchool() {
+		return school;
+	}
+
+	public void setSchool(String school) {
+		this.school = school;
+	}
+
+	
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;

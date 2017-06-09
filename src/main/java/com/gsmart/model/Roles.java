@@ -13,7 +13,7 @@ public class Roles {
 	@Column(name="ROLE")
 	private String role;
 	@Column(name="ENTRY_TIME")
-	private String entry_Time;
+	private String entryTime;
 	public String getRole() {
 		return role;
 	}
@@ -21,10 +21,10 @@ public class Roles {
 		this.role = role;
 	}
 	public String getEntry_Time() {
-		return entry_Time;
+		return entryTime;
 	}
 	public void setEntry_Time(String entry_Time) {
-		this.entry_Time = entry_Time;
+		this.entryTime = entry_Time;
 	}
 	
 	
