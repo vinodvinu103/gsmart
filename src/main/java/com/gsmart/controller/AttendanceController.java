@@ -61,7 +61,7 @@ public class AttendanceController {
 
 	@RequestMapping(value = "/calendar/{month}/{year}/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getAttendance(@RequestHeader HttpHeaders token, HttpSession httpSession,
-			@PathVariable("month") Integer month, @PathVariable("year") Integer year, 
+			@PathVariable("month") Integer month, @PathVariable("year") Integer year,
 			@PathVariable("smartId") String smartId, Holiday holiday) throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -86,7 +86,6 @@ public class AttendanceController {
 
 		holidayList = holidayDao.holidayList(tokenObj.getHierarchy().getHid());
 
-
 		permissions.put("attendanceList", attendanceList);
 		System.out.println("attendanceList:" + attendanceList);
 		permissions.put("holidayList", holidayList);
@@ -103,7 +102,8 @@ public class AttendanceController {
 		Map<String, Object> responseMap = new HashMap<>();
 		try {
 			SyncRequestObject syncRequestObject = objectMapper.readValue(stringObj, SyncRequestObject.class);
-			List<String> rfidList = attendanceService.addAttedance(syncRequestObject.getRequestMap().get("attendanceList"));
+			List<String> rfidList = attendanceService
+					.addAttedance(syncRequestObject.getRequestMap().get("attendanceList"));
 			if (rfidList == null) {
 				responseMap.put("status", 500);
 			} else {
@@ -119,7 +119,8 @@ public class AttendanceController {
 
 	@RequestMapping(value = "/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<IAMResponse> editAttendance(@RequestBody Attendance attendance,
-	@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException {
+			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 
 		Loggers.loggerStart();
 		IAMResponse myResponse = null;
@@ -131,13 +132,13 @@ public class AttendanceController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-			if (task.equals("edit")) {
-				attendanceService.editAttedance(attendance);
+		if ("edit".equals(task)) {
+			attendanceService.editAttedance(attendance);
 
-			}
-			myResponse = new IAMResponse("success");
-			Loggers.loggerEnd(attendance);
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		}
+		myResponse = new IAMResponse("success");
+		Loggers.loggerEnd(attendance);
+		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{smartId}", method = RequestMethod.GET)
@@ -147,134 +148,126 @@ public class AttendanceController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		
-		int year = Calendar.getInstance().get(Calendar.YEAR);  // Gets the current date and time
-		String academicYear=year+"-"+(year+1);
 
+		int year = Calendar.getInstance().get(Calendar.YEAR); // Gets the current date and time
+		String academicYear = year + "-" + (year + 1);
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
 
-			Profile profile = profileServices.getProfileDetails(smartId);
-			Map<String, Profile> profiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
-			Loggers.loggerValue("profile is ", profile);
-			ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
-			Loggers.loggerValue("child is", childList);
-			
-//			List<String> childListForAttendance = searchService.getAllChildSmartId(tokenObj.getSmartId(), profiles);
+		Profile profile = profileServices.getProfileDetails(smartId);
+		Map<String, Profile> profiles = searchService.getAllProfiles(academicYear, tokenObj.getHierarchy().getHid());
+		Loggers.loggerValue("profile is ", profile);
+		ArrayList<Profile> childList = searchService.searchEmployeeInfo(smartId, profiles);
+		Loggers.loggerValue("child is", childList);
 
-//			resultmap.put("attendanceCount", attendanceService.getAttendanceCount(childListForAttendance));
-			if (childList.size() != 0) {
-				profile.setChildFlag(true);
-			}
+		// List<String> childListForAttendance =
+		// searchService.getAllChildSmartId(tokenObj.getSmartId(), profiles);
 
-			Set<String> key = profiles.keySet();
-			for (int i = 0; i < childList.size(); i++) {
+		// resultmap.put("attendanceCount",
+		// attendanceService.getAttendanceCount(childListForAttendance));
+		if (childList.size() != 0) {
+			profile.setChildFlag(true);
+		}
 
-				for (String j : key) {
+		Set<String> key = profiles.keySet();
+		for (int i = 0; i < childList.size(); i++) {
 
-					Profile p = (Profile) profiles.get(j);
-					if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
+			for (String j : key) {
 
-						if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
-							childList.get(i).setChildFlag(true);
-						}
-					}
+				Profile p = (Profile) profiles.get(j);
+				if (p.getReportingManagerId().equals(childList.get(i).getSmartId()) && !(p.getSmartId().equals(childList.get(i).getSmartId()))) {
+
+						childList.get(i).setChildFlag(true);
+					
 				}
 			}
+		}
 
-			resultmap.put("selfProfile", profile);
-			resultmap.put("childList", childList);
-			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
+		resultmap.put("selfProfile", profile);
+		resultmap.put("childList", childList);
+		return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
 
 	}
-	
+
 	@RequestMapping(value = "/classAttendance", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> getClassAttendance(@RequestBody Attendance attendance,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-Loggers.loggerStart();
+		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		
-		int year = Calendar.getInstance().get(Calendar.YEAR);  // Gets the current date and time
-		String academicYear=year+"-"+(year+1);
 
-		
-		
+		int year = Calendar.getInstance().get(Calendar.YEAR); // Gets the current date and time
+		String academicYear = year + "-" + (year + 1);
 
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Map<String, Object> resultmap = new HashMap<String, Object>();
-//		Long hid=null;
-		/*if(tokenObj.getHierarchy()==null){
-			hid=hierarchy;
-		}else{
-			hid=tokenObj.getHierarchy().getHid();
-		}*/
+		// Long hid=null;
+		/*
+		 * if(tokenObj.getHierarchy()==null){ hid=hierarchy; }else{
+		 * hid=tokenObj.getHierarchy().getHid(); }
+		 */
 
-			Profile profile = profileServices.getProfileDetails(tokenObj.getSmartId());
-			Map<String, Profile> profiles = searchService.getAllProfiles(academicYear,tokenObj.getHierarchy().getHid());
-//			Loggers.loggerValue("profile is ", profile);
-			ArrayList<Profile> childList = searchService.searchEmployeeInfo(tokenObj.getSmartId(), profiles);
-//			Loggers.loggerValue("child is", childList);
-			List<String> childAttendance=new ArrayList<>();
-			
-			for (Profile profile2 : childList) {
-				childAttendance.add(profile2.getSmartId());
-				
-			}
-			
-//			List<String> childListForAttendance = searchService.getAllChildSmartId(tokenObj.getSmartId(), profiles);
+		Profile profile = profileServices.getProfileDetails(tokenObj.getSmartId());
+		Map<String, Profile> profiles = searchService.getAllProfiles(academicYear, tokenObj.getHierarchy().getHid());
+		// Loggers.loggerValue("profile is ", profile);
+		ArrayList<Profile> childList = searchService.searchEmployeeInfo(tokenObj.getSmartId(), profiles);
+		// Loggers.loggerValue("child is", childList);
+		List<String> childAttendance = new ArrayList<>();
 
-			resultmap.put("selfProfile", profile);
-			resultmap.put("childList", childList);
-			resultmap.put("childAttendance", attendanceService.getAttendanceCount(childAttendance,attendance.getDate()));
-			/*if (childList.size() != 0) {
-				profile.setChildFlag(true);
-			}
+		for (Profile profile2 : childList) {
+			childAttendance.add(profile2.getSmartId());
 
-			Set<String> key = profiles.keySet();
-			for (int i = 0; i < childList.size(); i++) {
+		}
 
-				for (String j : key) {
+		// List<String> childListForAttendance =
+		// searchService.getAllChildSmartId(tokenObj.getSmartId(), profiles);
 
-					Profile p = (Profile) profiles.get(j);
-					if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
+		resultmap.put("selfProfile", profile);
+		resultmap.put("childList", childList);
+		resultmap.put("childAttendance", attendanceService.getAttendanceCount(childAttendance, attendance.getDate()));
+		/*
+		 * if (childList.size() != 0) { profile.setChildFlag(true); }
+		 * 
+		 * Set<String> key = profiles.keySet(); for (int i = 0; i < childList.size();
+		 * i++) {
+		 * 
+		 * for (String j : key) {
+		 * 
+		 * Profile p = (Profile) profiles.get(j); if
+		 * (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
+		 * 
+		 * if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
+		 * childList.get(i).setChildFlag(true); } } } }
+		 * 
+		 * resultmap.put("selfProfile", profile); resultmap.put("childList", childList);
+		 */
+		if (childList.isEmpty()) {
+			resultmap.put("status", 400);
+			resultmap.put("message", "No Data Found");
+		} else {
+			resultmap.put("status", 200);
+			resultmap.put("message", "success");
 
-						if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
-							childList.get(i).setChildFlag(true);
-						}
-					}
-				}
-			}
-
-			resultmap.put("selfProfile", profile);
-			resultmap.put("childList", childList);*/
-			if(childList.isEmpty()){
-				resultmap.put("status", 400);
-				resultmap.put("message", "No Data Found");
-			}else{
-				resultmap.put("status", 200);
-				resultmap.put("message", "success");
-				
-			}
-			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(resultmap, HttpStatus.OK);
 
 	}
-	
+
 	@RequestMapping(value = "/addAttendance", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> addClassAttendance(@RequestBody List<Attendance> attendance,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-		Map<String, Object> respMap=new HashMap<>();
+		Map<String, Object> respMap = new HashMap<>();
 		Loggers.loggerStart();
-		System.out.println("attendanceList"+attendance);
-		
+		System.out.println("attendanceList" + attendance);
+
 		attendanceService.addClassAttendance(attendance);
-		
+
 		Loggers.loggerEnd();
-		return new ResponseEntity<Map<String,Object>>(respMap, HttpStatus.OK);
-	
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+
 	}
-	
+
 }

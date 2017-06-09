@@ -59,6 +59,11 @@ public class InventoryAssignmentsStudent {
 	@Column(name="STUDENT_ID")
 	private String studentId;
 	
+
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+	
 	
 	public String getStudentId() {
 		return studentId;
@@ -80,9 +85,6 @@ public class InventoryAssignmentsStudent {
 	}
 
 
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;

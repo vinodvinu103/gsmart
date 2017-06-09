@@ -15,7 +15,7 @@ import com.gsmart.util.Loggers;
 public class TransportationServiceImpl implements TransportationService {
 
 	@Autowired
-	TransportationDao TransportationDao;
+	private TransportationDao TransportationDao;
 
 	@Override
 	public List<Transportation> getTransportationFeeList(Long hid) throws GSmartServiceException {

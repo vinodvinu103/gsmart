@@ -42,7 +42,7 @@ public class RolePermissionDaoImp implements RolePermissionDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	Query query;
+	private Query query;
 
 	/**
 	 * to view the list of records available in {@link RolePermission} table

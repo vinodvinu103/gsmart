@@ -15,7 +15,7 @@ import com.gsmart.util.Loggers;
 public class PayRollServiceImpl implements PayRollService {
 
 	@Autowired
-	PayRollDao payrolldao;
+	private PayRollDao payrolldao;
 	
 	
 	@Override

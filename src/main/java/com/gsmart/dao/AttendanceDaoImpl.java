@@ -1,6 +1,5 @@
 package com.gsmart.dao;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,9 +38,8 @@ public class AttendanceDaoImpl implements AttendanceDao {
 	 * public void setSessionFactory(SessionFactory sessionFactory) {
 	 * this.sessionFactory = sessionFactory; }
 	 */
-	Query query;
-	DateFormat format = new SimpleDateFormat("");
-	Calendar calendar = Calendar.getInstance();
+	private Query query;
+	private Calendar calendar = Calendar.getInstance();
 
 	@SuppressWarnings("unchecked")
 	@Override

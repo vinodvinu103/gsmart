@@ -60,7 +60,7 @@ public class HierarchyDaoImpl implements HierarchyDao {
 	private SessionFactory sessionFactory;
 
 	
-	Query query;
+	private Query query;
 
 	// final Logger logger = Logger.getLogger(HierarchyDaoImpl.class);
 

@@ -48,8 +48,6 @@ public class HierarchyController {
 	@Autowired
 	private GetAuthorization getAuthorization;
 
-	
-
 	/**
 	 * to view {@link Hierarchy} details.
 	 * 
@@ -59,21 +57,22 @@ public class HierarchyController {
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	
-	@RequestMapping(value="/search", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> searchhierarchy(@RequestBody Hierarchy hierarchy, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchhierarchy(@RequestBody Hierarchy hierarchy,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		Map<String, Object> searchhierar = new HashMap<>();
 		List<Hierarchy> searchHier = null;
 		searchHier = hierarchyServices.searchhierarchy(hierarchy);
 		searchhierar.put("searchlist", searchHier);
 		return new ResponseEntity<>(searchhierar, HttpStatus.OK);
-		
+
 	}
 
-
-	@RequestMapping(value="/{min}/{max}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable ("min") Integer min, @PathVariable ("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+	@RequestMapping(value = "/{min}/{max}", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getHierarchy(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
 		Loggers.loggerStart();
@@ -81,53 +80,52 @@ public class HierarchyController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> hierarchyList = null;
-		Token tokenObj=(Token) httpSession.getAttribute("token");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
 		Map<String, Object> permissions = new HashMap<>();
 
-			hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(),tokenObj.getHierarchy(), min, max);
-			if(hierarchyList!=null){
-				permissions.put("status", 200);
-				permissions.put("message", "success");
-				permissions.put("hierarchyList",hierarchyList);
-				
-			}else{
-				permissions.put("status", 404);
-				permissions.put("message", "No Data Is Present");
-				
-			}
-			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		hierarchyList = hierarchyServices.getHierarchyList(tokenObj.getRole(), tokenObj.getHierarchy(), min, max);
+		if (hierarchyList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("hierarchyList", hierarchyList);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 
 	}
-	
-	
+
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getAllHierarchys(@RequestHeader HttpHeaders token, HttpSession httpSession)
-			throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> getAllHierarchys(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
 
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		List<Hierarchy> hierarchyList = null;
-		Token tokenObj=(Token) httpSession.getAttribute("token");
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
 		Map<String, Object> permissions = new HashMap<>();
 
-			hierarchyList = hierarchyServices.getHierarchyList1(tokenObj.getRole(),tokenObj.getHierarchy());
-			if(hierarchyList!=null){
-				permissions.put("status", 200);
-				permissions.put("message", "success");
-				permissions.put("hierarchyList",hierarchyList);
-				
-			}else{
-				permissions.put("status", 404);
-				permissions.put("message", "No Data Is Present");
-				
-			}
-			Loggers.loggerEnd();
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
+		hierarchyList = hierarchyServices.getHierarchyList1(tokenObj.getRole(), tokenObj.getHierarchy());
+		if (hierarchyList != null) {
+			permissions.put("status", 200);
+			permissions.put("message", "success");
+			permissions.put("hierarchyList", hierarchyList);
+
+		} else {
+			permissions.put("status", 404);
+			permissions.put("message", "No Data Is Present");
+
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 
 	}
 
@@ -142,23 +140,23 @@ public class HierarchyController {
 	 */
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> addHierarchy(@RequestBody Hierarchy hierarchy, @RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+	public ResponseEntity<Map<String, Object>> addHierarchy(@RequestBody Hierarchy hierarchy,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart(hierarchy);
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-		Map<String, Object> respMap=new HashMap<>();
-			boolean status = hierarchyServices.addHierarchy(hierarchy);
-			if (status) {
-				respMap.put("status", 200);
-	        	respMap.put("message", "Saved Successfully");
-			} else {
-				respMap.put("status", 400);
-	        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
-			}
+		Map<String, Object> respMap = new HashMap<>();
+		boolean status = hierarchyServices.addHierarchy(hierarchy);
+		if (status) {
+			respMap.put("status", 200);
+			respMap.put("message", "Saved Successfully");
+		} else {
+			respMap.put("status", 400);
+			respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+		}
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}
@@ -176,29 +174,29 @@ public class HierarchyController {
 			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart(hierarchy);
-		Map<String, Object> respMap=new HashMap<>();
+		Map<String, Object> respMap = new HashMap<>();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-		Hierarchy ch=null;
+		Hierarchy ch = null;
 
-			if (task.equals("edit")) {
-				ch = hierarchyServices.editHierarchy(hierarchy);
-				if (ch != null) {
-					respMap.put("status", 200);
-		        	respMap.put("message", "Saved Succesfully");
-				} else {
-					respMap.put("status", 400);
-		        	respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
-				}
-			} else if (task.equals("delete")) {
-				hierarchyServices.deleteHierarchy(hierarchy);
+		if ("edit".equals(task)) {
+			ch = hierarchyServices.editHierarchy(hierarchy);
+			if (ch != null) {
 				respMap.put("status", 200);
-	        	respMap.put("message", "Deleted Successfully");
-			} 
-		
+				respMap.put("message", "Saved Succesfully");
+			} else {
+				respMap.put("status", 400);
+				respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
+			}
+		} else if (task.equals("delete")) {
+			hierarchyServices.deleteHierarchy(hierarchy);
+			respMap.put("status", 200);
+			respMap.put("message", "Deleted Successfully");
+		}
+
 		Loggers.loggerEnd();
 		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
 	}

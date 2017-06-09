@@ -15,7 +15,6 @@ import com.itextpdf.text.Document;
 public interface ReportCardService {
 	
 	
-	public List<ReportCard> reportCardList() throws GSmartServiceException;
 	
 	public CompoundReportCard addReportCard(ReportCard card)throws GSmartServiceException;
 	

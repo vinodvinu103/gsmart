@@ -45,8 +45,8 @@ public class ReportCardDaoImpl implements ReportCardDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
-	Criteria criteria = null;
+	private Query query;
+	private Criteria criteria = null;
 	/*
 	 * public void getConnection() { session = sessionFactroy.openSession();
 	 * tranction = session.beginTransaction(); }
@@ -381,11 +381,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 			Loggers.loggerEnd();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			/*
-			 * workbook.close(); file.close(); session.close();
-			 */
-		}
+		} 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -397,7 +393,7 @@ public class ReportCardDaoImpl implements ReportCardDao {
 		String role = tokenDetail.getRole();
 		String smartId = tokenDetail.getSmartId();
 		try {
-			if (role.equals("TEACHER") || role.equals("STUDENT")) {
+			if ("TEACHER".equals(role) || "STUDENT".equals(role)) {
 				query = sessionFactory.getCurrentSession().createQuery(
 						"select distinct academicYear from ReportCard where (reportingManagerId=:reportingManagerId or smartId=:smartId ) and hid=:hierarchy and isActive='Y'");
 				query.setParameter("reportingManagerId", smartId);

@@ -88,13 +88,10 @@ public class OrgStructureController {
 			for (int i = 0; i < childList.size(); i++) {
 				for (String j : key) {
 					Profile p = (Profile) profiles.get(j);
-					if(p.getReportingManagerId()!=null){
-						if (p.getReportingManagerId().equals(childList.get(i).getSmartId())) {
+					if(p.getReportingManagerId()!=null && p.getReportingManagerId().equals(childList.get(i).getSmartId()) && !(p.getSmartId().equals(childList.get(i).getSmartId()))){
 
-							if (!(p.getSmartId().equals(childList.get(i).getSmartId()))) {
 								childList.get(i).setChildFlag(true);
-							}
-						}
+						
 					}
 					
 				}
@@ -108,7 +105,7 @@ public class OrgStructureController {
 	
 
 	@RequestMapping(value = "/searchname", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, ArrayList<Profile>>> Search(@RequestBody Search search,
+	public ResponseEntity<Map<String, ArrayList<Profile>>> search(@RequestBody Search search,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) {
 
 		String tokenNumber = token.get("Authorization").get(0);
@@ -159,6 +156,7 @@ public class OrgStructureController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
+		String smartID=null;
 		Map<String, ArrayList<Profile>> jsonMap = new HashMap<String, ArrayList<Profile>>();
 
 		ArrayList<Profile> temp = new ArrayList<Profile>();
@@ -184,8 +182,8 @@ public class OrgStructureController {
 
 				for (int i = 0; i < temp1.size(); i++) {
 
-					smartId = temp1.get(i).getSmartId();
-					temp = searchService.searchEmployeeInfo(smartId, profiles);
+					smartID = temp1.get(i).getSmartId();
+					temp = searchService.searchEmployeeInfo(smartID, profiles);
 
 					temp2.clear();
 					temp2.addAll(temp);
@@ -212,11 +210,10 @@ public class OrgStructureController {
 				for (String j : key) {
 
 					Profile p = (Profile) profiles.get(j);
-					if (p.getReportingManagerId().equals(list.get(i).getSmartId())) {
+					if (p.getReportingManagerId().equals(list.get(i).getSmartId()) && !(p.getSmartId().equals(list.get(i).getSmartId()))) {
 
-						if (!(p.getSmartId().equals(list.get(i).getSmartId()))) {
 							list.get(i).setChildFlag(true);
-						}
+						
 					}
 				}
 			}

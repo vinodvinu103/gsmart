@@ -37,13 +37,6 @@ public class TransportationFee {
 	@Column(name = "SECTION")
 	private String section;
 
-	public String getSection() {
-		return section;
-	}
-
-	public void setSection(String section) {
-		this.section = section;
-	}
 
 	@Column(name="ISACTIVE")
 	private String isActive;
@@ -95,6 +88,20 @@ public class TransportationFee {
 	@Column(name="REPORTING_MANAGER_ID")
 	private String reportingManagerId;
 	
+
+	@Column(name="")
+	private String feeType;
+	
+
+	public String getSection() {
+		return section;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+	
+
 	public Integer getPaidFee() {
 		return paidFee;
 	}
@@ -102,9 +109,6 @@ public class TransportationFee {
 	public void setPaidFee(Integer paidFee) {
 		this.paidFee = paidFee;
 	}
-
-	@Column(name="")
-	private String feeType;
 	
 	public String getSmartId() {
 		return smartId;

@@ -43,6 +43,22 @@ public class Inventory {
 	
 	@Column(name="LEFT_QUANTITY")
 	private Integer leftQuantity;
+	
+	@Column(name="EXIT_TIME")
+	private String exitTime;
+
+	/**
+	 * Its a time when the inventory instance is editing the item
+	 */
+	@Column(name="UPDATE_TIME")
+	private String updateTime;
+	@Column(name="ISACTIVE")
+	private String isActive;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+//	@Index(name = "hierarchy")
+	private Hierarchy hierarchy;
 
 	public Integer getQuantity() {
 		return quantity;
@@ -63,21 +79,7 @@ public class Inventory {
 	/**
 	 * Its a time when the inventory instance is exit
 	 */
-	@Column(name="EXIT_TIME")
-	private String exitTime;
-
-	/**
-	 * Its a time when the inventory instance is editing the item
-	 */
-	@Column(name="UPDATE_TIME")
-	private String updateTime;
-	@Column(name="ISACTIVE")
-	private String isActive;
 	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-//	@Index(name = "hierarchy")
-	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;

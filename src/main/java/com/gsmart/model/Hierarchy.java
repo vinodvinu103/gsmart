@@ -81,6 +81,20 @@ public class Hierarchy {
 	@Column(name="LANDLINE_NUMBER")
 	private String landLineNumber;
 	
+	@Column(name="EXIT_TIME")
+	private String exitTime;
+	
+	@Column(name="UPDATE_TIME")
+	private String updateTime;
+	
+	
+	@Column(name="IS_ACTIVE")
+	private String isActive;
+	
+	@Column(name="SCHOOL_PHONE_NUMBER")
+	private String schoolPhoneNumber;
+	
+	
 	
 	public String getLandLineNumber() {
 		return landLineNumber;
@@ -90,8 +104,7 @@ public class Hierarchy {
 		this.landLineNumber = landLineNumber;
 	}
 
-	@Column(name="SCHOOL_PHONE_NUMBER")
-	private String schoolPhoneNumber;
+	
 
 	public byte[] getSchoolLogo() {
 		return schoolLogo;
@@ -140,19 +153,8 @@ public class Hierarchy {
 	 * @return this person's(current timestam) Time_Stamp
 	 */
 	
-	@Column(name="EXIT_TIME")
-	private String exitTime;
+
 	
-	@Column(name="UPDATE_TIME")
-	private String updateTime;
-	
-	
-	@Column(name="IS_ACTIVE")
-	private String isActive;
-	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
 	
 
 	public String getEntryTime() {
@@ -222,12 +224,7 @@ public class Hierarchy {
 		this.isActive = isActive;
 	}
 
-	/*@Override
-	public String toString( ) {
-		return "\n\n{Hierarchy {Compound  : \n\tschool=" + school + ",\n\t institution="
-				+ institution + " },\n entryTime=" + entryTime + ",\n exitTime=" + exitTime + ",\n updateTime=" + updateTime
-				+ ",\n isActive=" + isActive + " }";
-	}*/
+
 
 	public Long getHid() {
 		return hid;

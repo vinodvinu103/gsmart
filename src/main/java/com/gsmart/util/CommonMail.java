@@ -1,30 +1,20 @@
 package com.gsmart.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.gsmart.model.Login;
 import com.gsmart.model.Profile;
 
-@SuppressWarnings("unused")
 
 public class CommonMail {
-	private static final Logger logger = Logger.getLogger(CommonMail.class);
+//	private static final Logger logger = Logger.getLogger(CommonMail.class);
 
 	public void mail(String toAddress, String subject, String messagebody, String fromAddress, String ccAddress)
 			throws Exception {
@@ -41,7 +31,6 @@ public class CommonMail {
 
 	private Session msgGetDefaultInstance() {
 		// String host="localhost";
-		boolean debug = false;
 		Properties prop = new Properties();
 		prop.put("mail.transport.protocol", "smtp");
 		// prop.put("mail.smtp.port",587);

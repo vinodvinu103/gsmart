@@ -30,7 +30,7 @@ public class ContactDaoImp implements ContactDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	Query query = null;
+	private Query query = null;
 	
 
 	@Override

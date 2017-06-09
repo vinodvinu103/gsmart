@@ -19,10 +19,10 @@ import com.gsmart.util.Loggers;
 public class TimeTableServiceImpl implements TimeTableService {
 	
 	@Autowired
-	ProfileDao profileDao;
+	private ProfileDao profileDao;
 	
 	@Autowired
-	TimeTableDao timetableDao;
+	private TimeTableDao timetableDao;
 
 	@Override
 	public List<TimeTable> studentView(String academicYear, Token token) throws GSmartDatabaseException {

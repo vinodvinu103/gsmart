@@ -66,11 +66,12 @@ public class PayRollController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 	    str.length();
+	    PayRoll payRollObj=null;
 
         if(getAuthorization.authorizationForPost(tokenNumber, httpSession)){
-		payroll=payrollService.addPayroll(payroll);
+        	payRollObj=payrollService.addPayroll(payroll);
 		
-	        if(payroll!=null)
+	        if(payRollObj!=null)
 	        {
 	        	resp.put("status", 200);
 	        	resp.put("message", "Saved Successfully");

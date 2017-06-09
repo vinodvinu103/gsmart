@@ -1,10 +1,8 @@
 package com.gsmart.util;
 
-import org.apache.log4j.Logger;
 
 public class IAMResponse {
 
-	Logger logger = Logger.getLogger(IAMResponse.class);
 	
 	private String message;
 	private int statusCode;

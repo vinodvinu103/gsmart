@@ -24,7 +24,7 @@ public class ModulesDaoImpl implements ModulesDao{
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
+	private Query query;
 
 	 
 	

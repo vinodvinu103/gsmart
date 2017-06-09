@@ -8,6 +8,8 @@ public class CompoundLeave implements Serializable {
 private static final long serialVersionUID = 1L;
 
 private String smartId;
+private String entryTime;
+
 public String getSmartId() {
 	return smartId;
 }
@@ -15,7 +17,7 @@ public void setSmartId(String smartId) {
 	this.smartId = smartId;
 }
 //private String reportingManagerId;
-private String entryTime;
+
 
 /*public String getReportingManagerId() {
 	return reportingManagerId;

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -46,7 +45,7 @@ public class HolidayDaoImpl implements HolidayDao {
 			this.sessionFactory = sessionFactory;
 		}*/
 
-	Query query;
+	private Query query;
 
 	/**
 	 * create instance for session and begins transaction
@@ -57,7 +56,6 @@ public class HolidayDaoImpl implements HolidayDao {
 
 	}
 */
-	final Logger logger = Logger.getLogger(HolidayDaoImpl.class);
 
 	/**
 	 * to view the list of records available in {@link Holiday} table

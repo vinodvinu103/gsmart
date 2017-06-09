@@ -46,7 +46,6 @@ import com.gsmart.util.GSmartBaseException;
 import com.gsmart.util.GetAuthorization;
 import com.gsmart.util.Loggers;
 
-
 @Controller
 @RequestMapping(Constants.REGISTRATION)
 
@@ -61,10 +60,8 @@ public class RegistrationController {
 	@Autowired
 	private GetAuthorization getAuthorization;
 
-
 	@Autowired
 	private PasswordServices passwordServices;
-
 
 	@Autowired
 	private FeeMasterServices feeMasterServices;
@@ -76,7 +73,7 @@ public class RegistrationController {
 	@Autowired
 	private ProfileDao profileDao;
 
-	int i = 0;
+	private int i = 0;
 
 	@RequestMapping(value = "/employee/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewEmployeeProfiles(@PathVariable("min") Integer min,
@@ -98,19 +95,19 @@ public class RegistrationController {
 			hid = tokenObj.getHierarchy().getHid();
 		}
 
-			profileList = profileServices.getProfiles("employee", tokenObj.getSmartId(), hid, min, max);
-			if (profileList != null) {
-				jsonMap.put("status", 200);
-				jsonMap.put("result", profileList);
-				jsonMap.put("message", "success");
-			} else {
-				jsonMap.put("status", 400);
-				jsonMap.put("message", "try again");
+		profileList = profileServices.getProfiles("employee", tokenObj.getSmartId(), hid, min, max);
+		if (profileList != null) {
+			jsonMap.put("status", 200);
+			jsonMap.put("result", profileList);
+			jsonMap.put("message", "success");
+		} else {
+			jsonMap.put("status", 400);
+			jsonMap.put("message", "try again");
 
-			}
+		}
 
-			Loggers.loggerEnd(jsonMap);
-			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		Loggers.loggerEnd(jsonMap);
+		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 
 	}
 
@@ -124,7 +121,6 @@ public class RegistrationController {
 		str.length();
 		Map<String, Object> jsonMap = new HashMap<>();
 
-
 		Map<String, Object> profileMap1 = null;
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		Long hid = null;
@@ -135,18 +131,18 @@ public class RegistrationController {
 			hid = tokenObj.getHierarchy().getHid();
 		}
 
-			profileMap1 = profileServices.getProfiles("student", tokenObj.getSmartId(), hid, min, max);
-			if (profileMap1 != null) {
-				jsonMap.put("status", 200);
-				jsonMap.put("result", profileMap1);
-				jsonMap.put("message", "success");
-			} else {
-				jsonMap.put("status", 400);
-				jsonMap.put("message", "try again");
+		profileMap1 = profileServices.getProfiles("student", tokenObj.getSmartId(), hid, min, max);
+		if (profileMap1 != null) {
+			jsonMap.put("status", 200);
+			jsonMap.put("result", profileMap1);
+			jsonMap.put("message", "success");
+		} else {
+			jsonMap.put("status", 400);
+			jsonMap.put("message", "try again");
 
-			}
-			Loggers.loggerEnd(jsonMap);
-			return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
+		}
+		Loggers.loggerEnd(jsonMap);
+		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/addProfile/{hierarchy}", method = RequestMethod.POST)
@@ -156,97 +152,92 @@ public class RegistrationController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		FeeMaster feeMaster =null;
+		FeeMaster feeMaster = null;
 		Map<String, Object> jsonMap = new HashMap<>();
 
-			Token tokenObj = (Token) httpSession.getAttribute("token");
-			// String updSmartId = tokenObj.getSmartId();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		// String updSmartId = tokenObj.getSmartId();
 
-			Loggers.loggerStart(profile.getFirstName());
-			System.out.println("hid"+hierarchy);
+		Loggers.loggerStart(profile.getFirstName());
+		System.out.println("hid" + hierarchy);
 
-			String smartId = String.valueOf((Integer.parseInt(profileServices.getmaxSamrtId()) + 1));
-			if (profile.getRole().equalsIgnoreCase("student")) {
-				if (tokenObj.getHierarchy() == null) {
-					Hierarchy hierarchy2=hierarchyDao.getHierarchyByHid(hierarchy);
-					profile.setHierarchy(hierarchy2);
-					profile.setSchool(hierarchy2.getSchool());
-					profile.setInstitution(hierarchy2.getInstitution());
+		String smartId = String.valueOf((Integer.parseInt(profileServices.getmaxSamrtId()) + 1));
+		if (profile.getRole().equalsIgnoreCase("student")) {
+			if (tokenObj.getHierarchy() == null) {
+				Hierarchy hierarchy2 = hierarchyDao.getHierarchyByHid(hierarchy);
+				profile.setHierarchy(hierarchy2);
+				profile.setSchool(hierarchy2.getSchool());
+				profile.setInstitution(hierarchy2.getInstitution());
 
-				} else {
-					profile.setHierarchy(tokenObj.getHierarchy());
-					profile.setSchool(tokenObj.getHierarchy().getSchool());
-					profile.setInstitution(tokenObj.getHierarchy().getInstitution());
+			} else {
+				profile.setHierarchy(tokenObj.getHierarchy());
+				profile.setSchool(tokenObj.getHierarchy().getSchool());
+				profile.setInstitution(tokenObj.getHierarchy().getInstitution());
 
-				}
-			feeMaster= feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
-			if(feeMaster==null){
+			}
+			feeMaster = feeMasterServices.getFeeStructure(profile.getStandard(), profile.getHierarchy().getHid());
+			if (feeMaster == null) {
 				jsonMap.put("status", 500);
 				jsonMap.put("message", "Standard or Section Cannot be Null");
 				return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 			}
 
-				 
+		}
+
+		profile.setSmartId(smartId);
+		profile.setEntryTime(Calendar.getInstance().getTime().toString());
+
+		if (profileServices.insertUserProfileDetails(profile)) {
+
+			Login login = new Login();
+			login.setReferenceSmartId(Encrypt.md5(smartId));
+			login.setSmartId(smartId);
+			passwordServices.setPassword(login, profile.getHierarchy());
+
+			if (profile.getRole().equalsIgnoreCase("student")) {
+				Fee fee = new Fee();
+				fee.setSmartId(profile.getSmartId());
+				fee.setName(profile.getFirstName());
+				fee.setParentName(profile.getFatherName());
+				fee.setEntryTime(CalendarCalculator.getTimeStamp());
+				fee.setDate(CalendarCalculator.getTimeStamp());
+				fee.setFeeStatus("unpaid");
+				fee.setHierarchy(profile.getHierarchy());
+				fee.setTotalFee(feeMaster.getTotalFee());
+				fee.setIdCardFee(feeMaster.getIdCardFee());
+				fee.setMiscellaneousFee(feeMaster.getMiscellaneousFee());
+				fee.setSportsFee(feeMaster.getSportsFee());
+				fee.setStandard(feeMaster.getStandard());
+				fee.setTuitionFee(feeMaster.getTuitionFee());
+				// fee.setTransportationFee(feeMaster.getTransportationFee());
+				fee.setReportingManagerId(profile.getReportingManagerId());
+				fee.setModeOfPayment("cash");
+				fee.setAcademicYear(profile.getAcademicYear());
+				fee.setPaidFee(0);
+				fee.setBalanceFee(feeMaster.getTotalFee());
+				feeService.addFee(fee);
 			}
 
-			profile.setSmartId(smartId);
-			profile.setEntryTime(Calendar.getInstance().getTime().toString());
-			
-
-			if (profileServices.insertUserProfileDetails(profile)) {
-
-				Login login = new Login();
-				login.setReferenceSmartId(Encrypt.md5(smartId));
-				login.setSmartId(smartId);
-				passwordServices.setPassword(login, profile.getHierarchy());
-				
-				if (profile.getRole().equalsIgnoreCase("student")) {
-					Fee fee = new Fee();
-					fee.setSmartId(profile.getSmartId());
-					fee.setName(profile.getFirstName());
-					fee.setParentName(profile.getFatherName());
-					fee.setEntryTime(CalendarCalculator.getTimeStamp());
-					fee.setDate(CalendarCalculator.getTimeStamp());
-					fee.setFeeStatus("unpaid");
-					fee.setHierarchy(profile.getHierarchy());
-					fee.setTotalFee(feeMaster.getTotalFee());
-					fee.setIdCardFee(feeMaster.getIdCardFee());
-					fee.setMiscellaneousFee(feeMaster.getMiscellaneousFee());
-					fee.setSportsFee(feeMaster.getSportsFee());
-					fee.setStandard(feeMaster.getStandard());
-					fee.setTuitionFee(feeMaster.getTuitionFee());
-					//fee.setTransportationFee(feeMaster.getTransportationFee());
-					fee.setReportingManagerId(profile.getReportingManagerId());
-					fee.setModeOfPayment("cash");
-					fee.setAcademicYear(profile.getAcademicYear());
-					fee.setPaidFee(0);
-					fee.setBalanceFee(feeMaster.getTotalFee());
-					feeService.addFee(fee);
-				}
-
-				
-				if (!sendMail(profile)) {
-					if (profileDao.deleteProfileIfMailFailed(profile.getSmartId())) {
-						jsonMap.put("status", 404);
-						jsonMap.put("message", "please try again.. server is busy");
-					} else {
-						jsonMap.put("status", 500);
-						jsonMap.put("message", "profile not recorded ..please contact admin");
-					}
-
+			if (!sendMail(profile)) {
+				if (profileDao.deleteProfileIfMailFailed(profile.getSmartId())) {
+					jsonMap.put("status", 404);
+					jsonMap.put("message", "please try again.. server is busy");
 				} else {
-					jsonMap.put("status", 200);
-					jsonMap.put("message", "success");
-					jsonMap.put("Id", smartId);
-
+					jsonMap.put("status", 500);
+					jsonMap.put("message", "profile not recorded ..please contact admin");
 				}
 
 			} else {
-				jsonMap.put("status", 500);
-				jsonMap.put("message", "EmailID is already Registered");
+				jsonMap.put("status", 200);
+				jsonMap.put("message", "success");
+				jsonMap.put("Id", smartId);
+
 			}
 
-		
+		} else {
+			jsonMap.put("status", 500);
+			jsonMap.put("message", "EmailID is already Registered");
+		}
 
 		Loggers.loggerEnd(jsonMap);
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
@@ -280,22 +271,22 @@ public class RegistrationController {
 		str.length();
 		Loggers.loggerValue("Updated by: ", updEmpSmartId);
 		Map<String, Object> jsonResult = new HashMap<>();
-			String result = profileServices.updateProfile(profile);
-			jsonResult.put("status", 200);
-			jsonResult.put("result", result);
+		String result = profileServices.updateProfile(profile);
+		jsonResult.put("status", 200);
+		jsonResult.put("result", result);
 		Loggers.loggerEnd(jsonResult);
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 
 	}
-	
-	@RequestMapping(value="/changeprofileimage",method = RequestMethod.POST)
-	public ResponseEntity<Map<String,Object>> changeprofileimage(@RequestBody Profile profile,@RequestHeader HttpHeaders token, HttpSession httpSession)
-	throws GSmartBaseException{
+
+	@RequestMapping(value = "/changeprofileimage", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> changeprofileimage(@RequestBody Profile profile,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		Map<String,Object> jsonResult = new HashMap<String, Object>();
+		Map<String, Object> jsonResult = new HashMap<String, Object>();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		profile.setSmartId(tokenObj.getSmartId());
 		String result = profileServices.changeprofileimage(profile);
@@ -304,7 +295,6 @@ public class RegistrationController {
 		Loggers.loggerEnd(jsonResult);
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 	}
-	
 
 	@RequestMapping(value = "/delete/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<Map<String, Object>> deleteProfile(@RequestBody Profile profile,
@@ -315,20 +305,18 @@ public class RegistrationController {
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
-		
+
 		Map<String, Object> jsonResult = new HashMap<String, Object>();
-			if (task.equals("delete")) {
-				String result = profileServices.deleteprofile(profile);
-				jsonResult.put("result", result);
-				Loggers.loggerEnd(jsonResult);
+		if ("delete".equals(task)) {
+			String result = profileServices.deleteprofile(profile);
+			jsonResult.put("result", result);
+			Loggers.loggerEnd(jsonResult);
 
-			}
+		}
 
-		
 		return new ResponseEntity<Map<String, Object>>(jsonResult, HttpStatus.OK);
 	}
-    
-	
+
 	@RequestMapping(value = "/searchRep", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> searchRep(@RequestBody Search search, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) {
@@ -338,60 +326,60 @@ public class RegistrationController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-			Token tokenObj = (Token) httpSession.getAttribute("token");
-			Loggers.loggerStart("search.getName() before : " + search.getName());
-			Map<String, Profile> map = searchService.searchRep(search, tokenObj.getRole(), tokenObj.getHierarchy());
-			Loggers.loggerStart("search.getName() after : " + search.getName());
-			ArrayList<Profile> profiless = null;
-			if (search.getName() != null && map != null) {
-				Loggers.loggerStart("search.getName() is not null before : " + search.getName());
-				profiless = searchService.getEmployeeInfo(search.getName(), map);
-				Loggers.loggerStart("search.getName() is not null after : " + search.getName());
-				if (profiless != null) {
-					Loggers.loggerStart("profiless is not null");
-					jsonMap.put("status", 200);
-					jsonMap.put("result", profiless);
-					jsonMap.put("message", "success");
-				} else {
-					Loggers.loggerStart("profiless is null");
-					jsonMap.put("status", 400);
-					jsonMap.put("message", "try again");
-
-				}
-			} else if (map != null) {
-				Loggers.loggerStart("search.getName() is null before : " + search.getName());
-				/*
-				 * Set<String> keys = map.keySet();
-				 * Loggers.loggerStart("keys are extracted"); for(String key :
-				 * keys){ profiless.add(map.get(key)); }
-				 */
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		Loggers.loggerStart("search.getName() before : " + search.getName());
+		Map<String, Profile> map = searchService.searchRep(search, tokenObj.getRole(), tokenObj.getHierarchy());
+		Loggers.loggerStart("search.getName() after : " + search.getName());
+		ArrayList<Profile> profiless = null;
+		if (search.getName() != null && map != null) {
+			Loggers.loggerStart("search.getName() is not null before : " + search.getName());
+			profiless = searchService.getEmployeeInfo(search.getName(), map);
+			Loggers.loggerStart("search.getName() is not null after : " + search.getName());
+			if (profiless != null) {
+				Loggers.loggerStart("profiless is not null");
 				jsonMap.put("status", 200);
+				jsonMap.put("result", profiless);
 				jsonMap.put("message", "success");
-				jsonMap.put("result", map.values());
-				Loggers.loggerStart("search.getName() is null after : " + search.getName());
 			} else {
-				Loggers.loggerStart("map is null");
 				Loggers.loggerStart("profiless is null");
 				jsonMap.put("status", 400);
 				jsonMap.put("message", "try again");
+
 			}
-			Loggers.loggerEnd();
-		
+		} else if (map != null) {
+			Loggers.loggerStart("search.getName() is null before : " + search.getName());
+			/*
+			 * Set<String> keys = map.keySet(); Loggers.loggerStart("keys are extracted");
+			 * for(String key : keys){ profiless.add(map.get(key)); }
+			 */
+			jsonMap.put("status", 200);
+			jsonMap.put("message", "success");
+			jsonMap.put("result", map.values());
+			Loggers.loggerStart("search.getName() is null after : " + search.getName());
+		} else {
+			Loggers.loggerStart("map is null");
+			Loggers.loggerStart("profiless is null");
+			jsonMap.put("status", 400);
+			jsonMap.put("message", "try again");
+		}
+		Loggers.loggerEnd();
+
 		return new ResponseEntity<Map<String, Object>>(jsonMap, HttpStatus.OK);
 
 	}
-	
-	@RequestMapping(value = "/searchstu", method= RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> searchstudent(@RequestBody Profile profile, @RequestHeader HttpHeaders token, HttpSession httpSession)throws GSmartBaseException{
+
+	@RequestMapping(value = "/searchstu", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> searchstudent(@RequestBody Profile profile,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Token tokenobj = (Token) httpSession.getAttribute("token");
 		Long hid = null;
-		if(tokenobj.getHierarchy()==null){
+		if (tokenobj.getHierarchy() == null) {
 			hid = profile.getHierarchy().getHid();
-		}else {
+		} else {
 			hid = tokenobj.getHierarchy().getHid();
 		}
 		List<Profile> studlist = null;
@@ -399,9 +387,9 @@ public class RegistrationController {
 		Map<String, Object> slist = new HashMap<>();
 		slist.put("studlist", studlist);
 		return new ResponseEntity<>(slist, HttpStatus.OK);
-		
+
 	}
-	
+
 	@RequestMapping(value = "/searchemp1", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> searchemp(@RequestBody Profile profile, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartBaseException {
@@ -410,10 +398,10 @@ public class RegistrationController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
-		Long hid  = null;
-		if(tokenObj.getHierarchy()==null){
+		Long hid = null;
+		if (tokenObj.getHierarchy() == null) {
 			hid = profile.getHierarchy().getHid();
-		}else {
+		} else {
 			hid = tokenObj.getHierarchy().getHid();
 		}
 		List<Profile> emplist = null;

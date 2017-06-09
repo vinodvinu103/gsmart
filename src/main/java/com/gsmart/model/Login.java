@@ -34,6 +34,19 @@ public class Login  {
 	
 	@Column(name = "REFERENCESMARTID")
 	private String referenceSmartId;	
+	
+	@Column(name = "ATTEMPT")
+	private Integer attempt;
+
+	@Column(name = "ENTRY_TIME")
+	private String entryTime;
+
+	@Column(name = "UPDATED_TIME")
+	private String updatedTime;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
 
 	public String getReferenceSmartId() {
 		return referenceSmartId;
@@ -50,18 +63,7 @@ public class Login  {
 		this.referenceSmartId = referenceSmartId;
 	}
 
-	@Column(name = "ATTEMPT")
-	private Integer attempt;
-
-	@Column(name = "ENTRY_TIME")
-	private String entryTime;
-
-	@Column(name = "UPDATED_TIME")
-	private String updatedTime;
 	
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;

@@ -98,7 +98,7 @@ public class PrivilegeController {
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
-			if (task.equals("edit"))
+		if ("edit".equals(task))
 		
 		     profileServices.editRole(profile);
 		

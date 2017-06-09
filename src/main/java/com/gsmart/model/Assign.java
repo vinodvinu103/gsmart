@@ -49,6 +49,10 @@ public class Assign {
 	@Column(name = "IS_ACTIVE")
 //	@Index(name = "isActive")
 	private String isActive;
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
 
 	@Override
 	public String toString() {
@@ -58,9 +62,7 @@ public class Assign {
 				+ hierarchy + "]";
 	}
 
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="hid")
-	private Hierarchy hierarchy;
+	
 
 	public Hierarchy getHierarchy() {
 		return hierarchy;

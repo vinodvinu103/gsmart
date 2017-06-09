@@ -27,8 +27,8 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
-	Criteria criteria=null;
+	private Query query;
+	private Criteria criteria=null;
 
 	/*public void getConnection() {
 		session = sessionFactory.openSession();
@@ -178,6 +178,7 @@ public class MyTeamLeaveDaoImpl implements MyTeamLeaveDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Leave> searchmyteamleave(Leave leave, Long hid) throws GSmartDatabaseException {
 		List<Leave> leavelist = null;

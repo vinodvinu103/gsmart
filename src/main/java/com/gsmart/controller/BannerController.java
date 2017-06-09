@@ -32,41 +32,37 @@ public class BannerController {
 	@Autowired
 	private GetAuthorization getAuthorization;
 
-
 	@Autowired
 	private ProfileServices profileServices;
-	
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getBanner(@RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 
-		Loggers.loggerStart("getBanner api started in Banner controller  " );
+		Loggers.loggerStart("getBanner api started in Banner controller  ");
 		String tokenNumber = null;
 		List<Banners> bannerList = null;
 		Map<String, Object> permissions = new HashMap<>();
-		if(token.get("Authorization") != null) {
+		if (token.get("Authorization") != null) {
 			tokenNumber = token.get("Authorization").get(0);
 		} else {
 			bannerList = profileServices.getBannerList();
 			permissions.put("bannerList", bannerList);
 			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 		}
-		
+
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
-		
-		
-			bannerList = profileServices.getBannerList();
-			permissions.put("bannerList", bannerList);
-			Loggers.loggerEnd("getBanner api ended in Banner controller  with bannerList with size of "+bannerList.size() );
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		
+		bannerList = profileServices.getBannerList();
+		permissions.put("bannerList", bannerList);
+		Loggers.loggerEnd(
+				"getBanner api ended in Banner controller  with bannerList with size of " + bannerList.size());
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 
 	}
 
-	/*consumes = MediaType.APPLICATION_JSON_VALUE*/
+	/* consumes = MediaType.APPLICATION_JSON_VALUE */
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<IAMResponse> addBannner(@RequestBody Banners banner, @RequestHeader HttpHeaders token,
 			HttpSession httpSession) throws GSmartServiceException {
@@ -79,12 +75,10 @@ public class BannerController {
 
 		str.length();
 
+		profileServices.addBanner(banner);
 
-			profileServices.addBanner(banner);
-
-			Loggers.loggerEnd();
-			return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
-		
+		Loggers.loggerEnd();
+		return new ResponseEntity<IAMResponse>(rsp, HttpStatus.OK);
 
 	}
 
@@ -98,16 +92,14 @@ public class BannerController {
 
 		str.length();
 
-		 
-			if (task.equals("delete")) {
-				profileServices.deleteBanner(banner);
-				myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
-			}
-			Loggers.loggerEnd();
+		if ("delete".equals(task)) {
+			profileServices.deleteBanner(banner);
+			myResponse = new IAMResponse("DATA IS ALREADY EXIST.");
+		}
+		Loggers.loggerEnd();
 
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 
 	}
-
 
 }

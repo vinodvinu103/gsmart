@@ -33,8 +33,10 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	Query query;
-	Criteria criteria = null;
+	private Query query;
+	private Criteria criteria = null;
+	
+	private String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
 	
 	@Override
 	public TransportationFee addTranspotationFee(TransportationFee fee) throws GSmartDatabaseException {
@@ -113,9 +115,7 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GSmartDatabaseException(e.getMessage());
-		} finally {
-			// session.close();
-		}
+		} 
 		Loggers.loggerEnd();
 	}
 	
@@ -159,7 +159,7 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 	}
 
 
-	String year = (Year.now().getValue())+"-"+(Year.now().getValue()+1);
+	
 
 	  @SuppressWarnings("unchecked")
 	public String getinvoice(Hierarchy hierarchy,String schoolname) {
@@ -353,6 +353,7 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 		return StudentUnpaidfeeList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TransportationFee> searchpaidtrans(TransportationFee trans, Long hid) throws GSmartDatabaseException {
 		List<TransportationFee> list = null;
@@ -366,6 +367,7 @@ public class TranspotationFeeDaoImpl implements TranspotationFeeDao{
 		return list;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TransportationFee> searchunpaidtrans(TransportationFee trans, Long hid) throws GSmartDatabaseException {
 		List<TransportationFee> list = null;

@@ -20,12 +20,6 @@ public class Leave {
 //	@Index(name = "smartId")
 	private String smartId;
 	
-	public String getSmartId() {
-		return smartId;
-	}
-	public void setSmartId(String smartId) {
-		this.smartId = smartId;
-	}
 	@Column(name="REPORTINGMANAGER_ID")
 	private String reportingManagerId; 
 	
@@ -78,6 +72,14 @@ public class Leave {
 
 	public void setHierarchy(Hierarchy hierarchy) {
 		this.hierarchy = hierarchy;
+	}
+	
+
+	public String getSmartId() {
+		return smartId;
+	}
+	public void setSmartId(String smartId) {
+		this.smartId = smartId;
 	}
 	
 	public String getReportingManagerId() {

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.gsmart.model.Profile;
 import com.gsmart.model.Token;
-import com.gsmart.model.TransportationFee;
 import com.gsmart.services.ProfileServices;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;

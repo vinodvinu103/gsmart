@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -29,9 +28,8 @@ public class NoticeDaoImpl implements NoticeDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	Query query=null;
+	private Query query=null;
 	
-	final Logger logger = Logger.getLogger(NoticeDao.class);
 	
 	/*public void getConnection(){
 		session=sessionFactory.openSession();
@@ -144,7 +142,7 @@ public List<Notice> viewMyNotice(String smartId, Long hid) throws GSmartDatabase
 			Loggers.loggerEnd();
 			addNotice(notice,"smartId");*/
 			
-		}catch (org.hibernate.exception.ConstraintViolationException e){
+		}catch (ConstraintViolationException e){
 		}catch (Throwable e) {
 			throw new GSmartBaseException(e.getMessage());
 		}
@@ -216,7 +214,7 @@ public List<Notice> viewMyNotice(String smartId, Long hid) throws GSmartDatabase
 	
 			Loggers.loggerStart("current smartId"+smartId);
 			
-			if (role.toLowerCase().equals("student")) {
+			if (role.equalsIgnoreCase("student")) {
 				query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y'and role='student' and smartId like '"+smartId.substring(0,2)+"%'");
 			} else {
 				query = sessionFactory.getCurrentSession().createQuery("from Profile where isActive='Y'and role!='student' and smartId like '"+smartId.substring(0,2)+"%'");

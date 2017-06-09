@@ -48,10 +48,11 @@ public class InventoryAssignmentsController {
 	private GetAuthorization getAuthorization;
 	@Autowired
 	private HierarchyServices hierarchyServices;
-	
+
 	@RequestMapping(value = "/student/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getInventoryAssignmentStudent(@PathVariable("min") Integer min, @PathVariable("max") Integer max,
-			@RequestHeader HttpHeaders token, HttpSession httpSession,@PathVariable("hierarchy") Long hid) throws GSmartBaseException{
+	public ResponseEntity<Map<String, Object>> getInventoryAssignmentStudent(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession,
+			@PathVariable("hierarchy") Long hid) throws GSmartBaseException {
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
@@ -62,10 +63,11 @@ public class InventoryAssignmentsController {
 		Map<String, Object> dataMap = new HashMap<>();
 		Map<String, Object> inventoryStudentList = null;
 		System.out.println("inside if condition student");
-		if(tokenObj.getHierarchy() == null){
-			List<Hierarchy> hierarchyList=hierarchyServices.getAllHierarchy();
-			for(Hierarchy hid1:hierarchyList){
-				inventoryStudentList = inventoryassignmentdao.getInventoryAssignStudentList(tokenObj.getRole(), hid, min, max);
+		if (tokenObj.getHierarchy() == null) {
+			List<Hierarchy> hierarchyList = hierarchyServices.getAllHierarchy();
+			for (Hierarchy hid1 : hierarchyList) {
+				inventoryStudentList = inventoryassignmentdao.getInventoryAssignStudentList(tokenObj.getRole(), hid,
+						min, max);
 				System.out.println("going to inside studentList map");
 				dataMap.put("inventoryStudentList", inventoryStudentList);
 				dataMap.put("hierarchy", hid1);
@@ -73,27 +75,28 @@ public class InventoryAssignmentsController {
 			responseMap.put("data", dataMap);
 			responseMap.put("status", 200);
 			responseMap.put("message", "success");
-		}else if(tokenObj.getHierarchy() != null){
-			inventoryStudentList = inventoryassignmentdao.getInventoryAssignStudentList(tokenObj.getRole(),hid , min, max);
-		dataMap.put("inventoryStudentList", inventoryStudentList);
-		dataMap.put("hierarchy", hid);
-		responseMap.put("data", dataMap);
-		responseMap.put("status", 200);
-		responseMap.put("message", "success");
-		}else {
+		} else if (tokenObj.getHierarchy() != null) {
+			inventoryStudentList = inventoryassignmentdao.getInventoryAssignStudentList(tokenObj.getRole(), hid, min,
+					max);
+			dataMap.put("inventoryStudentList", inventoryStudentList);
+			dataMap.put("hierarchy", hid);
+			responseMap.put("data", dataMap);
+			responseMap.put("status", 200);
+			responseMap.put("message", "success");
+		} else {
 			responseMap.put("data", null);
 			responseMap.put("status", 404);
 			responseMap.put("message", "Data not found");
 		}
-  Loggers.loggerEnd("student data list for inventory ASSIGNMMENT"+inventoryStudentList);
+		Loggers.loggerEnd("student data list for inventory ASSIGNMMENT" + inventoryStudentList);
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
-		
+
 	}
 
 	@RequestMapping(value = "/assign/{min}/{max}/{hierarchy}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getInventoryAssign(@PathVariable("min") Integer min,
-			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession,@PathVariable("hierarchy") Long hid)
-			throws GSmartBaseException {
+			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession,
+			@PathVariable("hierarchy") Long hid) throws GSmartBaseException {
 
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
@@ -111,7 +114,7 @@ public class InventoryAssignmentsController {
 
 				inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj, hid, min, max);
 				dataMap.put("inventoryList", inventoryList);
-				dataMap.put("hierarchy",hid1);
+				dataMap.put("hierarchy", hid1);
 				Loggers.loggerEnd("Inventory List:" + inventoryList);
 
 			}
@@ -120,7 +123,7 @@ public class InventoryAssignmentsController {
 			responseMap.put("message", "success");
 		} else if (tokenObj.getHierarchy() != null) {
 
-			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj,hid, min, max);
+			inventoryList = inventoryAssignmentsServices.getInventoryAssignList(tokenObj, hid, min, max);
 
 			dataMap.put("inventoryList", inventoryList);
 			dataMap.put("hierarchy", tokenObj.getHierarchy());
@@ -136,7 +139,6 @@ public class InventoryAssignmentsController {
 		return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
 
 	}
-	
 
 	@RequestMapping(value = "/student", method = RequestMethod.POST)
 	public ResponseEntity<IAMResponse> addInventoryStudent(
@@ -153,9 +155,9 @@ public class InventoryAssignmentsController {
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
 		inventoryAssignmentStudent.setHierarchy(tokenObj.getHierarchy());
-		
 
-		CompoundInventoryAssignmentsStudent ch1 = inventoryassignmentdao.addInventoryStudent(inventoryAssignmentStudent,oldInventoryAssignment,tokenObj.getSmartId(),tokenObj.getHierarchy().getHid());
+		CompoundInventoryAssignmentsStudent ch1 = inventoryassignmentdao.addInventoryStudent(inventoryAssignmentStudent,
+				oldInventoryAssignment, tokenObj.getSmartId(), tokenObj.getHierarchy().getHid());
 		if (ch1 != null) {
 			resp.setMessage("succes");
 		} else {
@@ -185,7 +187,8 @@ public class InventoryAssignmentsController {
 		inventoryAssignments.setHierarchy(tokenObj.getHierarchy());
 		System.out.println("before add");
 
-		InventoryAssignmentsCompoundKey ch = inventoryAssignmentsServices.addInventoryDetails(inventoryAssignments,old,tokenObj.getHierarchy().getHid());
+		InventoryAssignmentsCompoundKey ch = inventoryAssignmentsServices.addInventoryDetails(inventoryAssignments, old,
+				tokenObj.getHierarchy().getHid());
 		if (ch != null) {
 			resp.setMessage("success");
 		} else {
@@ -195,19 +198,19 @@ public class InventoryAssignmentsController {
 
 		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/student/{task}", method = RequestMethod.PUT)
 	public ResponseEntity<IAMResponse> editInventoryStudent(
 			@RequestBody InventoryAssignmentsStudent inventoryAssignmentsStudent, @PathVariable("task") String task,
 			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
-Loggers.loggerStart();
+		Loggers.loggerStart();
 		IAMResponse myResponse = null;
 		String tokenNumber = token.get("Authorization").get(0);
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 
 		InventoryAssignmentsStudent ch1 = null;
-		if (task.equals("edit")) {
+		if ("edit".equals(task)) {
 			ch1 = inventoryassignmentdao.editInventoryStudentDetails(inventoryAssignmentsStudent);
 			if (ch1 != null) {
 				myResponse = new IAMResponse("success");
@@ -220,7 +223,7 @@ Loggers.loggerStart();
 			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 
 		}
-Loggers.loggerEnd();
+		Loggers.loggerEnd();
 		return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
 	}
 
@@ -262,7 +265,7 @@ Loggers.loggerEnd();
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 		str.length();
 		Token tokenObj = (Token) httpSession.getAttribute("token");
-		response.put("studentList", profileServices.getProfileByStuentHierarchy(hierarchy,tokenObj.getSmartId()));
+		response.put("studentList", profileServices.getProfileByStuentHierarchy(hierarchy, tokenObj.getSmartId()));
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 
 	}

@@ -135,13 +135,6 @@ public class Profile {
 	@Column(name = "PARENTS_IMAGE", length = 400000)
 	private byte[] parentImage;
 
-	public byte[] getParentImage() {
-		return parentImage;
-	}
-
-	public void setParentImage(byte[] parentImage) {
-		this.parentImage = parentImage;
-	}
 
 	// CONTACT DETAILS
 
@@ -334,13 +327,7 @@ public class Profile {
 	@Column(name="DEVICE_TOKEN")
 	private String finalToken;
 
-	public String getFinalToken() {
-		return finalToken;
-	}
-
-	public void setFinalToken(String finalToken) {
-		this.finalToken = finalToken;
-	}
+	
 
 
 	@Transient
@@ -365,6 +352,23 @@ public class Profile {
 	private Hierarchy hierarchy;
 
 	// -----------------------------------------------------------/
+	
+
+	public byte[] getParentImage() {
+		return parentImage;
+	}
+
+	public void setParentImage(byte[] parentImage) {
+		this.parentImage = parentImage;
+	}
+	
+	public String getFinalToken() {
+		return finalToken;
+	}
+
+	public void setFinalToken(String finalToken) {
+		this.finalToken = finalToken;
+	}
 
 	public String getUpdSmartId() {
 		return updSmartId;

@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -51,9 +50,8 @@ public class NoticeController {
 	private GetAuthorization getAuthorization;
 
 	@Autowired
-	NoticeDao noticeDao;
+	private NoticeDao noticeDao;
 
-	final Logger logger = Logger.getLogger(NoticeDao.class);
 
 	@RequestMapping(value = "/viewNotice/{smartId}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> viewNotice(@PathVariable("smartId") String smartId,

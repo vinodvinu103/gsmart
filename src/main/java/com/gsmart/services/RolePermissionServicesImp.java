@@ -178,7 +178,10 @@ public class RolePermissionServicesImp implements RolePermissionServices {
 					break;
 				case "TRANSPORTATIONFEE":
 					rolePermission.setIcon("white fa fa-bus fa-3x");
-					break;	
+					break;
+				default :
+					rolePermission.setIcon("white fa fa-home fa-3x");
+					break;
 				}
 				
 			}

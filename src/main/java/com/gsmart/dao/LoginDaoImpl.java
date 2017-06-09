@@ -24,8 +24,8 @@ public class LoginDaoImpl implements LoginDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	Login login;
-	Query query;
+	
+	private Query query;
 
 	@Override
 	public Map<String, Object> authenticate(Login loginDetails) throws GSmartDatabaseException {
@@ -35,7 +35,7 @@ public class LoginDaoImpl implements LoginDao {
 		try {
 			
 			int attempt = 0;
-			Query query = sessionFactory.getCurrentSession().createQuery("from Login where smartId = :smartId");
+			query = sessionFactory.getCurrentSession().createQuery("from Login where smartId = :smartId");
 			query.setParameter("smartId", loginDetails.getSmartId());
 			Login login =  (Login) query.uniqueResult();
 
