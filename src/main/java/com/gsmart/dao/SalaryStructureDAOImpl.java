@@ -26,9 +26,8 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	Query query;
-	private Criteria criteria = null;
-	private Criteria criteriaCount=null;
+	
+	
 	
 	
 	/*public void getConnection() {
@@ -42,6 +41,8 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	public Map<String, Object> getSalaryStructure(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		Long count=null;
+		Criteria criteria = null;
+		 Criteria criteriaCount=null;
 		List<SalaryStructure> salaryStructureList=null;
 		
 		Map<String, Object> salaryStructureMap = new HashMap<>();
@@ -71,6 +72,7 @@ public class SalaryStructureDAOImpl implements SalaryStructureDAO{
 	@Override
 	public CompoundSalaryStructure addSalaryStructure(SalaryStructure salarystructure) throws GSmartDatabaseException {
 		Loggers.loggerStart();
+		Query query;
 		CompoundSalaryStructure css=null;
 		try{
 			query=sessionFactory.getCurrentSession().createQuery("from SalaryStructure where isActive=:isActive and smartId=:smartId and year=:year hierarchy.hid=:hierarchy");

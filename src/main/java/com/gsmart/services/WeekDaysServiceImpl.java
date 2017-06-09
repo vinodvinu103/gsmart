@@ -156,6 +156,8 @@ public class WeekDaysServiceImpl implements WeekDaysService{
 		case "SATURDAY":
 			day="7";
 			break;
+		default:
+			break;
 		}
 		weekdays.setWeekDay(day);
 

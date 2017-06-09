@@ -20,10 +20,10 @@ public class Roles {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	public String getEntry_Time() {
+	public String getEntryTime() {
 		return entryTime;
 	}
-	public void setEntry_Time(String entry_Time) {
+	public void setEntryTime(String entry_Time) {
 		this.entryTime = entry_Time;
 	}
 	

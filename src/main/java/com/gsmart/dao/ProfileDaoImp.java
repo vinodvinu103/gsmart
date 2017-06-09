@@ -34,7 +34,6 @@ public class ProfileDaoImp implements ProfileDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	private Query query;
-	private Criteria criteria = null;
 	/* for registration */
 
 	@SuppressWarnings("unchecked")
@@ -202,6 +201,7 @@ public class ProfileDaoImp implements ProfileDao {
 	@Override
 	public Map<String, Object> getProfiles(String role, String smartId, Long hid, int min, int max) throws GSmartDatabaseException {
 		Loggers.loggerStart(role);
+		Criteria criteria = null;
 		Loggers.loggerStart("current smartId" + smartId);
 		/*
 		 * session = this.getSessionFactory().openSession();
@@ -264,7 +264,7 @@ public class ProfileDaoImp implements ProfileDao {
 		Profile currentProfile =null;
 		try {
 			Loggers.loggerStart();
-			if (role.toLowerCase().equals("student")) {
+			if (role.equalsIgnoreCase("student")) {
 				query = sessionFactory.getCurrentSession().createQuery("from Profile where entryTime in (select max(entryTime) from Profile where lower(role)=:role and hid=:hid)");
 				query.setParameter("role", role);
 			} else {

@@ -43,7 +43,6 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 	private SessionFactory sessionFactory;
 
 	private Query query;
-	private Criteria criteria = null;
 
 	/**
 	 * to view the list of records available in {@link FeeMaster} table
@@ -56,6 +55,7 @@ public class FeeMasterDaoImpl implements FeeMasterDao {
 			throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<FeeMaster> feeList = null;
+		Criteria criteria = null;
 		Map<String, Object> feeMap = new HashMap<>();
 		
 		try {

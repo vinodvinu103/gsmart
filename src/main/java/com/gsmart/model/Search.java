@@ -7,7 +7,7 @@ public class Search implements Serializable {
 
 	private String name;
 
-	String school;
+	private String school;
 	
 	private int band;
 	

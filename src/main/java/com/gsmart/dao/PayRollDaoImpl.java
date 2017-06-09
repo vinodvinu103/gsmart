@@ -21,7 +21,6 @@ public class PayRollDaoImpl implements PayRollDao {
 	private SessionFactory sessionfactory;
 	private Session session;
 	private Transaction tx;
-	private Query query;
 	
 	public void getConnection(){
 		session=sessionfactory.openSession();
@@ -32,6 +31,7 @@ public class PayRollDaoImpl implements PayRollDao {
 	@Override
 	public Map<String, Object> getPayroll() {
 		Loggers.loggerStart();
+		Query query;
 		Map<String, Object> resp=new HashMap<>();
 		try{
 		getConnection();

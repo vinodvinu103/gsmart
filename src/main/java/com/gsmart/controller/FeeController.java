@@ -194,9 +194,7 @@ public class FeeController {
 		Map<String, Profile> profiles = (Map<String, Profile>) searchService.getAllProfiles(academicYear, hid);
 		List<Profile> profilesOfNullHierarchy = profileDao.getProfilesOfNullHierarchy(academicYear);
 
-		if (profilesOfNullHierarchy.contains(profile))
-			;
-		{
+		if (profilesOfNullHierarchy.contains(profile));{
 			for (Profile profile2 : profilesOfNullHierarchy) {
 				profiles.put(profile2.getSmartId(), profile2);
 
