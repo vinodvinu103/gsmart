@@ -34,9 +34,6 @@ public class AssignDaoImpl implements AssignDao {
 
 
 	private Query query;
-	private Criteria criteria = null;
-	private Criteria criteriaCount=null;
-	private Long count=null;
 	
 	/*public void getConnection() {
 		session = sessionFactory.openSession();
@@ -48,7 +45,9 @@ public class AssignDaoImpl implements AssignDao {
 	public Map<String, Object> getAssignReportee(Long hid, Integer min, Integer max) throws GSmartDatabaseException {
 		Loggers.loggerStart();
 		List<Assign> assignList = null;
-		
+		Criteria criteria = null;
+		Criteria criteriaCount=null;
+		Long count=null;
 		Map<String, Object> assignMap = new HashMap<>();
 		
 		try {

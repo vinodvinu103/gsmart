@@ -196,7 +196,7 @@ public class FeeMasterController {
 				respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 
 			}
-		} else if (task.equals("delete")) {
+		} else {
 			feeMasterServices.deleteFee(feeMaster);
 			respMap.put("status", 200);
 			respMap.put("message", "Deleted Successfully");

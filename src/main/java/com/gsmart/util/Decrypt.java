@@ -22,7 +22,7 @@ public class Decrypt {
        return buf.toString();
    }
 	 
-    public static String MD5(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException  {
+    public static String md5(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException  {
        MessageDigest md;
        md = MessageDigest.getInstance("MD5");
        byte[] md5hash = new byte[32];

@@ -493,7 +493,7 @@ public class SearchServiceImp implements SearchService {
 					ArrayList<Profile> gotoloop = childOfChilds(tempProfile, allProfiles);
 					if (!gotoloop.isEmpty()) {
 						map.put(++i, gotoloop);
-						boo = map.get(i).get(0).getRole().toLowerCase().equals("student");
+						boo = map.get(i).get(0).getRole().equalsIgnoreCase("student");
 						tempProfile = map.get(i);
 						Loggers.loggerValue("tempProfile value ", tempProfile);
 						for (Profile profile : gotoloop) {

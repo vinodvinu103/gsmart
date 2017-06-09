@@ -18,14 +18,13 @@ public class GetAuthorization {
 	private SessionFactory sessionFactory;
 
 
-	private Session session;
-	private Query query;
-	private RolePermission permissions = null;
 	private Token tokenObj=null;
+	
 
 	public RolePermission authorizationForGet(String tokenNumber, HttpSession httpSession) throws GSmartServiceException {
 
 		Loggers.loggerStart(tokenNumber);
+		 RolePermission permissions = null;
 		
 
 		try {
@@ -127,7 +126,8 @@ public class GetAuthorization {
 	}
 	
 	private RolePermission getPermission(Token token, String module) {
-		
+		 Session session;
+		 Query query;
 		Loggers.loggerStart(token);
 		Loggers.loggerStart(module);
 		
