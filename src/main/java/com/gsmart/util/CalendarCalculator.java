@@ -4,8 +4,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CalendarCalculator {
 
+
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class CalendarCalculator {
+	
+public static Long currentEpoch;
+
+
+	
 	public static String getTimeStamp() {
 		try {
 			Date a = new Date();
@@ -19,5 +28,16 @@ public class CalendarCalculator {
 			return null;
 		}
 	}
+
+	/*public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void execute(JsonSerializationContext context) throws JRubyExecutionException {
+		System.out.println("Hello Quartz!");
+	}*/
+	
+	public static Long getCurrentEpochTime() {
+		return new Date().getTime()/1000;
+	}
+
+
 
 }

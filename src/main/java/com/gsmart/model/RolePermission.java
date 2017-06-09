@@ -1,14 +1,17 @@
 
 package com.gsmart.model;
 
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 
 /**
  * class-name: RolePermission.java Assigning permission for everyone who
@@ -22,9 +25,8 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "PERMISSION_MASTER")
 @IdClass(com.gsmart.model.RolePermissionCompound.class)
-public class RolePermission implements Serializable {
+public class RolePermission {
 
-	private static final long serialVersionUID = 1L;
 	/**
 	 * Its a time when the new permission instance is add or edit
 	 */
@@ -36,27 +38,26 @@ public class RolePermission implements Serializable {
 	 */
 	@Id
 	@Column(name = "ROLE")
+//	@Index(name = "role")
 	private String role;
 	/**
 	 * Permission allowed module name
 	 */
 	@Id
 	@Column(name = "MODULE_NAME")
+//	@Index(name = "moduleName")
 	private String moduleName;
 	/**
 	 * Role of the person to access the add permission
 	 */
-	@Id
+
 	@Column(name = "SUB_MODULE_NAME")
 	private String subModuleName;
-
-	public String getSubModuleName() {
-		return subModuleName;
-	}
-
-	public void setSubModuleName(String subModuleName) {
-		this.subModuleName = subModuleName;
-	}
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="hid")
+	private Hierarchy hierarchy;
+	
 
 	@Column(name = "P_ADD")
 	private boolean add;
@@ -82,11 +83,30 @@ public class RolePermission implements Serializable {
 	@Column(name = "EXIT_TIME")
 	private String exitTime;
 
+	
 	@Column(name = "IS_ACTIVE")
+//	@Index(name = "isActive")
 	private String isActive;
 
 	@Transient
 	private String icon;
+
+	public Hierarchy getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(Hierarchy hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	public String getSubModuleName() {
+		return subModuleName;
+	}
+
+	public void setSubModuleName(String subModuleName) {
+		this.subModuleName = subModuleName;
+	}
+
 
 	public String getEntryTime() {
 		return entryTime;

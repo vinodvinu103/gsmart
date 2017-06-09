@@ -1,10 +1,14 @@
 package com.gsmart.dao;
 
 import java.util.List;
+import java.util.Map;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.util.GSmartBaseException;
+import com.gsmart.util.GSmartDatabaseException;
 /**
  * 
  * Defines the behavior of all services provided in {@link RolePermissionServicesImpl}
@@ -21,7 +25,7 @@ public interface RolePermissionDao {
 	 * @throws GSmartDatabaseException
 	 */
 
-	public List<RolePermission> getPermissionList() throws GSmartBaseException;
+	public Map<String, Object> getPermissionList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartBaseException;
 	/**
 	 * @param permission instanceOf {@link RolePermission}
 	 * @return Nothing
@@ -39,11 +43,16 @@ public interface RolePermissionDao {
 	 * @return Nothing
 	 * @throws GSmartDatabaseException
 	 */
-	public void editPermission(RolePermission permission)throws GSmartBaseException;
+	public RolePermission editPermission(RolePermission permission)throws GSmartBaseException;
 
-	public List<RolePermission> getPermission(String role)throws GSmartBaseException;
+	public Map<String, Object> getPermission(String role)throws GSmartBaseException;
 	
-	public List<RolePermission> getSubModuleNames(String role) throws GSmartBaseException;
+	public List<RolePermission> getSubModuleNames(String role,String moduleName) throws GSmartDatabaseException;
+	
+	public List<Roles> getRoles()throws GSmartDatabaseException;
+	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy)throws GSmartDatabaseException;
+	public boolean addPermissionsForUsers(List<RolePermission> permissionList) throws GSmartDatabaseException;
+	public List<RolePermission> getPermissionForRole(String role) throws GSmartDatabaseException;
 
 	
 }

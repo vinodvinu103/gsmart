@@ -1,9 +1,12 @@
 package com.gsmart.services;
 
 import java.util.List;
+import java.util.Map;
 
+import com.gsmart.model.Hierarchy;
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.util.GSmartServiceException;
 /**
  * Provides services for {@link PermissionController}.
@@ -19,13 +22,13 @@ public interface RolePermissionServices {
 	 * @throws GSmartServiceException
 	 */
 
-	public List<RolePermission> getPermissionList() throws GSmartServiceException;
+	public Map<String, Object> getPermissionList(String role,Hierarchy hierarchy, Integer min, Integer max) throws GSmartServiceException;
 	/**
 	 * @param permission instanceOf {@link RolePermission}
 	 * @return nothing
 	 * @throws GSmartServiceException
 	 */
-	public void editPermission(RolePermission permission) throws GSmartServiceException;
+	public RolePermission editPermission(RolePermission permission) throws GSmartServiceException;
 	/**
 	 * @param permission instanceOf {@link RolePermission}
 	 * @return nothing
@@ -36,11 +39,22 @@ public interface RolePermissionServices {
 	 * @param permission instanceOf {@link RolePermission}
 	 * @return nothing
 	 * @throws GSmartServiceException
+	 * 
+	 * 
 	 */
+	
+	public List<RolePermission> getPermissionForRole(String role) throws GSmartServiceException;
+	
+	public boolean addPermissionsForUsers(List<RolePermission> permissionList) throws GSmartServiceException;
+	
+	
 	public RolePermissionCompound addPermission(RolePermission permission) throws GSmartServiceException;
 
-	public List<RolePermission> getPermission(String role) throws GSmartServiceException;
+	public Map<String, Object> getPermission(String role) throws GSmartServiceException;
 	
-	public List<RolePermission> getSubModuleNames(String role) throws GSmartServiceException;
+	public List<RolePermission> getSubModuleNames(String role,String moduleName) throws GSmartServiceException;
+	
+	public List<Roles> getRoles()throws GSmartServiceException;
+	public List<RolePermission> search(RolePermission permission, Hierarchy hierarchy)throws GSmartServiceException;
 	
 }

@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.gsmart.model.RolePermission;
 import com.gsmart.model.RolePermissionCompound;
+import com.gsmart.model.Roles;
 import com.gsmart.model.Token;
 import com.gsmart.services.RolePermissionServices;
-import com.gsmart.services.TokenService;
 import com.gsmart.util.CalendarCalculator;
 import com.gsmart.util.Constants;
 import com.gsmart.util.GSmartBaseException;
@@ -44,13 +45,10 @@ import com.gsmart.util.Loggers;
 public class RolePermissionController {
 
 	@Autowired
-	RolePermissionServices rolePermissionServices;
+	private RolePermissionServices rolePermissionServices;
 
 	@Autowired
-	GetAuthorization getAuthorization;
-	
-	@Autowired
-	TokenService tokenService;
+	private GetAuthorization getAuthorization;
 
 	/**
 	 * to view {@link Permission} details.
@@ -59,58 +57,97 @@ public class RolePermissionController {
 	 *            parameters
 	 * @return returns list of permission entities present in the RolePermission
 	 *         table
+	 * @throws GSmartServiceException
 	 * @see List
 	 * @throws GSmartBaseException
 	 */
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> search(@RequestBody RolePermission permission,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartServiceException {
+		Loggers.loggerStart();
+		String tokenNumber = token.get("Authorization").get(0);
 
-	public ResponseEntity<Map<String, Object>> getPermissionList(@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		List<RolePermission> permissionss = null;
+
+		Map<String, Object> privilege = new HashMap<>();
+		permissionss = rolePermissionServices.search(permission, tokenObj.getHierarchy());
+		privilege.put("permissionss", permissionss);
+
+		Loggers.loggerEnd(permissionss);
+		return new ResponseEntity<Map<String, Object>>(privilege, HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/{min}/{max}", method = RequestMethod.GET)
+
+	public ResponseEntity<Map<String, Object>> getPermissionList(@PathVariable("min") Integer min,
+			@PathVariable("max") Integer max, @RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
 
 		Loggers.loggerStart();
 		String tokenNumber = token.get("Authorization").get(0);
-		
+
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-		List<RolePermission> rolePermissionList = null;
-		
-		RolePermission modulePermission = getAuthorization.authorizationForGet(tokenNumber, httpSession);
-		
+		Map<String, Object> rolePermissionList = null;
+
 		Map<String, Object> permissions = new HashMap<>();
-		
-		permissions.put("modulePermissions", modulePermission);
 
-		if (modulePermission!= null) {
-			rolePermissionList = rolePermissionServices.getPermissionList();
+		Token tokenObj = (Token) httpSession.getAttribute("token");
 
-			permissions.put("rolePermissionList", rolePermissionList);
-			Loggers.loggerEnd(rolePermissionList);
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
-		}
+		rolePermissionList = rolePermissionServices.getPermissionList(tokenObj.getRole(), tokenObj.getHierarchy(), min,
+				max);
+
+		permissions.put("rolePermissionList", rolePermissionList);
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(permissions, HttpStatus.OK);
 	}
-	
-	@RequestMapping(value="/subModules", method = RequestMethod.GET)
-	public ResponseEntity<List<RolePermission>> getSubModels(@RequestHeader HttpHeaders token,
-			HttpSession httpSession) throws GSmartBaseException {
-		
-		Loggers.loggerStart();
+
+	@RequestMapping(value = "/subModules", method = RequestMethod.GET)
+	public ResponseEntity<List<RolePermission>> getSubModels(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartBaseException {
+
+		Loggers.loggerStart(httpSession);
 		String tokenNumber = token.get("Authorization").get(0);
-		
+
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
 		List<RolePermission> subModules = null;
-		
-		Token tk = tokenService.getToken(tokenNumber);
-		Loggers.loggerValue("Token ", tk.getRole());
-		subModules = rolePermissionServices.getSubModuleNames(tk.getRole());
-		
-		
+
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		System.out.println("Token object" + tokenObj);
+		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(), "maintenance");
+		System.out.println("submodule ::" + subModules);
+
+		return new ResponseEntity<List<RolePermission>>(subModules, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/InssubModules", method = RequestMethod.GET)
+	public ResponseEntity<List<RolePermission>> getInsSubModels(@RequestHeader HttpHeaders token,
+			HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(httpSession);
+		String tokenNumber = token.get("Authorization").get(0);
+
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		List<RolePermission> subModules = null;
+
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		System.out.println("Token object" + tokenObj);
+		subModules = rolePermissionServices.getSubModuleNames(tokenObj.getRole(), "institution maintenance");
+		System.out.println("submodule ::" + subModules);
+
 		return new ResponseEntity<List<RolePermission>>(subModules, HttpStatus.OK);
 	}
 
@@ -135,19 +172,16 @@ public class RolePermissionController {
 
 		str.length();
 
-		if (getAuthorization.authorizationForPost(tokenNumber, httpSession)) {
-			RolePermissionCompound cb = rolePermissionServices.addPermission(permission);
+		Token tokenObj = (Token) httpSession.getAttribute("token");
+		permission.setHierarchy(tokenObj.getHierarchy());
+		RolePermissionCompound cb = rolePermissionServices.addPermission(permission);
 
-			if (cb != null)
-				resp.setMessage("success");
-			else
-				resp.setMessage("Already exists");
-			Loggers.loggerEnd();
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		} else {
-			resp.setMessage("Permission Denied");
-			return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
-		}
+		if (cb != null)
+			resp.setMessage("success");
+		else
+			resp.setMessage("Already exists");
+		Loggers.loggerEnd();
+		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 
 	}
 
@@ -164,31 +198,106 @@ public class RolePermissionController {
 			@PathVariable("task") String task, @RequestHeader HttpHeaders token, HttpSession httpSession)
 			throws GSmartBaseException {
 		Loggers.loggerStart();
-		IAMResponse myResponse;
+		IAMResponse resp = new IAMResponse();
 		String tokenNumber = token.get("Authorization").get(0);
 
 		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
 
 		str.length();
 
-		if (getAuthorization.authorizationForPut(tokenNumber, task, httpSession)) {
-			if (task.equals("edit"))
-				rolePermissionServices.editPermission(permission);
-			else if (task.equals("delete"))
-				rolePermissionServices.deletePermission(permission);
+		if ("edit".equals(task)) {
+			RolePermission cb = rolePermissionServices.editPermission(permission);
 
-			myResponse = new IAMResponse("success");
+			if (cb != null)
+				resp.setMessage("success");
+			else
+				resp.setMessage("Already exists");
 			Loggers.loggerEnd();
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
-		} else {
-			myResponse = new IAMResponse("Permission Denied");
-			return new ResponseEntity<IAMResponse>(myResponse, HttpStatus.OK);
+
 		}
+
+		else {
+			rolePermissionServices.deletePermission(permission);
+			resp.setMessage("success");
+
+		}
+
+		return new ResponseEntity<IAMResponse>(resp, HttpStatus.OK);
 	}
 
 	public void getPermission(String role) throws GSmartServiceException {
 
 		rolePermissionServices.getPermission(role);
+	}
+
+	@RequestMapping(value = "/roles", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getRoles(@RequestHeader HttpHeaders token, HttpSession httpSession)
+			throws GSmartServiceException {
+		Loggers.loggerStart();
+		Map<String, Object> respMap = new HashMap<>();
+		List<Roles> roles = rolePermissionServices.getRoles();
+		respMap.put("data", roles);
+		Loggers.loggerEnd(respMap);
+
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/addPermission", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addPermissionForUsers(@RequestBody List<RolePermission> permission,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(permission);
+		Map<String, Object> respMap = new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+		boolean status = false;
+
+		status = rolePermissionServices.addPermissionsForUsers(permission);
+
+		if (status) {
+			respMap.put("status", 200);
+			respMap.put("message", "Success");
+
+		} else {
+			respMap.put("status", 400);
+			respMap.put("message", "Permissions are Already Present for the role " + permission.get(0).getRole());
+
+		}
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/getpermissionByRole", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> addPermissionForUsers(@RequestBody String role,
+			@RequestHeader HttpHeaders token, HttpSession httpSession) throws GSmartBaseException {
+
+		Loggers.loggerStart(role);
+		Map<String, Object> respMap = new HashMap<>();
+		String tokenNumber = token.get("Authorization").get(0);
+		String str = getAuthorization.getAuthentication(tokenNumber, httpSession);
+
+		str.length();
+
+		List<RolePermission> rolePermission = rolePermissionServices.getPermissionForRole(role);
+
+		if (!rolePermission.isEmpty()) {
+			respMap.put("status", 200);
+			respMap.put("message", "Success");
+			respMap.put("data", rolePermission);
+
+		} else {
+			respMap.put("status", 400);
+			respMap.put("message", "bad request");
+
+		}
+
+		Loggers.loggerEnd();
+		return new ResponseEntity<Map<String, Object>>(respMap, HttpStatus.OK);
+
 	}
 
 }
