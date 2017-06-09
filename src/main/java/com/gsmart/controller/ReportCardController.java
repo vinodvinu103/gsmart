@@ -135,7 +135,7 @@ public class ReportCardController {
 				response = new IAMResponse("success");
 			else
 				response = new IAMResponse("Oops...! Record Already Exist");
-		} else if (task.equals("delete")) {
+		} else{
 			reportCardService.deleteReportCard(card);
 		}
 
