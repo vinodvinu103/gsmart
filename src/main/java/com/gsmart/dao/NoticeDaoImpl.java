@@ -130,7 +130,7 @@ public List<Notice> viewMyNotice(String smartId, Long hid) throws GSmartDatabase
 		Session session=this.sessionFactory.getCurrentSession();
 		try{
 			Notice oldNotice = getNotice(notice.getEntryTime());
-			oldNotice.setUpdate_time(CalendarCalculator.getTimeStamp());
+			oldNotice.setUpdateTime(CalendarCalculator.getTimeStamp());
 			oldNotice.setIsActive("N");
 			session.update(oldNotice);
 			
