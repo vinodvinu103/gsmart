@@ -191,7 +191,7 @@ public class HierarchyController {
 				respMap.put("status", 400);
 				respMap.put("message", "Data Already Exist, Please try with SomeOther Data");
 			}
-		} else if (task.equals("delete")) {
+		} else{
 			hierarchyServices.deleteHierarchy(hierarchy);
 			respMap.put("status", 200);
 			respMap.put("message", "Deleted Successfully");
